@@ -1,0 +1,80 @@
+{% extends "../base_in.html" %}
+{% block titulo %}
+	SGH
+{% endblock titulo %}
+
+{% block l1 %}
+	active
+{% endblock %}
+
+{% block cuerpo %}
+<div class="card text-center">
+        <div class="panel-heading bg-primary" >
+                <h3 class="panel-title text-light">Remisiones de Hielo</h3>
+            </div>
+        <div class="card-header">
+          <ul class="nav nav-tabs card-header-tabs">
+            <li class="nav-item">
+              <a class="nav-link {{ clases.o1 }}" href="#">Crear Remision</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link {{ clases.o2 }}" href="#">Remisiones</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link {{ clases.o3 }}" href="#">Devolucion</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link {{ clases.o3 }}" href="#">Devoluciones</a>
+            </li>
+          </ul>
+        </div>
+        <div class="card-body">
+            <div style="{{estilos.o1}}">
+                {% comment %} <div class="row">
+                  <div class="col-md-5">
+                    <form action="" method="post" enctype="multipart/form-data">
+                      {% csrf_token %}	
+                      <input type="hidden" name="id_o" value="{{ id_o }}">	
+                      {{ formRemision.as_table }}	
+                      <input class="btn btn-primary" type="submit" value="Guardar">
+                      <br>
+                    </form>
+                  </div>
+                  <div class="col-md-7">
+                    <form action="" method="post" enctype="multipart/form-data">
+                      {% csrf_token %}	
+                      <input type="hidden" name="id_o" value="{{ id_o }}">	
+                      
+                      
+                        
+                        
+                        {% for dr in formDRemisionFS  %}
+
+                        <div class="row">
+                          <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                            {{dr}}
+                          </div>
+                        </div>
+                        {% endfor %}
+                          
+                        
+                      
+                      <input class="btn btn-primary" type="submit" value="Guardar">
+                      <br>
+                    </form>
+                      {% load static %}
+                      <!--# <img class="img-circle" id="img-cliente" src="{% static 'imgs/lector.png' %}" style="width:300px" alt=""> -->
+                  </div>
+                </div>
+              </div> {% endcomment %}
+           <!-- <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eum molestias laboriosam dolor minus optio vero quae maxime aspernatur ut aliquam provident veritatis facere deserunt cupiditate, voluptates reprehenderit dolorum ratione sed!</p> -->
+          <!-- <h5 class="card-title">Special title treatment</h5>
+          <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+          <a href="#" class="btn btn-primary">Go somewhere</a> -->
+        </div>
+      </div>
+
+
+
+{% endblock cuerpo %}
+    

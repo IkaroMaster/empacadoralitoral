@@ -1,0 +1,27 @@
+{% extends "base_out.html" %}
+
+{% block titulo %}
+	Login
+{% endblock titulo %}
+
+{% block contenido %}
+	<br>
+	<div style="width:350px; margin: 70px auto;border:1px solid gray;border-radius: 5px; padding: 50px;background:#143458;color:white">
+		<h1>Login</h1>
+		  <div class="dropdown-divider"></div>
+	  <form action="{% url 'seguridad:log_in-url' %}" method="post">
+	  		{% csrf_token %}
+	   		{{ form.as_p }}
+	    <button type="submit" class="btn btn-primary">Iniciar sesión</button>
+	  </form>
+	  <div class="dropdown-divider"></div>
+	  <br>
+	  {% if message %}
+	  	<div style="font-size:14px" class="alert alert-danger" role="alert">
+ 		 {{ message }}
+		</div>
+	  {% endif %}
+	  <br>
+	  <br>
+	</div>
+{% endblock  %}
