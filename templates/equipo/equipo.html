@@ -1,0 +1,197 @@
+{% extends '../base_in.html' %}
+
+{% block titulo %}
+    Equipo
+{% endblock titulo %}
+
+{% block l2 %}
+    active
+{% endblock l2 %}
+
+{% block cuerpo %}
+<div class="card text-center">
+    <!-- <div class="panel-heading bg-primary" >
+        <h3 class="panel-title text-light">Inventario de equipo</h3>
+    </div> -->
+    <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+        <li class="nav-item">
+        <a class="nav-link {{ clases.o1 }}" href="{% url 'equipo:equipo-url' 1 %}">Gestion de Equipo</a>
+        </li>
+        <li class="nav-item">
+        <a class="nav-link {{ clases.o2 }}" href="{% url 'equipo:equipo-url' 2 %}">Equipos</a>
+        </li>
+        <li class="nav-item">
+        <a class="nav-link {{ clases.o3 }} " href="{% url 'equipo:equipo-url' 3 %}">Equipo base</a>
+        </li>
+        <li class="nav-item">
+        <a class="nav-link {{ clases.o3 }}" href="#">...</a>
+        </li>
+    </ul>
+    </div>
+    <div class="card-body">
+        <div style="{{estilos.o1}}">
+            
+                <form action=" {% url 'equipo:guardar_equipo-url' %}" class="row" method="POST">
+                        {% csrf_token %}	
+						<input type="hidden" name="id_o" value="{{ id_o }}">	
+                        <div class="col-6">
+                            <label for="id_nombre">
+                                <font style="vertical-align: inherit;">
+                                    <font style="vertical-align: inherit;">Nombre:</font>
+                                </font>
+                            </label>
+                            <p>{{form.nombre}}</p>
+                            <label for="id_numero">
+                                <font style="vertical-align: inherit;">
+                                    <font style="vertical-align: inherit;">Numero:</font>
+                                </font>
+                            </label>
+                            <p>{{form.numero}}</p>
+                            <label for="id_tamano">
+                                <font style="vertical-align: inherit;">
+                                   <font style="vertical-align: inherit;">Tamaño:</font>
+                                </font>
+                            </label>
+                            <p>{{form.tamano}}</p>
+                            <label for="id_color">
+                                <font style="vertical-align: inherit;">
+                                     <font style="vertical-align: inherit;">Color:</font>
+                                </font>
+                            </label>
+                            <p>{{form.color}}</p>
+                            <label for="id_estado">
+                                <font style="vertical-align: inherit;">
+                                    <font style="vertical-align: inherit;">Estado:</font>
+                                </font>
+                            </label>
+                            <p>{{form.estado}} </p>  
+                            
+                                     
+                        </div> 
+                        <div class="col-6">
+                                <label for="id_codigo_barras">
+                                    <font style="vertical-align: inherit;">
+                                        <font style="vertical-align: inherit;">Codigo de barras:</font>
+                                    </font>
+                                </label>
+                                <p>{{form.codigo_barras}}</p>
+                                <label for="id_informacion">
+                                    <font style="vertical-align: inherit;">
+                                        <font style="vertical-align: inherit;">Información:</font>
+                                    </font>
+                                </label>
+                                <p>{{form.informacion}}</p>
+                                <a href="{% url 'equipo:equipo-url' 2 %}" class="btn btn-danger">Cancelar</a>
+                                <input class="btn btn-success" type="submit" value="Guardar"><br>
+                        </div>
+
+                        
+                        
+                        
+                </form>        
+        </div>
+        <div style="{{estilos.o2}}">
+            
+            <!-- <div class="table-responsive"> -->
+                <table id="tablajs" class="table table-striped table-hover">
+                    <thead class="thead-inverse">
+                        <tr>
+                            <th>Cod.</th>
+                            <th>Nombre</th>
+                            <th>Numero</th>
+                            <th>Tamaño</th>
+                            <th>Color</th>
+                            <th>Estado</th>
+                            <th>Descripcion</th>
+                            <th>Edicion</th>
+                            <!-- <th>Añadir</th> -->
+                        </tr>
+                        </thead>
+                        <tbody>     
+                        {% for e in equipos %}
+                             <tr 
+                             {% if e.estado.id == 1 %}
+                                 class="table-primary"
+                            {% elif e.estado.id == 2 %}
+                                class="table-success"
+                            {% elif e.estado.id == 3 %}
+                                class="table-danger"
+                             {% endif %}
+                                 >
+                                 <td>{{ e.id }}</td>
+                                 <td>{{ e.nombre }}</td>
+                                 <td><a href="">{{ e.numero }}</a></td>
+                                 <td>{{ e.tamano }}</td>
+                                 <td>{{ e.color }}</td>
+                                 <td>{{ e.estado }}</td>
+                                 <td>
+                                 {% if e.informacion  %}
+                                    {{ e.informacion}}
+                                {% else %}
+                                    <l5>sin descripcion</l5>
+                                 {% endif %}
+                                </td>
+                                <td><a href="{% url 'equipo:editar_equipo-url' e.id %}" class="btn btn-primary">Editar </a></td>
+                                <!-- <td><button class="btn btn-success">Añadir</button></td> -->
+
+
+                             </tr>       
+                        {% endfor %}                            
+                        </tbody>
+                </table>
+            <!-- </div>     -->
+                
+        </div>
+
+        <div style="{{estilos.o3}}" class="row">
+            <div class="col-4 border rounded">
+                    
+                            
+                            <h3 class="panel-title" style="color:gray">Gestion</h3>
+                            <hr>
+                    
+                    <form action="{% url 'equipo:guardar_equipo_base-url' %}" method="post" id="formEquipoBase" >
+						{% csrf_token %}	
+						<input type="hidden" name="id_o" value="{{ id_o }}">	
+                        {{ form.as_p }}
+                        <button class="btn btn-danger" id="limpiarFormEquipoBase">Cancelar</button>
+                        <a   href=""></a>
+						<input class="btn btn-success" type="submit" value="Guardar">
+						<br>
+					</form>
+
+            </div>
+            <div class="col-8 ">
+                <table id="tablajs2" class="table table-striped table-hover">
+                    <thead class="thead-inverse">
+                        <tr>
+                            <th>Cod.</th>
+                            <th>Base</th>
+                            <th>Acción</th>
+                            
+                            <!-- <th>Añadir</th> -->
+                        </tr>
+                        </thead>
+                        <tbody>     
+                        {% for e in equipo_base %}
+                            <tr>
+                                <td>{{ e.id }}</td>
+                                <td>{{ e.nombre }}</td>
+                                <td><a href="{% url 'equipo:editar_equipo_base-url' e.id %}" class="btn btn-primary">Editar </a></td>
+                            <!-- <td><button class="btn btn-success">Añadir</button></td> -->
+                            </tr>       
+                        {% endfor %}                            
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock cuerpo %}
+    
+{% load static %}
+{% block script %}
+    <script src="{% static 'js/equipo.js'%}"></script>
+{% endblock script %}
+    

@@ -28,6 +28,10 @@ urlpatterns = [
     #inicio
     path('inicio/',include('apps.inicio.urls')),
     path('', views.login_form, name='login_form-url'),
+    #Equipo
+    path('equipo/', include('apps.equipo.urls')),
+    #Compania
+    path('compania/', include('apps.compania.urls')),
 
 ]+ static(settings.STATIC_URL, document_root = settings.STATIC_ROOT)
 

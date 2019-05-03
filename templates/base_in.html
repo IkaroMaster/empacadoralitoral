@@ -14,7 +14,7 @@
 
 {% load static %}
 {% block estilos %}
-<link rel="stylesheet" href="{% static 'css/base_in1.css' %}">
+<!-- <link rel="stylesheet" href="{% static 'css/base_in1.css' %}"> -->
 {% endblock%}
   
 
@@ -67,10 +67,10 @@
       <div class="col-md-3">
         <ul class="list-group">
             <li class="list-group-item {% block l1 %}{% endblock %}"><img src="{% static 'imgs/remision.png' %}" width="50px" alt=""> <strong>Remisiones</strong><span class="badge">{{ c_prestamos }}</span></li>
-            <li class="list-group-item{% block l2 %}{% endblock %}"><img src="{% static 'imgs/almacen.png' %}" width="50px" alt=""> <strong>Equipo</strong><span class="badge">{{ c_ventas }}</span></li>
-            <li class="list-group-item"><strong><img src="{% static 'imgs/reserva.png' %}" width="50px" alt=""> Prestamo de equipo</strong><span class="badge">{{ c_reservaciones }}</li>
-            <li class="list-group-item"><img src="{% static 'imgs/lector.png' %}" width="50px" alt=""> <strong>Empresas</strong><span class="badge">{{ c_clientes }}</span></li>
-            <li class="list-group-item"><img src="{% static 'imgs/bibliotecario.png' %}" width="50px" alt=""> <strong>Empleados</strong><span class="badge">{{ c_bibliotecarios }}</span></li>
+            <a href="{% url 'equipo:equipo-url' 2 %}" class="list-group-item{% block l2 %}{% endblock %}"><img src="{% static 'imgs/almacen.png' %}" width="50px" alt=""> <strong>Equipo</strong><span class="badge">{{ c_ventas }}</span></a>
+            <li class="list-group-item {% block l3 %}{% endblock %}"><strong><img src="{% static 'imgs/reserva.png' %}" width="50px" alt=""> Prestamo de equipo</strong><span class="badge">{{ c_reservaciones }}</li>
+            <a href="{% url 'compania:compania-url' 2 %}" class="list-group-item{% block l4 %}{% endblock %}"><img src="{% static 'imgs/lector.png' %}" width="50px" alt=""> <strong>Empresas</strong><span class="badge">{{ c_clientes }}</span></a>
+            <li class="list-group-item {% block l5 %}{% endblock %}"><img src="{% static 'imgs/bibliotecario.png' %}" width="50px" alt=""> <strong>Empleados</strong><span class="badge">{{ c_bibliotecarios }}</span></li>
         </ul>
 
       </div>

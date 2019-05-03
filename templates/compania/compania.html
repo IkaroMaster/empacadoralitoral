@@ -1,0 +1,138 @@
+{% extends '../base_in.html' %}
+
+{% block titulo %}
+    Empresas
+{% endblock titulo %}
+
+{% block l4 %}
+    active
+{% endblock l4 %}
+
+{% block cuerpo %}
+<div class="card text-center">
+    <!-- <div class="panel-heading bg-primary" >
+        <h3 class="panel-title text-light">Inventario de equipo</h3>
+    </div> -->
+    <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+        <li class="nav-item">
+        <a class="nav-link {{ clases.o1 }}" href="{% url 'compania:compania-url' 1 %}">Gestion de Empresa</a>
+        </li>
+        <li class="nav-item">
+        <a class="nav-link {{ clases.o2 }}" href="{% url 'compania:compania-url' 2 %}">Empresas</a>
+        </li>
+        <li class="nav-item">
+        <a class="nav-link {{ clases.o3 }} " href="{% url 'compania:compania-url' 3 %}">Gestion de Finca</a>
+        </li>
+        <li class="nav-item">
+        <a class="nav-link {{ clases.o4 }}" href="{% url 'compania:compania-url' 4 %}">Fincas</a>
+        </li>
+    </ul>
+    </div>
+    <div class="card-body">
+            <div style="{{estilos.o1}}">
+            
+                    <form action=" {% url 'compania:guardar_compania-url' %}" class="row" method="POST">
+                            {% csrf_token %}	
+                            <input type="hidden" name="id_o" value="{{ id_o }}">	
+                            <div class="col-6">
+                                {{ form.as_p }}
+                                
+                                <a href="{% url 'compania:compania-url' 2 %}" class="btn btn-danger">Cancelar</a>
+                                <input class="btn btn-success" type="submit" value="Guardar"><br>
+                                         
+                            </div> 
+                            
+                    </form>        
+            </div>
+            <div style="{{estilos.o2}}">
+                <!-- <div class="table-responsive"> -->
+                    <table id="tablajs" class="table table-striped table-hover">
+                        <thead class="thead-inverse">
+                            <tr>
+                                <th>Cod.</th>
+                                <th>Nombre</th>
+                                <th>Direccion</th>
+                                <th>Abreviatura</th>
+                                <th>Tipo de Empresa</th>
+                                <th>Accion</th>
+                                <!-- <th>Añadir</th> -->
+                            </tr>
+                            </thead>
+                            <tbody>     
+                            {% for c in companias %}
+                                    <tr >
+                                        <td>{{ c.id }}</td>
+                                        <td>{{ c.nombre }}</td>
+                                        <td>{{ c.direccion }}</td>
+                                        <td>{{ c.abreviatura }}</td>
+                                        <td>{{ c.tipoCompania.tipo }}</td>
+                                        <td><a href="{% url 'compania:editar_compania-url' c.id %}" class="btn btn-primary">Editar </a></td>
+                                    <!-- <td><button class="btn btn-success">Añadir</button></td> -->
+    
+    
+                                    </tr>       
+                            {% endfor %}                            
+                            </tbody>
+                    </table>
+                <!-- </div>     -->
+                    
+            </div>
+            <div style="{{estilos.o3}}">
+                    <form action=" {% url 'compania:guardar_finca-url' %}" class="row" method="POST">
+                            {% csrf_token %}	
+                            <input type="hidden" name="id_o" value="{{ id_o }}">	
+                            <div class="col-6">
+                                {{ form.as_p }}
+                                
+                                <a href="{% url 'compania:compania-url' 4 %}" class="btn btn-danger">Cancelar</a>
+                                <input class="btn btn-success" type="submit" value="Guardar"><br>
+                                         
+                            </div> 
+                            
+                    </form>   
+            </div>
+            <div style="{{estilos.o4}}">
+                <!-- <div class="table-responsive"> -->
+                    <table id="tablajs2" class="table table-striped table-hover">
+                        <thead class="thead-inverse">
+                            <tr>
+                                <th>Codigo de Finca</th>
+                                <th>Nombre</th>
+                                <th>Abreviatura</th>
+                                <th>Direccion</th>
+                                <th>Empresa</th>
+                                <th>Accion</th>
+                                <!-- <th>Añadir</th> -->
+                            </tr>
+                            </thead>
+                            <tbody>     
+                            {% for f in fincas %}
+                                    <tr >
+                                        <td>{{ f.codFinca }}</td>
+                                        <td>{{ f.nombre }}</td>
+                                        <td>{{ f.abreviatura }}</td>
+                                        <td>{{ f.direccion }}</td>
+                                        <td>{{ f.compania.nombre }}</td>
+                                        <td><a  href="{% url 'compania:editar_finca-url' f.codFinca %}" class="btn btn-primary">Editar </a></td>
+                                    <!-- <td><button class="btn btn-success">Añadir</button></td> -->
+    
+    
+                                    </tr>       
+                            {% endfor %}                            
+                            </tbody>
+                    </table>
+                <!-- </div>     -->
+                    
+            </div>
+
+    </div>
+        
+</div>
+{% endblock cuerpo %}
+    
+{% load static %}
+{% block script %}
+    <script src="{% static 'js/compania.js'%}"></script>
+{% endblock script %}
+    

@@ -39,11 +39,11 @@ class BaseEquipo(models.Model):
 
 	
 class Equipo(models.Model):
-	nombre			= models.ForeignKey(BaseEquipo,on_delete=models.PROTECT)
-	numero		 	= models.IntegerField()
-	tamano 			= models.ForeignKey(Tamano,on_delete=models.PROTECT)
+	nombre			= models.ForeignKey(BaseEquipo,on_delete=models.PROTECT,help_text='Seleccione el tipo de equipo que va a registrar')
+	numero		 	= models.IntegerField(help_text="ingrese el numero unico del equipo")
+	tamano 			= models.ForeignKey(Tamano,verbose_name="Tamaño" ,on_delete=models.PROTECT)
 	color 			= models.ForeignKey(Color,on_delete=models.PROTECT)
-	Estado			= models.ForeignKey(Estado,on_delete=models.PROTECT)	
+	estado			= models.ForeignKey(Estado,on_delete=models.PROTECT)	
 	codigo_barras 	= models.CharField(verbose_name=u"Código de Barras",  max_length=160, blank=True , null=True,unique=True)
 	informacion 	= models.TextField(blank=True,  null=True)
 	def __str__(self):

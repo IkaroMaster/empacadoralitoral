@@ -17,6 +17,7 @@ class Compania(models.Model):
 	direccion	= models.CharField(max_length=200)
 	abreviatura		= models.CharField(max_length=10,blank=True, null=True)
 	tipoCompania 	= models.ForeignKey(TipoCompania, on_delete=models.PROTECT)
+	estado			= models.BooleanField(default= True)
 
 
 	class Meta:
@@ -28,11 +29,11 @@ class Compania(models.Model):
 
 
 class Finca(models.Model):
-	codFinca		= models.CharField(primary_key=True,max_length=10)
+	codFinca		= models.CharField(primary_key=True,max_length=10,verbose_name="Codigo de Finca")
 	nombre			= models.CharField(max_length=50)
 	abreviatura		= models.CharField(max_length=10,blank=True, null=True)
 	direccion 		= models.CharField(max_length=200)
-	compania 		= models.ForeignKey(Compania,on_delete=models.PROTECT)
+	compania 		= models.ForeignKey(Compania,verbose_name="Empresa",on_delete=models.PROTECT)
 
 	def __str__(self):
 		return "{} -> {}".format(self.codFinca,self.nombre)

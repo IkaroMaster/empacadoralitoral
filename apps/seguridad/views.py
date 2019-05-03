@@ -21,7 +21,7 @@ def login_form(request):
 		return render(request, 'seguridad/login_form.html', {'form': form})
 		# return HttpResponse('no funciona')
 	else:
-		return HttpResponse('hola putito xD')
+		return HttpResponseRedirect(reverse('inicio:inicio-url'))
 	# if not request.user.is_authenticated():
 	# 	form = AuthenticationForm()
 	# 	form.fields['username'].widget.attrs['class'] = 'form-control'
