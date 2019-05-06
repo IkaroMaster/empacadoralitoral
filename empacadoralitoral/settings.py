@@ -48,6 +48,7 @@ LOCAL_APPS = [
     'apps.remision',
     'apps.seguridad',
     'apps.vehiculo',
+    'debug_toolbar'
 ]
 # Application definition
 
@@ -61,6 +62,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     # 'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -193,5 +195,16 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'jorgeescoto18@gmail.com'
 EMAIL_HOST_PASSWORD = 'escoto100'
+
+def show_toolbar(request):
+    if not request.is_ajax() and request.user and request.user.username == 'admin':
+        return True
+    return False
+
+DEBUG_TOOLBAR_CONFIG = {
+
+    'SHOW_TOOLBAR_CALLBACK' : 'empacadoralitoral.settings.show_toolbar',
+
+}
 
 

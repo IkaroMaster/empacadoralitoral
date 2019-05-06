@@ -119,7 +119,6 @@ def guardar_equipo_base(request):
 	# 	return HttpResponseRedirect(reverse('app:home_cliente'))
 	if request.method == 'POST':
 		form = EquipoBaseForm(request.POST)
-
 		if form.is_valid():
 			if not request.POST['id_o'].isnumeric():
 				form.save()

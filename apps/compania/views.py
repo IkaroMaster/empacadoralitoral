@@ -96,23 +96,25 @@ def editar_compania(request,id):
 
 ###################-------------- F I N C A
 
+# //import pdb
+
 @login_required()
 def guardar_finca(request):
+    # pdb.run('hello')
 	# if verificarTipoUsuario(request.user):
 	# 	return HttpResponseRedirect(reverse('app:home_cliente'))
 	if request.method == 'POST':
 		form = FincaForm(request.POST)
-
 		if form.is_valid():
-			if not request.POST['id_o'].isalnum():
+			if not request.POST['id_o']:
 				form.save()
 			else:
-				form = FincaForm(data = request.POST, instance = Finca.objects.get( pk = request.POST['id_o']))	
+				form = FincaForm(data = request.POST, instance = Finca.objects.get( pk = str(request.POST['id_o'])))	
 				finca = form.save(commit = False)
 				finca.save()
-			return HttpResponseRedirect(reverse('compania:compania-url', args= (3,)))
-		else:
 			return HttpResponseRedirect(reverse('compania:compania-url', args= (4,)))
+		else:
+			return HttpResponseRedirect(reverse('compania:compania-url', args= (3,)))
 	else:
 		return render(request, '404.html')
 
