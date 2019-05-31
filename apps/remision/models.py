@@ -34,15 +34,20 @@ class TipoRemision(models.Model):
 	class Meta:
 		verbose_name_plural = 'Tipo de movimiento de remision'
 
+class EstadoRemision(models.Model):
+    estado          = models.CharField(max_length=15)
+    def __str__(self):
+        return '{} {}'.format(self.id,self.estado)
 
 
 class Remision(models.Model):
 	numRemision 	= models.CharField(primary_key=True,max_length=6)
 	tipoRemision	= models.ForeignKey(TipoRemision ,on_delete=models.PROTECT)
-	Guia			= models.IntegerField(blank=True, null=True)
+	guia			= models.IntegerField(blank=True, null=True)
 	compania		= models.ForeignKey(Compania,on_delete=models.PROTECT)
 	fecha			= models.DateField(auto_now_add=False,auto_now=False)
-	estado			= models.BooleanField(default=False)
+	# estado			= models.BooleanField(default=False)
+	estado			= models.ForeignKey(EstadoRemision,default=1,on_delete=models.PROTECT,blank=True, null=True)
 	prestamoEquipo	= models.OneToOneField(PrestamoEquipo,blank=True, null=True,on_delete=models.PROTECT)
 	conductor 		= models.ForeignKey(Conductor,blank=True, null=True,on_delete=models.PROTECT)
 	entrego			= models.ForeignKey(Empleado,on_delete=models.PROTECT)
@@ -59,7 +64,7 @@ class Remision(models.Model):
 
 	
 class DetalleRemision(models.Model):
-	remision  		= models.ForeignKey(Remision,on_delete=models.CASCADE)
+	remision  		= models.ForeignKey(Remision,on_delete=models.CASCADE,blank=True, null=True)
 # binn			= models.ForeignKey(Bin, db_column='bin_id')
 	salida			= models.IntegerField()
 	unidad			= models.ForeignKey(Medida,on_delete=models.PROTECT)
@@ -70,7 +75,7 @@ class DetalleRemision(models.Model):
 	cantidad		= property(_get_cantidad)
 
 	def __str__(self):
-		return "{} -> {} :{}".format(self.remision,self.salida,self.cantidad)
+		return "{} -> {} :{}".format(self.remision,self.id,self.cantidad)
 	class Meta:
 		verbose_name_plural = 'detalle Remision de hielo'
 	

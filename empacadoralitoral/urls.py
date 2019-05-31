@@ -32,6 +32,10 @@ urlpatterns = [
     path('equipo/', include('apps.equipo.urls')),
     #Compania
     path('compania/', include('apps.compania.urls')),
+    #Prestamos
+    path("prestamos/",include('apps.prestamos.urls')),
+    #Remision
+    path("remision/",include('apps.remision.urls')),
 
 ]+ static(settings.STATIC_URL, document_root = settings.STATIC_ROOT)
 

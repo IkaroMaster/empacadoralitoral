@@ -66,9 +66,9 @@
   <div class="row">  
       <div class="col-md-3">
         <ul class="list-group">
-            <li class="list-group-item {% block l1 %}{% endblock %}"><img src="{% static 'imgs/remision.png' %}" width="50px" alt=""> <strong>Remisiones</strong><span class="badge">{{ c_prestamos }}</span></li>
+            <a href="{% url 'remision:remision-url' %}" class="list-group-item{% block l1 %}{% endblock %}"><img src="{% static 'imgs/remision.png' %}" width="50px" alt=""> <strong>Remisiones</strong><span class="badge">{{ c_ventas }}</span></a>
             <a href="{% url 'equipo:equipo-url' 2 %}" class="list-group-item{% block l2 %}{% endblock %}"><img src="{% static 'imgs/almacen.png' %}" width="50px" alt=""> <strong>Equipo</strong><span class="badge">{{ c_ventas }}</span></a>
-            <li class="list-group-item {% block l3 %}{% endblock %}"><strong><img src="{% static 'imgs/reserva.png' %}" width="50px" alt=""> Prestamo de equipo</strong><span class="badge">{{ c_reservaciones }}</li>
+            <a href="{% url 'prestamos:prestamos-url' %}" class="list-group-item{% block l3 %}{% endblock %}"><img src="{% static 'imgs/reserva.png' %}" width="50px" alt=""> <strong>Préstamo de equipo</strong><span class="badge">{{ c_ventas }}</span></a>
             <a href="{% url 'compania:compania-url' 2 %}" class="list-group-item{% block l4 %}{% endblock %}"><img src="{% static 'imgs/lector.png' %}" width="50px" alt=""> <strong>Empresas</strong><span class="badge">{{ c_clientes }}</span></a>
             <li class="list-group-item {% block l5 %}{% endblock %}"><img src="{% static 'imgs/bibliotecario.png' %}" width="50px" alt=""> <strong>Empleados</strong><span class="badge">{{ c_bibliotecarios }}</span></li>
         </ul>
@@ -79,5 +79,38 @@
           {% endblock cuerpo %}
         </div>
   </div>
+
+
+  <!-- Modal -->
+<div class="modal fade" id="mostrarModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">
+          {% block modalTitulo %}{% endblock modalTitulo %}
+        </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          
+          {% block modalCuerpo %}
+            
+          {% endblock modalCuerpo %}
+            
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary" id="modalGuardar">
+          {% block modalGuardar %}
+            
+          {% endblock modalGuardar %}
+            </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--##################-->
 
 {% endblock %}

@@ -6,7 +6,7 @@ class Estado(models.Model):
 	estado = models.CharField(max_length=30)
 
 	def __str__(self):
-		return self.estado
+		return '{} {}'.format(self.id,self.estado)
 
 	class Meta:
 		verbose_name_plural = 'Estados'

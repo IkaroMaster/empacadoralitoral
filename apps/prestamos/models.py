@@ -10,7 +10,7 @@ from apps.equipo.models import Equipo
 class EstadoPrestamo(models.Model):
     estado          = models.CharField(max_length=15)
     def __str__(self):
-        return self.estado
+        return '{} {}'.format(self.id,self.estado)
     
 # Create your models here.
 class PrestamoEquipo(models.Model):
@@ -33,7 +33,7 @@ class PrestamoEquipo(models.Model):
 class DetallePrestamoEquipo(models.Model):
 	prestamoEquipo  	= models.ForeignKey(PrestamoEquipo, on_delete=models.CASCADE)
 	descripcion			= models.CharField(max_length=100,blank=True, null=True)
-	equipo				= models.ForeignKey(Equipo,on_delete=models.PROTECT)
+	equipo				= models.ForeignKey(Equipo,on_delete=models.PROTECT,related_name='equipos')
 	tapadera			= models.IntegerField(blank=True, null=True)
 
 	def __str__(self):

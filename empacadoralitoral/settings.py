@@ -133,7 +133,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 # AUTH_USER_MODEL = 'users.User'
 
-LANGUAGE_CODE = 'es'
+LANGUAGE_CODE = 'es-HN'
 
 TIME_ZONE = 'America/Tegucigalpa'
 
