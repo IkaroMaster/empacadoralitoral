@@ -1,34 +1,53 @@
 $(function(){
 
+    // $('.dx').selectpicker({
+    //     liveSearch: true,
+    //     // selectAll: true
+    // });    
+    $('.detalle-formset').formset({
+        addText: 'Agregar equipo',
+        deleteText: 'x',
+        addCssClass: 'add-row btn btn-outline-primary',
+        animateForms: true, 
+    });
+    $( ".delete-row" ).addClass( "btn btn-outline-danger " );
+    $( ".add-row" ).on("click",function() {
+        $( ".delete-row" ).addClass( "btn btn-outline-danger" );
+        $('.dx').selectpicker({
+            liveSearch: true,
+            // selectAll: true
+        });        
+    });
+
     var tablex = $('#tablajs').DataTable({
-        			dom: 'Bfrtip',
-                    // lengthChange: false,
-                    buttons: [ 'copy', 'excel', 'pdf','colvis',{
-                        extend: 'pdfHtml5',
-                        download: 'open',
-                        orientation: 'landscape',
-                        pageSize: 'LEGAL',
-                        text: 'Ver',
-                        title: 'Reporte de equipos'}],
-                    "scrollX": true,
-                    "language": {
-                        "lengthMenu": "Mostrar _MENU_ por páginas",
-                        "zeroRecords": "No se encontró ningún registro",
-                        "info": "Mostrando página _PAGE_ de _PAGES_",
-                        "infoEmpty": "Registro no valido",
-                        "infoFiltered": "(filtrado de _MAX_ registros totales)",
-                        'search': 'Buscar:'
-                        /*'search': 'Buscar: _INPUT_ aqui'*/,
-                         "paginate": {
-                              "next": "Siguiente",
-                              'previous': 'Anterior'
-                         },
-                         buttons: {
-                            colvis: 'Columnas visibles',
-                            copy: 'Copiar'
-                        }
-                    }
-                 });
+        "scrollY":      '50vh',
+        "scrollCollapse": true,
+        "scrollX":      true,
+        "deferRender":  true,
+        // responsive: true,
+        "scroller":     true,
+        "language":     {
+                            "zeroRecords": "No se ha encontrado nada, lo siento.",
+                            "infoEmpty": "No hay registros disponibles",
+                            "infoFiltered": "(filtrado de _MAX_ registros totales)",
+                            "info":      "Mostrando _START_ a _END_ de _TOTAL_ registros.",
+                            "search":         "Buscar:"
+        }
+        // "scrollCollapse": true
+    });
+
+
+    $('.editar').on('click', function () {
+        id = $(this).attr('data-editar');
+        // $.ajax({
+        //     type: "GET",
+        //     url: '{% url "" %}',
+        //     data: "data",
+        //     success: function (response) {
+                
+        //     }
+        // });
+    });
 
                  
 

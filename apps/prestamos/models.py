@@ -31,7 +31,7 @@ class PrestamoEquipo(models.Model):
 
 	
 class DetallePrestamoEquipo(models.Model):
-	prestamoEquipo  	= models.ForeignKey(PrestamoEquipo, on_delete=models.CASCADE)
+	prestamoEquipo  	= models.ForeignKey(PrestamoEquipo, on_delete=models.CASCADE,blank=True, null=True)
 	descripcion			= models.CharField(max_length=100,blank=True, null=True)
 	equipo				= models.ForeignKey(Equipo,on_delete=models.PROTECT,related_name='equipos')
 	tapadera			= models.IntegerField(blank=True, null=True)

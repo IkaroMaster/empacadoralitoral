@@ -69,6 +69,20 @@ active
                         <label for="">Fecha:</label>
                         {{remision_form.fecha}}
                         <br>
+                        <div class="container {% if remision_form.estado.value == 1 %}
+                        alert-info
+                        {%elif remision_form.estado.value == 2%}
+                        alert-success
+                        {%elif remision_form.estado.value == 3%}
+                        alert-danger
+                        {% endif %}" 
+                        
+                            >
+                            <label for="">Estado Actual:</label>
+                            {{remision_form.estado}}
+                        <br>
+                        
+                        </div>
                         
                         <!-- {{remision_form.estado}} -->
 
@@ -199,9 +213,7 @@ active
                 <a href="{% url 'remision:remision-url'%} " class="btn btn-secondary">Cancelar</a>
                 <input type="submit" class="btn btn-success" value="Guardar" class="button" />
 
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#mostrarModal">
-                        Launch demo modal
-                      </button>
+                
             <!-- <div class="" style="visibility: hidden;">
                 
                     
@@ -242,7 +254,7 @@ active
             <!-- {% if object %}
             <form role="form" action="{% url 'prestamos:modificar_prestamo-url' object.numPrestamo %}" method="post">
             {% else %}
-            <form role="form" action="{% url 'prestamos:crear_prestamo-url' %}" method="post">
+            <form role="form" action="" method="post">
             {% endif %}
                 
                 <h3>Crear remision</h3>
@@ -270,10 +282,10 @@ active
         </form>-->
         </div>
         <div style="{{estilos.o2}}">
-            <table id="tablajs" class="table table-striped table-hover">
+            <table id="tablajs" class="table table-striped table-bordered" style="width:100%" class="display">
                 <thead class="thead-inverse">
                     <tr>
-                        <th>Cod.</th>
+                        <th data-priority="1">Cod.</th>
                         <th>Tipo de remision</th>
                         <th>Guia</th>
                         <th>Compania</th>
@@ -283,38 +295,61 @@ active
                         <th>Conductor</th>
                         <th>Entregado por</th>
                         <th>Placa</th>
-                        <th>Acciones</th>
+                        <th data-priority="2">Acciones</th>
                         <!-- <th>Añadir</th> -->
                     </tr>
                 </thead>
                 <tbody>
                     {% for r in remisiones %}
-                    <tr id="fila-{{r.numRemision}}"{% if r.estado.id == 1 %} class="table-primary" {% elif r.estado.id == 2 %}
+                    <tr id="fila-{{r.numRemision}}"{% if r.estado.id == 1 %} {% elif r.estado.id == 2 %}
                         class="table-success" {% elif r.estado.id == 3 %} class="table-danger" {% endif %}>
                         <td>{{ r.numRemision }}</td>
                         <td>{{ r.tipoRemision }}</td>
-                        <td><a href="">{{ r.guia }}</a></td>
+                        <td>
+                        {% if r.guia %}
+                           <a href="">{{ r.guia }}</a>
+                        {% else %}
+                            -
+                        {% endif %}
+                            </td>
                         <td>{{ r.compania }}</td>
                         <td>{{ r.fecha }}</td>
-                        <td id="col-{{ r.numRemision }}">{{ r.estado }}</td>
-                        <td>{{ r.prestamoEquipo }}</td>
+                        <td id="col_estado-{{ r.numRemision }}">
+                        {% if r.estado.id == 1 %}
+                            <p style="display: none">1</p>
+                            <i class="fas fa-exclamation" ></i>
+                        {% elif r.estado.id == 2 %}
+                            <p style="display: none">2</p>
+                            <i class="fas fa-check"></i>
+                        {% elif r.estado.id == 3 %}
+                            <p style="display: none">3</p>
+                            <i class="fas fa-times"></i>
+                        {% endif %}
+                            </td>
+                        <td id="col_prestamo-{{ r.numRemision }}">
+                        {% if r.prestamoEquipo  %}
+                            {{ r.prestamoEquipo }}
+                        {% else %}
+                            -
+                        {% endif %}
+                            </td>
                         <td>{{ r.conductor }}</td>
                         <td>{{ r.entrego }}</td>
                         <td>{{ r.placa }}</td>
                         <td> 
-                            <div class="row ">
-                                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-                                    <a href="{% url 'remision:modificar_remision-url' r.numRemision %}"
-                                        class="btn btn-info">#</a> 
-                                    
-                                </div>
-                                
-                                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-                                    <button class="btn btn-warning anularRemision" data-id="{{ r.numRemision }}">-</button>
-                                    
-                                </div>
-                                
-                            </div>
+
+                        {% if r.estado.id == 1 %}
+                            <button class="btn btn-success fas fa-check terminarRemision"data-id="{{ r.numRemision }}" data-terminar="{{ r.numRemision }}"></button>
+                            <a href="{% url 'remision:modificar_remision-url' r.numRemision %}" class="btn btn-info fas fa-pen " data-id="{{ r.numRemision }}" data-editar="{{ r.numRemision }}"></a> 
+                            <button class="btn btn-danger anularRemision fas fa-times" data-id="{{ r.numRemision }}" data-anular="{{ r.numRemision }}"></button>
+                            <button class="btn btn-warning verRemision fas fa-eye " data-id="{{ r.numRemision }}"></button>
+                        {% elif r.estado.id == 2 %}
+                            <a href="{% url 'remision:modificar_remision-url' r.numRemision %}" class="btn btn-info fas fa-pen " data-id="{{ r.numRemision }}"></a> 
+                            <button class="btn btn-warning verRemision fas fa-eye " data-id="{{ r.numRemision }}"></button>
+                        {% else %}
+                            <button class="btn btn-warning verRemision fas fa-eye " data-id="{{ r.numRemision }}"></button>
+                        {% endif %} 
+                            
                         </td>
 
 
@@ -329,6 +364,27 @@ active
     </div>
 
 </div>
+<!-- Modal -->
+<div class="modal fade" id="modalDetalleRemision" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">Visualizacion de remision</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body modalCuerpoRemision">
+          ...
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="cerrarModal" data-dismiss="modal">Cerrar</button>
+
+          <button type="button" class="btn btn-primary" id="terminarRemision">Continuar</button>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock cuerpo %}
 {% load static %}
 {% block script %}

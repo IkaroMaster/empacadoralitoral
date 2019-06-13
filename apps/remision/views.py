@@ -11,8 +11,7 @@ from django.forms.formsets import formset_factory
 from django.shortcuts import redirect, render
 from django.db.models import Q
 from django import forms
-
-
+import json
 
 #RECURSOS
 from .models import *
@@ -131,6 +130,69 @@ def prestamoEquipo_asJson(request):
 				'compania': prestamoEquipo.compania.id,
 				'conductor': prestamoEquipo.conductor.numIdentidad,
 				'placa': prestamoEquipo.placa.placa,
+			}
+		return JsonResponse(data)
+	else:
+		pass
+
+
+def detalleRemision_asJson(request):
+	if request.is_ajax():		
+		codRemision = request.GET['id']
+		remision = Remision.objects.get(pk=codRemision)
+		detalleRemision = DetalleRemision.objects.filter(remision= remision)
+		htmlRemision ='' 
+		htmlRemision +='''
+			<div class="container row">
+				<div class="col-6"><p><strong>Numero de remision: </strong> {}</p></div>
+				<div class="col-6"><p><strong>Tipo de remision: </strong> {}</p></div>
+				<div class="col-12"><p><strong>Consignado a: </strong>{}</p></div>
+				<div class="col-12"><p><strong>Retirado en: </strong>Empacadora Litoral</p></div>
+				<div class="col-12"><p><strong>Fecha: </strong>{}</p></div>
+			</div>
+		'''.format(remision.numRemision,remision.tipoRemision,remision.compania,remision.fecha) 
+		htmlDetalleRemision = ''
+		htmlDetalleRemision += '''
+			<p>A continuacion detallamos los articulos que enviamos.</p>
+			<table class="table table-bordered">
+					<thead>
+					  <tr>
+						<th scope="col">Cantidad</th>
+						<th scope="col">Unidad</th>
+						<th scope="col">Descripcion</th>
+						<th scope="col">Devolucion</th>
+						<th scope="col">Valor total</th>
+					  </tr>
+					</thead>
+					<tbody>						
+		'''
+		for dR in detalleRemision:
+			htmlDetalleRemision +='''
+			<tr>
+				<th scope="row">{}</th>
+				<td>{}</td>
+				<td>{}</td>
+				<td>{}</td>
+				<td>{}</td>
+			</tr>
+			'''.format(dR.salida,dR.unidad,dR.hielo,dR.devolucion,dR.cantidad)
+		
+		htmlDetalleRemision += '''
+				</tbody>
+			</table>
+			<div class="row">
+				<div class="col-6 border"><p><strong>Entrego: </strong>{}</p></div>
+				<div class="col-6 border"><p><strong>Recibio: </strong>{}</p>
+									<p><strong>Placa No </strong>{}</p>
+				</div>
+			</div>
+		'''.format(remision.entrego,remision.conductor,remision.placa)
+
+		print(htmlDetalleRemision)
+
+		data = {
+				'htmlRemision':htmlRemision,
+				'htmlDetalleRemision':htmlDetalleRemision
 			}
 		return JsonResponse(data)
 	else:
@@ -345,3 +407,83 @@ def anularRemision_asJson(request):
 # 		return JsonResponse(data)
 # 	else:
 # 		pass
+
+
+def terminarRemision_asJson(request):
+	if request.is_ajax():
+		if request.method == 'POST':
+			devolucionRemisiones = request.POST['devolucionRemisiones']
+			data = json.loads(devolucionRemisiones)
+			pk = ''
+			for x in data:
+				detalleRemision = DetalleRemision.objects.get(pk=x['id'])
+				detalleRemision.devolucion = x['devolucion']
+				detalleRemision.save()
+				pk = detalleRemision.remision.numRemision
+			remision = Remision.objects.get(pk= pk)
+			remision.estado = EstadoRemision.objects.get(pk = 2)
+			remision.save()
+			return JsonResponse({'id':pk})
+		else:
+			codRemision = request.GET['id']
+			remision = Remision.objects.get(pk=codRemision)
+			detalleRemision = DetalleRemision.objects.filter(remision= remision)
+			htmlRemision ='' 
+			htmlRemision +='''
+				<span class="alert alert-warning alert-dismissible ">Atencion: Si existen devoluciones, ingrese la devolucion antes de continuar.</span>
+                <br><br>
+				<div class="row container">
+					<div class="col-6"><p><strong>Numero de remision: </strong> {}</p></div>
+					<div class="col-6"><p><strong>Tipo de remision: </strong> {}</p></div>
+					<div class="col-12"><p><strong>Consignado a: </strong>{}</p></div>
+					<div class="col-12"><p><strong>Retirado en: </strong>Empacadora Litoral</p></div>
+					<div class="col-12"><p><strong>Fecha: </strong>{}</p></div>
+				</div>
+			'''.format(remision.numRemision,remision.tipoRemision,remision.compania,remision.fecha)
+			htmlDetalleRemision = ''
+			htmlDetalleRemision += '''
+				<p>A continuacion detallamos los articulos que enviamos.</p>
+				<table class="table table-bordered">
+						<thead>
+						<tr>
+							<th scope="col">Cantidad</th>
+							<th scope="col">Unidad</th>
+							<th scope="col">Descripcion</th>
+							<th scope="col">Devolucion</th>
+							<th scope="col">Valor total</th>
+						</tr>
+						</thead>
+						<tbody>	
+											
+			'''
+			for dR in detalleRemision:
+				htmlDetalleRemision +='''
+				<tr>
+					<th scope="row">{}</th>
+					<td>{}</td>
+					<td>{}</td>
+					<td><input type="text" class="devolucion text-success" value="{}"  data-id="{}"></td>
+					<td>{}</td>
+				</tr>
+				'''.format(dR.salida,dR.unidad,dR.hielo,dR.devolucion,dR.id,dR.cantidad)
+				print(dR.id)
+			htmlDetalleRemision += '''
+					</tbody>
+				</table>
+				<div class="row container">
+					<div class="col-6 border"><p><strong>Entrego: </strong>{}</p></div>
+					<div class="col-6 border"><p><strong>Recibio: </strong>{}</p>
+										<p><strong>Placa No </strong>{}</p>
+					</div>
+				</div>
+			'''.format(remision.entrego,remision.conductor,remision.placa)
+
+			print(htmlDetalleRemision)
+
+			data = {
+					'htmlRemision':htmlRemision,
+					'htmlDetalleRemision':htmlDetalleRemision
+				}
+			return JsonResponse(data)
+	else:
+		pass

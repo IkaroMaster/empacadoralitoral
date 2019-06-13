@@ -142,36 +142,58 @@ $(function(){
 // };
    
 
-
-    var tablex = $('#tablajs').DataTable({
-        			dom: 'Bfrtip',
-                    // lengthChange: false,
-                    buttons: [ 'copy', 'excel', 'pdf','colvis',{
-                        extend: 'pdfHtml5',
-                        download: 'open',
-                        orientation: 'landscape',
-                        pageSize: 'LEGAL',
-                        text: 'Ver',
-                        title: 'Reporte de equipos'}],
-                    "scrollX": true,
-                    "language": {
-                        "lengthMenu": "Mostrar _MENU_ por páginas",
-                        "zeroRecords": "No se encontró ningún registro",
-                        "info": "Mostrando página _PAGE_ de _PAGES_",
-                        "infoEmpty": "Registro no valido",
+var tablex = $('#tablajs').DataTable({
+    "scrollY":      '50vh',
+    "scrollCollapse": true,
+    "scrollX":      true,
+    "deferRender":  true,
+    // responsive: true,
+    "scroller":     true,
+    "language":     {
+                        "zeroRecords": "No se ha encontrado nada, lo siento.",
+                        "infoEmpty": "No hay registros disponibles",
                         "infoFiltered": "(filtrado de _MAX_ registros totales)",
-                        'search': 'Buscar:'
-                        /*'search': 'Buscar: _INPUT_ aqui'*/,
-                         "paginate": {
-                              "next": "Siguiente",
-                              'previous': 'Anterior'
-                         },
-                         buttons: {
-                            colvis: 'Columnas visibles',
-                            copy: 'Copiar'
-                        }
-                    }
-                 });
+                        "info":      "Mostrando _START_ a _END_ de _TOTAL_ registros.",
+                        "search":         "Buscar:"
+    }
+    // "scrollCollapse": true
+});
+    // var tablex = $('#tablajs').DataTable({
+    //     			dom: 'Bfrtip',
+    //                 lengthChange: false,
+    //                 // bAutoWidth: true,
+    //                 // scrollCollapse: true,
+    //                 // scroller:       true,
+    //                 // deferRender:    true,
+    //                 // scroller:       true,
+    //                 scrollY: 300,
+    //                 buttons: [ 'copy', 'excel', 'pdf','colvis',{
+    //                     extend: 'pdfHtml5',
+    //                     download: 'open',
+    //                     orientation: 'landscape',
+    //                     pageSize: 'LEGAL',
+    //                     text: 'Ver',
+    //                     title: 'Reporte de equipos'}],
+    //                     scrollX: true,
+    //                     // scrollY: 400,
+    //                 "language": {
+    //                     "lengthMenu": "Mostrar _MENU_ por páginas",
+    //                     "zeroRecords": "No se encontró ningún registro",
+    //                     "info": "Mostrando página _PAGE_ de _PAGES_",
+    //                     "infoEmpty": "Registro no valido",
+    //                     "infoFiltered": "(filtrado de _MAX_ registros totales)",
+    //                     'search': 'Buscar:'
+    //                     /*'search': 'Buscar: _INPUT_ aqui'*/,
+    //                      "paginate": {
+    //                           "next": "Siguiente",
+    //                           'previous': 'Anterior'
+    //                      },
+    //                      buttons: {
+    //                         colvis: 'Columnas visibles',
+    //                         copy: 'Copiar'
+    //                     }
+    //                 }
+    //              });
 
         $("#prestamoEquipo_selected").change(function () {
             var num = $(this).find(":selected").val(); 
@@ -229,10 +251,41 @@ $(function(){
         //     //     $('button[data-id = '+id+']').css('display', 'none')
         //     // });
         // });
-
         
+         
         $('.anularRemision').on('click', function(){
+        
             // alert($(this).attr('data-id'));
+            
+            // swal({
+            //     title: 'Are you sure?',
+            //     text: "You won't be able to revert this!",
+            //     type: 'warning',
+            //     showCancelButton: true,
+            //     confirmButtonColor: '#3085d6',
+            //     cancelButtonColor: '#d33',
+            //     confirmButtonText: 'Yes, delete it!',
+            //     showLoaderOnConfirm: true,
+            //     preConfirm: function() {
+            //        return new Promise(function(resolve) {
+            //             $.ajax({
+            //                 url: '/remision/ajax_anular_remision/',
+            //                 type: 'POST',
+            //                 data: {id: id},
+            //                 dataType: 'json'
+            //             })
+            //             .done(function(response){
+            //                 swal('Deleted!', response.message, response.status);
+            //                 readProducts();
+            //                     })
+            //             .fail(function(){
+            //                 swal('Oops...', 'Something went wrong with ajax !', 'error');
+            //             });
+            //         });
+            //     },
+            //     allowOutsideClick: false     
+            //     });
+
             var id = $(this).attr('data-id');
             Swal.fire({
                 title: '¿Quieres anular la remision numero '+id+'?',
@@ -243,17 +296,19 @@ $(function(){
                 cancelButtonColor: '#d33',
                 confirmButtonText: 'Si, anular!',
                 cancelButtonText: 'Cancelar',
-                showLoaderOnConfirm: true,
+                // showLoaderOnConfirm: true,
               }).then((result) => {
                 if (result.value) {
-                    $(y).scroll(function () { 
-                        
-                    });
                     $.get('/remision/ajax_anular_remision/', {id: id},function(data) {
                         if(data.anulado == true){
                             $('#fila-'+id).prop('class', 'table-danger');
-                            $('#col-'+id).html('Anulado');
-                            $('button[data-id = '+id+']').css('display', 'none');
+                            $('#col_estado-'+id).html('<p style="display: none">3</p>'+
+                            '<i class="fas fa-times"></i>');
+                            $('#col_prestamo-'+id).html('-');
+                            $('button[data-terminar = '+id+']').css('display', 'none');
+                            $('a[data-editar = '+id+']').css('display', 'none');
+                            $('button[data-anular = '+id+']').css('display', 'none');
+                            // $('a[data-id = '+id+']').css('display', 'none');
                             Swal.fire({
                                 // 'Anulado!',
                                 title:'La remision '+id+' ha sido anulada exitosamente.',
@@ -277,8 +332,108 @@ $(function(){
               })
         });
 
+        $('.verRemision').click('click', function(){
+            var id = $(this).attr('data-id');
+
+            $.get('/remision/ajax_detalle_remision/', {id: id},function(data) {
+                $('.modalCuerpoRemision').empty().html(data.htmlRemision+''+data.htmlDetalleRemision);
+            });
+            $('#terminarRemision').hide();
+            $('#modalDetalleRemision').modal('show');
+
+        });
+        $('#cerrarModal').click(function () {
+            $('#terminarRemision').show();
+        });
+
+        $('.terminarRemision').on('click',function(){
+            var id = $(this).attr('data-id');
+
+            $.get('/remision/ajax_terminar_remision/', {id: id},function(data) {
+                $('.modalCuerpoRemision').empty().html(data.htmlRemision+''+data.htmlDetalleRemision);
+            });
+
+            $('#modalDetalleRemision').modal('show');
+
+        });
+
+        $('#terminarRemision').on('click',function(){
+
+            var items = $('.modalCuerpoRemision').find('.devolucion');
+            var devolucionRemisiones = [];
+            items.each(function (i, item) { 
+                var obj = {
+                    'id':$(item).attr('data-id'),
+                    'devolucion':$(item).val()
+                }
+                devolucionRemisiones.push(obj);
+            });
+            console.log(devolucionRemisiones);
+            $.ajax({
+                type: "POST",
+                url: "/remision/ajax_terminar_remision/",
+                // headers: {
+                //     'Authorization': "Token " + localStorage.access_token
+                // },
+                data: {
+                    devolucionRemisiones : JSON.stringify(devolucionRemisiones),
+                    csrfmiddlewaretoken: getCookie('csrftoken')
+                },
+                success: function (data) {
+                    alert(data.id)
+                    $('#modalDetalleRemision').modal('hide');
+                    $('#fila-'+data.id).prop('class', 'table-success');
+                    $('#col_estado-'+data.id).html('<p style="display: none">2</p>'+
+                    '<i class="fas fa-check"></i>');
+                    $('button[data-terminar='+data.id+']').hide();
+                    // $('button[data-editar = '+id+']').css('display', 'none');
+                    $('a[data-anular='+data.id+']').css('display', 'none');
+                    // $('#col_prestamo-'+data.id).html('None');
+                    // $('button[data-id = '+data.id+']').css('display', 'none');                        $('a[data-id = '+id+']').css('display', 'none');
+                    Swal.fire({
+                        // 'Anulado!',
+                        title:'La remision ha sido terminada exitosamente.',
+                        type:'success',
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+
+                },error: function (data){
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: '¡Algo salió mal!',
+                        showConfirmButton: false,
+                        timer: 3000
+                        // footer: '<a href>Why do I have this issue?</a>'
+                    })
+                }
+
+            });
+        });
+
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
 
 
         
+
+        // $("#tablajs").on("click","tr",function(){
+        //     var c = $(this).attr('id');
+        //     Swal.fire('hello '+c,'success');
+        // });
 
 });

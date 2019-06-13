@@ -31,7 +31,7 @@ class DetalleRemisionForm(forms.ModelForm):
             self.fields[field].widget.attrs.update({
                 'class': 'form-control'
             })
-            print(field)
+            # print(field)
             if field == 'unidad' or field == 'hielo':
                 self.fields[field].choices = [("","Seleccione...")] + list(self.fields[field].choices)[1:]
                 self.fields[field].widget.attrs['class'] = 'selectpicker form-control dx'

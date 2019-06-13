@@ -48,5 +48,6 @@ def horaBasico(objeto,campo,mensaje):
 	objeto.fields[campo].label = mensaje
 	# objeto.fields[campo].widget = widgets.AdminDateWidget()
 	objeto.fields[campo].widget = forms.TimeInput(attrs={
-					'type': 'time'
+					'type': 'time',
+					'class':'form-control',
 				})
