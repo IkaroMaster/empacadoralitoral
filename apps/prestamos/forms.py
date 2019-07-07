@@ -54,13 +54,14 @@ class DetallePrestamoForm(forms.ModelForm):
 				'class': 'form-control'
 			})
 			if field == 'equipo':
-				equipo = Equipo.objects.filter(estado=Estado.objects.get(pk=2))
+				equipo = Equipo.objects.all()#filter(estado=Estado.objects.get(pk=2))
 				cl = []
 				for c in equipo:
 					cl.append([(str(c.pk)), str(c)])
 				self.fields[field].choices = [("","Seleccione...")] + cl
-				self.fields[field].widget.attrs['class'] = 'selectpicker custom-select dx'
-				# self.fields[field].widget.attrs['data-live-search'] = True
+				self.fields[field].widget.attrs['class'] = 'selectpicker form-control dx'
+				self.fields[field].widget.attrs['data-live-search'] = 'true'
+				# self.fields[field].widget.attrs['data-size'] = 5
 		
 #         equipos = Equipo.objects.filter(Q(estado = 2)  )
 		

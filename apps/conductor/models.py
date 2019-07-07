@@ -11,6 +11,6 @@ class Conductor(models.Model):
 	Celular 		= models.IntegerField(blank=True,null=True)
 
 	def __str__(self):
-		return "{} - {} {}".format(self.numIdentidad,self.nombre1,self.apellido1)
+		return "{} {}".format(self.nombre1,self.apellido1)
 	class Meta:
 		verbose_name_plural = 'Conductores'

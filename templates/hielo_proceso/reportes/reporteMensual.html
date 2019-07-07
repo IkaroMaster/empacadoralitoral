@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html> -->
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+{% load humanize %}
+<title>TABLA DE CONSUMO DE HIELO EN PROCESO {{hielo.fecha}} | EMPACADORA LITORAL S.A</title>
+<!-- <meta http-equiv="content-type" content="text/html" charset="UTF-8" /> -->
+
+
+</head>   
+<style type="text/css">
+@page {
+  size: {{tamano}} {{posicion}};
+  margin: 1.5cm;
+} 
+#remision {
+    color: red;
+}
+
+table {
+    border: none;
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 10%;
+
+}
+th{
+    border: 1px solid grey;
+  border-collapse: collapse;
+  text-align: center;
+  background: rgb(226, 223, 223);
+}
+
+td { 
+    padding: 5px 10px;
+    text-align: center;
+    border: 1px solid #999;
+}
+.total{
+    background-color: #ddd !important;
+}
+.Encabezado{
+    display: inline-block;
+}
+.n1{
+    width: 10%;
+}
+#logo {
+    width:80pt;
+  height:80pt;
+ }
+.n2 {
+    width:80%
+}
+
+.TextoArriba {
+    font-size: 14pt;
+    text-align: left;
+}
+
+
+/* #tablaRemision table
+{
+ 
+  padding: 6px;
+  text-align: center;
+  border: 1px solid grey;
+  border-collapse: collapse;
+}
+ #tablaRemision td
+{
+  margin: 1px auto;
+  text-shadow: 2px 2px 1px rgba(0, 0, 0, .1);
+  color:black;
+  text-align: center;
+  padding: 4px;
+  background-color: white;
+  border: 1px solid grey;
+  border-collapse: collapse;
+ }
+ #tablaRemision th
+{
+  margin: 1px auto;
+  text-shadow: 2px 2px 1px rgba(0, 0, 0, .1);
+  color:black;
+  text-align: center;
+  padding: 4px;
+  background-color: white;
+  border: 1px solid grey;
+  border-collapse: collapse;
+ }
+ 
+ #encabezados th
+{
+  background-color: rgb(209, 204, 204);
+  color: black;
+  font-size: 14px;
+  font-weight: bold;
+} */
+
+ /* #tableResultado td
+{
+  margin: 1px auto;
+  text-shadow: 2px 2px 1px rgba(0, 0, 0, .1);
+  color:black;
+  text-align: center;
+  padding: 4px;
+  background-color: white;
+  border: 1px solid grey;
+  border-collapse: collapse;
+ }
+
+#tableResultado table
+{
+ 
+  padding: 6px;
+  text-align: center;
+  border: 1px solid grey;
+  border-collapse: collapse;
+}
+
+
+
+#encabezados td
+{
+  background-color: grey;
+  color: black;
+  font-size: 14px;
+  font-weight: bold;
+}
+#encabezadosInfe td {
+        font-size: 13px;
+}
+    h1 {
+        font-size: 20px;
+    }
+    h2 {
+        font-size: 16px;
+    } 
+ */
+ 
+</style> 
+<body>
+   <center>
+   <!-- <img src="http://127.0.0.1:8000/static/img/logocacsan.png" width="160" ><br> -->
+   <div class="Encabezado n1">
+        {% load static %}
+        <img  id="logo" src="{% static 'imgs/logo_grupo_litoral.png'%}" alt="" width="10px" height="10px">
+
+   </div>
+    <div class="Encabezado n2">
+        <h2>EMPACADORA LITORAL,S.A DE C.V</h2>
+        <h3><u>Control de hielo utilizado en proceso del mes de {{mesNombre}} del {{anio}}</u></h3>
+    </div>
+   <div class="Encabezado n3"></div>
+   
+ </center>
+ <p>A continuacion se detalla el uso diario de hielo usando los siguientes recipientes.</p>
+ <article id="tablaRemision">
+    <table>
+        <thead>
+            <tr id="encabezados">
+                <th scope="col">Fecha</th>
+                <th scope="col">Bin grande</th>
+                <th scope="col">Bin pequeño</th>
+                <th scope="col">Carretón blanco</th>
+                <th scope="col">Glaseo</th>
+                <th scope="col">Canasta Naranja o Azul</th>
+                <th scope="col">Canasta pequeña roja</th>
+                <th scope="col">Canasta pequeña azul</th>
+                <th scope="col">Total Quintales</th>
+            </tr>
+        </thead>
+        <tbody>
+            
+            {% for dhp in detalleHielo  %}
+            <tr>
+                
+                <td>{{dhp.departamento}}</td>
+                <td>{{dhp.binGrande}}</td>
+                <td>{{dhp.binPequeno}}</td>
+                <td>{{dhp.carretonBlanco}}</td>
+                <td>{{dhp.glaseo}}</td>
+                <td>{{dhp.canastaA}}</td>
+                <td>{{dhp.canastapRoja}}</td>
+                <td>{{dhp.canastapAzul}}</td>
+                <td>{{dhp.totalQuintales}}</td>
+            </tr>
+            {% endfor %}
+            <tr class="total">
+                <td><strong>Total</strong></td>
+                <td>{{totales.totalBinGrande}}</td>  
+                <td>{{totales.totalBinPequeno}}</td>
+                <td>{{totales.totalCarretonBlanco}}</td>
+                <td>{{totales.totalGlaseo}}</td>
+                <td>{{totales.totalCanastaA}}</td>
+                <td>{{totales.totalCanastapRoja}}</td>
+                <td>{{totales.totalCanastapAzul}}</td>
+                <td><u>{{totalQuintales}}</u></td>
+            </tr>
+        </tbody>
+    </table>
+    
+ </article>
+ <h6>Esta tabla ha sido generada desde Sistema de Control de Hielo de Empacadora Litoral.</h6>
+ <hr>
+ <!-- <button class="btn btn-danger">holaaaaa</button>
+ {% load static %}
+    <img src="{% static 'imgs/reportes.png' %}" alt="" /> -->
+  <!-- <section>
+<article id = "tableResultado">
+<table>
+ <tr id="encabezados">
+  <td>Código Inversión</td>
+  <td>Filial</td>
+  <td>Banco</td>
+  <td>Fecha Apertura</td>
+  <td>Fecha Vencimiento</td>
+  <td>Tasa</td>
+  <td>Estado Inversión</td>
+  <td>Monto</td>
+</tr> -->
+
+<!-- {% for resultado in inv %} -->
+
+<tr id="encabezadosInfe">
+  <!-- <td>{{resultado.codInversion}}</td>
+  <td>{{resultado.filial.nomFilial}}</td>
+  <td>{{resultado.banco.nomBanco }}</td>
+  <td>{{resultado.fechaAperInversion|date:"d/m/y"}}</td>
+  <td>{{resultado.fechaVenInversion|date:"d/m/y"}}</td>
+  <td>{{resultado.porceInversion}}%</td>
+  <td>{{resultado.estadoInv}}</td>
+  <td>Lps. {{resultado.Monto|floatformat:'2'|intcomma}}</td> -->
+</tr>
+
+<!-- {% endfor%}  -->
+ 
+<!-- </table>
+{% if total %}
+<h2 align="right">Monto total de Inversiones Generales: Lps. {{total|floatformat:'2'|intcomma}}</h2> 
+{% else %}
+<h2 align="right">Monto total de Inversiones Generales: Lps. 0.00</h2> 
+{% endif %}
+</article>
+</section> -->
+
+</body>
+</html>

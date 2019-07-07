@@ -10,10 +10,16 @@ from django.forms.formsets import formset_factory
 from django.db.models import Q
 from django import forms
 import json
+from django.contrib import messages
+
+from datetime import datetime
+from django.utils import formats
+
 #RECURSOS
 from .models import *
 from ..equipo.models import *
 from ..compania.models import  *
+from ..remision.models import  *
 from .forms import *
 #FUNCIONES
 from apps.funciones import renderizado
@@ -21,64 +27,504 @@ from apps.funciones import renderizado
 
 class ListadoPrestamoList(ListView):
 
-    model = PrestamoEquipo
-    context_object_name = 'prestamos'
-    template_name='prestamos/prestamos.html'
-    def get_context_data(self, **kwargs):
-        estilos, clases = renderizado(2, 4)
-        ctx = super(ListadoPrestamoList, self).get_context_data(**kwargs)
-        ctx['estilos'] = estilos
-        ctx['clases'] = clases
-        return ctx
+	model = PrestamoEquipo
+	context_object_name = 'prestamos'
+	template_name='prestamos/prestamos.html'
+	def get_context_data(self, **kwargs):
+		estilos, clases = renderizado(2, 4)
+		ctx = super(ListadoPrestamoList, self).get_context_data(**kwargs)
+		ctx['estilos'] = estilos
+		ctx['clases'] = clases
+		return ctx
 
 @login_required()
 def CrearPrestamo(request):
-    estilos, clases = renderizado(1, 4)
-    
-    DetallePrestamoFormSet = formset_factory(DetallePrestamoForm,formset=BaseDetallePrestamoFormSet)
+	estilos, clases = renderizado(1, 4)
+	
+	DetallePrestamoFormSet = formset_factory(DetallePrestamoForm,formset=BaseDetallePrestamoFormSet)
 
 
-    if request.method == 'POST':
-        pass
-        # prestamo_form = PrestamoForm()
-    else:
-        empleado = Empleado.objects.get(usuario = request.user)
+	if request.method == 'POST':
+		prestamo_form = PrestamoForm(request.POST) #, user=user
 
-        prestamo_form = PrestamoForm(initial = {'empleado':empleado})
-        detallePrestamo_formset = DetallePrestamoFormSet()
+		detallePrestamo_formset = DetallePrestamoFormSet(request.POST)
+		# print(request.POST)
+		#  print('prestamo: ',prestamo_form.is_valid())
+		# print(prestamo_form)
+		# print('detallePrestamo: ',detallePrestamo_formset.is_valid())
+		# print(detallePrestamo_formset)
+		# print('esta entrando al metodo post')
+		# print(request.POST['numRemision'])
+		if prestamo_form.is_valid() and detallePrestamo_formset.is_valid():
+			
+			prestamo_form.save()
+			prestamo = PrestamoEquipo.objects.get(pk=prestamo_form.cleaned_data.get('numPrestamo'))
 
-        FormControl(prestamo_form)
-        fechaBasico(prestamo_form,'fechaSalida','...')
-        fechaBasico(prestamo_form,'fechaEntrada','...')
-        horaBasico(prestamo_form,'horaSalida','...')
-        em = Compania.objects.filter(tipoCompania = TipoCompania.objects.get(pk = 1))
-        comboboxBasico(prestamo_form,'compania','Seleccione...','true',em)
-        comboboxBasico(prestamo_form,'placa','Seleccione...','true',[])
-        comboboxBasico(prestamo_form,'conductor','Seleccione...','true',[])
-        comboboxBasico(prestamo_form,'empleado','Seleccione...','true',[])
+			# if request.POST['prestamoEquipo']:		
+			# 	asignarPrestamo = PrestamoEquipo.objects.get(pk= request.POST['prestamoEquipo'])
+			# 	asignarPrestamo.estadoPrestamo = EstadoPrestamo.objects.get(pk=3)
+			# 	print(asignarPrestamo)
+			# 	asignarPrestamo.save()
+
+			new_detallesPrestamo = []
+			for x in detallePrestamo_formset:
+				descripcion = x.cleaned_data.get('descripcion')
+				equipo = x.cleaned_data.get('equipo')
+				tapadera = x.cleaned_data.get('tapadera')
+				# devolucion = x.cleaned_data.get('devolucion')
+
+
+				if equipo:
+					new_detallesPrestamo.append(DetallePrestamoEquipo(prestamoEquipo=prestamo,descripcion=descripcion, equipo=equipo, tapadera=tapadera))
+
+			try:
+				with transaction.atomic():
+					DetallePrestamoEquipo.objects.bulk_create(new_detallesPrestamo)
+					
+
+					var = DetallePrestamoEquipo.objects.filter(prestamoEquipo = prestamo)
+					
+					if var.count() > 0:
+						print("*************************************")
+						for e in var:
+							print('registrado: '+str(e.equipo.id))
+							x = Equipo.objects.get(pk = e.equipo.id)
+							x.estado = Estado.objects.get(pk= 1)
+							x.save()
+						print("*************************************")
+					#Redireccionamos a la ventana del listado de compras
+					messages.success(request, 'Usted ha creado el prestamo de equipo.')
+
+			except IntegrityError: #If the transaction failed
+				messages.error(request, 'Ha ocurrido un error al intentar guardar el prestamo de equipo.')
+				return redirect(reverse('prestamos:prestamos-url'))
+		else:
+			messages.error(request, 'Informacion requerida incompleta para crear la remision.')	
+
+		# prestamo_form = PrestamoForm()
+	else:
+		empleado = Empleado.objects.get(usuario = request.user)
+
+		prestamo_form = PrestamoForm(initial = {'empleado':empleado,'estadoPrestamo':EstadoPrestamo.objects.get(pk=1)})
+		detallePrestamo_formset = DetallePrestamoFormSet()
+
+	FormControl(prestamo_form)
+	fechaBasico(prestamo_form,'fechaSalida','...')
+	fechaBasico(prestamo_form,'fechaEntrada','...')
+	horaBasico(prestamo_form,'horaSalida','...')
+	em = Compania.objects.filter(tipoCompania = TipoCompania.objects.get(pk = 1))
+	comboboxBasico(prestamo_form,'compania','Seleccione...','true',em)
+	comboboxBasico(prestamo_form,'placa','Seleccione...','true',[])
+	comboboxBasico(prestamo_form,'conductor','Seleccione...','true',[])
+	comboboxBasico(prestamo_form,'empleado','Seleccione...','true',[])
 	
 
 
-        # prestamo_form.fields['compania'].widget.attrs['class'] = 'form-control selectpicker '
-        # prestamo_form.fields['placa'].widget.attrs['class'] = 'selectpicker custom-select'
-        # prestamo_form.fields['compania'].widget.attrs['id'] = 'xv'
+		# prestamo_form.fields['compania'].widget.attrs['class'] = 'form-control selectpicker '
+		# prestamo_form.fields['placa'].widget.attrs['class'] = 'selectpicker custom-select'
+		# prestamo_form.fields['compania'].widget.attrs['id'] = 'xv'
 
 
-        context = {
-            'prestamo_form': prestamo_form,
-            'estilos':estilos,
-            'clases':clases,
-            'detallePrestamo_formset': detallePrestamo_formset,
-            'crear':True,
-        }
-        return render(request,'prestamos/prestamos.html',context)
+	context = {
+		'prestamo_form': prestamo_form,
+		'estilos':estilos,
+		'clases':clases,
+		'detallePrestamo_formset': detallePrestamo_formset,
+		'crear':True,
+	}
+	return render(request,'prestamos/prestamos.html',context)
+
+# @login_required
+def ModificarPrestamo(request,pk):
+	estilos, clases = renderizado(1, 4)
+	DetallePrestamoFormSet = formset_factory(DetallePrestamoForm, formset=BaseDetallePrestamoFormSet,extra=0)
+	prestamo = PrestamoEquipo.objects.get(pk = pk)
+	prestamoDetalles = DetallePrestamoEquipo.objects.filter(prestamoEquipo=prestamo) #.order_by('pk')
+	prestamoDetalles_data = [{'prestamoEquipo':rd.prestamoEquipo,'descripcion': rd.descripcion, 'equipo': rd.equipo,'tapadera':rd.tapadera} for rd in prestamoDetalles]
+	
+	if request.method == 'POST':
+		prestamo_form = PrestamoForm(request.POST,instance = prestamo)
+		detallePrestamo_formset = DetallePrestamoFormSet(request.POST)
+		if prestamo_form.is_valid() and detallePrestamo_formset.is_valid():
+			prestamo_form.save()
+			prestamo = PrestamoEquipo.objects.get(pk=prestamo_form.cleaned_data.get('numPrestamo'))
+			
+			new_detallesPrestamo = []
+			for n in detallePrestamo_formset:
+				descripcion =	n.cleaned_data.get('descripcion')
+				equipo	= n.cleaned_data.get('equipo')
+				tapadera = n.cleaned_data.get('tapadera')
+				if equipo:
+					new_detallesPrestamo.append(DetallePrestamoEquipo(prestamoEquipo=prestamo,descripcion=descripcion,equipo=equipo,tapadera=tapadera))
+			try:
+				with transaction.atomic():
+					dpe = DetallePrestamoEquipo.objects.filter(prestamoEquipo=prestamo)
+					for f in dpe:
+						temp1 = Equipo.objects.get(pk = f.equipo.pk)
+						temp1.estado = Estado.objects.get(pk = 2)
+						temp1.save()
+						print('adios ', temp1)
+					dpe.delete()
+					DetallePrestamoEquipo.objects.bulk_create(new_detallesPrestamo)
+					
+					var = DetallePrestamoEquipo.objects.filter(prestamoEquipo = prestamo)
+					if var.count() > 0:
+						print("*************************************")
+						for e in var:
+							print('registrado: '+str(e.equipo.id))
+							x = Equipo.objects.get(pk = e.equipo.id)
+							x.estado = Estado.objects.get(pk= 1)
+							x.save()
+						print("*************************************")
+					messages.success(request,'Usted ha actualizado la remision')
+
+			except IntegrityError:
+				messages.error(request, 'Ha ocurrido un error al intentar guardar el detalle del prestamo.')
+				return redirect(reverse('prestamos:prestamos-url'))
+	else:
+		prestamo_form = PrestamoForm(instance=prestamo)
+		detallePrestamo_formset = DetallePrestamoFormSet(initial=prestamoDetalles_data)
+
+	# dpf = DetallePrestamoForm()
+	# dp = DetallePrestamoEquipo.objects.filter(prestamoEquipo = prestamo)
+	# cl = []
+	# for d in dp:
+	# 	x = Equipo.objects.get(pk = d.equipo.id)
+	# 	cl.append([(str(x.pk)), str(x)])
+	# dpf.fields['equipo'].choices = [("","Seleccione...")] + cl
+	# dpf.fields['equipo'].widget.attrs['class'] = 'selectpicker form-control dx'
+	# dpf.fields['equipo'].widget.attrs['data-live-search'] = 'true'
+
+	
+
+	FormControl(prestamo_form)
+	# fechaBasico(prestamo_form,'fechaSalida','...')
+	# if prestamo_form.fechaEntrada:
+		# fechaBasico(prestamo_form,'fechaEntrada','...')
+	horaBasico(prestamo_form,'horaSalida','...')
+	em = Compania.objects.filter(tipoCompania = TipoCompania.objects.get(pk = 1))
+	comboboxBasico(prestamo_form,'compania','Seleccione...','true',em)
+	comboboxBasico(prestamo_form,'placa','Seleccione...','true',[])
+	comboboxBasico(prestamo_form,'conductor','Seleccione...','true',[])
+	comboboxBasico(prestamo_form,'empleado','Seleccione...','true',[])
+	
+
+
+		# prestamo_form.fields['compania'].widget.attrs['class'] = 'form-control selectpicker '
+		# prestamo_form.fields['placa'].widget.attrs['class'] = 'selectpicker custom-select'
+		# prestamo_form.fields['compania'].widget.attrs['id'] = 'xv'
+
+
+	context = {
+		'prestamo_form': prestamo_form,
+		'estilos':estilos,
+		'clases':clases,
+		'detallePrestamo_formset': detallePrestamo_formset,
+		'crear':False,
+	}
+	return render(request,'prestamos/prestamos.html',context)
+
+def anularPrestamo_asJson(request):
+	if request.is_ajax():
+		id = request.GET['id']
+		prestamo = PrestamoEquipo.objects.get(pk = id)
+		prestamo.estadoPrestamo = EstadoPrestamo.objects.get(pk=2)
+		
+			
+		var = DetallePrestamoEquipo.objects.filter(prestamoEquipo = prestamo)
+		if var.count() > 0:
+			print("*************************************")
+			for e in var:
+				print('disponible: '+str(e.equipo.id))
+				x = Equipo.objects.get(pk = e.equipo.id)
+				x.estado = Estado.objects.get(pk= 2)
+				x.save()
+			print("*************************************")
+			# print(remision)
+			prestamo.save()
+			print("*************************************")
+			print('prestamo anulado y equipos devueltos.')
+			print("*************************************")
+			return JsonResponse({'anulado':True})
+			
+		else:
+			print("*************************************")
+			print('prestamo anulado.')
+			print("*************************************")
+			prestamo.save()
+			return JsonResponse({'anulado':True})
+	else:
+		print("***********************************************************************")
+		print('prestamo no anulado porque la peticion no cumple con los requisitos.')
+		print("***********************************************************************")
+
+
+def terminarPrestamo_asJson(request):
+	if request.is_ajax():
+		if request.method == 'POST':
+			prestamo = PrestamoEquipo.objects.get(pk=request.POST['id'])
+			prestamo.estadoPrestamo = EstadoPrestamo.objects.get(pk = 4)
+			prestamo.fechaEntrada = request.POST['fecha']
+			prestamo.save()
+			detallePrestamo = DetallePrestamoEquipo.objects.filter(prestamoEquipo= prestamo)
+			for r in detallePrestamo:
+				e = Equipo.objects.get(pk=r.equipo.pk)
+				e.estado = Estado.objects.get(pk=2)
+				e.save()
+			return JsonResponse({'id':prestamo.pk,'fecha':prestamo.fechaEntrada})
+		else:
+			numPrestamo = request.GET['id']
+			prestamo = PrestamoEquipo.objects.get(pk=numPrestamo)
+			detallePrestamo = DetallePrestamoEquipo.objects.filter(prestamoEquipo= prestamo)
+			htmlPrestamo ='' 
+			htmlPrestamo +='''
+				<span class="alert alert-warning alert-dismissible ">Atencion: Solo debe finalizar el prestamo si todo el equipo prestado ha sido devuelto.</span>
+				<br><br>
+				<div class="row container">
+					<div class="col-6"><p><strong>Numero de prestamo: </strong> {}</p></div>
+					<div class="col-6"><p><strong>Empresa: </strong> {}</p></div>
+				</div>
+			'''.format(prestamo.numPrestamo,prestamo.compania)
+			
+			htmlDetallePrestamo = ''
+			htmlDetallePrestamo += '''
+				<p>A continuacion detallamos los articulos que enviamos.</p>
+				<table class="table table-bordered">
+						<thead>
+						<tr>
+							<th scope="col">Equipo</th>
+							<th scope="col">Tapadera</th>
+							<th scope="col">Descripcion</th>
+						</tr>
+						</thead>
+						<tbody>	
+											
+			'''
+			for dP in detallePrestamo:
+				htmlDetallePrestamo +='''
+				<tr>
+					<td scope="row">{}</td>
+					<td>{}</td>
+					<td>{}</td>
+				</tr>
+				'''.format(dP.equipo,dP.tapadera,dP.descripcion)
+
+			fecha = ''
+			if prestamo.fechaEntrada:
+				fecha = prestamo.fechaEntrada
+			else:
+				r = datetime.now()
+				fecha = formats.date_format(r,"SHORT_DATETIME_FORMAT")
+
+			htmlDetallePrestamo += '''
+					</tbody>
+				</table>
+				<div class="row container">
+					<div class="col-6"><p><strong>Numero de placa: </strong> {}</p></div>
+					<div class="col-6"><p><strong>Hora de salida: </strong> {}</p></div>
+					<div class="col-6"><p><strong>Fecha de salida: </strong> {}</p></div>
+					<div class="col-6">
+						<label><strong>Fecha de entrada</strong></label>
+						<input type="date" class="fechaEntrada form-control datetimepicker" value="{}"  data-id="{}" >
+					</div>
+					<div class="col-12"><p><strong>Observaciones: </strong> {}</p></div>
+				</div>
+			'''.format(prestamo.placa,prestamo.horaSalida,prestamo.fechaSalida,fecha,prestamo.numPrestamo,prestamo.observaciones)
+
+			print(htmlDetallePrestamo)
+
+			data = {
+					'htmlPrestamo':htmlPrestamo,
+					'htmlDetallePrestamo':htmlDetallePrestamo
+				}
+			return JsonResponse(data)
+	else:
+		pass
+
+
+def detallePrestamo_asJson(request):
+	if request.is_ajax():		
+		numPrestamo = request.GET['id']
+		prestamo = PrestamoEquipo.objects.get(pk=numPrestamo)
+		detallePrestamo = DetallePrestamoEquipo.objects.filter(prestamoEquipo= prestamo)
+		htmlPrestamo ='' 
+		htmlPrestamo +='''
+			
+			<br><br>
+			<div class="row container">
+				<div class="col-6"><p><strong>Numero de prestamo: </strong> {}</p></div>
+				<div class="col-6"><p><strong>Empresa: </strong> {}</p></div>
+			</div>
+		'''.format(prestamo.numPrestamo,prestamo.compania)
+		
+		htmlDetallePrestamo = ''
+		htmlDetallePrestamo += '''
+			<p>A continuacion detallamos los articulos que enviamos.</p>
+			<table class="table table-bordered">
+					<thead>
+					<tr>
+						<th scope="col">Equipo</th>
+						<th scope="col">Tapadera</th>
+						<th scope="col">Descripcion</th>
+					</tr>
+					</thead>
+					<tbody>	
+										
+		'''
+		for dP in detallePrestamo:
+			htmlDetallePrestamo +='''
+			<tr>
+				<td scope="row">{}</td>
+				<td>{}</td>
+				<td>{}</td>
+			</tr>
+			'''.format(dP.equipo,dP.tapadera,dP.descripcion)
+
+		fecha = ''
+		if prestamo.fechaEntrada:
+			fecha = prestamo.fechaEntrada
+		
+		htmlDetallePrestamo += '''
+				</tbody>
+			</table>
+			<div class="row container">
+				<div class="col-6"><p><strong>Numero de placa: </strong> {}</p></div>
+				<div class="col-6"><p><strong>Hora de salida: </strong> {}</p></div>
+				<div class="col-6"><p><strong>Fecha de salida: </strong> {}</p></div>
+				<div class="col-6"><p><strong>Fecha de Entrada: </strong> {}</p></div>
+				<div class="col-12"><p><strong>Observaciones: </strong> {}</p></div>
+				
+				
+			</div>
+			
+		'''.format(prestamo.placa,prestamo.horaSalida,prestamo.fechaSalida,fecha,prestamo.observaciones)
+		
+		
+		htmlRemision =''
+		htmlDetalleRemision = ''
+		if Remision.objects.filter(prestamoEquipo= prestamo):
+			remision = Remision.objects.get(prestamoEquipo= prestamo)
+			print('remision : ',remision)
+			detalleRemision = DetalleRemision.objects.filter(remision= remision)
+			htmlRemision +='''
+				
+				<div class="p-3 mb-2 bg-primary text-white text-center">Este prestamo esta ligado a la remision numero <strong>{}</strong>.</div>
+				<br>
+
+				<div class="row container">
+					<div class="col-6"><p><strong>Numero de remision: </strong> {}</p></div>
+					<div class="col-6"><p><strong>Tipo de remision: </strong> {}</p></div>
+					<div class="col-12"><p><strong>Consignado a: </strong>{}</p></div>
+					<div class="col-12"><p><strong>Retirado en: </strong>Empacadora Litoral</p></div>
+					<div class="col-12"><p><strong>Fecha: </strong>{}</p></div>
+				</div>
+			'''.format(remision.numRemision,remision.numRemision,remision.tipoRemision,remision.compania,remision.fecha)
+			
+			htmlDetalleRemision += '''
+				<p>A continuacion detallamos los articulos que enviamos.</p>
+				<table class="table table-bordered">
+						<thead>
+						<tr>
+							<th scope="col">Cantidad</th>
+							<th scope="col">Unidad</th>
+							<th scope="col">Descripcion</th>
+							<th scope="col">Devolucion</th>
+							<th scope="col">Valor total</th>
+						</tr>
+						</thead>
+						<tbody>	
+											
+			'''
+			for dR in detalleRemision:
+				htmlDetalleRemision +='''
+				<tr>
+					<th scope="row">{}</th>
+					<td>{}</td>
+					<td>{}</td>
+					<td>{}</td>
+					<td>{}</td>
+				</tr>
+				'''.format(dR.salida,dR.unidad,dR.hielo,dR.devolucion,dR.cantidad)
+				print(dR.id)
+			htmlDetalleRemision += '''
+					</tbody>
+				</table>
+				<div class="row container">
+					<div class="col-6 border"><p><strong>Entrego: </strong>{}</p></div>
+					<div class="col-6 border"><p><strong>Recibio: </strong>{}</p>
+										<p><strong>Placa No </strong>{}</p>
+					</div>
+				</div>
+			'''.format(remision.entrego,remision.conductor,remision.placa)
+			
+
+		data = {
+				'htmlPrestamo':htmlPrestamo,
+				'htmlDetallePrestamo':htmlDetallePrestamo,
+				'htmlRemision':htmlRemision,
+				'htmlDetalleRemision':htmlDetalleRemision,
+			}
+		return JsonResponse(data)
+	else:
+		pass
+
+	# """
+	# Allows a user to update their own profile.
+	# """
+	# # user = request.user
+	# remision = Remision.objects.get(numRemision=pk)
+
+	# if remision.prestamoEquipo:
+	# 	prestamoActual = remision.prestamoEquipo.pk
+	# 	print(prestamoActual)	
+	# else:
+	# 	prestamoActual = ''
+	# 	print('Prestamo vacio:',prestamoActual)	
+	# # print(remision)
+
+	# # Create the formset, specifying the form and formset we want to use.
+	# DetalleRemisionFormSet = formset_factory(DetalleRemisionForm, formset=BaseDetalleRemisionFormSet,extra=0)
+
+	# # Get our existing link data for this user.  This is used as initial data.
+	# remisionDetalles = DetalleRemision.objects.filter(remision=remision) #.order_by('pk')
+	# remisionDetalles_data = [{'remision':rd.remision,'salida': rd.salida, 'unidad': rd.unidad,'hielo':rd.hielo,'devolucion':rd.devolucion} for rd in remisionDetalles]
+
+
+	# if request.method == 'POST':
+	# 	# print('hola putitooooo, estan entrando al metodo,en que estas fallando?')
+	# 	remision_form = RemisionForm(request.POST,instance = remision) #, user=user
+	# 	detalleRemision_formset = DetalleRemisionFormSet(request.POST)
+	# 	if remision_form.is_valid() and detalleRemision_formset.is_valid():
+	# 		# Save user info
+	# 		# user.first_name = remision_form.cleaned_data.get('first_name')
+	# 		# user.last_name = remision_form.cleaned_data.get('last_name')
+	# 		remision_form.save()
+			
+	# 		if request.POST['prestamoEquipo']:
+	# 			if request.POST['prestamoEquipo'] != prestamoActual:
+	# 				if prestamoActual:	
+	# 					asignarPrestamo = PrestamoEquipo.objects.get(pk= prestamoActual)
+	# 					asignarPrestamo.estadoPrestamo = EstadoPrestamo.objects.get(pk=1)
+	# 					print(asignarPrestamo)
+	# 					asignarPrestamo.save()
+	# 				if request.POST['prestamoEquipo']:	
+	# 					reAsignarPrestamo = PrestamoEquipo.objects.get(pk= request.POST['prestamoEquipo'])
+	# 					reAsignarPrestamo.estadoPrestamo = EstadoPrestamo.objects.get(pk=3)
+	# 					print(reAsignarPrestamo)
+	# 					reAsignarPrestamo.save()
+	# 		else:
+	# 			if prestamoActual:
+	# 				asignarPrestamo = PrestamoEquipo.objects.get(pk= prestamoActual)
+	# 				asignarPrestamo.estadoPrestamo = EstadoPrestamo.objects.get(pk=1)
+	# 				print(asignarPrestamo)
+	# 				asignarPrestamo.save()
 
 # class CrearPrestamo(CreateView):
 #     model = PrestamoEquipo
 #     template_name = 'prestamos/prestamos.html'
 #     form_class = PrestamoEquipoForm
 #     success_url = reverse_lazy('prestamos:prestamos-url')
-    
+	
 #     def get(self, request, *args, **kwargs):
 #     # """Primero ponemos nuestro object como nulo, se debe tener en
 #     # cuenta que object se usa en la clase CreateView para crear el objeto
@@ -90,7 +536,7 @@ def CrearPrestamo(request):
 #         detallePrestamoEquipoFormSet = DetallePrestamoEquipoFormSet()
 #         #Renderizamos el formulario de la compra y el formset
 #         return self.render_to_response(self.get_context_data(form = form, detallePrestamoEquipoFormSet = detallePrestamoEquipoFormSet ))
-        
+		
 #     def post(self, request, *args, **kwargs):
 #         #Obtenemos nuevamente la instancia del formulario de Compras
 #         form_class = self.get_form_class()
@@ -103,7 +549,7 @@ def CrearPrestamo(request):
 #             return self.form_valid(form, dpefs)
 #         else:
 #             return self.form_invalid(form, dpefs)
-    
+	
 #     def form_valid(self, form, dpefs):
 #         #Aquí ya guardamos el object de acuerdo a los valores del formulario de Compra
 #         self.object = form.save()
@@ -171,12 +617,12 @@ def CrearPrestamo(request):
 #         form_class = self.get_form_class()
 #         form = self.get_form(form_class)
 #         #Obtenemos los detalles de la compra
-        
+		
 #         detalles = DetallePrestamoEquipo.objects.filter(prestamoEquipo=self.object).order_by('pk')
 #         detalles_data = []
 #         #Guardamos los detalles en un diccionario
 #         for detalle in detalles:
-            
+			
 #             d = {'descripcion': detalle.descripcion,
 #                 'equipo': detalle.equipo,
 #                 'tapadera': detalle.tapadera}
@@ -186,7 +632,7 @@ def CrearPrestamo(request):
 #         #Renderizamos el formulario y el formset
 #         return self.render_to_response(self.get_context_data(form=form,
 #                                                        detallePrestamoEquipoFormSet = dpefs))
-    
+	
 
 
 #     def post(self, request, *args, **kwargs):
@@ -200,14 +646,14 @@ def CrearPrestamo(request):
 #             return self.form_valid(form, dpefs)
 #         else:
 #             return self.form_invalid(form, dpefs)
-    
+	
 #     def form_valid(self, form, dpefs):
 #         #Guardamos el objeto prestamo equipo
 #         self.object = form.save()
 #         dpefs.instance = self.object
 #         #Eliminamos todas los detalles de la compra
 #         var = DetallePrestamoEquipo.objects.filter(prestamoEquipo = self.object)
-        
+		
 #         if var.count() > 0:
 #             print("*************************************")
 #             for e in var:
@@ -216,7 +662,7 @@ def CrearPrestamo(request):
 #                 x.estado = Estado.objects.get(pk= 2)
 #                 x.save()
 #             print("*************************************")
-        
+		
 #         DetallePrestamoEquipo.objects.filter(prestamoEquipo = self.object).delete()
 #         #Guardamos los nuevos detalles de la compra
 #         dpefs.save()

@@ -7,6 +7,9 @@ active
 {% endblock l1 %}
 {% block cuerpo %}
 <div class="card text-center">
+    <div class="panel-heading bg-primary" >
+        <h3 class="panel-title text-light">Remisiones de Hielo</h3>
+    </div>    
     <div class="card-header">
         <ul class="nav nav-tabs card-header-tabs">
             <li class="nav-item">
@@ -378,8 +381,8 @@ active
           ...
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" id="cerrarModal" data-dismiss="modal">Cerrar</button>
-
+          <button type="button" class="btn btn-secondary fas fa-times" id="cerrarModal" data-dismiss="modal"> Cerrar</button>
+          <a href="" class="btn btn-warning fas fa-print" id="imprimirRemision" target="_blank"> Imprimir</a>
           <button type="button" class="btn btn-primary" id="terminarRemision">Continuar</button>
         </div>
       </div>

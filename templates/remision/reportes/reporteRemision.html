@@ -1,0 +1,242 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+{% load humanize %}
+<title>NOTA DE REMISION DE HIELO | EMPACADORA LITORAL S.A</title>
+<meta http-equiv="content-type" content="text/html" charset="UTF-8" />
+
+</head>   
+<style type="text/css">
+@page {
+  size: {{tamano}} {{posicion}};
+  margin: 1.5cm;
+} 
+#remision {
+    color: red;
+}
+
+table {
+    border: none;
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 10%;
+
+}
+th{
+    border: 1px solid grey;
+  border-collapse: collapse;
+  text-align: center;
+  background: rgb(226, 223, 223);
+}
+
+td { 
+    padding: 5px 10px;
+    text-align: center;
+    border: 1px solid #999;
+}
+.Encabezado{
+    display: inline-block;
+}
+.n1{
+    width: 10%;
+}
+#logo {
+    width:80pt;
+  height:80pt;
+ }
+.n2 {
+    width:80%
+}
+
+.TextoArriba {
+    font-size: 14pt;
+    text-align: left;
+}
+.TextoAbajo {
+    display: inline-block;
+    width:30%;
+    margin-left: 5pt;
+    border: 1px solid #999;
+    border-radius: 10pt;
+}
+.TextoAbajo p {
+    margin: 0;
+    padding: 3pt;
+    text-align: center;
+}
+.TextoAbajo hr{
+    margin: 0;
+}
+/* #tablaRemision table
+{
+ 
+  padding: 6px;
+  text-align: center;
+  border: 1px solid grey;
+  border-collapse: collapse;
+}
+ #tablaRemision td
+{
+  margin: 1px auto;
+  text-shadow: 2px 2px 1px rgba(0, 0, 0, .1);
+  color:black;
+  text-align: center;
+  padding: 4px;
+  background-color: white;
+  border: 1px solid grey;
+  border-collapse: collapse;
+ }
+ #tablaRemision th
+{
+  margin: 1px auto;
+  text-shadow: 2px 2px 1px rgba(0, 0, 0, .1);
+  color:black;
+  text-align: center;
+  padding: 4px;
+  background-color: white;
+  border: 1px solid grey;
+  border-collapse: collapse;
+ }
+ 
+ #encabezados th
+{
+  background-color: rgb(209, 204, 204);
+  color: black;
+  font-size: 14px;
+  font-weight: bold;
+} */
+
+ /* #tableResultado td
+{
+  margin: 1px auto;
+  text-shadow: 2px 2px 1px rgba(0, 0, 0, .1);
+  color:black;
+  text-align: center;
+  padding: 4px;
+  background-color: white;
+  border: 1px solid grey;
+  border-collapse: collapse;
+ }
+
+#tableResultado table
+{
+ 
+  padding: 6px;
+  text-align: center;
+  border: 1px solid grey;
+  border-collapse: collapse;
+}
+
+
+
+#encabezados td
+{
+  background-color: grey;
+  color: black;
+  font-size: 14px;
+  font-weight: bold;
+}
+#encabezadosInfe td {
+        font-size: 13px;
+}
+    h1 {
+        font-size: 20px;
+    }
+    h2 {
+        font-size: 16px;
+    } 
+ */
+ 
+</style> 
+<body>
+   <center>
+   <!-- <img src="http://127.0.0.1:8000/static/img/logocacsan.png" width="160" ><br> -->
+   <div class="Encabezado n1">
+        {% load static %}
+        <img  id="logo" src="{% static 'imgs/logo_grupo_litoral.png'%}" alt="" width="10px" height="10px">
+
+   </div>
+    <div class="Encabezado n2">
+        <h2>EMPACADORA LITORAL,S.A DE C.V</h2>
+        <h3><u>NOTA DE REMISIÓN DE HIELO</u> <strong id="remision">Nº {{remision.numRemision}}</strong></h3>
+    </div>
+   <div class="Encabezado n3"></div>
+   
+    
+   <p class="TextoArriba"><strong>Consignado a:</strong> {{ remision.compania }}</p>
+   <p class="TextoArriba"><strong>Retirado en:</strong>  Empacadora litoral</p> <!--{{ahora|date:"d/m/y"}}-->
+   <p class="TextoArriba"><strong>Fecha:</strong> {{remision.fecha}} </p>
+ </center>
+ <p>A continuacion detallamos los articulos que enviamos.</p>
+ <article id="tablaRemision">
+    <table>
+        <thead>
+            <tr id="encabezados">
+                <th>CANTIDAD</th>
+                <th>UNIDAD</th>
+                <th>DESCRIPCION</th>
+                <th>VALOR TOTAL</th>
+            </tr>
+        </thead>
+        <tbody>
+            
+            {% for dr in detalle_remision  %}
+            <tr>
+                <td>{{dr.cantidad}}</td>
+                <td>{{dr.unidad}}</td>
+                <td>{{dr.hielo}}</td>
+                <td>{{dr.valorTotal}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <p><strong>OBSERVACIONES:</strong>  {{remision.observacion}} </p>
+    <div class="TextoAbajo"><p>{{remision.entrego}}</p><hr><p><strong>Entrego:</strong></p></div>
+    <div class="TextoAbajo"><p><strong>Recibió: </strong> {{remision.conductor}} </p><hr><p><strong>Placa Nº </strong>{{remision.placa}} </p></div>
+    <div class="TextoAbajo"><p> Registro Vijente </p><hr><p><strong>Autorizado por:</strong></p></div>
+ </article>
+ <h6>Esta remision ha sido generada desde Sistema de Control de Hielo de Empacadora Litoral.</h6>
+ <hr>
+ <!-- <button class="btn btn-danger">holaaaaa</button>
+ {% load static %}
+    <img src="{% static 'imgs/reportes.png' %}" alt="" /> -->
+  <!-- <section>
+<article id = "tableResultado">
+<table>
+ <tr id="encabezados">
+  <td>Código Inversión</td>
+  <td>Filial</td>
+  <td>Banco</td>
+  <td>Fecha Apertura</td>
+  <td>Fecha Vencimiento</td>
+  <td>Tasa</td>
+  <td>Estado Inversión</td>
+  <td>Monto</td>
+</tr> -->
+
+<!-- {% for resultado in inv %} -->
+
+<tr id="encabezadosInfe">
+  <!-- <td>{{resultado.codInversion}}</td>
+  <td>{{resultado.filial.nomFilial}}</td>
+  <td>{{resultado.banco.nomBanco }}</td>
+  <td>{{resultado.fechaAperInversion|date:"d/m/y"}}</td>
+  <td>{{resultado.fechaVenInversion|date:"d/m/y"}}</td>
+  <td>{{resultado.porceInversion}}%</td>
+  <td>{{resultado.estadoInv}}</td>
+  <td>Lps. {{resultado.Monto|floatformat:'2'|intcomma}}</td> -->
+</tr>
+
+<!-- {% endfor%}  -->
+ 
+<!-- </table>
+{% if total %}
+<h2 align="right">Monto total de Inversiones Generales: Lps. {{total|floatformat:'2'|intcomma}}</h2> 
+{% else %}
+<h2 align="right">Monto total de Inversiones Generales: Lps. 0.00</h2> 
+{% endif %}
+</article>
+</section> -->
+
+</body>
+</html>

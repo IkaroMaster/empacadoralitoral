@@ -14,7 +14,7 @@ class Medida(models.Model):
 	abreviatura 	= models.CharField(max_length=30)
 
 	def __str__(self):
-		return "{} -> {}".format(self.magnitud,self.unidad)
+		return "{}".format(self.unidad)
 	class Meta:
 		verbose_name_plural = 'Unidad de Medidas'
 
@@ -23,7 +23,7 @@ class Hielo(models.Model):
 	precioQuintal	= models.DecimalField(max_digits=6, decimal_places=2)
 
 	def __str__(self):
-		return "{} -> {}".format(self.estadoHielo,self.precioQuintal)
+		return "{}".format(self.estadoHielo)
 	class Meta:
 		verbose_name_plural = 'Precio por tipo de hielo'
 
@@ -52,7 +52,7 @@ class Remision(models.Model):
 	conductor 		= models.ForeignKey(Conductor,blank=True, null=True,on_delete=models.PROTECT)
 	entrego			= models.ForeignKey(Empleado,on_delete=models.PROTECT)
 	placa			= models.ForeignKey(Vehiculo,blank=True, null=True,on_delete=models.PROTECT)
-	
+	observacion		= models.TextField(blank=True, null=True)
 	
 	# unidad			= models.ForeignKey(Medida)
 	# cantidad		= models.IntegerField()
@@ -71,11 +71,13 @@ class DetalleRemision(models.Model):
 	hielo 			= models.ForeignKey(Hielo,on_delete=models.PROTECT)
 	devolucion		= models.IntegerField(default=0)
 	def _get_cantidad(self):
-		return self.salida-self.devolucion
+    		return self.salida-self.devolucion
 	cantidad		= property(_get_cantidad)
-
+	def get_valor_total(self):
+    		return self.cantidad*self.hielo.precioQuintal
+	valorTotal		= property(get_valor_total)
 	def __str__(self):
-		return "{} -> {} :{}".format(self.remision,self.id,self.cantidad)
+		return "{} -> {} :{}".format(self.remision,self.id,self.valorTotal)
 	class Meta:
 		verbose_name_plural = 'detalle Remision de hielo'
 	

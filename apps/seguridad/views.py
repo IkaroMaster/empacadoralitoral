@@ -71,4 +71,8 @@ def log_in(request):
 
 	else:
 		return HttpResponse('que paso amiguito ? XD,no estas enviando el metodo post?')
+
+def log_out(request):
+	logout(request)
+	return HttpResponseRedirect(reverse('login_form-url'))
 	

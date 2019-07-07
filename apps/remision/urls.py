@@ -17,4 +17,7 @@ urlpatterns = [
 	path("ajax_detalle_remision/", views.detalleRemision_asJson, name ="detalleRemision_asJson-url"),
 	path("ajax_terminar_remision/", views.terminarRemision_asJson, name ="terminarRemision_asJson-url"),
 	# path('medida_asJson/', views.medida_asJson, name = "medida_asJson-url"),
+
+	path("reporte_remision/<slug:pk>/",views.ReporteRemision, name="reporte_remision-url"),
+
 ]

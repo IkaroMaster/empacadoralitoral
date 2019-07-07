@@ -36,6 +36,8 @@ urlpatterns = [
     path("prestamos/",include('apps.prestamos.urls')),
     #Remision
     path("remision/",include('apps.remision.urls')),
+    #Hielo de Proceso
+    path("hielo_proceso/",include('apps.hielo_proceso.urls')),
 
 ]+ static(settings.STATIC_URL, document_root = settings.STATIC_ROOT)
 

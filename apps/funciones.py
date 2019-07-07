@@ -51,3 +51,47 @@ def horaBasico(objeto,campo,mensaje):
 					'type': 'time',
 					'class':'form-control',
 				})
+
+def meses(var):
+	var.append([(str('01')), str('Enero')])
+	var.append([(str('02')), str('Febrero')])
+	var.append([(str('03')), str('Marzo')])
+	var.append([(str('04')), str('Abril')])
+	var.append([(str('05')), str('Mayo')])
+	var.append([(str('06')), str('Junio')])
+	var.append([(str('07')), str('Julio')])
+	var.append([(str('08')), str('Agosto')])
+	var.append([(str('09')), str('Septiembre')])
+	var.append([(str('10')), str('Octubre')])
+	var.append([(str('11')), str('Noviembre')])
+	var.append([(str('12')), str('Diciembre')])
+	return var
+
+def anios(var):
+	var.append([2015])
+	var.append([2016])
+	var.append([2017])
+	var.append([2018])
+	var.append([2019])
+	var.append([2020])
+	var.append([2021])
+	var.append([2022])
+	var.append([2022])
+	var.append([2023])
+	var.append([2024])
+	var.append([2025])
+
+def binGrande():
+    return 15
+def binPequeno():
+    return 10
+def carretonBlanco():
+    return 7.26
+def glaseo():
+    return 1.93
+def canastaA():
+    return 1.4597
+def canastapRoja():
+    return 1.45
+def canastapAzul():
+    return 1.45

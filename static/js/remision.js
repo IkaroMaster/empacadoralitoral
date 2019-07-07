@@ -62,9 +62,6 @@ $(function(){
 
     
 
-    $('#probando').on('click','.validacion',function(){
-        alert('ls');
-    });
 
     // $(".validacion").on("click",function(){ 
     //     alert('hola');
@@ -336,12 +333,19 @@ var tablex = $('#tablajs').DataTable({
             var id = $(this).attr('data-id');
 
             $.get('/remision/ajax_detalle_remision/', {id: id},function(data) {
-                $('.modalCuerpoRemision').empty().html(data.htmlRemision+''+data.htmlDetalleRemision);
+                $('.modalCuerpoRemision').empty().html(data.htmlRemision+''+data.htmlDetalleRemision+''+data.htmlPrestamo+''+data.htmlDetallePrestamo);
             });
             $('#terminarRemision').hide();
             $('#modalDetalleRemision').modal('show');
-
+            $('#imprimirRemision').attr('data-imprimirRemision',id);
+            $('#imprimirRemision').prop('href','/remision/reporte_remision/'+id+'/');
+            
         });
+
+        // $('#imprimirRemision').click(function(){
+        //     var id = $(this).attr('data-imprimirRemision');
+        //     Swal.fire(id);
+        // })
         $('#cerrarModal').click(function () {
             $('#terminarRemision').show();
         });
@@ -350,7 +354,7 @@ var tablex = $('#tablajs').DataTable({
             var id = $(this).attr('data-id');
 
             $.get('/remision/ajax_terminar_remision/', {id: id},function(data) {
-                $('.modalCuerpoRemision').empty().html(data.htmlRemision+''+data.htmlDetalleRemision);
+                $('.modalCuerpoRemision').empty().html(data.htmlRemision+''+data.htmlDetalleRemision+''+data.htmlPrestamo+''+data.htmlDetallePrestamo);
             });
 
             $('#modalDetalleRemision').modal('show');

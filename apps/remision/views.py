@@ -13,6 +13,18 @@ from django.db.models import Q
 from django import forms
 import json
 
+from datetime import datetime
+from django.utils import formats
+
+# Reportes
+from django.template.loader import render_to_string
+from weasyprint import HTML
+import tempfile
+from django.db.models import Count
+from django.db.models import Sum
+from datetime import datetime, date, time, timedelta
+from django.conf import settings
+#----------
 #RECURSOS
 from .models import *
 from ..equipo.models import *
@@ -188,11 +200,72 @@ def detalleRemision_asJson(request):
 			</div>
 		'''.format(remision.entrego,remision.conductor,remision.placa)
 
-		print(htmlDetalleRemision)
+
+		
+		htmlPrestamo ='' 
+		htmlDetallePrestamo = ''
+		if remision.prestamoEquipo:
+			prestamo = PrestamoEquipo.objects.get(pk=remision.prestamoEquipo.pk)
+			detallePrestamo = DetallePrestamoEquipo.objects.filter(prestamoEquipo= prestamo)
+		
+			htmlPrestamo +='''
+				<div class="p-3 mb-2 bg-primary text-white text-center">Esta remision esta ligada al prestamo de equipo numero <strong>{}</strong>.</div>
+				<br>
+				<div class="row container">
+					<div class="col-6"><p><strong>Numero de prestamo: </strong> {}</p></div>
+					<div class="col-6"><p><strong>Empresa: </strong> {}</p></div>
+				</div>
+			'''.format(prestamo.numPrestamo,prestamo.numPrestamo,prestamo.compania)
+			
+			
+			htmlDetallePrestamo += '''
+				<p>A continuacion detallamos los articulos que enviamos.</p>
+				<table class="table table-bordered">
+						<thead>
+						<tr>
+							<th scope="col">Equipo</th>
+							<th scope="col">Tapadera</th>
+							<th scope="col">Descripcion</th>
+						</tr>
+						</thead>
+						<tbody>	
+											
+			'''
+			for dP in detallePrestamo:
+				htmlDetallePrestamo +='''
+				<tr>
+					<td scope="row">{}</td>
+					<td>{}</td>
+					<td>{}</td>
+				</tr>
+				'''.format(dP.equipo,dP.tapadera,dP.descripcion)
+
+			fecha = ''
+			if prestamo.fechaEntrada:
+				fecha = prestamo.fechaEntrada
+			
+			htmlDetallePrestamo += '''
+					</tbody>
+				</table>
+				<div class="row container">
+					<div class="col-6"><p><strong>Numero de placa: </strong> {}</p></div>
+					<div class="col-6"><p><strong>Hora de salida: </strong> {}</p></div>
+					<div class="col-6"><p><strong>Fecha de salida: </strong> {}</p></div>
+					<div class="col-6"><p><strong>Fecha de Entrada: </strong> {}</p></div>
+					<div class="col-12"><p><strong>Observaciones: </strong> {}</p></div>
+					
+					
+				</div>
+				
+			'''.format(prestamo.placa,prestamo.horaSalida,prestamo.fechaSalida,fecha,prestamo.observaciones)
+			
+		
 
 		data = {
 				'htmlRemision':htmlRemision,
-				'htmlDetalleRemision':htmlDetalleRemision
+				'htmlDetalleRemision':htmlDetalleRemision,
+				'htmlPrestamo':htmlPrestamo,
+				'htmlDetallePrestamo':htmlDetallePrestamo
 			}
 		return JsonResponse(data)
 	else:
@@ -423,6 +496,15 @@ def terminarRemision_asJson(request):
 			remision = Remision.objects.get(pk= pk)
 			remision.estado = EstadoRemision.objects.get(pk = 2)
 			remision.save()
+			if remision.prestamoEquipo:
+				prestamo = PrestamoEquipo.objects.get(pk = remision.prestamoEquipo.pk)
+				prestamo.estadoPrestamo = EstadoPrestamo.objects.get(pk = 4)
+				detallePrestamo = DetallePrestamoEquipo.objects.filter(prestamoEquipo= prestamo)
+				for r in detallePrestamo:
+					e = Equipo.objects.get(pk=r.equipo.pk)
+					e.estado = Estado.objects.get(pk=2)
+					e.save()
+				prestamo.save()
 			return JsonResponse({'id':pk})
 		else:
 			codRemision = request.GET['id']
@@ -431,7 +513,7 @@ def terminarRemision_asJson(request):
 			htmlRemision ='' 
 			htmlRemision +='''
 				<span class="alert alert-warning alert-dismissible ">Atencion: Si existen devoluciones, ingrese la devolucion antes de continuar.</span>
-                <br><br>
+				<br><br>
 				<div class="row container">
 					<div class="col-6"><p><strong>Numero de remision: </strong> {}</p></div>
 					<div class="col-6"><p><strong>Tipo de remision: </strong> {}</p></div>
@@ -477,13 +559,128 @@ def terminarRemision_asJson(request):
 					</div>
 				</div>
 			'''.format(remision.entrego,remision.conductor,remision.placa)
+			
+			htmlPrestamo ='' 
+			htmlDetallePrestamo = ''
+			if remision.prestamoEquipo:
+				prestamo = PrestamoEquipo.objects.get(pk=remision.prestamoEquipo.pk)
+				detallePrestamo = DetallePrestamoEquipo.objects.filter(prestamoEquipo= prestamo)
+				htmlPrestamo +='''
+					<div class="p-3 mb-2 bg-primary text-white text-center">Esta remision esta ligada al prestamo de equipo numero <strong>{}</strong>.</div>
+					<br>
+					<span class="alert alert-warning alert-dismissible ">Atencion: Solo debe finalizar el prestamo si todo el equipo prestado ha sido devuelto.</span>
+					<br><br>
+					<div class="row container">
+						<div class="col-6"><p><strong>Numero de prestamo: </strong> {}</p></div>
+						<div class="col-6"><p><strong>Empresa: </strong> {}</p></div>
+					</div>
+				'''.format(prestamo.numPrestamo,prestamo.numPrestamo,prestamo.compania)
+				
+				
+				htmlDetallePrestamo += '''
+					<p>A continuacion detallamos los articulos que enviamos.</p>
+					<table class="table table-bordered">
+							<thead>
+							<tr>
+								<th scope="col">Equipo</th>
+								<th scope="col">Tapadera</th>
+								<th scope="col">Descripcion</th>
+							</tr>
+							</thead>
+							<tbody>	
+												
+				'''
+				for dP in detallePrestamo:
+					htmlDetallePrestamo +='''
+					<tr>
+						<td scope="row">{}</td>
+						<td>{}</td>
+						<td>{}</td>
+					</tr>
+					'''.format(dP.equipo,dP.tapadera,dP.descripcion)
 
-			print(htmlDetalleRemision)
+				fecha = ''
+				if prestamo.fechaEntrada:
+					fecha = prestamo.fechaEntrada
+				else:
+					r = datetime.now()
+					fecha = formats.date_format(r,"SHORT_DATETIME_FORMAT")
+
+				htmlDetallePrestamo += '''
+						</tbody>
+					</table>
+					<div class="row container">
+						<div class="col-6"><p><strong>Numero de placa: </strong> {}</p></div>
+						<div class="col-6"><p><strong>Hora de salida: </strong> {}</p></div>
+						<div class="col-6"><p><strong>Fecha de salida: </strong> {}</p></div>
+						<div class="col-6">
+							<label><strong>Fecha de entrada</strong></label>
+							<input type="date" class="fechaEntrada form-control datetimepicker" value="{}"  data-id="{}" >
+						</div>
+						<div class="col-12"><p><strong>Observaciones: </strong> {}</p></div>
+					</div>
+				'''.format(prestamo.placa,prestamo.horaSalida,prestamo.fechaSalida,fecha,prestamo.numPrestamo,prestamo.observaciones)
 
 			data = {
 					'htmlRemision':htmlRemision,
-					'htmlDetalleRemision':htmlDetalleRemision
+					'htmlDetalleRemision':htmlDetalleRemision,
+					'htmlPrestamo':htmlPrestamo,
+					'htmlDetallePrestamo':htmlDetallePrestamo,
 				}
 			return JsonResponse(data)
 	else:
 		pass
+
+
+
+# **************** 				final de las vistas			   ****************
+# Tamaño	Ancho x Alto (mm)	Ancho x Alto (pulg)
+# A4		210 x 297 mm		8,3 x 11,7 pulg
+# Letter	216 x 279 mm		8,5 x 11,0 pulg
+# Legal		216 x 356 mm		8,5 x 14,0 pulg
+# Foolscap	203 x 330 mm		8,0 x 13,0 pulg
+
+# **************** vistas que muestran reportes de inversiones ****************
+
+
+
+@login_required()
+def ReporteRemision(request,pk):
+    # imagen en base64
+	
+	ahora = datetime.now()
+	remision = Remision.objects.get(pk = pk)
+	detalle_remision = DetalleRemision.objects.filter(remision= remision)
+	data = {'tamano':'Letter', 
+			'posicion':'portrait', 
+			'remision':remision, 
+			'detalle_remision':detalle_remision, 
+			'ahora':ahora,
+	}
+	html_string = render_to_string('remision/reportes/reporteRemision.html',data)
+	html = HTML(string=html_string,base_url=request.build_absolute_uri(),encoding="UTF-8")
+	
+	result = html.write_pdf(stylesheets=[
+        # Change this to suit your css path
+        ## settings.BASE_DIR + '/static/bootstrap/css/bootstrap.css',
+    ],)
+	# Creating http response
+	response = HttpResponse(content_type='application/pdf;')
+	response['Content-Disposition'] = 'inline; filename=remison-'+pk+'.pdf'
+	response['Content-Transfer-Encoding'] = 'UTF-8'
+	with tempfile.NamedTemporaryFile(delete=True) as output:
+		output.write(result)
+		output.flush()
+		output = open(output.name, 'rb')
+		response.write(output.read())
+
+	return response
+# from django.core.files.storage import FileSystemStorage
+	# html.write_pdf(target='/tmp/mypdf.pdf')
+	# fs = FileSystemStorage('/tmp')
+	# with fs.open('mypdf.pdf') as pdf:
+	# 	response = HttpResponse(pdf, content_type='application/pdf')
+	# 	response['Content-Disposition'] = 'attachment; filename="mypdf.pdf"'
+	# 	return response
+
+	# return HttpResponse('putitos')

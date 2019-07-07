@@ -12,6 +12,6 @@ class Vehiculo(models.Model):
 	# tipoVehiculo = models.ForeignKey(TipoVehiculo,blank=True, null=True)
 
 	def __str__(self):
-		return "{} -> {} {}".format(self.placa,self.marca,self.color)
+		return "{}".format(self.placa)
 	class Meta:
 		verbose_name_plural = 'Vehiculos'

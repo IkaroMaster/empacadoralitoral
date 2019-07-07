@@ -48,6 +48,7 @@ LOCAL_APPS = [
     'apps.remision',
     'apps.seguridad',
     'apps.vehiculo',
+    'apps.hielo_proceso',
     'debug_toolbar'
 ]
 # Application definition
@@ -133,7 +134,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 # AUTH_USER_MODEL = 'users.User'
 
-LANGUAGE_CODE = 'es-HN'
+# LANGUAGE_CODE = 'es-HN'
+LANGUAGE_CODE = 'es-EN'
 
 TIME_ZONE = 'America/Tegucigalpa'
 
