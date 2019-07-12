@@ -12,10 +12,14 @@ active
     </div>    
     <div class="card-header">
         <ul class="nav nav-tabs card-header-tabs">
-            <li class="nav-item">
-                <a class="nav-link {{ clases.o1 }}" href="{% url 'remision:crear_remision-url' %}">Gestión de
-                    Remision</a>
-            </li>
+            
+            {% if perms.remision.add_remision %}
+                <li class="nav-item">
+                    <a class="nav-link {{ clases.o1 }}" href="{% url 'remision:crear_remision-url' %}">Gestión de
+                        Remision</a>
+                </li>
+            {% endif %}
+                        
             <li class="nav-item">
                 <a class="nav-link {{ clases.o2 }}" href="{% url 'remision:remision-url'%} ">Remisiones</a>
             </li>
@@ -342,12 +346,22 @@ active
                         <td> 
 
                         {% if r.estado.id == 1 %}
+                            
+                            {% if perms.remision.terminar_remision %}
                             <button class="btn btn-success fas fa-check terminarRemision"data-id="{{ r.numRemision }}" data-terminar="{{ r.numRemision }}"></button>
-                            <a href="{% url 'remision:modificar_remision-url' r.numRemision %}" class="btn btn-info fas fa-pen " data-id="{{ r.numRemision }}" data-editar="{{ r.numRemision }}"></a> 
+                            {% endif %}
+                            {% if perms.remision.update_remision %}
+                            <a href="{% url 'remision:modificar_remision-url' r.numRemision %}" class="btn btn-info fas fa-pen " data-id="{{ r.numRemision }}" data-editar="{{ r.numRemision }}"></a>  
+                            {% endif %}
+                            {% if perms.remision.delete_remision %}    
                             <button class="btn btn-danger anularRemision fas fa-times" data-id="{{ r.numRemision }}" data-anular="{{ r.numRemision }}"></button>
+                            {% endif %}                            
                             <button class="btn btn-warning verRemision fas fa-eye " data-id="{{ r.numRemision }}"></button>
                         {% elif r.estado.id == 2 %}
+                            {% if perms.remision.update_remision %}
                             <a href="{% url 'remision:modificar_remision-url' r.numRemision %}" class="btn btn-info fas fa-pen " data-id="{{ r.numRemision }}"></a> 
+                            {% endif %}
+                                
                             <button class="btn btn-warning verRemision fas fa-eye " data-id="{{ r.numRemision }}"></button>
                         {% else %}
                             <button class="btn btn-warning verRemision fas fa-eye " data-id="{{ r.numRemision }}"></button>

@@ -29,8 +29,9 @@ def comboboxBasico(objeto,campo,mensaje,buscador,queryset):
 	else:
 		objeto.fields[campo].choices = [("",mensaje)] + list(objeto.fields[campo].choices)[1:]
 	
-	objeto.fields[campo].widget.attrs['class'] = 'selectpicker form-control'
+	objeto.fields[campo].widget.attrs['class'] = 'selectpicker form-control show-tick'
 	objeto.fields[campo].widget.attrs['data-live-search'] = buscador
+	objeto.fields[campo].widget.attrs['data-size'] = 3
 	# objeto.fields[campo].widget.attrs['data-show-subtext'] = buscador
 
 
@@ -82,9 +83,9 @@ def anios(var):
 	var.append([2025])
 
 def binGrande():
-    return 15
+    return 15.00
 def binPequeno():
-    return 10
+    return 10.00
 def carretonBlanco():
     return 7.26
 def glaseo():

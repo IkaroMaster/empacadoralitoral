@@ -1,15 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<!-- <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html> -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="X-UA-Compatible" content="ie=edge">
 {% load humanize %}
-<title>TABLA DE CONSUMO DE HIELO EN PROCESO {{hielo.fecha}} | EMPACADORA LITORAL S.A</title>
-<!-- <meta http-equiv="content-type" content="text/html" charset="UTF-8" /> -->
-
+<title>REPORTE DE COSECHA | EMPACADORA LITORAL S.A</title>
+<meta http-equiv="content-type" content="text/html" charset="UTF-8" />
 
 </head>   
 <style type="text/css">
@@ -17,9 +11,10 @@
   size: {{tamano}} {{posicion}};
   margin: 1.5cm;
 } 
-#remision {
+#cosecha {
     color: red;
 }
+
 
 table {
     border: none;
@@ -28,7 +23,7 @@ table {
     border-radius: 10%;
 
 }
-th{
+th,#total{
     border: 1px solid grey;
   border-collapse: collapse;
   text-align: center;
@@ -40,29 +35,48 @@ td {
     text-align: center;
     border: 1px solid #999;
 }
-.total{
-    background-color: #ddd !important;
-}
 .Encabezado{
     display: inline-block;
+    
+
 }
-.n1{
-    width: 10%;
-}
+
 #logo {
     width:80pt;
   height:80pt;
  }
-.n2 {
-    width:80%
-}
 
+.n2 h2{
+  text-transform: uppercase;
+}
 .TextoArriba {
     font-size: 14pt;
     text-align: left;
 }
+.bloque1{
+  display: inline-block;
+  margin: 0 auto;
+  width: 32%;
+}
+.bloque1 p{
+  margin: 0 auto;
+}
 
-
+.TextoAbajo {
+    display: inline-block;
+    width:30%;
+    margin-left: 5pt;
+    border: 1px solid #999;
+    border-radius: 10pt;
+}
+.TextoAbajo p {
+    margin: 0;
+    padding: 3pt;
+    text-align: center;
+}
+.TextoAbajo hr{
+    margin: 0;
+}
 /* #tablaRemision table
 {
  
@@ -147,66 +161,73 @@ td {
 <body>
    <center>
    <!-- <img src="http://127.0.0.1:8000/static/img/logocacsan.png" width="160" ><br> -->
-   <div class="Encabezado n1">
-        {% load static %}
-        <img  id="logo" src="{% static 'imgs/logo_grupo_litoral.png'%}" alt="" width="10px" height="10px">
-
-   </div>
     <div class="Encabezado n2">
-        <h2>EMPACADORA LITORAL,S.A DE C.V</h2>
-        <h3><u>Control de hielo utilizado en proceso del mes de {{mesNombre}} del {{anio}}</u></h3>
+        <h2>{{cosecha.laguna.finca.compania}}</h2>
+        <h2>{{cosecha.laguna.finca.compania.abreviatura}}</h2>
     </div>
-   <div class="Encabezado n3"></div>
-   
+   <h3>REPORTE DE COSECHA <strong id="cosecha">Nº {{cosecha.codCosecha}}</strong></h3> 
  </center>
- <p>A continuacion se detalla el total de uso diario de hielo usando los siguientes recipientes.</p>
+ <p class="TextoArriba"><strong>Fecha:</strong> {{ cosecha.fecha }}</p>
+ <div class="bloque1">
+     <p class="TextoArriba"><strong>Laguna No. </strong> {{cosecha.laguna.codLaguna}}</p> <!--{{ahora|date:"d/m/y"}}-->
+ </div>
+ <div class="bloque1">
+     <p class="TextoArriba"><strong>Hora Inicio </strong> {{cosecha.horaInicio}}</p> <!--{{ahora|date:"d/m/y"}}-->
+ </div>
+ <div class="bloque1">
+     <p class="TextoArriba"><strong>Hora Final </strong> {{cosecha.horaFinal}}</p> <!--{{ahora|date:"d/m/y"}}-->
+ </div>
+ <p class="TextoArriba"><strong>Envio a Empacadora </strong> LITORAL</p>
  <article id="tablaRemision">
     <table>
         <thead>
             <tr id="encabezados">
-                <th scope="col">Fecha</th>
-                <th scope="col">Bin grande</th>
-                <th scope="col">Bin pequeño</th>
-                <th scope="col">Carretón blanco</th>
-                <th scope="col">Glaseo</th>
-                <th scope="col">Canasta Naranja o Azul</th>
-                <th scope="col">Canasta pequeña roja</th>
-                <th scope="col">Canasta pequeña azul</th>
-                <th scope="col">Total Quintales</th>
+                <th>ORDEN</th>
+                <th>No. Bin</th>
+                <th>Total Canasta</th>
+                <th>Total Libras</th>
+                <th>Observaciones</th>
             </tr>
         </thead>
         <tbody>
             
-            {% for h in hielo  %}
+            {% for dr in detalleCosecha  %}
             <tr>
-                
-                <td>{{h.fecha|date:'d/m/Y'}}</td>
-                <td>{{h.binGrande}}</td>
-                <td>{{h.binPequeno}}</td>
-                <td>{{h.carretonBlanco}}</td>
-                <td>{{h.glaseo}}</td>
-                <td>{{h.canastaA}}</td>
-                <td>{{h.canastapRoja}}</td>
-                <td>{{h.canastapAzul}}</td>
-                <td>{{h.quintales}}</td>
+                <td>{{forloop.counter}}</td>
+                <td>{{dr.numeroBin}}</td>
+                <td>{{dr.totalCanasta}}</td>
+                <td>{{dr.libras}}</td>
+                <td>{{dr.observaciones}}</td>
             </tr>
+            
             {% endfor %}
-            <tr class="total">
-                <td><strong>Total</strong></td>
-                <td>{{totales.binGrande}}</td>  
-                <td>{{totales.binPequeno}}</td>
-                <td>{{totales.carretonBlanco}}</td>
-                <td>{{totales.glaseo}}</td>
-                <td>{{totales.canastaA}}</td>
-                <td>{{totales.canastapRoja}}</td>
-                <td>{{totales.canastapAzul}}</td>
-                <td><u>{{totales.quintales}}</u></td>
+            <tr id="total">
+              <td>Total</td>
+              <td></td>
+              <td>{{totales.totalCanastas}}</td>
+              <td>{{totales.totalLibras}}</td>
+              <td></td>
             </tr>
         </tbody>
     </table>
-    
+    <br>
+    <div class="bloque1">
+        <p class="TextoArriba"><strong>Motorista: </strong> {{cosecha.remision.conductor}}</p> <!--{{ahora|date:"d/m/y"}}-->
+    </div>
+    <div class="bloque1">
+        <p class="TextoArriba"><strong>Marca: </strong> {{cosecha.remision.placa.marca}}</p> <!--{{ahora|date:"d/m/y"}}-->
+    </div>
+    <div class="bloque1">
+        <p class="TextoArriba"><strong>Placa: </strong> {{cosecha.remision.placa.placa}}</p> <!--{{ahora|date:"d/m/y"}}-->
+    </div>
  </article>
- <h6>Esta tabla ha sido generada desde Sistema de Control de Hielo de Empacadora Litoral.</h6>
+ <hr>
+ <Strong>Supervisor de cosechas</Strong>
+ <div>
+   <p><strong>Nombre:</strong> {{cosecha.entrego}}</p>
+ </div>
+
+ <h6>Este reporte de cosecha ha sido generado desde Sistema de Control de Hielo de Empacadora Litoral.</h6>
  <hr>
  <!-- <button class="btn btn-danger">holaaaaa</button>
  {% load static %}

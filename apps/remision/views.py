@@ -1,7 +1,6 @@
 from django.shortcuts import render
 
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView,CreateView,UpdateView
@@ -35,8 +34,13 @@ from .forms import *
 #FUNCIONES
 from apps.funciones import *
 
+#PERMISOS
+from django.contrib.auth.decorators import login_required,permission_required
+from django.utils.decorators import method_decorator
+
 
 @login_required
+@permission_required('remision.add_remision',raise_exception=True)
 def CrearRemision(request): #,pk
 	
 	DetalleRemisionFormSet = formset_factory(DetalleRemisionForm, formset=BaseDetalleRemisionFormSet)
@@ -47,7 +51,6 @@ def CrearRemision(request): #,pk
 	
 
 	if request.method == 'POST':
-		
 		remision_form = RemisionForm(request.POST) #, user=user
 		detalleRemision_formset = DetalleRemisionFormSet(request.POST)
 		# print(request.POST)
@@ -274,6 +277,7 @@ def detalleRemision_asJson(request):
 
 
 @login_required
+@permission_required('remision.update_remision',raise_exception=True)
 def ModificarRemision(request,pk): #,pk
 	"""
 	Allows a user to update their own profile.
@@ -427,8 +431,12 @@ class ListadoRemisionList(ListView):
 		ctx['estilos'] = estilos
 		ctx['clases'] = clases
 		return ctx
+	@method_decorator(permission_required('remision.view_remision',raise_exception=True))
+	def dispatch(self, *args, **kwargs):
+		return super(ListadoRemisionList, self).dispatch(*args, **kwargs)
 
 @login_required()
+@permission_required('remision.delete_remision')
 def anularRemision_asJson(request):
 	if request.is_ajax():
 		id = request.GET['id']
@@ -481,7 +489,8 @@ def anularRemision_asJson(request):
 # 	else:
 # 		pass
 
-
+@login_required()
+@permission_required('remision.terminar_remision')
 def terminarRemision_asJson(request):
 	if request.is_ajax():
 		if request.method == 'POST':
@@ -646,7 +655,7 @@ def terminarRemision_asJson(request):
 
 @login_required()
 def ReporteRemision(request,pk):
-    # imagen en base64
+	# imagen en base64
 	
 	ahora = datetime.now()
 	remision = Remision.objects.get(pk = pk)
@@ -661,9 +670,9 @@ def ReporteRemision(request,pk):
 	html = HTML(string=html_string,base_url=request.build_absolute_uri(),encoding="UTF-8")
 	
 	result = html.write_pdf(stylesheets=[
-        # Change this to suit your css path
-        ## settings.BASE_DIR + '/static/bootstrap/css/bootstrap.css',
-    ],)
+		# Change this to suit your css path
+		## settings.BASE_DIR + '/static/bootstrap/css/bootstrap.css',
+	],)
 	# Creating http response
 	response = HttpResponse(content_type='application/pdf;')
 	response['Content-Disposition'] = 'inline; filename=remison-'+pk+'.pdf'

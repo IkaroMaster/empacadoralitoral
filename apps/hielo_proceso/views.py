@@ -32,7 +32,8 @@ from ..empleado.models import *
 from django.template.loader import render_to_string
 from weasyprint import HTML
 import tempfile
-from django.db.models import Count,Sum,F,Value
+from django.db.models import Count,Sum,F,Value,FloatField
+from django.db.models.functions import Cast
 from datetime import datetime, date, time, timedelta
 from django.conf import settings
 
@@ -417,200 +418,59 @@ def ReporteMensual(request):
 		mes = request.POST['mes']
 		anio = request.POST['anio']
 
-		hielo = HieloProceso.objects.filter(fecha__month=int(mes),fecha__year=int(anio))
-		mesNombre = hielo[0].fecha.strftime('%B')
+		# hielo = HieloProceso.objects.filter(fecha__month=int(mes),fecha__year=int(anio))
 
-		hieloX = HieloProceso.objects.filter(fecha__month=int(mes),fecha__year=int(anio)).annotate(totalBinGrande=Sum(F('detallehieloproceso__binGrande')),
-																									totalBinPequeno=Sum(F('detallehieloproceso__binPequeno')),
-																									totalCarretonBlanco=Sum(F('detallehieloproceso__carretonBlanco')),
-																									totalGlaseo=Sum(F('detallehieloproceso__glaseo')),
-																									totalCanastaA=Sum(F('detallehieloproceso__canastaA')),
-																									totalCanastapRoja=Sum(F('detallehieloproceso__canastapRoja')),
-																									totalCanastapAzul=Sum(F('detallehieloproceso__canastapAzul')),
-																									totalQuintales=Sum((F('detallehieloproceso__binGrande') * binGrande())+(F('detallehieloproceso__binPequeno') * binPequeno())+(F('detallehieloproceso__carretonBlanco') * carretonBlanco())+(F('detallehieloproceso__glaseo') * glaseo())+(F('detallehieloproceso__canastaA') * canastaA())+(F('detallehieloproceso__canastapRoja') * canastapRoja())+(F('detallehieloproceso__canastapAzul') * canastapAzul())))
-		for x in hieloX:
-			print(x,x.totalBinGrande,x.totalQuintales)
-		# var = []
-		# for x in hielo:
-		# 	# detalleHielo = DetalleHieloProceso.objects.filter(hieloProceso= x)
-		# 	totales = DetalleHieloProceso.objects.filter(hieloProceso=x).aggregate(totalBinGrande=Sum('binGrande'),
-		# 																			
-		# 																			)
-		# 	var.append(totales)
-		# print(var)
+		hielo = HieloProceso.objects.filter(fecha__month=int(mes),fecha__year=int(anio)).annotate(binGrande=Sum(F('detallehieloproceso__binGrande')),
+																									binPequeno=Sum(F('detallehieloproceso__binPequeno')),
+																									carretonBlanco=Sum(F('detallehieloproceso__carretonBlanco')),
+																									glaseo=Sum(F('detallehieloproceso__glaseo')),
+																									canastaA=Sum(F('detallehieloproceso__canastaA')),
+																									canastapRoja=Sum(F('detallehieloproceso__canastapRoja')),
+																									canastapAzul=Sum(F('detallehieloproceso__canastapAzul')),
+																									quintales=Cast(Sum((F('detallehieloproceso__binGrande') * binGrande())+(F('detallehieloproceso__binPequeno') * binPequeno())+(F('detallehieloproceso__carretonBlanco') * carretonBlanco())+(F('detallehieloproceso__glaseo') * glaseo())+(F('detallehieloproceso__canastaA') * canastaA())+(F('detallehieloproceso__canastapRoja') * canastapRoja())+(F('detallehieloproceso__canastapAzul') * canastapAzul())),FloatField())).order_by('fecha')
 		
+		if hielo:
+			bg,bp,cb,g,ca,cpr,cpa,q = 0,0,0,0,0,0,0,0
+			for h in hielo:
+				bg += h.binGrande
+				bp += h.binPequeno
+				cb += h.carretonBlanco
+				g += h.glaseo
+				ca += h.canastaA
+				cpr += h.canastapRoja
+				cpa += h.canastapAzul
+				q += h.quintales
+			totales = {'binGrande':bg,'binPequeno':bp,'carretonBlanco':cb,'glaseo':g,'canastaA':ca,'canastapRoja':cpr,'canastapAzul':cpa,'quintales':q}
+
+			mesNombre = hielo[0].fecha.strftime('%B')
+			data = {'tamano':'Letter', 
+					'posicion':'portrait', 
+					'hielo':hielo,
+					'mesNombre':mesNombre,
+					'anio': anio, 
+					'totales':totales, 
+					'ahora':ahora,
+			}
+			html_string = render_to_string('hielo_proceso/reportes/reporteMensual.html',data)
+			html = HTML(string=html_string,base_url=request.build_absolute_uri(),encoding="UTF-8")
 			
-		# totalQuintales = 0
-		# for x in DetalleHieloProceso.objects.filter(hieloProceso=hielo):
-		# 	totalQuintales += x.totalQuintales
-		data = {'tamano':'Letter', 
-				'posicion':'portrait', 
-				'hielo':hielo,
-				'mesNombre':mesNombre,
-				'anio': anio, 
-				'detalle_remision':'detalle_remision', 
-				'ahora':ahora,
-		}
-		html_string = render_to_string('hielo_proceso/reportes/reporteMensual.html',data)
-		html = HTML(string=html_string,base_url=request.build_absolute_uri(),encoding="UTF-8")
+			result = html.write_pdf(stylesheets=[
+				# Change this to suit your css path
+				## settings.BASE_DIR + '/static/bootstrap/css/bootstrap.css',
+			],)
+			# Creating http response
+			response = HttpResponse(content_type='application/pdf;')
+			response['Content-Disposition'] = 'inline; filename=remison-'+str(request.POST['mes'])+'-'+str(request.POST['anio'])+'.pdf'
+			response['Content-Transfer-Encoding'] = 'UTF-8'
+			with tempfile.NamedTemporaryFile(delete=True) as output:
+				output.write(result)
+				output.flush()
+				output = open(output.name, 'rb')
+				response.write(output.read())
+
+			return response
+		else:
+			return HttpResponse('No hay cosumo de hielo en el mes seleccionado')
 		
-		result = html.write_pdf(stylesheets=[
-			# Change this to suit your css path
-			## settings.BASE_DIR + '/static/bootstrap/css/bootstrap.css',
-		],)
-		# Creating http response
-		response = HttpResponse(content_type='application/pdf;')
-		response['Content-Disposition'] = 'inline; filename=remison-'+str(request.POST['mes'])+'-'+str(request.POST['anio'])+'.pdf'
-		response['Content-Transfer-Encoding'] = 'UTF-8'
-		with tempfile.NamedTemporaryFile(delete=True) as output:
-			output.write(result)
-			output.flush()
-			output = open(output.name, 'rb')
-			response.write(output.read())
-
-		return response
-		# 	devolucionRemisiones = request.POST['devolucionRemisiones']
-		# 	data = json.loads(devolucionRemisiones)
-		# 	pk = ''
-		# 	for x in data:
-		# 		detalleRemision = DetalleRemision.objects.get(pk=x['id'])
-		# 		detalleRemision.devolucion = x['devolucion']
-		# 		detalleRemision.save()
-		# 		pk = detalleRemision.remision.numRemision
-		# 	remision = Remision.objects.get(pk= pk)
-		# 	remision.estado = EstadoRemision.objects.get(pk = 2)
-		# 	remision.save()
-		# 	if remision.prestamoEquipo:
-		# 		prestamo = PrestamoEquipo.objects.get(pk = remision.prestamoEquipo.pk)
-		# 		prestamo.estadoPrestamo = EstadoPrestamo.objects.get(pk = 4)
-		# 		detallePrestamo = DetallePrestamoEquipo.objects.filter(prestamoEquipo= prestamo)
-		# 		for r in detallePrestamo:
-		# 			e = Equipo.objects.get(pk=r.equipo.pk)
-		# 			e.estado = Estado.objects.get(pk=2)
-		# 			e.save()
-		# 		prestamo.save()
-		# 	return JsonResponse({'id':pk})
-		# else:
-		# 	codRemision = request.GET['id']
-		# 	remision = Remision.objects.get(pk=codRemision)
-		# 	detalleRemision = DetalleRemision.objects.filter(remision= remision)
-		# 	htmlRemision ='' 
-		# 	htmlRemision +='''
-		# 		<span class="alert alert-warning alert-dismissible ">Atencion: Si existen devoluciones, ingrese la devolucion antes de continuar.</span>
-		# 		<br><br>
-		# 		<div class="row container">
-		# 			<div class="col-6"><p><strong>Numero de remision: </strong> {}</p></div>
-		# 			<div class="col-6"><p><strong>Tipo de remision: </strong> {}</p></div>
-		# 			<div class="col-12"><p><strong>Consignado a: </strong>{}</p></div>
-		# 			<div class="col-12"><p><strong>Retirado en: </strong>Empacadora Litoral</p></div>
-		# 			<div class="col-12"><p><strong>Fecha: </strong>{}</p></div>
-		# 		</div>
-		# 	'''.format(remision.numRemision,remision.tipoRemision,remision.compania,remision.fecha)
-		# 	htmlDetalleRemision = ''
-		# 	htmlDetalleRemision += '''
-		# 		<p>A continuacion detallamos los articulos que enviamos.</p>
-		# 		<table class="table table-bordered">
-		# 				<thead>
-		# 				<tr>
-		# 					<th scope="col">Cantidad</th>
-		# 					<th scope="col">Unidad</th>
-		# 					<th scope="col">Descripcion</th>
-		# 					<th scope="col">Devolucion</th>
-		# 					<th scope="col">Valor total</th>
-		# 				</tr>
-		# 				</thead>
-		# 				<tbody>	
-											
-		# 	'''
-		# 	for dR in detalleRemision:
-		# 		htmlDetalleRemision +='''
-		# 		<tr>
-		# 			<th scope="row">{}</th>
-		# 			<td>{}</td>
-		# 			<td>{}</td>
-		# 			<td><input type="text" class="devolucion text-success" value="{}"  data-id="{}"></td>
-		# 			<td>{}</td>
-		# 		</tr>
-		# 		'''.format(dR.salida,dR.unidad,dR.hielo,dR.devolucion,dR.id,dR.cantidad)
-		# 		print(dR.id)
-		# 	htmlDetalleRemision += '''
-		# 			</tbody>
-		# 		</table>
-		# 		<div class="row container">
-		# 			<div class="col-6 border"><p><strong>Entrego: </strong>{}</p></div>
-		# 			<div class="col-6 border"><p><strong>Recibio: </strong>{}</p>
-		# 								<p><strong>Placa No </strong>{}</p>
-		# 			</div>
-		# 		</div>
-		# 	'''.format(remision.entrego,remision.conductor,remision.placa)
-			
-		# 	htmlPrestamo ='' 
-		# 	htmlDetallePrestamo = ''
-		# 	if remision.prestamoEquipo:
-		# 		prestamo = PrestamoEquipo.objects.get(pk=remision.prestamoEquipo.pk)
-		# 		detallePrestamo = DetallePrestamoEquipo.objects.filter(prestamoEquipo= prestamo)
-		# 		htmlPrestamo +='''
-		# 			<div class="p-3 mb-2 bg-primary text-white text-center">Esta remision esta ligada al prestamo de equipo numero <strong>{}</strong>.</div>
-		# 			<br>
-		# 			<span class="alert alert-warning alert-dismissible ">Atencion: Solo debe finalizar el prestamo si todo el equipo prestado ha sido devuelto.</span>
-		# 			<br><br>
-		# 			<div class="row container">
-		# 				<div class="col-6"><p><strong>Numero de prestamo: </strong> {}</p></div>
-		# 				<div class="col-6"><p><strong>Empresa: </strong> {}</p></div>
-		# 			</div>
-		# 		'''.format(prestamo.numPrestamo,prestamo.numPrestamo,prestamo.compania)
-				
-				
-		# 		htmlDetallePrestamo += '''
-		# 			<p>A continuacion detallamos los articulos que enviamos.</p>
-		# 			<table class="table table-bordered">
-		# 					<thead>
-		# 					<tr>
-		# 						<th scope="col">Equipo</th>
-		# 						<th scope="col">Tapadera</th>
-		# 						<th scope="col">Descripcion</th>
-		# 					</tr>
-		# 					</thead>
-		# 					<tbody>	
-												
-		# 		'''
-		# 		for dP in detallePrestamo:
-		# 			htmlDetallePrestamo +='''
-		# 			<tr>
-		# 				<td scope="row">{}</td>
-		# 				<td>{}</td>
-		# 				<td>{}</td>
-		# 			</tr>
-		# 			'''.format(dP.equipo,dP.tapadera,dP.descripcion)
-
-		# 		fecha = ''
-		# 		if prestamo.fechaEntrada:
-		# 			fecha = prestamo.fechaEntrada
-		# 		else:
-		# 			r = datetime.now()
-		# 			fecha = formats.date_format(r,"SHORT_DATETIME_FORMAT")
-
-		# 		htmlDetallePrestamo += '''
-		# 				</tbody>
-		# 			</table>
-		# 			<div class="row container">
-		# 				<div class="col-6"><p><strong>Numero de placa: </strong> {}</p></div>
-		# 				<div class="col-6"><p><strong>Hora de salida: </strong> {}</p></div>
-		# 				<div class="col-6"><p><strong>Fecha de salida: </strong> {}</p></div>
-		# 				<div class="col-6">
-		# 					<label><strong>Fecha de entrada</strong></label>
-		# 					<input type="date" class="fechaEntrada form-control datetimepicker" value="{}"  data-id="{}" >
-		# 				</div>
-		# 				<div class="col-12"><p><strong>Observaciones: </strong> {}</p></div>
-		# 			</div>
-		# 		'''.format(prestamo.placa,prestamo.horaSalida,prestamo.fechaSalida,fecha,prestamo.numPrestamo,prestamo.observaciones)
-
-		# 	data = {
-		# 			'htmlRemision':htmlRemision,
-		# 			'htmlDetalleRemision':htmlDetalleRemision,
-		# 			'htmlPrestamo':htmlPrestamo,
-		# 			'htmlDetallePrestamo':htmlDetallePrestamo,
-		# 		}
-		# 	return JsonResponse(data)
 	else:
 		pass

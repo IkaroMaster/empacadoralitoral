@@ -75,4 +75,38 @@ def log_in(request):
 def log_out(request):
 	logout(request)
 	return HttpResponseRedirect(reverse('login_form-url'))
-	
+
+
+# def cambiar_contrasena(request):
+#     if request.method == 'POST':
+# 		c1 = request.POST['password1']
+# 		c2 = request.POST['password2']
+
+# 		if not c1.isnumeric():
+# 			if len(str(c1)) >=8:
+# 				if str(c1).strip() == str(c2).strip():
+# 					usuario = request.user
+# 					usuario.set_password(str(c1).strip())
+# 					usuario.save()
+
+# 					user = authenticate(username = usuario.username, password = c1)
+# 					login(request, user)
+
+# 					if Cliente.objects.filter(usuario = request.user).exists():
+# 						cliente = Cliente.objects.get(usuario = request.user)
+# 						cliente.actualizoContrasena = True
+# 						cliente.save()
+# 						return HttpResponseRedirect(reverse('app:home_cliente'))
+# 					else:
+# 						bibliotecario = Bibliotecario.objects.get(usuario = request.user)
+# 						bibliotecario.actualizoContrasena = True
+# 						bibliotecario.save()
+# 						return HttpResponseRedirect(reverse('app:home'))
+# 				else:
+# 					return render(request, 'cambiar_contrasena_form.html', {'message': u'Las contraseñas no son iguales'})
+# 			else:
+# 				return render(request, 'cambiar_contrasena_form.html', {'message': u'Las contraseñas debe contener al menos 8 caracteres'})
+# 		else:
+# 			return render(request, 'cambiar_contrasena_form.html', {'message': u'La contraseña no puede ser completamente numerica'})
+# 	else:
+# 		return render(request, "404.html")

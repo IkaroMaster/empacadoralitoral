@@ -17,7 +17,7 @@ class Medida(models.Model):
 		return "{}".format(self.unidad)
 	class Meta:
 		verbose_name_plural = 'Unidad de Medidas'
-
+		
 class Hielo(models.Model):
 	estadoHielo		= models.CharField(max_length=30)
 	precioQuintal	= models.DecimalField(max_digits=6, decimal_places=2)
@@ -61,6 +61,10 @@ class Remision(models.Model):
 		return "{} -> {}".format(self.numRemision,self.compania)
 	class Meta:
 		verbose_name_plural = 'Remisiones de hielo'
+		permissions	= [
+			("terminar_remision","Puede terminar la remision de hielo"),
+		]
+
 
 	
 class DetalleRemision(models.Model):

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
 {% load humanize %}
-<title>TABLA DE CONSUMO DE HIELO EN PROCESO {{hielo.fecha}} | EMPACADORA LITORAL S.A</title>
+<title>REPORTE DE COSECHA {{mesNombre}}/{{anio}} | EMPACADORA LITORAL S.A</title>
 <!-- <meta http-equiv="content-type" content="text/html" charset="UTF-8" /> -->
 
 
@@ -25,7 +25,6 @@ table {
     border: none;
     width: 100%;
     border-collapse: collapse;
-    border-radius: 10%;
 
 }
 th{
@@ -36,7 +35,7 @@ th{
 }
 
 td { 
-    padding: 5px 10px;
+    padding: 1px 1px;
     text-align: center;
     border: 1px solid #999;
 }
@@ -47,11 +46,11 @@ td {
     display: inline-block;
 }
 .n1{
-    width: 10%;
+    width: 5%;
 }
 #logo {
-    width:80pt;
-  height:80pt;
+    width:40pt;
+  height:40pt;
  }
 .n2 {
     width:80%
@@ -60,6 +59,28 @@ td {
 .TextoArriba {
     font-size: 14pt;
     text-align: left;
+}
+.cuarta{
+  background-color: rgb(247, 246, 246);
+  border-radius: 3mm;
+  display: inline-block;
+  width: 115mm;
+  height: 78mm;
+  margin: 1mm auto;
+  margin-left: 3mm;  
+  margin-right: 3mm;  
+  padding: 0.5mm;
+  padding-top: 2mm;
+  float: left;
+  
+}
+.cuarta table{
+  margin-top: 2mm;
+}
+.cuartaTexto{
+  
+  display: inline-block;
+  width: 48%;
 }
 
 
@@ -149,65 +170,65 @@ td {
    <!-- <img src="http://127.0.0.1:8000/static/img/logocacsan.png" width="160" ><br> -->
    <div class="Encabezado n1">
         {% load static %}
-        <img  id="logo" src="{% static 'imgs/logo_grupo_litoral.png'%}" alt="" width="10px" height="10px">
+        <img  id="logo" src="{% static 'imgs/logo.png'%}" alt="" >
 
    </div>
     <div class="Encabezado n2">
-        <h2>EMPACADORA LITORAL,S.A DE C.V</h2>
-        <h3><u>Control de hielo utilizado en proceso del mes de {{mesNombre}} del {{anio}}</u></h3>
+        <p><strong>EMPACADORA LITORAL,S.A DE C.V</strong></p>
+        <p>Reporte de cosecha del mes de {{mesNombre}} del {{anio}}</p>
     </div>
    <div class="Encabezado n3"></div>
    
  </center>
- <p>A continuacion se detalla el total de uso diario de hielo usando los siguientes recipientes.</p>
+ 
  <article id="tablaRemision">
-    <table>
-        <thead>
-            <tr id="encabezados">
-                <th scope="col">Fecha</th>
-                <th scope="col">Bin grande</th>
-                <th scope="col">Bin pequeño</th>
-                <th scope="col">Carretón blanco</th>
-                <th scope="col">Glaseo</th>
-                <th scope="col">Canasta Naranja o Azul</th>
-                <th scope="col">Canasta pequeña roja</th>
-                <th scope="col">Canasta pequeña azul</th>
-                <th scope="col">Total Quintales</th>
-            </tr>
-        </thead>
-        <tbody>
-            
-            {% for h in hielo  %}
-            <tr>
-                
-                <td>{{h.fecha|date:'d/m/Y'}}</td>
-                <td>{{h.binGrande}}</td>
-                <td>{{h.binPequeno}}</td>
-                <td>{{h.carretonBlanco}}</td>
-                <td>{{h.glaseo}}</td>
-                <td>{{h.canastaA}}</td>
-                <td>{{h.canastapRoja}}</td>
-                <td>{{h.canastapAzul}}</td>
-                <td>{{h.quintales}}</td>
-            </tr>
-            {% endfor %}
-            <tr class="total">
-                <td><strong>Total</strong></td>
-                <td>{{totales.binGrande}}</td>  
-                <td>{{totales.binPequeno}}</td>
-                <td>{{totales.carretonBlanco}}</td>
-                <td>{{totales.glaseo}}</td>
-                <td>{{totales.canastaA}}</td>
-                <td>{{totales.canastapRoja}}</td>
-                <td>{{totales.canastapAzul}}</td>
-                <td><u>{{totales.quintales}}</u></td>
-            </tr>
-        </tbody>
-    </table>
+    
+    {% for c in cosechas %}
+      <div class="cuarta">
+        <div class="cuartaTexto">
+            <strong>FECHA:</strong> {{c.fecha}} <br>
+            <strong>FINCA:</strong> {{c.laguna.finca.nombre}} <br>
+            <strong>LAGUNA:</strong> {{c.laguna.codLaguna}}
+            <strong>FECHA:</strong> {{c.laguna.codLaguna}}
+
+        </div>
+        <div class="cuartaTexto">
+            <strong>REMISION:</strong> {{c.remision.numRemision}} <br>
+            <strong>SENASA:</strong> {{c.remision.guia}} <br>
+            <strong>CONDUCTOR:</strong> {{c.remision.conductor}}
+        </div>
+          <table>
+              <thead>
+                  <tr id="encabezados">
+                      <th scope="col">#Bin</th>
+                      <th scope="col">Libras</th>
+                      <th scope="col">Observaciones</th>
+                      
+                  </tr>
+              </thead>
+              <tbody>
+                  
+                  {% for dc in c.detallecosecha_set.all  %}
+                  <tr>
+                      
+                      <td>{{dc.numeroBin.numero}}</td>
+                      <td>{{dc.libras}}</td>
+                      <td>{{dc.observaciones}}</td>
+                  </tr>
+                  {% endfor %}
+              </tbody>
+          </table>
+      </div>
+    {% endfor %}
+   
+    
+    
+      
     
  </article>
- <h6>Esta tabla ha sido generada desde Sistema de Control de Hielo de Empacadora Litoral.</h6>
- <hr>
+ 
+
+
  <!-- <button class="btn btn-danger">holaaaaa</button>
  {% load static %}
     <img src="{% static 'imgs/reportes.png' %}" alt="" /> -->
