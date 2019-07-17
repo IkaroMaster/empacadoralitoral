@@ -38,6 +38,8 @@ from apps.funciones import *
 from django.contrib.auth.decorators import login_required,permission_required
 from django.utils.decorators import method_decorator
 
+#CORREOS
+from django.core.mail import EmailMessage
 
 @login_required
 @permission_required('remision.add_remision',raise_exception=True)
@@ -133,7 +135,8 @@ def CrearRemision(request): #,pk
 		'detalleRemision_formset': detalleRemision_formset,
 		'crear':True,
 	}
-
+	# email = EmailMessage(subject="El titulo",body='aqui es el cuerpo donde va la infomacion',to=['ikaromaster18@gmail.com'])
+	# email.send()
 	return render(request, 'remision/remision.html', context)
 
 # @login_required

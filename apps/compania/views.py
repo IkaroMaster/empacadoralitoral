@@ -98,6 +98,7 @@ def editar_compania(request,id):
 
 # //import pdb
 
+
 @login_required()
 def guardar_finca(request):
     # pdb.run('hello')

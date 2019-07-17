@@ -1,0 +1,212 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+{% load humanize %}
+<title>DATOS DE ACCESO | EMPACADORA LITORAL S.A</title>
+<meta http-equiv="content-type" content="text/html" charset="UTF-8" />
+
+</head>   
+<style type="text/css">
+@page {
+  size: {{tamano}} {{posicion}};
+  margin: 1.5cm;
+} 
+#cosecha {
+    color: red;
+}
+
+
+table {
+    border: none;
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 10%;
+
+}
+th,#total{
+    border: 1px solid grey;
+  border-collapse: collapse;
+  text-align: center;
+  background: rgb(226, 223, 223);
+}
+
+td { 
+    padding: 5px 10px;
+    text-align: center;
+    border: 1px solid #999;
+}
+.Encabezado{
+    display: inline-block;
+    
+
+}
+
+#logo {
+    width:80pt;
+  height:80pt;
+ }
+
+.n2 h2{
+  text-transform: uppercase;
+}
+.TextoArriba {
+    font-size: 14pt;
+    text-align: left;
+}
+.bloque1{
+  display: inline-block;
+  margin: 0 auto;
+  width: 32%;
+}
+.bloque1 p{
+  margin: 0 auto;
+}
+
+.TextoAbajo {
+    display: inline-block;
+    width:30%;
+    margin-left: 5pt;
+    border: 1px solid #999;
+    border-radius: 10pt;
+}
+.TextoAbajo p {
+    margin: 0;
+    padding: 3pt;
+    text-align: center;
+}
+.TextoAbajo hr{
+    margin: 0;
+}
+/* #tablaRemision table
+{
+ 
+  padding: 6px;
+  text-align: center;
+  border: 1px solid grey;
+  border-collapse: collapse;
+}
+ #tablaRemision td
+{
+  margin: 1px auto;
+  text-shadow: 2px 2px 1px rgba(0, 0, 0, .1);
+  color:black;
+  text-align: center;
+  padding: 4px;
+  background-color: white;
+  border: 1px solid grey;
+  border-collapse: collapse;
+ }
+ #tablaRemision th
+{
+  margin: 1px auto;
+  text-shadow: 2px 2px 1px rgba(0, 0, 0, .1);
+  color:black;
+  text-align: center;
+  padding: 4px;
+  background-color: white;
+  border: 1px solid grey;
+  border-collapse: collapse;
+ }
+ 
+ #encabezados th
+{
+  background-color: rgb(209, 204, 204);
+  color: black;
+  font-size: 14px;
+  font-weight: bold;
+} */
+
+ /* #tableResultado td
+{
+  margin: 1px auto;
+  text-shadow: 2px 2px 1px rgba(0, 0, 0, .1);
+  color:black;
+  text-align: center;
+  padding: 4px;
+  background-color: white;
+  border: 1px solid grey;
+  border-collapse: collapse;
+ }
+
+#tableResultado table
+{
+ 
+  padding: 6px;
+  text-align: center;
+  border: 1px solid grey;
+  border-collapse: collapse;
+}
+
+
+
+#encabezados td
+{
+  background-color: grey;
+  color: black;
+  font-size: 14px;
+  font-weight: bold;
+}
+#encabezadosInfe td {
+        font-size: 13px;
+}
+    h1 {
+        font-size: 20px;
+    }
+    h2 {
+        font-size: 16px;
+    } 
+ */
+ 
+</style> 
+<body>
+    <hr><h2>Sistema Control de Hielo de Empacadora Litoral,S.A</h2><hr>
+    <p>{{usuario.first_name}} {{usuario.last_name}} ingrese los siguiente datos de acceso para ingresar al sistema.</p>
+    <h3><strong>Usuario:</strong> {{usuario}} </h3>
+    <h3><strong>Contraseña:</strong> {{contra}}</h3>
+    <p><strong>Nota:</strong> Se le solicitara cambio de contraseña la primera vez que inicie sesión.</p>
+ 
+ <h6>Este documento ha sido generado desde Sistema de Control de Hielo de Empacadora Litoral.</h6>
+ <hr>
+ <!-- <button class="btn btn-danger">holaaaaa</button>
+ {% load static %}
+    <img src="{% static 'imgs/reportes.png' %}" alt="" /> -->
+  <!-- <section>
+<article id = "tableResultado">
+<table>
+ <tr id="encabezados">
+  <td>Código Inversión</td>
+  <td>Filial</td>
+  <td>Banco</td>
+  <td>Fecha Apertura</td>
+  <td>Fecha Vencimiento</td>
+  <td>Tasa</td>
+  <td>Estado Inversión</td>
+  <td>Monto</td>
+</tr> -->
+
+<!-- {% for resultado in inv %} -->
+
+<tr id="encabezadosInfe">
+  <!-- <td>{{resultado.codInversion}}</td>
+  <td>{{resultado.filial.nomFilial}}</td>
+  <td>{{resultado.banco.nomBanco }}</td>
+  <td>{{resultado.fechaAperInversion|date:"d/m/y"}}</td>
+  <td>{{resultado.fechaVenInversion|date:"d/m/y"}}</td>
+  <td>{{resultado.porceInversion}}%</td>
+  <td>{{resultado.estadoInv}}</td>
+  <td>Lps. {{resultado.Monto|floatformat:'2'|intcomma}}</td> -->
+</tr>
+
+<!-- {% endfor%}  -->
+ 
+<!-- </table>
+{% if total %}
+<h2 align="right">Monto total de Inversiones Generales: Lps. {{total|floatformat:'2'|intcomma}}</h2> 
+{% else %}
+<h2 align="right">Monto total de Inversiones Generales: Lps. 0.00</h2> 
+{% endif %}
+</article>
+</section> -->
+
+</body>
+</html>

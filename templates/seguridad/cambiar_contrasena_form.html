@@ -11,7 +11,7 @@
 	    <h3 class="panel-title">Cambiar Contraseña: {{ user }}</h3>
 	  </div>
 	  <div class="panel-body">
-		<form action="{% url 'security:cambiar_contrasena' %}" method="post">
+		<form action="{% url 'seguridad:cambiar_contrasena' %}" method="post">
 			{% csrf_token %}
 
 		<p>Ingrese una nueva contraseña para <strong>{{ user }}</strong>.</p>
@@ -29,7 +29,7 @@
 
 		<div class="form-group">
 		  
-		  <label class="required" for="id_password2">Password (Nuevamente):</label> <input id="id_password2" class="form-control" style="width:300px" name="password2" type="password" required  minlength="8"/>
+		  <label class="required" for="id_password2">Repetir Contraseña:</label> <input id="id_password2" class="form-control" style="width:300px" name="password2" type="password" required  minlength="8"/>
 		  
 		  <p class="help">Ingrese la misma contraseña que antes, para verificación.</p>
 		  

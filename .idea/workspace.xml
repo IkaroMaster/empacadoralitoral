@@ -3,9 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="adfd9a6a-0ffe-416e-bbf8-bd1ae9076656" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/apps/compania/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/apps/compania/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/equipo/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/apps/equipo/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/empacadoralitoral/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/empacadoralitoral/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/empacadoralitoral/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/empacadoralitoral/urls.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -14,12 +11,12 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/apps/compania/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="127">
-              <caret line="60" column="43" selection-start-line="60" selection-start-column="43" selection-end-line="60" selection-end-column="43" />
+            <state relative-caret-position="266">
+              <caret line="100" column="2" selection-start-line="100" selection-start-column="2" selection-end-line="100" selection-end-column="2" />
               <folding>
                 <element signature="e#0#35#0" expanded="true" />
               </folding>
@@ -61,6 +58,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -72,10 +70,10 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
   </component>
@@ -152,24 +150,20 @@
       <option name="presentableId" value="Default" />
       <updated>1556923976984</updated>
       <workItem from="1556923982972" duration="245000" />
+      <workItem from="1562953877125" duration="131000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="245000" />
+    <option name="totallyTimeSpent" value="376000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1280" height="709" extended-state="6" />
+    <frame x="0" y="23" width="1280" height="777" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info id="Favorites" side_tool="true" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24555735" />
+      <window_info content_ui="combo" id="Project" order="0" weight="0.24959612" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Docker" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Database Changes" />
-      <window_info anchor="bottom" id="Version Control" />
-      <window_info anchor="bottom" id="Python Console" />
-      <window_info anchor="bottom" id="Terminal" sideWeight="0.49919224" visible="true" weight="0.30794165" />
-      <window_info anchor="bottom" id="Event Log" sideWeight="0.50080776" side_tool="true" visible="true" weight="0.30794165" />
+      <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="bottom" id="Run" order="2" />
@@ -177,13 +171,19 @@
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="right" id="Database" />
-      <window_info anchor="right" id="R Packages" />
-      <window_info anchor="right" id="SciView" />
-      <window_info anchor="right" id="R Graphics" />
+      <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Version Control" order="8" />
+      <window_info anchor="bottom" id="Database Changes" order="9" />
+      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.5016155" side_tool="true" visible="true" weight="0.30656934" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="11" sideWeight="0.4983845" visible="true" weight="0.30656934" />
+      <window_info anchor="bottom" id="Python Console" order="12" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="SciView" order="3" />
+      <window_info anchor="right" id="R Graphics" order="4" />
+      <window_info anchor="right" id="R Packages" order="5" />
+      <window_info anchor="right" id="Database" order="6" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -192,8 +192,8 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/apps/compania/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="127">
-          <caret line="60" column="43" selection-start-line="60" selection-start-column="43" selection-end-line="60" selection-end-column="43" />
+        <state relative-caret-position="266">
+          <caret line="100" column="2" selection-start-line="100" selection-start-column="2" selection-end-line="100" selection-end-column="2" />
           <folding>
             <element signature="e#0#35#0" expanded="true" />
           </folding>

@@ -105,19 +105,17 @@
   <div class="row">  
       <div class="col-md-3">
         <ul class="list-group">
-            
+            <a href="{% url 'prestamos:prestamos-url' %}" class="list-group-item{% block l3 %}{% endblock %}"><img src="{% static 'imgs/reserva.png' %}" width="50px" alt=""> <strong>Préstamo de equipo</strong><span class="badge">{{ c_ventas }}</span></a>
             {% if perms.remision.view_remision %}
              <a href="{% url 'remision:remision-url' %}" class="list-group-item{% block l1 %}{% endblock %}"><img src="{% static 'imgs/remision.png' %}" width="50px" alt=""> <strong>Remisiones</strong><span class="badge">{{ c_ventas }}</span></a>
             {% endif %}
-              
-            <a href="{% url 'prestamos:prestamos-url' %}" class="list-group-item{% block l3 %}{% endblock %}"><img src="{% static 'imgs/reserva.png' %}" width="50px" alt=""> <strong>Préstamo de equipo</strong><span class="badge">{{ c_ventas }}</span></a>
-            <a href="{% url 'hielo_proceso:dias-url' %}" class="list-group-item{% block l8 %}{% endblock %}"><img src="{% static 'imgs/hielo.png' %}" width="50px" alt=""> <strong>Hielo</strong><span class="badge">{{ c_ventas }}</span></a>
             <a href="{% url 'camaron:cosechas-url' %}" class="list-group-item{% block l9 %}{% endblock %}"><img src="{% static 'imgs/camaron.png' %}" width="50px" alt=""> <strong>Camaron</strong><span class="badge">{{ c_ventas }}</span></a>
+            <a href="{% url 'hielo_proceso:dias-url' %}" class="list-group-item{% block l8 %}{% endblock %}"><img src="{% static 'imgs/hielo.png' %}" width="50px" alt=""> <strong>Hielo</strong><span class="badge">{{ c_ventas }}</span></a>
             <a href="{% url 'equipo:equipo-url' 2 %}" class="list-group-item{% block l2 %}{% endblock %}"><img src="{% static 'imgs/almacen.png' %}" width="50px" alt=""> <strong>Equipo</strong><span class="badge">{{ c_ventas }}</span></a>
             <a href="{% url 'compania:compania-url' 2 %}" class="list-group-item{% block l4 %}{% endblock %}"><img src="{% static 'imgs/lector.png' %}" width="50px" alt=""> <strong>Empresas</strong><span class="badge">{{ c_clientes }}</span></a>
-            <a href="{% url 'compania:compania-url' 2 %}" class="list-group-item{% block l5 %}{% endblock %}"><img src="{% static 'imgs/vehiculo.png' %}" width="50px" alt=""> <strong>Vehiculos</strong><span class="badge">{{ c_clientes }}</span></a>
+            <a href="{% url 'vehiculo:vehiculos-url' %}" class="list-group-item{% block l5 %}{% endblock %}"><img src="{% static 'imgs/vehiculo.png' %}" width="50px" alt=""> <strong>Vehiculos</strong><span class="badge">{{ c_clientes }}</span></a>
             <a href="{% url 'compania:compania-url' 2 %}" class="list-group-item{% block l6 %}{% endblock %}"><img src="{% static 'imgs/lector.png' %}" width="50px" alt=""> <strong>Conductores</strong><span class="badge">{{ c_clientes }}</span></a>
-            <li class="list-group-item {% block l7 %}{% endblock %}"><img src="{% static 'imgs/bibliotecario.png' %}" width="50px" alt=""> <strong>Empleados</strong><span class="badge">{{ c_bibliotecarios }}</span></li>
+            <a href="{% url 'empleado:empleados-url'  %}" class="list-group-item{% block l7 %}{% endblock %}"><img src="{% static 'imgs/bibliotecario.png' %}" width="50px" alt=""> <strong>Empleados</strong><span class="badge">{{ c_clientes }}</span></a>
         </ul>
 
       </div>

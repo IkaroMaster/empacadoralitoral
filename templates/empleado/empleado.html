@@ -1,0 +1,253 @@
+{% extends "base_in.html" %}
+{% block titulo %}
+Empleados
+{% endblock titulo %}
+{% block l7 %}
+active
+{% endblock l7 %}
+{% block cuerpo %}
+<div class="card text-center">
+    <div class="panel-heading bg-primary" >
+        <h3 class="panel-title text-light">Empleados</h3>
+    </div>    
+    <div class="card-header">
+        <ul class="nav nav-tabs card-header-tabs">
+            
+            {% if perms.empleado.add_empleado or perms.empleado.update_empleado %}
+                <li class="nav-item">
+                    <a class="nav-link {{ clases.o1 }}" href="{% url 'empleado:crear-url' %}">Gestión de
+                        Empleado</a>
+                </li>
+            {% endif %}
+                        
+            <li class="nav-item">
+                <a class="nav-link {{ clases.o2 }}" href="{% url 'empleado:empleados-url'%} ">Empleados</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ clases.o3 }} " href="">...</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ clases.o3 }}" href="#">...</a>
+            </li>
+        </ul>
+    </div>
+    <div class="card-body">
+        <div style="{{estilos.o1}}">
+
+            {% if messages %}
+            {% for message in messages %}
+                <span class="alert alert-danger alert-dismissible ">Error: {{ message|escape }}</span> <!--data-dismiss="alert"-->
+                <br><br>
+            {% endfor %}
+            {% endif %}
+
+            <form id="formEmpleado" method="POST">
+                {% csrf_token %}
+                <div class=" panel-heading alert-info" >
+                    <h3 class="panel-title ">Información de acceso</h3>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        <label for="" class="mb-3">Codigo del Empleado:<a href="#" role="button" class="fas fa-question-circle" data-toggle="popover" title="Código del empleado" data-content="Código de identificación único del empleado asignado por BIT."></a></label>
+                        <br>
+                        {{form_empleado.codEmpleado}}
+                    </div>
+                    <div class="col-4">
+                        <label for="">{{form_usuario.username.label_tag}} <a href="#" role="button" class="fas fa-question-circle" data-toggle="popover" title="Nombre de usuario" data-content="{{form_usuario.username.help_text}}"></a></label>
+                        {{form_usuario.username}}
+                    </div>
+                    <div class="col-4">
+                        <label for="">{{form_usuario.password1.label_tag}} <a href="#" role="button" class="fas fa-question-circle" data-toggle="popover" title="Contraseña" data-content="{{form_usuario.password1.help_text}}" data-html="true"></a></label>
+                        {{form_usuario.password1}}
+                        <div style="display: none;">{{form_usuario.password2}}{{form_empleado.actualizoContrasena}} </div>
+                        
+                    </div>
+                </div>
+                <br>
+                <div class=" panel-heading alert-info" >
+                    <h3 class="panel-title ">Información del empleado</h3>
+                </div>   
+                <div class="row">
+                    <div class="col-3">
+                        <label for="">Cargo:</label>
+                        {{form_empleado.cargo}}
+                    </div>
+                    <div class="col-3">
+                        <label for="">Numero Identidad:</label>
+                        {{form_empleado.identidad}}
+                    </div>
+                    
+                    <div class="col-3">
+                        <label for="">Teléfono:</label>
+                        {{form_empleado.telefono}}
+                    </div> <hr>
+                    <div class="col-3">
+                        <label for="">Primer Nombre:</label>
+                        {{form_empleado.nombre}}
+                    </div>
+                    <div class="col-3">
+                        <label for="">Segundo Nombre:</label>
+                        {{form_empleado.segundoNombre}}
+                    </div>
+                    <div class="col-3">
+                        <label for="">Primer Apellido:</label>
+                        {{form_empleado.apellido}}
+                    </div>
+                    <div class="col-3">
+                        <label for="">Segundo Apellido:</label>
+                        {{form_empleado.segundoApellido}}
+                    </div>
+                    <div class="col-3">
+                        <label for="">Correo Electronico:</label>
+                        <input type="email" class="form-control" name="correo" id="correo" value="{{correo}}">
+                    </div>
+                </div>
+                <br>
+                <a href="{% url 'empleado:empleados-url'%} " class="btn btn-secondary">Cancelar</a>
+                
+                {% if crear %}
+                <input id="enviarEmpleado" class="btn btn-success" value="Guardar" class="button" />
+                {% else %}
+                <input type="submit" class="btn btn-success" value="Modificar" class="button" />
+                {% endif %}
+                    
+
+            </form>
+            
+        </div>
+        <div style="{{estilos.o2}}">
+            <table id="tablajs" class="table table-striped table-bordered" style="width:100%" class="display">
+                <thead class="thead-inverse">
+                    <tr>
+                            
+                        <th data-priority="1">Codigo</th>
+                        <th>Usuario</th>
+                        <th>Identidad</th>
+                        <th>Nombre Completo</th>
+                        <th>Telefono</th>
+                        <th>Correo</th>
+                        <th>Estado</th>
+                        <th>Cargo</th>
+                        <th data-priority="2">Acciones</th>
+                        <!-- <th>Añadir</th> -->
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for e in empleados %}
+                    <tr id="fila-{{e.pk}}"{% if e.usuario.is_active %}  {% else %} class="table-danger" {% endif %}>
+                        <td>{{ e.pk }}</td>
+                        <td>{{ e.usuario }}</td>
+                        <td>{{ e.identidad }}</td>
+                        <td>{{ e.nombre }} {{e.apellido}}</td>
+                        <td>{{e.telefono}} </td>
+                        <td>{{e.usuario.email}}</td>
+                       
+                        <td id="col_estado-{{ e.pk }}">
+                        
+                        {% if e.usuario.is_active %}
+                            <p style="display: none">1</p>
+                            <i class="fas fa-check"></i>
+                        {% else%}
+                            <p style="display: none">2</p>
+                            <i class="fas fa-times"></i>
+                        {% endif %}
+                            </td>
+                        
+                        <td>{{e.cargo}} </td>
+                        
+                        <td> 
+
+                        {% if e.usuario.is_active %}
+                            
+                            {% if perms.empleado.delete_empleado %}
+                            <button class="desactivar btn btn-danger fas fa-user-minus"  data-desactivar="{{ e.pk }}" data-nombre="{{e.nombre}} {{e.apellido}}"></button>
+                            {% endif %}
+                            
+                        {% else %}
+                            {% if perms.empleado.update_empleado %}
+                            <button class="activar btn btn-success fas fa-check " data-activar="{{ e.pk }}" data-nombre="{{e.nombre}} {{e.apellido}}"></button>
+                            {% endif %}
+                        {% endif %} 
+                            {% if perms.empleado.update_empleado %}
+                            <a href="{% url 'empleado:modificar-url' e.pk %}" class="btn btn-info fas fa-pen " data-editar="{{ e.pk }}"></a>  
+                            {% endif %}
+                            
+                            {% if e.usuario.is_active %}
+                                {% if not e.actualizoContrasena %}
+                                    {% if perms.empleado.obtener_contrasena %}
+                                    <button type="submit" class="imprimir btn btn-warning fas fa-key" form="formObtenerContrasena-{{e.pk}}"></button>
+                                    {% endif %}
+                                {% endif %}
+                                
+                                {% if e.actualizoContrasena %}
+                                    {% if perms.empleado.restablecer_contrasena %}
+                                    <button type="button" class="validarEmpleado btn btn-primary fas fa-user-lock" data-empleado="{{e.pk}}" data-toggle="modal" data-target="#modalReporte"></button>        
+                                    {% endif %}
+                                {% endif %}
+                            {% endif %}
+                                
+                            <form action="{% url 'empleado:reporte_contrasena-url' %}" method="post" target="_blank" id="formObtenerContrasena-{{e.pk}}">
+                                {% csrf_token %}
+                                <input type="hidden" name="codEmpleado" value="{{e.pk}}" id="">
+                            </form>     
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+<!-- Modal -->
+<div class="modal fade" id="modalDetalleRemision" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">Visualizacion de remision</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body modalCuerpoRemision">
+          ...
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary fas fa-times" id="cerrarModal" data-dismiss="modal"> Cerrar</button>
+          <a href="" class="btn btn-warning fas fa-print" id="imprimirRemision" target="_blank"> Imprimir</a>
+          <button type="button" class="btn btn-primary" id="terminarRemision">Continuar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+ <!-- Small modal 
+{# <button type="button" class="btn btn-primary" >Small modal</button> #}-->
+
+<div class="modal fade" id="modalReporte" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLongTitle">Restablecer contraseña</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body modalCuerpoReporte">
+               <p>Ingrese su contraseña para restablecer la contraseña del empleado seleccionado:</p> 
+               <input type="text" name="usuario" class="form-control" id="campoUsuario" autocomplete="nope" value="{{user}}" readonly style="display:none" >
+               <input type="password" name="contrasena" class="form-control" id="campoContrasena" autocomplete="nope">
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary fas fa-times" id="cerrarModal" data-dismiss="modal"> Cancelar</button>
+              <button class="btn btn-warning fas fa-key" id="imprimirReporte">Continuar</button>
+              <!-- <a href="" class="btn btn-warning fas fa-print" id="imprimirReporte" target="_blank"> Imprimir</a> -->
+            </div>
+          </div>
+        </div>
+        </div>
+
+{% endblock cuerpo %}
+{% load static %}
+{% block script %}
+<script src="{% static 'js/empleado.js'%}"></script>
+{% endblock script %}

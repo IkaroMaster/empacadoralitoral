@@ -36,6 +36,9 @@ from django.middleware import csrf
 
 # Create your views here.
 def Cosechas(request):
+	if not request.user.empleado.actualizoContrasena:
+		return HttpResponseRedirect(reverse('seguridad:log_out-url'))	
+		
 	estilos, clases = renderizado(2, 4)
 	cosecha = Cosecha.objects.all()#.order_by('-fecha')
 	detalleCosecha = DetalleCosecha.objects.all().order_by('numeroBin')

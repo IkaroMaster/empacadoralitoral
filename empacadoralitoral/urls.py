@@ -40,6 +40,10 @@ urlpatterns = [
     path("hielo_proceso/",include('apps.hielo_proceso.urls')),
     #Hielo de Proceso
     path("camaron/",include('apps.camaron.urls')),
+    #Hielo de Proceso
+    path("empleado/",include('apps.empleado.urls')),
+    #Vehiculos
+    path("vehiculo/",include('apps.vehiculo.urls')),
 
 ]+ static(settings.STATIC_URL, document_root = settings.STATIC_ROOT)
 
