@@ -1,80 +1,204 @@
-{% extends "../base_in.html" %}
-{% block titulo %}
-	Inicio
-{% endblock titulo %}
+{% extends "base.html" %}
 
-{% block l1 %}
-	active
-{% endblock %}
+{% block imagen %}
+<!-- {% load static %}
+  <img src="{% static 'imgs/fondo5.jpg' %}" alt="" style="position:absolute; z-index:0; width:100%; height:100%; opacity: 0.5"> -->
+<style>
+  body {
+    background: #d7d5d3;
+  }
+</style>
+{% endblock imagen %}
 
-{% block cuerpo %}
-<div class="card text-center">
-        <div class="panel-heading bg-primary" >
-                <h3 class="panel-title text-light">Remisiones de Hielo</h3>
-            </div>
-        <div class="card-header">
-          <ul class="nav nav-tabs card-header-tabs">
-            <li class="nav-item">
-              <a class="nav-link {{ clases.o1 }}" href="#">Crear Remision</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link {{ clases.o2 }}" href="#">Remisiones</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link {{ clases.o3 }}" href="#">Devolucion</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link {{ clases.o3 }}" href="#">Devoluciones</a>
-            </li>
-          </ul>
-        </div>
-        <div class="card-body">
-            <div style="{{estilos.o1}}">
-                {% comment %} <div class="row">
-                  <div class="col-md-5">
-                    <form action="" method="post" enctype="multipart/form-data">
-                      {% csrf_token %}	
-                      <input type="hidden" name="id_o" value="{{ id_o }}">	
-                      {{ formRemision.as_table }}	
-                      <input class="btn btn-primary" type="submit" value="Guardar">
-                      <br>
-                    </form>
-                  </div>
-                  <div class="col-md-7">
-                    <form action="" method="post" enctype="multipart/form-data">
-                      {% csrf_token %}	
-                      <input type="hidden" name="id_o" value="{{ id_o }}">	
-                      
-                      
-                        
-                        
-                        {% for dr in formDRemisionFS  %}
+{% load static %}
+{% block estilos %}
+<!-- <link rel="stylesheet" href="{% static 'css/base_in1.css' %}"> -->
 
-                        <div class="row">
-                          <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
-                            {{dr}}
-                          </div>
-                        </div>
-                        {% endfor %}
-                          
-                        
-                      
-                      <input class="btn btn-primary" type="submit" value="Guardar">
-                      <br>
-                    </form>
-                      {% load static %}
-                      <!--# <img class="img-circle" id="img-cliente" src="{% static 'imgs/lector.png' %}" style="width:300px" alt=""> -->
-                  </div>
-                </div>
-              </div> {% endcomment %}
-           <!-- <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eum molestias laboriosam dolor minus optio vero quae maxime aspernatur ut aliquam provident veritatis facere deserunt cupiditate, voluptates reprehenderit dolorum ratione sed!</p> -->
-          <!-- <h5 class="card-title">Special title treatment</h5>
-          <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-          <a href="#" class="btn btn-primary">Go somewhere</a> -->
-        </div>
+{% endblock%}
+
+
+{% block contenido %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top ">
+  <ul class="nav navbar-nav mr-auto">
+    <li class="nav-item">
+      <a class="navbar-brand" href="#">Control de Hielo de Empacadora Litoral</a>
+    </li>
+  </ul>
+  <ul class="nav navbar-nav ">
+      
+      <li class="nav-item ">
+          <a class="navbar-brand" href="#" >Bienvenido, {{user.get_full_name}}</a>
+          
+        </li>
+  </ul>
+</nav>
+
+
+<br>
+
+<div class="row">
+  
+  
+
+  {% if perms.prestamos.view_prestamoequipo %}
+  <div class="col-md-3 mb-4">
+    <div class="card ">
+      <div class="card-body" style="text-align: center;">
+        <a href="{% url 'prestamos:prestamos-url' %}"><strong class="">Préstamo de equipo </strong><span
+            class="badge badge-primary badge-pill">14</span></a><br>
+        <a href="{% url 'prestamos:prestamos-url' %}" class=" align-items-center"><img
+            src="{% static 'imgs/reserva.png' %}" width="40%" alt=""></a>
       </div>
+    </div>
+  </div>
+  {% endif %}
+  {% if perms.remision.view_remision %}
+  <div class="col-md-3 mb-4">
+    <div class="card">
+      <div class="card-body" style="text-align: center;">
+        <a href="{% url 'remision:remision-url' %}" ><strong class="">Remisiones </strong><span
+            class="badge badge-primary badge-pill">14</span></a><br>
+        <a href="{% url 'remision:remision-url' %}"  class=" align-items-center"><img
+          src="{% static 'imgs/remision.png' %}" width="38%" alt=""></a>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+  {% if perms.camaron.view_cosecha %}
+  <div class="col-md-3 mb-4">
+    <div class="card">
+      <div class="card-body" style="text-align: center;">
+        <a href="{% url 'camaron:cosechas-url' %}" ><strong class="">Camarón </strong><span
+            class="badge badge-primary badge-pill">14</span></a><br>
+        <a href="{% url 'camaron:cosechas-url' %}"  class=" align-items-center"><img
+          src="{% static 'imgs/camaron.png' %}" width="40%" alt=""></a>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+  
+  {% if perms.hielo_proceso.view_hieloproceso %}
+  <div class="col-md-3 mb-4">
+    <div class="card">
+      <div class="card-body" style="text-align: center;">
+        <a href="{% url 'hielo_proceso:dias-url' %}" ><strong class="">Hielo </strong><span
+            class="badge badge-primary badge-pill">14</span></a><br>
+        <a href="{% url 'hielo_proceso:dias-url' %}"  class=" align-items-center"><img
+          src="{% static 'imgs/hielo.png' %}" width="40%" alt=""></a>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+  {% if perms.equipo.view_equipo %}
+  <div class="col-md-3 mb-4">
+    <div class="card">
+      <div class="card-body" style="text-align: center;">
+        <a href="{% url 'equipo:equipo-url' 2 %}" ><strong class="">Bines y Equipo </strong><span
+            class="badge badge-primary badge-pill">14</span></a><br>
+        <a href="{% url 'equipo:equipo-url' 2 %}"  class=" align-items-center"><img
+          src="{% static 'imgs/almacen.png' %}" width="52%" alt=""></a>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+  {% if perms.compania.view_compania %}
+  <div class="col-md-3 mb-4">
+    <div class="card">
+      <div class="card-body" style="text-align: center;">
+        <a href="{% url 'compania:compania-url' 2 %}" ><strong class="">Empresas </strong><span
+            class="badge badge-primary badge-pill">14</span></a><br>
+        <a href="{% url 'compania:compania-url' 2 %}"  class=" align-items-center"><img
+          src="{% static 'imgs/compania2.png' %}" width="40%" alt=""></a>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+  {% if perms.vehiculo.view_vehiculo %}
+  <div class="col-md-3 mb-4">
+    <div class="card">
+      <div class="card-body" style="text-align: center;">
+        <a href="{% url 'vehiculo:vehiculos-url' %}"  ><strong class="">Vehículos </strong><span
+            class="badge badge-primary badge-pill">14</span></a><br>
+        <a href="{% url 'vehiculo:vehiculos-url' %}"   class=" align-items-center"><img
+          src="{% static 'imgs/vehiculo.png' %}" width="40%" alt=""></a>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+  {% if perms.conductor.view_conductor %}
+  <div class="col-md-3 mb-4">
+    <div class="card">
+      <div class="card-body" style="text-align: center;">
+        <a href="{% url 'conductor:conductores-url' %}" ><strong class="">Motoristas </strong><span
+            class="badge badge-primary badge-pill">14</span></a><br>
+        <a href="{% url 'conductor:conductores-url' %}"  class=" align-items-center"><img
+          src="{% static 'imgs/conductor.png' %}" width="56%" alt=""></a>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+  {% if perms.empleado.view_empleado %}
+  <div class="col-md-3 mb-4">
+    <div class="card">
+      <div class="card-body" style="text-align: center;">
+        <a href="{% url 'empleado:empleados-url'  %}" ><strong class="">Empleados </strong><span
+            class="badge badge-primary badge-pill">14</span></a><br>
+        <a href="{% url 'empleado:empleados-url'  %}"  class=" align-items-center"><img
+          src="{% static 'imgs/empleado.png' %}" width="40%" alt=""></a>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+  <div class="col-md-3 mb-4">
+    <div class="card">
+      <div class="card-body" style="text-align: center;">
+        <a href="{% url 'seguridad:log_out-url'%}" ><strong class=" text-black-50">Cerrar Sesión </strong></a><br>
+        <a href="{% url 'seguridad:log_out-url'%}"  class=" align-items-center"><img
+          src="{% static 'imgs/cerrarsesion.png' %}" width="40%" alt=""></a>
+      </div>
+    </div>
+  </div>
+ 
+  
+  
+</div>
+
+<div class="escaner border-danger">
+  <div id="resultado"></div>
+    <div id="camera"></div>
+</div>
 
 
+{% endblock %}
+ {% load static %}
+ {% block script %}
+  <script  src="{%static 'js/quagga/quagga.min.js'%}"></script>
 
-{% endblock cuerpo %}
-    
+  <script>
+
+        Quagga.init({
+            inputStream: {
+                name: "Live",
+                type: "LiveStream",
+                target: document.querySelector('#camera')    // Or '#yourElement' (optional)
+            },
+            decoder: {
+                readers: ["code_128_reader"]
+            }
+        }, function (err) {
+            if (err) {
+                console.log(err);
+                return
+            }
+            console.log("Initialization finished. Ready to start");
+            Quagga.start();
+        });
+
+        Quagga.onDetected(function (data) {
+            console.log(data.codeResult.code);
+            document.querySelector('#resultado').innerText = data.codeResult.code;
+        });
+
+    </script>
+ {% endblock script %}
+   

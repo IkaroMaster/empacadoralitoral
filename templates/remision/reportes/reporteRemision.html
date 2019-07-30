@@ -149,11 +149,28 @@ td {
  
 </style> 
 <body>
-   <center>
-   <!-- <img src="http://127.0.0.1:8000/static/img/logocacsan.png" width="160" ><br> -->
+
+    <div id="espacio1" style="width: 15%;display:inline-block;float:left">
+        {% load static %}
+        <img src="{% static 'imgs/logo_litoral.png'%}" alt="" style="width: 80pt">
+      </div>
+      <div id="espacio2" style="width: 70%;display:inline-block;">
+        <center>
+        <!-- <img src="http://127.0.0.1:8000/static/img/logocacsan.png" width="160" ><br> -->
+        <h2>EMPACADORA LITORAL,S.A DE C.V</h2>
+        <h3><u>NOTA DE REMISIÓN DE HIELO</u> <strong id="remision">Nº {{remision.numRemision}}</strong></h3>
+    
+      </center>
+      </div>
+      <div id="espacio3" style="width: 15%;display:inline-block;">
+    
+      </div>
+   <!-- <center>
+   <!-- <img src="http://127.0.0.1:8000/static/img/logocacsan.png" width="160" ><br> 
+
    <div class="Encabezado n1">
         {% load static %}
-        <img  id="logo" src="{% static 'imgs/logo_grupo_litoral.png'%}" alt="" width="10px" height="10px">
+        <img  id="logo" src="{% static 'imgs/logo_litoral.png'%}" alt="" width="10px" height="10px">
 
    </div>
     <div class="Encabezado n2">
@@ -161,12 +178,12 @@ td {
         <h3><u>NOTA DE REMISIÓN DE HIELO</u> <strong id="remision">Nº {{remision.numRemision}}</strong></h3>
     </div>
    <div class="Encabezado n3"></div>
-   
+   </center> -->
     
    <p class="TextoArriba"><strong>Consignado a:</strong> {{ remision.compania }}</p>
    <p class="TextoArriba"><strong>Retirado en:</strong>  Empacadora litoral</p> <!--{{ahora|date:"d/m/y"}}-->
    <p class="TextoArriba"><strong>Fecha:</strong> {{remision.fecha}} </p>
- </center>
+ 
  <p>A continuacion detallamos los articulos que enviamos.</p>
  <article id="tablaRemision">
     <table>

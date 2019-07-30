@@ -15,6 +15,10 @@ urlpatterns = [
     path("ajax_fecha/", views.Fecha1_asJson, name ="fecha-url"),
     path("reporte_mensual/", views.ReporteMensual, name ="reporte_mensual-url"),
 
+    #Graficos
+    path("grafico/",views.Grafico, name="grafico-url"),
+    path("data/",views.GraficoData, name="data-url"),
+
     # path("crear/",views.CrearPrestamo,name="crear_prestamo-url"),
     # path("anular/",views.anularPrestamo_asJson,name="ajax_anular_prestamo-url"),
     # path("ajax_terminar_prestamo/", views.terminarPrestamo_asJson, name ="terminarPrestamo_asJson-url"),

@@ -1,22 +1,22 @@
 {% extends "base_in.html" %}
 {% block titulo %}
-Vehiculos
+Conductores
 {% endblock titulo %}
-{% block l5 %}
+{% block l6 %}
 active
-{% endblock l5 %}
+{% endblock l6 %}
 {% block cuerpo %}
 <div class="card text-center">
     <div class="panel-heading bg-primary" >
-        <h3 class="panel-title text-light">Vehículos</h3>
+        <h3 class="panel-title text-light">Conductores</h3>
     </div>    
     <div class="card-header">
         <ul class="nav nav-tabs card-header-tabs">
             <li class="nav-item">
-                <a class="nav-link {{ clases.o1 }}" href="{% url 'vehiculo:crear-url' %}">Gestión de Vehiculo</a>
+                <a class="nav-link {{ clases.o1 }}" href="{% url 'conductor:crear-url' %}">Gestión de Conductor</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ clases.o2 }}" href="{% url 'vehiculo:vehiculos-url' %} ">Vehiculos</a>
+                <a class="nav-link {{ clases.o2 }}" href="{% url 'conductor:conductores-url' %} ">Conductores</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link {{ clases.o3 }} " href="">...</a>
@@ -39,35 +39,49 @@ active
                 <input type="hidden" name="crear" id="crear" value="{{ crear }}">
                 {% csrf_token %}
                 <div class="row container border p-2">
+                    <div class="col-12 row">
+                        <div class="col-4">
+                            <label for="">Numero de Identidad:</label>
+                            {{conductor_form.numIdentidad}}
+                            <br>
+                        </div>
+                        <div class="col-4">
+                            <label for="">Fecha de Nacimiento:</label>
+                            {{conductor_form.fechaNacimiento}}
+                            <br>
+                        </div>
+                        <div class="col-4">
+                            <label for="">Celular:</label>
+                            {{conductor_form.celular}}
+                            <br>
+                        </div>
+                    </div>
                     <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ">
-                        <label for="">Placa:</label>
-                        {{vehiculo_form.placa}}
+                        
+
+                        <label for="">Primer Nombre:</label>
+                        {{conductor_form.nombre1}}
                         <br>
 
-                        <label for="">Marca:</label>
-                        {{vehiculo_form.marca}}
-                        <br>
-
-                        <label for="">Modelo:</label>
-                        {{vehiculo_form.modelo}}
+                        <label for="">Primer Apellido:</label>
+                        {{conductor_form.apellido1}}
+                        <div style="display:none">
+                             {{conductor_form.activo}}
+                        </div>
                         <br>
                     
+                        
                     </div>
 
                     <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
                         
-                        <label for="">Año:</label>
-                        {{vehiculo_form.anio}}
+                        <label for="">Segundo Nombre:</label>
+                        {{conductor_form.nombre2}}
                         <br>
 
-                        <label for="">Color:</label>
-                        {{vehiculo_form.color}}
-                        <br><br>
-
-                        <label for="">Empresa:</label>
-                        {{vehiculo_form.empresaFlete}}
-                        <br><br>
-
+                        <label for="">Segundo Apellido:</label>
+                        {{conductor_form.apellido2}}
+                        <br>
                     </div>
                 </div>
                 <br>
@@ -82,28 +96,28 @@ active
             <table id="tablajs" class="table table-striped table-bordered" style="width:100%" class="display">
                 <thead class="thead-inverse">
                     <tr>
-                        <th data-priority="1">Placa</th>
-                        <th>Marca</th>
-                        <th>Modelo</th>
-                        <th>Año</th>
-                        <th>Color</th>
-                        <th>Empresa</th>
+                        <th data-priority="1">Identidad</th>
+                        <th>Nombre Completo</th>
+                        <th>Fecha de nacimiento</th>
+                        <th>celular</th>
                         <th data-priority="2">Acciones</th>
                         <!-- <th>Añadir</th> -->
                     </tr>
                 </thead>
                 <tbody>
-                    {% for v in vehiculos %}
-                    <tr id="fila-{{c.codCosecha}}">
-                        <td>{{ v.placa }}</td>
-                        <td>{{ v.marca }}</td>
-                        <td>{{ v.modelo }}</td>
-                        <td>{{ v.anio }}</td>
-                        <td>{{ v.color }}</td>
-                        <td>{{ v.empresaFlete }} </td>
+                    {% for c in conductores %}
+                    <tr id="fila-{{v.pk}}" 
+                    {% if not c.activo %}
+                        class="table-danger"
+                    {% endif %}
+                        >
+                        <td>{{ c.pk }}</td>
+                        <td>{{ c.nombre1 }} {{ c.nombre2 }} {{ c.apellido1 }} {{ c.apellido2 }}</td>
+                        <td>{{ c.fechaNacimiento }}</td>
+                        <td>{{ c.celular }}</td>
                         <td> 
                             {% if perms.vehiculo.update_vehiculo %}
-                            <a href="{% url 'vehiculo:modificar-url' v.pk %}" class="btn btn-info fas fa-pen " data-editar="{{ v.pk }}"></a>  
+                            <a href="{% url 'conductor:modificar-url' c.pk %}" class="btn btn-info fas fa-pen " data-editar="{{ v.pk }}"></a>  
                             {% endif %}
                             {% if perms.vehiculo.delete_vehiculo %}
                             <button class="eliminar btn btn-danger fas fa-trash-alt " data-eliminar="{{v.pk}}"></button>

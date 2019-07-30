@@ -8,7 +8,8 @@ class Conductor(models.Model):
 	apellido1 		= models.CharField(max_length=30)
 	apellido2 		= models.CharField(max_length=30,blank=True,null=True)
 	fechaNacimiento = models.DateField(auto_now_add=False,blank=True, null=True)
-	Celular 		= models.IntegerField(blank=True,null=True)
+	celular 		= models.IntegerField(blank=True,null=True)
+	activo			= models.BooleanField(default=True)
 
 	def __str__(self):
 		return "{} {}".format(self.nombre1,self.apellido1)

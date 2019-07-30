@@ -40,8 +40,15 @@ from django.conf import settings
 #FUNCIONES
 from apps.funciones import *
 
-# Create your views here.
+#PERMISOS
+from django.contrib.auth.decorators import login_required,permission_required
+from django.utils.decorators import method_decorator
+
+@login_required
+@permission_required('hielo_proceso.view_hieloproceso',raise_exception=True)
 def Dias(request):
+	if not request.user.empleado.actualizoContrasena:
+		return HttpResponseRedirect(reverse('seguridad:log_out-url'))	
 	estilos, clases = renderizado(2, 4)
 	hieloProceso = HieloProceso.objects.all().order_by('-fecha')
 	detalleHieloProceso = DetalleHieloProceso.objects.all().order_by('departamento')
@@ -51,10 +58,15 @@ def Dias(request):
 		 'clases': clases,
 		 'hieloProceso': hieloProceso,
 		 'detalleHieloProceso':detalleHieloProceso,
+		 'listado':True,
 	 }
 	return render(request, 'hielo_proceso/hielo_proceso.html', context)
 
+@login_required
+@permission_required('hielo_proceso.add_hieloproceso',raise_exception=True)
 def CrearProcesoHielo(request):
+	if not request.user.empleado.actualizoContrasena:
+		return HttpResponseRedirect(reverse('seguridad:log_out-url'))	
 	estilos, clases = renderizado(1, 4)
 	DetalleHieloFormSet = formset_factory(DetalleHieloForm,formset=BaseDetalleHieloFormSet)
 	if request.method == 'POST':
@@ -97,6 +109,9 @@ def CrearProcesoHielo(request):
 			if HieloProceso.objects.filter(fecha = request.POST['fecha']).exists():
 				messages.error(request, 'Ya existe un registro de hielo de proceso con la fecha '+request.POST['fecha'])
 				print('este registro ya existe en el sistema men!')
+			else:
+				messages.error(request, 'Los datos ingresados no son validos.')
+
 
 
 	else:
@@ -106,7 +121,8 @@ def CrearProcesoHielo(request):
 	FormControl(hielo_form)
 	fechaBasico(hielo_form,'fecha','...')
 	comboboxBasico(hielo_form,'registrado','Seleccione...','true',[])
-
+	 
+	hielo_form.fields['fecha'].widget.attrs['value'] = datetime.now().date()
 
 
 		# hielo_form.fields['compania'].widget.attrs['class'] = 'form-control selectpicker '
@@ -124,7 +140,12 @@ def CrearProcesoHielo(request):
 
 	return render(request,'hielo_proceso/hielo_proceso.html',context)
 
+
+@login_required
+@permission_required('hielo_proceso.change_hieloproceso',raise_exception=True)
 def ModificarProcesoHielo(request,pk):
+	if not request.user.empleado.actualizoContrasena:
+		return HttpResponseRedirect(reverse('seguridad:log_out-url'))	
 	estilos, clases = renderizado(1, 4)
 	DetalleHieloFormSet = formset_factory(DetalleHieloForm,formset=BaseDetalleHieloFormSet,extra=0)
 	hielo = HieloProceso.objects.get(pk = pk)
@@ -194,12 +215,16 @@ def ModificarProcesoHielo(request,pk):
 		'estilos':estilos,
 		'clases':clases,
 		'detalleHielo_formset': detalleHielo_formset,
-		'crear':False,
+		'editar':True,
+		'fecha':hielo.fecha,
 	}
 
 	return render(request,'hielo_proceso/hielo_proceso.html',context)
 
+@login_required
 def detalleHielo_asJson(request):
+	if not request.user.empleado.actualizoContrasena:
+		return HttpResponseRedirect(reverse('seguridad:log_out-url'))	
 	if request.is_ajax():		
 		id = request.GET['id']
 		hielo = HieloProceso.objects.get(pk=id)
@@ -313,8 +338,11 @@ def detalleHielo_asJson(request):
 
 
 
-@login_required()
+@login_required
+@permission_required('hielo_proceso.imprimir_hieloproceso',raise_exception=True)
 def ReporteDiario(request,id):
+	if not request.user.empleado.actualizoContrasena:
+		return HttpResponseRedirect(reverse('seguridad:log_out-url'))	
 	ahora = datetime.now()
 	hielo = HieloProceso.objects.get(pk=id)
 	detalleHielo = DetalleHieloProceso.objects.filter(hieloProceso= hielo)
@@ -359,6 +387,8 @@ def ReporteDiario(request,id):
 
 @login_required()
 def Fecha1_asJson(request):
+	if not request.user.empleado.actualizoContrasena:
+		return HttpResponseRedirect(reverse('seguridad:log_out-url'))	
 	if request.is_ajax():
 		mes = []
 		meses(mes)
@@ -413,6 +443,8 @@ def Fecha1_asJson(request):
 
 @login_required
 def ReporteMensual(request):
+	if not request.user.empleado.actualizoContrasena:
+		return HttpResponseRedirect(reverse('seguridad:log_out-url'))	
 	if request.method == 'POST':
 		ahora = datetime.now()
 		mes = request.POST['mes']
@@ -474,3 +506,87 @@ def ReporteMensual(request):
 		
 	else:
 		pass
+
+@login_required
+@permission_required('hielo_proceso.grafico_hieloproceso',raise_exception=True)
+def Grafico(request):
+	if not request.user.empleado.actualizoContrasena:
+		return HttpResponseRedirect(reverse('seguridad:log_out-url'))	
+
+	estilos, clases = renderizado(1, 4)
+	context = {
+		'estilos': estilos,
+		 'clases': clases,
+	 }
+	return render(request, 'hielo_proceso/graficos/grafico.html', context)
+
+@login_required
+@permission_required('hielo_proceso.grafico_hieloproceso',raise_exception=True)
+def GraficoData(request):
+	if not request.user.empleado.actualizoContrasena:
+		return HttpResponseRedirect(reverse('seguridad:log_out-url'))	
+
+	estilos, clases = renderizado(1, 4)
+	dataset = HieloProceso.objects.values('fecha').annotate(quintales=Cast(Sum((F('detallehieloproceso__binGrande') * binGrande())+(F('detallehieloproceso__binPequeno') * binPequeno())+(F('detallehieloproceso__carretonBlanco') * carretonBlanco())+(F('detallehieloproceso__glaseo') * glaseo())+(F('detallehieloproceso__canastaA') * canastaA())+(F('detallehieloproceso__canastapRoja') * canastapRoja())+(F('detallehieloproceso__canastapAzul') * canastapAzul())),FloatField())).order_by('fecha').order_by('fecha')
+	# print(dataset)
+	
+	# dias = dict()
+	# for ds in dataset:
+	# 	dias[ds[0]] = ds[1]
+	# print(dias)
+	chart = {
+		'chart': {'type': 'spline'},
+		'title': {'text': 'Consumo diario de hielo en proceso'},
+		'xAxis': {
+			'categories': list(map(lambda row: row['fecha'],dataset))
+		},
+		'yAxis': {'title': {'text': 'Quintal (Q)'}},
+		'plotOptions': {
+			'line': {
+				'dataLabels': {
+					'enabled': 'true'
+				},
+				'enableMouseTracking': 'false'
+			}
+		},
+		'series': [{
+			'name':'Fecha',
+			'data':list(map(lambda row: row['quintales'],dataset))
+		}],
+			# 'data': list(map(lambda row: {'name': port_display_name[row['embarked']], 'y': row['total']}, dataset))
+		
+	}
+	# chart = {
+	# 	'chart': {'type': 'column'},
+	# 	'title': {'text': 'Consumo diario de hielo en proceso'},
+	# 	'xAxis': {
+	#         'categories': ['Total de hielo']
+	#     },
+	# 	'series': list(map(lambda row: {'name':row['fecha'],'data':str(row['quintales'],)},dataset))
+	# 		# 'data': list(map(lambda row: {'name': port_display_name[row['embarked']], 'y': row['total']}, dataset))
+		
+	# }
+	print(chart)
+	return JsonResponse(chart)
+
+	# Highcharts.chart('container', {
+	#     chart: {
+	#         type: 'column'
+	#     },
+	#     title: {
+	#         text: 'Historic World Population by Region'
+	#     },
+	#     xAxis: {
+	#         categories: ['Africa', 'America', 'Asia', 'Europe', 'Oceania']
+	#     },
+	#     series: [{
+	#         name: 'Year 1800',
+	#         data: [107, 31, 635, 203, 2]
+	#     }, {
+	#         name: 'Year 1900',
+	#         data: [133, 156, 947, 408, 6]
+	#     }, {
+	#         name: 'Year 2012',
+	#         data: [1052, 954, 4250, 740, 38]
+	#     }]
+	# });

@@ -1,39 +1,141 @@
 {% extends "base.html" %}
 
 {% block imagen %}
-  <!-- {% load static %}
+<!-- {% load static %}
   <img src="{% static 'imgs/fondo5.jpg' %}" alt="" style="position:absolute; z-index:0; width:100%; height:100%; opacity: 0.5"> -->
-  <style>
-    body {
-      background: #d7d5d3;
-    }
-
-    
-  </style>
+<style>
+  body {
+    background: #d7d5d3;
+  }
+</style>
 {% endblock imagen %}
 
 {% load static %}
 {% block estilos %}
 <!-- <link rel="stylesheet" href="{% static 'css/base_in1.css' %}"> -->
 {% endblock%}
-  
 
 {% block contenido %}
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top ">
-  <a class="navbar-brand " href="{% url 'inicio:inicio-url'%}"><img style="display:inline-block" src="{% static 'imgs/logo.png' %}" width="30px"> Control de hielo</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top mb-2 ">
+  <a class="navbar-brand " href="{% url 'inicio:inicio-url'%}"><img style="display:inline-block"
+      src="{% static 'imgs/iconito.png' %}" width="35px"> Control de hielo</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon "></span>
   </button>
-
+  
+  
+    
+  
+    
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
+      <li class="movil">
+          {% comment %}
+          {% if perms.prestamos.view_prestamoequipo %}
+          <a href="{% url 'prestamos:prestamos-url' %}" class="nav-link text-white"> <strong>Préstamo de equipo</strong><span
+              class="badge">{{ c_ventas }}</span></a>
+          {% endif %}
+          {% if perms.remision.view_remision %}
+          <a href="{% url 'remision:remision-url' %}" class="nav-link text-white"> <strong>Remisiones</strong><span
+              class="badge">{{ c_ventas }}</span></a>
+          {% endif %}
+          {% if perms.camaron.view_cosecha %}
+          <a href="{% url 'camaron:cosechas-url' %}" class="nav-link text-white"> <strong>Camaron</strong><span
+              class="badge">{{ c_ventas }}</span></a>
+          {% endif %}
+          {% if perms.hielo_proceso.view_hieloproceso %}
+          <a href="{% url 'hielo_proceso:dias-url' %}" class="nav-link text-white"> <strong>Hielo</strong><span
+              class="badge">{{ c_ventas }}</span></a>
+          {% endif %}
+          {% if perms.equipo.view_equipo %}
+          <a href="{% url 'equipo:equipo-url' 2 %}" class="nav-link text-white"> <strong>Bines y Equipo</strong><span
+              class="badge">{{ c_ventas }}</span></a>
+          {% endif %}
+          {% if perms.compania.view_compania %}
+          <a href="{% url 'compania:compania-url' 2 %}" class="nav-link text-white"> <strong>Empresas</strong><span
+              class="badge">{{ c_clientes }}</span></a>
+          {% endif %}
+          {% if perms.vehiculo.view_vehiculo %}
+          <a href="{% url 'vehiculo:vehiculos-url' %}" class="nav-link text-white"> <strong>Vehiculos</strong><span
+              class="badge">{{ c_clientes }}</span></a>
+          {% endif %}
+          {% if perms.conductor.view_conductor %}
+          <a href="{% url 'conductor:conductores-url' %}" class="nav-link text-white"> <strong>Conductores</strong><span
+              class="badge">{{ c_clientes }}</span></a>
+          {% endif %}
+          {% if perms.empleado.view_empleado %}
+          <a href="{% url 'empleado:empleados-url'  %}" class="nav-link text-white"> <strong>Empleados</strong><span
+              class="badge">{{ c_clientes }}</span></a>
+          {% endif %}
+          <a href="{% url 'seguridad:log_out-url'  %}" class="nav-link text-white"> <strong>Cerrar Sesión</strong><span
+              class="badge">{{ c_clientes }}</span></a>
+
+              {% endcomment %}
+          <div id="comentario"><!--     </div> 
+          {% if perms.prestamos.view_prestamoequipo %}
+          <a href="{% url 'prestamos:prestamos-url' %}" class="nav-link text-white"><img
+              src="{% static 'imgs/reserva.png' %}" width="50px" alt=""> <strong>Préstamo de equipo</strong><span
+              class="badge">{{ c_ventas }}</span></a>
+          {% endif %}
+          {% if perms.remision.view_remision %}
+          <a href="{% url 'remision:remision-url' %}" class="nav-link text-white"><img
+              src="{% static 'imgs/remision.png' %}" width="50px" alt=""> <strong>Remisiones</strong><span
+              class="badge">{{ c_ventas }}</span></a>
+          {% endif %}
+          {% if perms.camaron.view_cosecha %}
+          <a href="{% url 'camaron:cosechas-url' %}" class="nav-link text-white"><img
+              src="{% static 'imgs/camaron.png' %}" width="50px" alt=""> <strong>Camaron</strong><span
+              class="badge">{{ c_ventas }}</span></a>
+          {% endif %}
+          {% if perms.hielo_proceso.view_hieloproceso %}
+          <a href="{% url 'hielo_proceso:dias-url' %}" class="nav-link text-white"><img
+              src="{% static 'imgs/hielo.png' %}" width="50px" alt=""> <strong>Hielo</strong><span
+              class="badge">{{ c_ventas }}</span></a>
+          {% endif %}
+          {% if perms.equipo.view_equipo %}
+          <a href="{% url 'equipo:equipo-url' 2 %}" class="nav-link text-white"><img
+              src="{% static 'imgs/almacen.png' %}" width="50px" alt=""> <strong>Bines y Equipo</strong><span
+              class="badge">{{ c_ventas }}</span></a>
+          {% endif %}
+          {% if perms.compania.view_compania %}
+          <a href="{% url 'compania:compania-url' 2 %}" class="nav-link text-white"><img
+              src="{% static 'imgs/compania2.png' %}" width="50px" alt=""> <strong>Empresas</strong><span
+              class="badge">{{ c_clientes }}</span></a>
+          {% endif %}
+          {% if perms.vehiculo.view_vehiculo %}
+          <a href="{% url 'vehiculo:vehiculos-url' %}" class="nav-link text-white"><img
+              src="{% static 'imgs/vehiculo.png' %}" width="50px" alt=""> <strong>Vehiculos</strong><span
+              class="badge">{{ c_clientes }}</span></a>
+          {% endif %}
+          {% if perms.conductor.view_conductor %}
+          <a href="{% url 'conductor:conductores-url' %}" class="nav-link text-white"><img
+              src="{% static 'imgs/conductor.png' %}" width="50px" alt=""> <strong>Conductores</strong><span
+              class="badge">{{ c_clientes }}</span></a>
+          {% endif %}
+          {% if perms.empleado.view_empleado %}
+          <a href="{% url 'empleado:empleados-url'  %}" class="nav-link text-white"><img
+              src="{% static 'imgs/empleado.png' %}" width="50px" alt=""> <strong>Empleados</strong><span
+              class="badge">{{ c_clientes }}</span></a>
+          {% endif %}
+          <a href="{% url 'seguridad:log_out-url'  %}" class="nav-link text-white"><img
+              src="{% static 'imgs/cerrarsesion.png' %}" width="50px" alt=""> <strong>Cerrar Sesión</strong><span
+              class="badge">{{ c_clientes }}</span></a>
+               
+           <!---->
+                
+              
+                
+      </li>
       
+      {% comment %} 
       <li class="nav-item">
         <a class="nav-link" href="#">Link</a>
       </li>
-      <li class="nav-item dropdown " >
-        
-        <a class="nav-link dropdown-toggle text-white " href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <li class="nav-item dropdown ">
+
+        <a class="nav-link dropdown-toggle text-white " href="#" id="navbarDropdown" role="button"
+          data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Gráficos
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -45,7 +147,8 @@
         </div>
       </li>
       <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false">
           Reportes
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -59,73 +162,94 @@
       <li class="nav-item">
         <a class="nav-link disabled" href="#">Disabled</a>
       </li>
+      {% endcomment %}
     </ul>
+    
     <!-- <form class="form-inline my-2 my-lg-0">
       <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
       <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
     </form> -->
-    <ul class="nav navbar-nav ">
-        <li class="nav-item ">
-          <a class="nav-link text-white" href="#"> <span class="sr-only">(current)</span></a>
-        </li>
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{user.get_full_name}}</a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="#">Opciones</a>
-                <div class="dropdown-divider"></div>
-                <a class="fas fa-door-open dropdown-item  " href="{% url 'seguridad:log_out-url'%}"> Cerrar sesión</a>
-            </div>
-          </li>
+    <ul class="nav navbar-nav escritorio">
+      <li class="nav-item ">
+        <a class="nav-link text-white" href="#"> <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false">{{user.get_full_name}}</a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item disabled" href="#">Opciones</a>
+          <div class="dropdown-divider"></div>
+          <a class=" dropdown-item  " href="{% url 'seguridad:log_out-url'%}"> Cerrar sesión</a>
+        </div>
+      </li>
       <li class="nav-item ">
       </li>
     </ul>
   </div>
 </nav>
 
-<!-- <nav class="navbar  fixed-top navbar-dark bg-dark  navbar-expand-sm">
 
-  <a class="navbar-brand" href="/">Control de Hielo</a>
-  
-  <ul class="navbar-nav">
-      <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
-            Dropdown link
-          </a>
-          <div class="dropdown-menu">
-            <a class="dropdown-item" href="#">Link 1</a>
-            <a class="dropdown-item" href="#">Link 2</a>
-            <a class="dropdown-item" href="#">Link 3</a>
-          </div>
-        </li>
-  </ul>
-  
-   Navbar content -->
-  <br>
-  
-  <div class="row">  
-      <div class="col-md-3">
-        <ul class="list-group">
-            <a href="{% url 'prestamos:prestamos-url' %}" class="list-group-item{% block l3 %}{% endblock %}"><img src="{% static 'imgs/reserva.png' %}" width="50px" alt=""> <strong>Préstamo de equipo</strong><span class="badge">{{ c_ventas }}</span></a>
-            {% if perms.remision.view_remision %}
-             <a href="{% url 'remision:remision-url' %}" class="list-group-item{% block l1 %}{% endblock %}"><img src="{% static 'imgs/remision.png' %}" width="50px" alt=""> <strong>Remisiones</strong><span class="badge">{{ c_ventas }}</span></a>
-            {% endif %}
-            <a href="{% url 'camaron:cosechas-url' %}" class="list-group-item{% block l9 %}{% endblock %}"><img src="{% static 'imgs/camaron.png' %}" width="50px" alt=""> <strong>Camaron</strong><span class="badge">{{ c_ventas }}</span></a>
-            <a href="{% url 'hielo_proceso:dias-url' %}" class="list-group-item{% block l8 %}{% endblock %}"><img src="{% static 'imgs/hielo.png' %}" width="50px" alt=""> <strong>Hielo</strong><span class="badge">{{ c_ventas }}</span></a>
-            <a href="{% url 'equipo:equipo-url' 2 %}" class="list-group-item{% block l2 %}{% endblock %}"><img src="{% static 'imgs/almacen.png' %}" width="50px" alt=""> <strong>Equipo</strong><span class="badge">{{ c_ventas }}</span></a>
-            <a href="{% url 'compania:compania-url' 2 %}" class="list-group-item{% block l4 %}{% endblock %}"><img src="{% static 'imgs/lector.png' %}" width="50px" alt=""> <strong>Empresas</strong><span class="badge">{{ c_clientes }}</span></a>
-            <a href="{% url 'vehiculo:vehiculos-url' %}" class="list-group-item{% block l5 %}{% endblock %}"><img src="{% static 'imgs/vehiculo.png' %}" width="50px" alt=""> <strong>Vehiculos</strong><span class="badge">{{ c_clientes }}</span></a>
-            <a href="{% url 'compania:compania-url' 2 %}" class="list-group-item{% block l6 %}{% endblock %}"><img src="{% static 'imgs/lector.png' %}" width="50px" alt=""> <strong>Conductores</strong><span class="badge">{{ c_clientes }}</span></a>
-            <a href="{% url 'empleado:empleados-url'  %}" class="list-group-item{% block l7 %}{% endblock %}"><img src="{% static 'imgs/bibliotecario.png' %}" width="50px" alt=""> <strong>Empleados</strong><span class="badge">{{ c_clientes }}</span></a>
-        </ul>
+<div class="row" >
+  <div class="col-md-3 escritorio" id="menuLateral">
+    <ul class="list-group">
+      {% if perms.prestamos.view_prestamoequipo %}
+      <a href="{% url 'prestamos:prestamos-url' %}" class="list-group-item{% block l3 %}{% endblock %}"><img
+          src="{% static 'imgs/reserva.png' %}" width="50px" alt=""> <strong>Préstamo de equipo</strong><span
+          class="badge">{{ c_ventas }}</span></a>
+      {% endif %}
+      {% if perms.remision.view_remision %}
+      <a href="{% url 'remision:remision-url' %}" class="list-group-item{% block l1 %}{% endblock %}"><img
+          src="{% static 'imgs/remision.png' %}" width="50px" alt=""> <strong>Remisiones</strong><span
+          class="badge">{{ c_ventas }}</span></a>
+      {% endif %}
+      {% if perms.camaron.view_cosecha %}
+      <a href="{% url 'camaron:cosechas-url' %}" class="list-group-item{% block l9 %}{% endblock %}"><img
+          src="{% static 'imgs/camaron.png' %}" width="50px" alt=""> <strong>Camaron</strong><span
+          class="badge">{{ c_ventas }}</span></a>
+      {% endif %}
+      {% if perms.hielo_proceso.view_hieloproceso %}
+      <a href="{% url 'hielo_proceso:dias-url' %}" class="list-group-item{% block l8 %}{% endblock %}"><img
+          src="{% static 'imgs/hielo.png' %}" width="50px" alt=""> <strong>Hielo</strong><span
+          class="badge">{{ c_ventas }}</span></a>
+      {% endif %}
+      {% if perms.equipo.view_equipo %}
+      <a href="{% url 'equipo:equipo-url' 2 %}" class="list-group-item{% block l2 %}{% endblock %}"><img
+          src="{% static 'imgs/almacen.png' %}" width="50px" alt=""> <strong>Bines y Equipo</strong><span
+          class="badge">{{ c_ventas }}</span></a>
+      {% endif %}
+      {% if perms.compania.view_compania %}
+      <a href="{% url 'compania:compania-url' 2 %}" class="list-group-item{% block l4 %}{% endblock %}"><img
+          src="{% static 'imgs/compania2.png' %}" width="50px" alt=""> <strong>Empresas</strong><span
+          class="badge">{{ c_clientes }}</span></a>
+      {% endif %}
+      {% if perms.vehiculo.view_vehiculo %}
+      <a href="{% url 'vehiculo:vehiculos-url' %}" class="list-group-item{% block l5 %}{% endblock %}"><img
+          src="{% static 'imgs/vehiculo.png' %}" width="50px" alt=""> <strong>Vehiculos</strong><span
+          class="badge">{{ c_clientes }}</span></a>
+      {% endif %}
+      {% if perms.conductor.view_conductor %}
+      <a href="{% url 'conductor:conductores-url' %}" class="list-group-item{% block l6 %}{% endblock %}"><img
+          src="{% static 'imgs/conductor.png' %}" width="50px" alt=""> <strong>Conductores</strong><span
+          class="badge">{{ c_clientes }}</span></a>
+      {% endif %}
+      {% if perms.empleado.view_empleado %}
+      <a href="{% url 'empleado:empleados-url'  %}" class="list-group-item{% block l7 %}{% endblock %}"><img
+          src="{% static 'imgs/empleado.png' %}" width="50px" alt=""> <strong>Empleados</strong><span
+          class="badge">{{ c_clientes }}</span></a>
+      {% endif %}
+    </ul>
 
-      </div>
-        <div class="col-md-9">
-          {% block cuerpo %}
-          {% endblock cuerpo %}
-        </div>
   </div>
+  <div class="col-md-9">
+    <div id="contenedorSecundario" class="">
+      {% block cuerpo %}
+    {% endblock cuerpo %}
+    </div>
+    
+  </div>
+</div>
 
 
-  
+
 
 {% endblock %}

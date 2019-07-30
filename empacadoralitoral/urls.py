@@ -38,12 +38,14 @@ urlpatterns = [
     path("remision/",include('apps.remision.urls')),
     #Hielo de Proceso
     path("hielo_proceso/",include('apps.hielo_proceso.urls')),
-    #Hielo de Proceso
+    #Camaron
     path("camaron/",include('apps.camaron.urls')),
-    #Hielo de Proceso
+    #Empleado
     path("empleado/",include('apps.empleado.urls')),
-    #Vehiculos
+    #Vehiculo
     path("vehiculo/",include('apps.vehiculo.urls')),
+    #Conductor
+    path("conductor/",include('apps.conductor.urls')),
 
 ]+ static(settings.STATIC_URL, document_root = settings.STATIC_ROOT)
 

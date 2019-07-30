@@ -21,6 +21,12 @@ class Cosecha(models.Model):
 	def __str__(self):
 		return self.codCosecha
 
+	class Meta:
+		verbose_name_plural = 'Cosechas'
+		permissions	= [
+			("imprimir_cosecha","Puede imprimir las cosechas"),
+		]
+
 class  DetalleCosecha(models.Model):
 	cosecha 		= models.ForeignKey(Cosecha, on_delete=models.CASCADE,blank=True, null=True)
 	totalCanasta	= models.PositiveIntegerField(default=0)

@@ -31,7 +31,7 @@ def comboboxBasico(objeto,campo,mensaje,buscador,queryset):
 	
 	objeto.fields[campo].widget.attrs['class'] = 'selectpicker form-control show-tick'
 	objeto.fields[campo].widget.attrs['data-live-search'] = buscador
-	objeto.fields[campo].widget.attrs['data-size'] = 3
+	objeto.fields[campo].widget.attrs['data-size'] = 4
 	# objeto.fields[campo].widget.attrs['data-show-subtext'] = buscador
 
 

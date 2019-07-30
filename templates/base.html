@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{% block titulo %}{% endblock titulo %}</title>
     {% load static %}
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'imgs/iconito.png' %}">
     <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
     <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap-select.min.css' %}">
 	<link rel="stylesheet" href="{% static 'bootstrap/css/jasny-bootstrap.min.css' %}">
@@ -27,7 +28,7 @@
         
     {% endblock imagen %}
     
-    <div class="container">
+    <div id="contenedorPrincipal" class="container">
         
         {% block contenido %}
             
@@ -51,6 +52,8 @@
 	
 	<script src="{% static 'bootstrap/js/jasny-bootstrap.min.js' %}"></script>
     <script src="{% static 'bootstrap/js/jquery.formset.js' %}"></script>
+    <script src="{% static 'js/base_in.js'%}"></script>
+
     
     <!-- READONLY : PARA CONVERTIR SELECT EN READONLY -->
     <!-- <script src="{%static 'js/readonly/dist/readonly.js'%} "></script> -->
@@ -61,7 +64,12 @@
     <!--FONTAWESOME: ICONOS PARA BOOTSTRAP 4-->
     <!-- <script src="{% static 'fontawesome/js/all.min.js'%}"></script> -->
     <!-- <script src="{% static 'bootstrap/js/bootstrap-select.js' %}"></script> -->
-	<!-- <script src="{% static 'bootstrap/js/jasny-bootstrap.js' %}"></script> -->
+    <!-- <script src="{% static 'bootstrap/js/jasny-bootstrap.js' %}"></script> -->
+    
+    <!-- HIGHCHARTS: GENERAR GRAFICOS
+    <script src="{% static 'js/highcharts/highcharts.js'%}"></script>
+    <script src="{% static 'js/highcharts/exporting.js'%}"></script>
+    <script src="{% static 'js/highcharts/highcharts-more.js'%}"></script> -->
     {% block script %}		
 	{% endblock  %}
 </body>

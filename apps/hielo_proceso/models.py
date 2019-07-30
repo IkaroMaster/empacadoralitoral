@@ -25,6 +25,12 @@ class HieloProceso(models.Model):
     registrado              = models.ForeignKey(Empleado, on_delete=models.CASCADE)
     def __str__(self):
         return '{}'.format(self.fecha)
+    class Meta:
+        verbose_name_plural = 'Hielo utilizado en proceso'
+        permissions = [
+            ("imprimir_hieloproceso","Puede imprimir el consumo de hielo en proceso"),
+            ("grafico_hieloproceso","Puede graficar el consumo de hielo en proceso"),
+        ]
 
 # class DetalleHieloProceso(models.Model):
 #     def __str__(self):
@@ -32,7 +38,7 @@ class HieloProceso(models.Model):
 
 class DetalleHieloProceso(models.Model):
     hieloProceso  	    = models.ForeignKey(HieloProceso, on_delete=models.CASCADE,blank=True, null=True)
-    departamento      	= models.ForeignKey(DepartamentoProceso, on_delete=models.PROTECT)
+    departamento      	= models.ForeignKey(DepartamentoProceso, on_delete=models.PROTECT,blank=False, null=False)
     binGrande           = models.PositiveIntegerField(default=0)
     binPequeno          = models.PositiveIntegerField(default=0)
     carretonBlanco      = models.PositiveIntegerField(default=0)

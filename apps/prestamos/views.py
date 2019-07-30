@@ -24,6 +24,10 @@ from .forms import *
 #FUNCIONES
 from apps.funciones import renderizado
 
+#PERMISOS
+from django.contrib.auth.decorators import login_required,permission_required
+from django.utils.decorators import method_decorator
+
 
 class ListadoPrestamoList(ListView):
 
@@ -35,10 +39,20 @@ class ListadoPrestamoList(ListView):
 		ctx = super(ListadoPrestamoList, self).get_context_data(**kwargs)
 		ctx['estilos'] = estilos
 		ctx['clases'] = clases
+		ctx['listado'] = True
 		return ctx
 
+	@method_decorator(login_required)
+	@method_decorator(permission_required('prestamos.view_prestamoequipo',raise_exception=True))
+	def dispatch(self, *args, **kwargs):
+		return super(ListadoPrestamoList, self).dispatch(*args, **kwargs)
+
 @login_required()
+@permission_required('prestamos.add_prestamoequipo',raise_exception=True)
 def CrearPrestamo(request):
+	if not request.user.empleado.actualizoContrasena:
+		return HttpResponseRedirect(reverse('seguridad:log_out-url'))	
+
 	estilos, clases = renderizado(1, 4)
 	
 	DetallePrestamoFormSet = formset_factory(DetallePrestamoForm,formset=BaseDetallePrestamoFormSet)
@@ -94,12 +108,12 @@ def CrearPrestamo(request):
 						print("*************************************")
 					#Redireccionamos a la ventana del listado de compras
 					messages.success(request, 'Usted ha creado el prestamo de equipo.')
+					return redirect(reverse('prestamos:prestamos-url'))
 
 			except IntegrityError: #If the transaction failed
 				messages.error(request, 'Ha ocurrido un error al intentar guardar el prestamo de equipo.')
-				return redirect(reverse('prestamos:prestamos-url'))
 		else:
-			messages.error(request, 'Informacion requerida incompleta para crear la remision.')	
+			messages.error(request, 'Informacion requerida incompleta para crear el prestamo de equipo.')	
 
 		# prestamo_form = PrestamoForm()
 	else:
@@ -118,12 +132,7 @@ def CrearPrestamo(request):
 	comboboxBasico(prestamo_form,'conductor','Seleccione...','true',[])
 	comboboxBasico(prestamo_form,'empleado','Seleccione...','true',[])
 	
-
-
-		# prestamo_form.fields['compania'].widget.attrs['class'] = 'form-control selectpicker '
-		# prestamo_form.fields['placa'].widget.attrs['class'] = 'selectpicker custom-select'
-		# prestamo_form.fields['compania'].widget.attrs['id'] = 'xv'
-
+	prestamo_form.fields['fechaSalida'].widget.attrs['value'] = datetime.now().date()
 
 	context = {
 		'prestamo_form': prestamo_form,
@@ -134,17 +143,20 @@ def CrearPrestamo(request):
 	}
 	return render(request,'prestamos/prestamos.html',context)
 
-# @login_required
+@login_required()
+@permission_required('prestamos.change_prestamoequipo',raise_exception=True)
 def ModificarPrestamo(request,pk):
+	if not request.user.empleado.actualizoContrasena:
+		return HttpResponseRedirect(reverse('seguridad:log_out-url'))	
 	estilos, clases = renderizado(1, 4)
-	DetallePrestamoFormSet = formset_factory(DetallePrestamoForm, formset=BaseDetallePrestamoFormSet,extra=0)
+	DetallePrestamoFormSet = formset_factory(EditarDetallePrestamoForm, formset=BaseDetallePrestamoFormSet,extra=0)
 	prestamo = PrestamoEquipo.objects.get(pk = pk)
 	prestamoDetalles = DetallePrestamoEquipo.objects.filter(prestamoEquipo=prestamo) #.order_by('pk')
 	prestamoDetalles_data = [{'prestamoEquipo':rd.prestamoEquipo,'descripcion': rd.descripcion, 'equipo': rd.equipo,'tapadera':rd.tapadera} for rd in prestamoDetalles]
 	
 	if request.method == 'POST':
 		prestamo_form = PrestamoForm(request.POST,instance = prestamo)
-		detallePrestamo_formset = DetallePrestamoFormSet(request.POST)
+		detallePrestamo_formset = DetallePrestamoFormSet(request.POST,form_kwargs={'prestamo':pk})
 		if prestamo_form.is_valid() and detallePrestamo_formset.is_valid():
 			prestamo_form.save()
 			prestamo = PrestamoEquipo.objects.get(pk=prestamo_form.cleaned_data.get('numPrestamo'))
@@ -177,13 +189,13 @@ def ModificarPrestamo(request,pk):
 							x.save()
 						print("*************************************")
 					messages.success(request,'Usted ha actualizado la remision')
+					return redirect(reverse('prestamos:prestamos-url'))
 
 			except IntegrityError:
 				messages.error(request, 'Ha ocurrido un error al intentar guardar el detalle del prestamo.')
-				return redirect(reverse('prestamos:prestamos-url'))
 	else:
 		prestamo_form = PrestamoForm(instance=prestamo)
-		detallePrestamo_formset = DetallePrestamoFormSet(initial=prestamoDetalles_data)
+		detallePrestamo_formset = DetallePrestamoFormSet(initial=prestamoDetalles_data,form_kwargs={'prestamo':pk})
 
 	# dpf = DetallePrestamoForm()
 	# dp = DetallePrestamoEquipo.objects.filter(prestamoEquipo = prestamo)
@@ -207,12 +219,8 @@ def ModificarPrestamo(request,pk):
 	comboboxBasico(prestamo_form,'placa','Seleccione...','true',[])
 	comboboxBasico(prestamo_form,'conductor','Seleccione...','true',[])
 	comboboxBasico(prestamo_form,'empleado','Seleccione...','true',[])
-	
 
-
-		# prestamo_form.fields['compania'].widget.attrs['class'] = 'form-control selectpicker '
-		# prestamo_form.fields['placa'].widget.attrs['class'] = 'selectpicker custom-select'
-		# prestamo_form.fields['compania'].widget.attrs['id'] = 'xv'
+	prestamo_form.fields['numPrestamo'].widget.attrs['readonly']='True'
 
 
 	context = {
@@ -220,11 +228,16 @@ def ModificarPrestamo(request,pk):
 		'estilos':estilos,
 		'clases':clases,
 		'detallePrestamo_formset': detallePrestamo_formset,
-		'crear':False,
+		'editar':True,
+		'prestamo':pk,
 	}
 	return render(request,'prestamos/prestamos.html',context)
 
+@login_required()
+@permission_required('prestamos.anular_prestamoequipo',raise_exception=True)
 def anularPrestamo_asJson(request):
+	if not request.user.empleado.actualizoContrasena:
+		return HttpResponseRedirect(reverse('seguridad:log_out-url'))	
 	if request.is_ajax():
 		id = request.GET['id']
 		prestamo = PrestamoEquipo.objects.get(pk = id)
@@ -257,9 +270,13 @@ def anularPrestamo_asJson(request):
 		print("***********************************************************************")
 		print('prestamo no anulado porque la peticion no cumple con los requisitos.')
 		print("***********************************************************************")
+		return render(request,'404.html')
 
-
+@login_required()
+@permission_required('prestamos.terminar_prestamoequipo',raise_exception=True)
 def terminarPrestamo_asJson(request):
+	if not request.user.empleado.actualizoContrasena:
+		return HttpResponseRedirect(reverse('seguridad:log_out-url'))	
 	if request.is_ajax():
 		if request.method == 'POST':
 			prestamo = PrestamoEquipo.objects.get(pk=request.POST['id'])
@@ -339,10 +356,14 @@ def terminarPrestamo_asJson(request):
 				}
 			return JsonResponse(data)
 	else:
-		pass
+		return render(request,'404.html')
 
 
+@login_required()
+@permission_required('prestamos.view_prestamoequipo',raise_exception=True)
 def detallePrestamo_asJson(request):
+	if not request.user.empleado.actualizoContrasena:
+		return HttpResponseRedirect(reverse('seguridad:log_out-url'))	
 	if request.is_ajax():		
 		numPrestamo = request.GET['id']
 		prestamo = PrestamoEquipo.objects.get(pk=numPrestamo)
@@ -422,7 +443,8 @@ def detallePrestamo_asJson(request):
 			
 			htmlDetalleRemision += '''
 				<p>A continuacion detallamos los articulos que enviamos.</p>
-				<table class="table table-bordered">
+				<div class="table-responsive">
+				<table class="table table-bordered ">
 						<thead>
 						<tr>
 							<th scope="col">Cantidad</th>
@@ -449,6 +471,7 @@ def detallePrestamo_asJson(request):
 			htmlDetalleRemision += '''
 					</tbody>
 				</table>
+				</div>
 				<div class="row container">
 					<div class="col-6 border"><p><strong>Entrego: </strong>{}</p></div>
 					<div class="col-6 border"><p><strong>Recibio: </strong>{}</p>
@@ -466,7 +489,7 @@ def detallePrestamo_asJson(request):
 			}
 		return JsonResponse(data)
 	else:
-		pass
+		return render(request,'404.html')
 
 	# """
 	# Allows a user to update their own profile.

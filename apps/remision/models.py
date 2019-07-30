@@ -35,9 +35,9 @@ class TipoRemision(models.Model):
 		verbose_name_plural = 'Tipo de movimiento de remision'
 
 class EstadoRemision(models.Model):
-    estado          = models.CharField(max_length=15)
-    def __str__(self):
-        return '{} {}'.format(self.id,self.estado)
+	estado          = models.CharField(max_length=15)
+	def __str__(self):
+		return '{}'.format(self.estado)
 
 
 class Remision(models.Model):
@@ -58,11 +58,12 @@ class Remision(models.Model):
 	# cantidad		= models.IntegerField()
 
 	def __str__(self):
-		return "{} -> {}".format(self.numRemision,self.compania)
+		return "{}".format(self.pk)
 	class Meta:
 		verbose_name_plural = 'Remisiones de hielo'
 		permissions	= [
 			("terminar_remision","Puede terminar la remision de hielo"),
+			("generar_reportes","Puede generar reportes de remision de hielo")
 		]
 
 
@@ -75,11 +76,17 @@ class DetalleRemision(models.Model):
 	hielo 			= models.ForeignKey(Hielo,on_delete=models.PROTECT)
 	devolucion		= models.IntegerField(default=0)
 	def _get_cantidad(self):
-    		return self.salida-self.devolucion
+		return self.salida-self.devolucion
 	cantidad		= property(_get_cantidad)
 	def get_valor_total(self):
-    		return self.cantidad*self.hielo.precioQuintal
+		return self.cantidad*self.hielo.precioQuintal
 	valorTotal		= property(get_valor_total)
+	def get_devolucionesHieloLimpio(self):
+		if self.hielo.pk == 2:
+			return 0
+		else:	
+			return self.devolucion
+	devolucionHieloLimpio = property(get_devolucionesHieloLimpio)
 	def __str__(self):
 		return "{} -> {} :{}".format(self.remision,self.id,self.valorTotal)
 	class Meta:

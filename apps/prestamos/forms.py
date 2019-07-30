@@ -54,7 +54,7 @@ class DetallePrestamoForm(forms.ModelForm):
 				'class': 'form-control'
 			})
 			if field == 'equipo':
-				equipo = Equipo.objects.all()#filter(estado=Estado.objects.get(pk=2))
+				equipo = Equipo.objects.filter(estado__pk=2)
 				cl = []
 				for c in equipo:
 					cl.append([(str(c.pk)), str(c)])
@@ -91,4 +91,31 @@ class BaseDetallePrestamoFormSet(BaseFormSet):
 	def clean(self):
 		if any(self.errors):
 			return 
-		
+
+class EditarDetallePrestamoForm(forms.ModelForm):
+	class Meta:
+		model = DetallePrestamoEquipo
+		fields = '__all__'
+
+	def __init__(self, *args, prestamo,**kwargs):
+		# current_user = kwargs.pop('current_user')
+		# self.request = kwargs.pop('current_user', None)
+		# other_variable = kwargs.pop('pk')
+		self.prestamo = prestamo
+		super(EditarDetallePrestamoForm, self).__init__(*args, **kwargs)
+		print(self.prestamo)
+		for field in iter(self.fields):
+			self.fields[field].widget.attrs.update({
+				'class': 'form-control'
+			})
+			if field == 'equipo':
+				# equipo = Equipo.objects.filter(estado=Estado.objects.get(pk=2))
+				equipo = Equipo.objects.filter(Q(equipos__prestamoEquipo__pk=self.prestamo) | Q(estado_id=2))
+				# print(equipo2)
+				cl = []
+				for c in equipo:
+					cl.append([(str(c.pk)), str(c)])
+				self.fields[field].choices = [("","Seleccione...")] + cl
+				self.fields[field].widget.attrs['class'] = 'selectpicker form-control dx'
+				self.fields[field].widget.attrs['data-live-search'] = 'true'
+				# self.fields[field].widget.attrs['data-size'] = 5

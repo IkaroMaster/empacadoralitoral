@@ -23,13 +23,16 @@ $(function () {
                             id:id,
                         },
                         success: function (data) {
-                            $('#col_estado-'+data.id).hide();
+                            
                             Swal.fire({
                                 title:'El vehiculo con placa '+id+' ha sido eliminado exitosamente.',
                                 type:'success',
                                 showConfirmButton: false,
                                 timer: 2000
                             });
+                            $('#fila-'+id).remove();
+                            // tablex.ajax.reload();
+
         
                         },error: function (data){
                             Swal.fire({

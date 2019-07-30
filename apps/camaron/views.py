@@ -34,7 +34,12 @@ from datetime import datetime, date, time, timedelta
 from django.conf import settings
 from django.middleware import csrf
 
-# Create your views here.
+#PERMISOS
+from django.contrib.auth.decorators import login_required,permission_required
+from django.utils.decorators import method_decorator
+
+@login_required
+@permission_required('camaron.view_cosecha',raise_exception=True)
 def Cosechas(request):
 	if not request.user.empleado.actualizoContrasena:
 		return HttpResponseRedirect(reverse('seguridad:log_out-url'))	
@@ -48,12 +53,16 @@ def Cosechas(request):
 		 'clases': clases,
 		 'cosecha': cosecha,
 		 'detalleCosecha':detalleCosecha,
+		 'listado':True,
 	 }
 	return render(request, 'camaron/camaron.html', context)
 
 
 @login_required
-def CrearCosecha(request): 
+@permission_required('camaron.add_cosecha',raise_exception=True)
+def CrearCosecha(request):
+	if not request.user.empleado.actualizoContrasena:
+		return HttpResponseRedirect(reverse('seguridad:log_out-url'))	 
 	estilos, clases = renderizado(1, 4)
 	DetalleCosechaFormSet = formset_factory(DetalleCosechaForm, formset=BaseDetalleCosechaFormSet,extra=0)
 	if request.method == 'POST' and request.is_ajax() == False:
@@ -95,10 +104,11 @@ def CrearCosecha(request):
 							e.save()
 						prestamo.save()
 						messages.success(request, 'Usted ha creado la nueva nota de cosecha.')
+						return redirect(reverse('camaron:cosechas-url'))
+
 
 			except IntegrityError: #If the transaction failed
 				messages.error(request, 'Ha ocurrido un error al intentar guardar la la nota de cosecha.')
-				return redirect(reverse('remision:remision-url'))
 		else:
 			messages.error(request, 'Informacion requerida incompleta para crear la remision.')	
 	elif request.method == 'POST' and request.is_ajax():
@@ -169,6 +179,7 @@ def CrearCosecha(request):
 	FormControl(cosecha_form)
 	fechaBasico(cosecha_form,'fecha','Seleccione...')
 	comboboxBasico(cosecha_form,'laguna','Seleccione...','true',[])
+	comboboxBasico(cosecha_form,'entrego','Seleccione...','true',[])
 	horaBasico(cosecha_form,'horaInicio','Seleccione...')
 	horaBasico(cosecha_form,'horaFinal','Seleccione...')
 	if r.exists():
@@ -189,8 +200,10 @@ def CrearCosecha(request):
 
 	return render(request, 'camaron/camaron.html', context)
 
-
+@login_required
 def Lagunas_asJson(request):
+	if not request.user.empleado.actualizoContrasena:
+		return HttpResponseRedirect(reverse('seguridad:log_out-url'))	
 	if request.is_ajax() and request.method == 'GET':
 		id = request.GET['id']
 		lagunas = Laguna.objects.filter(finca__pk = id)
@@ -209,11 +222,14 @@ def Lagunas_asJson(request):
 			}
 		return JsonResponse(data)
 	else:
-		pass
+		return render(request,'404.html')
 
 
 @login_required
+@permission_required('camaron.change_cosecha',raise_exception=True)
 def ModificarCosecha(request,pk): 
+	if not request.user.empleado.actualizoContrasena:
+		return HttpResponseRedirect(reverse('seguridad:log_out-url'))	
 	estilos, clases = renderizado(1, 4)
 	cosecha = Cosecha.objects.get(pk = pk)
 	remisionActual = cosecha.remision.pk
@@ -282,6 +298,7 @@ def ModificarCosecha(request,pk):
 					else:
 						print('no entro al if')
 					messages.success(request, 'Usted ha actualizado la nota de cosecha.')
+					return redirect(reverse('camaron:cosechas-url'))
 
 					# remision = Remision.objects.get(pk= cosecha.remision.pk)
 					# remision.estado = EstadoRemision.objects.get(pk = 2)
@@ -298,7 +315,6 @@ def ModificarCosecha(request,pk):
 
 			except IntegrityError: #If the transaction failed
 				messages.error(request, 'Ha ocurrido un error al intentar guardar la la nota de cosecha.')
-				return redirect(reverse('remision:remision-url'))
 		else:
 			messages.error(request, 'Informacion requerida incompleta para crear la remision.')	
 	elif request.method == 'POST' and request.is_ajax():
@@ -389,7 +405,8 @@ def ModificarCosecha(request,pk):
 		cosecha_form.fields['remision'].choices = [("",'No hay Remisiones disponibles')] 
 		cosecha_form.fields['remision'].widget.attrs['class'] = ' form-control selectpicker'
 		cosecha_form.fields['remision'].widget.attrs['data-live-search'] = False
-	
+
+	cosecha_form.fields['codCosecha'].widget.attrs['readonly']='True'
 	
 	context = {
 		'cosecha_form': cosecha_form,
@@ -397,13 +414,16 @@ def ModificarCosecha(request,pk):
 		'clases':clases,
 		'detalleCosecha_formset': detalleCosecha_formset,
 		'htmlFincas' : htmlFincas,
-		'crear':False,
+		'editar':True,
+		'pk':cosecha.pk,
 	}
 
 	return render(request, 'camaron/camaron.html', context)
 
-
+@login_required
 def detalleCosecha_asJson(request):
+	if not request.user.empleado.actualizoContrasena:
+		return HttpResponseRedirect(reverse('seguridad:log_out-url'))	
 	if request.is_ajax():		
 		id = request.GET['id']
 		cosecha = Cosecha.objects.get(pk=id)
@@ -488,6 +508,8 @@ def detalleCosecha_asJson(request):
 		pass
 @login_required()
 def Fecha1_asJson(request):
+	if not request.user.empleado.actualizoContrasena:
+		return HttpResponseRedirect(reverse('seguridad:log_out-url'))	
 	if request.is_ajax():
 		mes = []
 		meses(mes)
@@ -541,6 +563,8 @@ def Fecha1_asJson(request):
 
 @login_required()
 def FechaIntervalo_asJson(request):
+	if not request.user.empleado.actualizoContrasena:
+		return HttpResponseRedirect(reverse('seguridad:log_out-url'))	
 	if request.is_ajax():
 		mes = []
 		meses(mes)
@@ -570,7 +594,10 @@ def FechaIntervalo_asJson(request):
 
 
 @login_required()
+@permission_required('camaron.imprimir_cosecha',raise_exception=True)
 def ReporteCosecha(request):
+	if not request.user.empleado.actualizoContrasena:
+		return HttpResponseRedirect(reverse('seguridad:log_out-url'))	
 	if request.method == 'POST':
 		id = request.POST['codCosecha'] 
 		ahora = datetime.now()
@@ -605,7 +632,10 @@ def ReporteCosecha(request):
 		return response
 
 @login_required
+@permission_required('camaron.imprimir_cosecha',raise_exception=True)
 def ReporteMensual(request):
+	if not request.user.empleado.actualizoContrasena:
+		return HttpResponseRedirect(reverse('seguridad:log_out-url'))	
 	if request.method == 'POST':
 		ahora = datetime.now()
 		mes = request.POST['mes']
@@ -651,8 +681,11 @@ def ReporteMensual(request):
 		pass
 
 
-@login_required
+@login_required()
+@permission_required('camaron.imprimir_cosecha',raise_exception=True)
 def ReporteIntervalo(request):
+	if not request.user.empleado.actualizoContrasena:
+		return HttpResponseRedirect(reverse('seguridad:log_out-url'))	
 	if request.method == 'POST':
 		ahora = datetime.now()
 		fechaInicio = request.POST['fechaInicio']

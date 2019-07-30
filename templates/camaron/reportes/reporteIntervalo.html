@@ -166,27 +166,25 @@ td {
  
 </style> 
 <body>
-   <center>
-   <!-- <img src="http://127.0.0.1:8000/static/img/logocacsan.png" width="160" ><br> -->
-   <div class="Encabezado n1">
+    <div id="espacio1" style="width: 15%;display:inline-block;">
         {% load static %}
-        <img  id="logo" src="{% static 'imgs/logo.png'%}" alt="" >
-
-   </div>
-    <div class="Encabezado n2">
-        <p><strong>EMPACADORA LITORAL,S.A DE C.V</strong></p>
+        <img src="{% static 'imgs/logo_litoral.png'%}" alt="" style="width: 60pt">
+      </div>
+      <div id="espacio2" style="width: 70%;display:inline-block;position:absolute">
+        <center>
+            <p><strong>EMPACADORA LITORAL,S.A DE C.V</strong></p>
         
-        {% if fechaInicio == fechaFinal %}
-        <p>Reporte de cosecha del {{fechaInicio}}
-        {% else %}
-        <p>Reporte de cosecha del {{fechaInicio}} al {{fechaFinal}}</p>
-        {% endif %}
-          
-        
-    </div>
-   <div class="Encabezado n3"></div>
+            {% if fechaInicio == fechaFinal %}
+            <p>Reporte de cosecha del {{fechaInicio}}
+            {% else %}
+            <p>Reporte de cosecha del {{fechaInicio}} al {{fechaFinal}}</p>
+            {% endif %}
+        </center>
+      </div>
+      <div id="espacio3" style="width: 15%;display:inline-block;">
+    
+      </div>
    
- </center>
  
  <article id="tablaRemision">
     

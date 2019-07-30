@@ -7,23 +7,33 @@ active
 {% endblock l9 %}
 {% block cuerpo %}
 <div class="card text-center">
-    <div class="panel-heading bg-primary" >
-        <h3 class="panel-title text-light">Notas de cosecha de Camaron</h3>
-    </div>    
+    <div class="panel-heading bg-primary">
+        <h4 class="panel-title text-light">
+            {% if listado  %}
+            Notas de Cosecha de Camarón
+            {% elif editar %}
+            Editar Nota de Cosecha Nō {{pk}}
+            {% elif crear %}
+            Crear Nueva Nota de Cosecha
+            {% endif %}
+
+        </h4>
+    </div>
     <div class="card-header">
         <ul class="nav nav-tabs card-header-tabs">
+            {% if perms.camaron.add_cosecha %}
             <li class="nav-item">
                 <a class="nav-link {{ clases.o1 }}" href="{% url 'camaron:crear-url' %}">Gestión de Cosecha</a>
             </li>
+            {% endif %}
+            {% if perms.camaron.view_cosecha %}
             <li class="nav-item">
                 <a class="nav-link {{ clases.o2 }}" href="{% url 'camaron:cosechas-url'%} ">Cosechas</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link {{ clases.o3 }} " href="">...</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link {{ clases.o3 }}" href="#">...</a>
-            </li>
+            {% endif %}
+
+
+
         </ul>
     </div>
     <div class="card-body">
@@ -31,100 +41,105 @@ active
 
             {% if messages %}
             {% for message in messages %}
-                <span class="alert alert-danger alert-dismissible ">Error: {{ message|escape }}</span> <!--data-dismiss="alert"-->
-                <br><br>
+            <span class="alert alert-danger alert-dismissible ">Error: {{ message|escape }}</span>
+            <!--data-dismiss="alert"-->
+            <br><br>
             {% endfor %}
             {% endif %}
 
             <form method="post" id="formCosecha">
-                    <input type="hidden" name="crear" id="crear" value="{{ crear }}">
-                    {% csrf_token %}
-                    <div class="row container border p-2">
-                        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ">
+                <input type="hidden" name="crear" id="crear" data-cosecha="{{pk}}" value="{{ crear }}">
+                {% csrf_token %}
+                <div class="row container border p-2">
+                    <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ">
+                        <div class="row">
+
+                            <div class="col-6">
+                                <label for="">Codigo:</label>
+                                {{cosecha_form.codCosecha}}
+                                <br>
+                            </div>
+                            <div class="col-6">
+                                <label for="">Remisión:</label>
+                                {{cosecha_form.remision}}
+                                <br><br>
+                            </div>
+
+
+                        </div>
+
+                        <div class="row">
+                            <div class="col-6">
+                                <label for="">Finca:</label>
+                                <select name="" class="form-control selectpicker show-tick" data-live-search="true"
+                                    id="finca" required>
+                                    {% if htmlFincas %}
+                                    {{htmlFincas|safe}}
+                                    {% else %}
+                                    <option value="">Seleccione... </option>
+                                    {% endif %}
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <label for="">Laguna:</label>
+                                {{cosecha_form.laguna}}
+                            </div>
+                        </div>
+                        <label for="">Nombre:</label>
+                        {{cosecha_form.entrego}}
+                        <br>
+
+
+
+
+                        <!-- {{cosecha_form.estado}} -->
+
+
+                    </div>
+
+                    <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+
+
+                        <!-- <p>{{cosecha_form.prestamoEquipo.pk}}</p> -->
+
+                        <div class="" id="conductor">
+                            <div class="row">
+                                <div class="col-7">
+                                    <label for="">Fecha:</label>
+                                    {{cosecha_form.fecha}}
+                                    <br>
+                                </div>
+                            </div>
+
                             <div class="row">
                                 <div class="col-6">
-                                    <label for="">Codigo:</label>
-                                    {{cosecha_form.codCosecha}}
+                                    <label for="">Hora Inicio:</label>
+                                    {{cosecha_form.horaInicio}}
                                     <br>
                                 </div>
                                 <div class="col-6">
-                                    <label for="">Remisión:</label>
-                                    {{cosecha_form.remision}}
-                                    <br><br>
+                                    <label for="">Hora Final:</label>
+                                    {{cosecha_form.horaFinal}}
+                                    <br>
                                 </div>
                             </div>
-                            
-                            <div class="row">
-                                <div class="col-6">
-                                    <label for="">Finca:</label>
-                                    <select name="" class="form-control selectpicker show-tick" data-live-search="true" id="finca">
-                                        {% if htmlFincas %}
-                                        {{htmlFincas|safe}}
-                                        {% else %}
-                                        <option value="">Seleccione... </option>
-                                        {% endif %}
-                                    </select>
-                                </div>
-                                <div class="col-6">
-                                    <label for="">Laguna:</label>
-                                    {{cosecha_form.laguna}}
-                                </div>
-                            </div>
-                            <label for="">Nombre:</label>
-                            {{cosecha_form.entrego}}
-                            <br>
-                            
-    
-                            
-                            
-                            <!-- {{cosecha_form.estado}} -->
-    
-                            
+                            <div style="display: none">{{cosecha_form.registro}}</div>
                         </div>
-    
-                        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-                            
-                            
-                            <!-- <p>{{cosecha_form.prestamoEquipo.pk}}</p> -->
-                            
-                            <div class="" id="conductor">
-                                <div class="row">
-                                    <div class="col-7">
-                                        <label for="">Fecha:</label>
-                                        {{cosecha_form.fecha}}
-                                        <br>
-                                    </div>
-                                </div>
-                                
-                                <div class="row">
-                                    <div class="col-6">
-                                        <label for="">Hora Inicio:</label>
-                                        {{cosecha_form.horaInicio}}
-                                        <br> 
-                                    </div>
-                                    <div class="col-6">
-                                        <label for="">Hora Final:</label>
-                                        {{cosecha_form.horaFinal}}
-                                        <br>
-                                    </div>
-                                </div>
-                                <div style="display: none">{{cosecha_form.registro}}</div>
-                            </div>
-    
-                        </div>
-    
-    
+
                     </div>
-    
-    
-    
-    
-    
-    
-    
-    
-    
-                    <!-- {% for rf in remision_form %}
+
+
+                </div>
+
+
+
+
+
+
+
+
+
+                <!-- {% for rf in remision_form %}
                         <div class="link-formset">
                             {{ rf.anchor }}
                             {% if rf.anchor.errors %}
@@ -141,93 +156,106 @@ active
                             {% endif %}
                         </div>
                     {% endfor %} -->
-    
-                    <div id="detalleCosecha">
-                        
-                        {% if not crear %}       
-                            {{ detalleCosecha_formset.management_form }}
-                            <hr>
-                            <table class="table table-striped table-inverse table-responsive">
-                                <thead class="thead-inverse">
-                                    <tr>
-                                        <th>No. Bin</th>
-                                        <th>Total Canasta</th>
-                                        <th>Total Libras</th>
-                                        <th>Observaciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for dc in detalleCosecha_formset %}
-                                    <tr class="detalle-formset">
-                                        <!-- <td>{{ dc.remision }}</td> -->
-                                        <td width="100px">{{dc.numeroBin}}
-                                                {% if dc.numeroBin.errors %}
-                                                {% for error in dc.numeroBin.errors %}
-                                                    <span class="text-danger">{{ error|escape }}</span>
-                                                {% endfor %}
-                                            {% endif %} 
-                                        </td>
-                                        <td>{{dc.totalCanasta}}
-                                            {% if dc.totalCanasta.errors %}
-                                                {% for error in dc.totalCanasta.errors %}
-                                                    <span class="text-danger">{{ error|escape }}</span>
-                                                {% endfor %}
-                                            {% endif %} 
-                                        </td>
-                                        <td>
-                                             {{ dc.libras }}
-                                                {% if dc.libras.errors %}
-                                                {% for error in dc.libras.errors %}
-                                                    <span class="text-danger">{{ error|escape }}</span>
-                                                {% endfor %}
-                                            {% endif %} 
-                                        </td>
-                                        <!-- <td>{{dc.hielo}}</td> -->
-                                        <td>{{dc.observaciones}}</td>
-                                        <td></td>
-                                        <!-- <a name="" id="" class="btn btn-primary" href="#" role="button"></a> -->
-                                    </tr>
-            
+
+                <div id="detalleCosecha">
+
+                    {% if not crear %}
+                    {{ detalleCosecha_formset.management_form }}
+                    <hr>
+                    <table class="table table-striped table-inverse table-responsive">
+                        <thead class="thead-inverse">
+                            <tr>
+                                <th>No. Bin</th>
+                                <th>Total Canasta</th>
+                                <th>Total Libras</th>
+                                <th>Observaciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for dc in detalleCosecha_formset %}
+                            <tr class="detalle-formset">
+                                <!-- <td>{{ dc.remision }}</td> -->
+                                <td width="100px">{{dc.numeroBin}}
+                                    {% if dc.numeroBin.errors %}
+                                    {% for error in dc.numeroBin.errors %}
+                                    <span class="text-danger">{{ error|escape }}</span>
                                     {% endfor %}
-                                </tbody>
-                            </table>
-                        {% endif %}
-                    </div>
+                                    {% endif %}
+                                </td>
+                                <td>{{dc.totalCanasta}}
+                                    {% if dc.totalCanasta.errors %}
+                                    {% for error in dc.totalCanasta.errors %}
+                                    <span class="text-danger">{{ error|escape }}</span>
+                                    {% endfor %}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {{ dc.libras }}
+                                    {% if dc.libras.errors %}
+                                    {% for error in dc.libras.errors %}
+                                    <span class="text-danger">{{ error|escape }}</span>
+                                    {% endfor %}
+                                    {% endif %}
+                                </td>
+                                <!-- <td>{{dc.hielo}}</td> -->
+                                <td>{{dc.observaciones}}</td>
+                                <td></td>
+                                <!-- <a name="" id="" class="btn btn-primary" href="#" role="button"></a> -->
+                            </tr>
 
-                    {% if detalleCosecha_formset.non_form_errors %}
-                        {% for error in detalleCosecha_formset.non_form_errors %}
-                        <span class="alert alert-warning alert-dismissible">Alerta: {{ error|escape }}</span> <!--data-dismiss="alert"-->
-                        <br>
-                        <br>
-                        {% endfor %}
-                    {% endif %} 
-    
-                    <a href="{% url 'remision:remision-url'%} " class="btn btn-secondary">Cancelar</a>
-                    <input type="submit" class="btn btn-success" value="Guardar" class="button" />
-    
-                    
-                
-                        
-                </form>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% endif %}
+                </div>
 
+                {% if detalleCosecha_formset.non_form_errors %}
+                {% for error in detalleCosecha_formset.non_form_errors %}
+                <span class="alert alert-warning alert-dismissible">Alerta: {{ error|escape }}</span>
+                <!--data-dismiss="alert"-->
+                <br>
+                <br>
+                {% endfor %}
+                {% endif %}
+                <input type="submit" id="enviarFormularioCosecha" hidden>
 
+            </form>
+
+            <center>
+                <br>
+                <button id="guardarCosecha" class="btn btn-success">
+                    {% if crear %}
+                    Guardar Cosecha
+                    {% elif editar%}
+                    Modificar
+                    {% endif %}
+                </button>
+                <a href="{% url 'camaron:cosechas-url'%} " class="btn btn-secondary">Cancelar</a>
+
+            </center>
 
         </div>
         <div style="{{estilos.o2}}">
             <div class="row">
-                    <div class="col-3">
-                        <div class="btn-group" role="group">
-                            <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Reportes
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                                <button id="reporteMensual" data-toggle="modal" data-target="#modalReporte" class=" dropdown-item ">Reporte Mensual</button>
-                                <div class="dropdown-divider"></div>
-                                <button id="reporteIntervalo" data-toggle="modal" data-target="#modalReporte" class=" dropdown-item ">Reporte Con Intervalo De Fechas</button>
-                            </div>
+                {% if perms.camaron.imprimir_cosecha %}
+                <div class="col-3">
+                    <div class="btn-group" role="group">
+                        <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Reportes
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                            <button id="reporteMensual" data-toggle="modal" data-target="#modalReporte"
+                                class=" dropdown-item ">Reporte Mensual</button>
+                            <div class="dropdown-divider"></div>
+                            <button id="reporteIntervalo" data-toggle="modal" data-target="#modalReporte"
+                                class=" dropdown-item ">Reporte Con Intervalo De Fechas</button>
                         </div>
                     </div>
                 </div>
+                {% endif %}
+
+            </div>
             <table id="tablajs" class="table table-striped table-bordered" style="width:100%" class="display">
                 <thead class="thead-inverse">
                     <tr>
@@ -256,73 +284,96 @@ active
                         <td>{{c.remision.conductor}} </td>
                         <td>{{c.remision.placa.marca}} </td>
                         <td>{{c.remision.placa}} </td>
-                        
-                        <td> 
-                            
-                                <button type="submit" class="imprimir btn btn-success fas fa-print" form="formReporteCosecha-{{c.pk}}"></button>
-                                <!-- <a data-imprimir='{{c.pk}}' href="" class="imprimir btn btn-success fas fa-print" target="_blank"></a> -->
-                                <a data-editar='{{c.pk}}' href="{% url 'camaron:modificar-url' c.pk%}" class="editar btn btn-info fas fa-pen"></a>
-                                <button class="ver btn btn-warning fas fa-eye " data-ver='{{c.pk}}'></button>
-                                
+
+                        <td>
+
+                            {% if perms.camaron.imprimir_cosecha %}
+                            <button type="submit" class="imprimir btn btn-success fas fa-print"
+                                form="formReporteCosecha-{{c.pk}}"></button>
+                            {% endif %}
+
+                            {% if perms.camaron.change_cosecha %}
+                            <a id="editar-{{c.pk}}" data-editar='{{c.pk}}' href="{% url 'camaron:modificar-url' c.pk%}"
+                                class="editar "></a>
+                            <button data-id="{{c.pk}}" class="editarCosecha btn btn-info fas fa-pen"></button>
+                            {% endif %}
+                            {% if perms.camaron.view_cosecha %}
+                            <button class="ver btn btn-warning fas fa-eye " data-ver='{{c.pk}}'></button>
+                            {% endif %}
+
+
+                            <!-- <a data-imprimir='{{c.pk}}' href="" class="imprimir btn btn-success fas fa-print" target="_blank"></a> -->
+
+
                             </form>
                         </td>
-                        <form action="{% url 'camaron:reporte_cosecha-url' %}" method="post" target="_blank" id="formReporteCosecha-{{c.pk}}">
-                                {% csrf_token %}
-                                <input type="hidden" name="codCosecha" value="{{c.pk}}" id="">
+                        <form action="{% url 'camaron:reporte_cosecha-url' %}" method="post" target="_blank"
+                            id="formReporteCosecha-{{c.pk}}">
+                            {% csrf_token %}
+                            <input type="hidden" name="codCosecha" value="{{c.pk}}" id="">
                         </form>
 
                         <!-- <td><button class="btn btn-success">Añadir</button></td> -->
 
-                        
+
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
 
-            
+
         </div>
     </div>
 
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="modalDetalleCosecha" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-    <div class="modal-content">
-    <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Visualización De Nota De Cosecha</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-        </button>
+<div class="modal fade" id="modalDetalleCosecha" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Visualización De Nota De Cosecha</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body modalCuerpoCosecha">
+                ...
+            </div>
+            <div class="modal-footer">
+
+                {% if perms.camaron.imprimir_cosecha %}
+                <button type="submit" id="imprimir" class="imprimir btn-lg btn-warning fas fa-print"></button>
+
+                {% endif %}
+
+                <button type="button" class="btn-lg btn-secondary fas fa-times" id="cerrarModal"
+                    data-dismiss="modal"></button>
+            </div>
+        </div>
     </div>
-    <div class="modal-body modalCuerpoCosecha">
-        ...
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-secondary fas fa-times" id="cerrarModal" data-dismiss="modal"> Cerrar</button>
-        <button type="submit" id="imprimir" class="imprimir btn btn-success fas fa-print"></button>
-    </div>
-    </div>
-</div>
 </div>
 <!-- Modal Reporte-->
-<div class="modal fade" id="modalReporte" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+<div class="modal fade" id="modalReporte" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
     <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
         <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLongTitle">Reporte Mensual</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="modal-body modalCuerpoReporte">
-            ...
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary fas fa-times" id="cerrarModal" data-dismiss="modal"> Cerrar</button>
-            <button class="btn btn-warning fas fa-print" id="imprimirReporte">Imprimir</button>
-            <!-- <a href="" class="btn btn-warning fas fa-print" id="imprimirReporte" target="_blank"> Imprimir</a> -->
-        </div>
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Reporte Mensual</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body modalCuerpoReporte">
+                ...
+            </div>
+            <div class="modal-footer">
+                <!-- <button type="button" class="btn btn-secondary fas fa-times" id="cerrarModal" data-dismiss="modal">
+                    Cerrar</button> -->
+                <button class="btn-lg btn-warning fas fa-print" id="imprimirReporte"></button>
+                <!-- <a href="" class="btn btn-warning fas fa-print" id="imprimirReporte" target="_blank"> Imprimir</a> -->
+            </div>
         </div>
     </div>
 </div>

@@ -2,89 +2,112 @@
 <html lang="en">
 <!-- <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html> -->
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="X-UA-Compatible" content="ie=edge">
-{% load humanize %}
-<title>REPORTE DE COSECHA {{mesNombre}}/{{anio}} | EMPACADORA LITORAL S.A</title>
-<!-- <meta http-equiv="content-type" content="text/html" charset="UTF-8" /> -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  {% load humanize %}
+  <title>REPORTE DE COSECHA {{mesNombre}}/{{anio}} | EMPACADORA LITORAL S.A</title>
+  <!-- <meta http-equiv="content-type" content="text/html" charset="UTF-8" /> -->
 
 
-</head>   
+</head>
 <style type="text/css">
-@page {
-  size: {{tamano}} {{posicion}};
-  margin: 1.5cm;
-} 
-#remision {
-    color: red;
-}
+  @page {
+    size: {
+        {
+        tamano
+      }
+    }
 
-table {
+      {
+        {
+        posicion
+      }
+    }
+
+    ;
+    margin: 1.5cm;
+  }
+
+  #remision {
+    color: red;
+  }
+
+  table {
     border: none;
     width: 100%;
     border-collapse: collapse;
 
-}
-th{
-    border: 1px solid grey;
-  border-collapse: collapse;
-  text-align: center;
-  background: rgb(226, 223, 223);
-}
+  }
 
-td { 
+  th {
+    border: 1px solid grey;
+    border-collapse: collapse;
+    text-align: center;
+    background: rgb(226, 223, 223);
+  }
+
+  td {
     padding: 1px 1px;
     text-align: center;
     border: 1px solid #999;
-}
-.total{
-    background-color: #ddd !important;
-}
-.Encabezado{
-    display: inline-block;
-}
-.n1{
-    width: 5%;
-}
-#logo {
-    width:40pt;
-  height:40pt;
- }
-.n2 {
-    width:80%
-}
+  }
 
-.TextoArriba {
+  .total {
+    background-color: #ddd !important;
+  }
+
+  .Encabezado {
+    display: inline-block;
+  }
+
+  .n1 {
+    width: 5%;
+  }
+
+  #logo {
+    width: 40pt;
+    height: 40pt;
+  }
+
+  .n2 {
+    width: 80%
+  }
+
+  .TextoArriba {
     font-size: 14pt;
     text-align: left;
-}
-.cuarta{
-  background-color: rgb(247, 246, 246);
-  border-radius: 3mm;
-  display: inline-block;
-  width: 115mm;
-  height: 78mm;
-  margin: 1mm auto;
-  margin-left: 3mm;  
-  margin-right: 3mm;  
-  padding: 0.5mm;
-  padding-top: 2mm;
-  float: left;
-  
-}
-.cuarta table{
-  margin-top: 2mm;
-}
-.cuartaTexto{
-  
-  display: inline-block;
-  width: 48%;
-}
+  }
+
+  .cuarta {
+    background-color: rgb(247, 246, 246);
+    border-radius: 3mm;
+    display: inline-block;
+    width: 115mm;
+    height: 78mm;
+    margin: 1mm auto;
+    margin-left: 3mm;
+    margin-right: 3mm;
+    padding: 0.5mm;
+    padding-top: 2mm;
+    float: left;
+
+  }
+
+  .cuarta table {
+    margin-top: 2mm;
+  }
+
+  .cuartaTexto {
+
+    display: inline-block;
+    width: 48%;
+  }
 
 
-/* #tablaRemision table
+  /* #tablaRemision table
 {
  
   padding: 6px;
@@ -123,7 +146,7 @@ td {
   font-weight: bold;
 } */
 
- /* #tableResultado td
+  /* #tableResultado td
 {
   margin: 1px auto;
   text-shadow: 2px 2px 1px rgba(0, 0, 0, .1);
@@ -163,73 +186,73 @@ td {
         font-size: 16px;
     } 
  */
- 
-</style> 
+</style>
+
 <body>
-   <center>
-   <!-- <img src="http://127.0.0.1:8000/static/img/logocacsan.png" width="160" ><br> -->
-   <div class="Encabezado n1">
-        {% load static %}
-        <img  id="logo" src="{% static 'imgs/logo.png'%}" alt="" >
+  <div id="espacio1" style="width: 15%;display:inline-block;">
+    {% load static %}
+    <img src="{% static 'imgs/logo_litoral.png'%}" alt="" style="width: 60pt">
+  </div>
+  <div id="espacio2" style="width: 70%;display:inline-block;position:absolute">
+    <center>
+      <p><strong>EMPACADORA LITORAL,S.A DE C.V</strong></p>
+      <p>Reporte de cosecha del mes de {{mesNombre}} del {{anio}}</p>
+    </center>
+  </div>
+  <div id="espacio3" style="width: 15%;display:inline-block;">
 
-   </div>
-    <div class="Encabezado n2">
-        <p><strong>EMPACADORA LITORAL,S.A DE C.V</strong></p>
-        <p>Reporte de cosecha del mes de {{mesNombre}} del {{anio}}</p>
-    </div>
-   <div class="Encabezado n3"></div>
-   
- </center>
- 
- <article id="tablaRemision">
-    
+  </div>
+
+
+  <article id="tablaRemision">
+
     {% for c in cosechas %}
-      <div class="cuarta">
-        <div class="cuartaTexto">
-            <strong>FECHA:</strong> {{c.fecha}} <br>
-            <strong>FINCA:</strong> {{c.laguna.finca.nombre}} <br>
-            <strong>LAGUNA:</strong> {{c.laguna.codLaguna}}
-            <strong>FECHA:</strong> {{c.laguna.codLaguna}}
+    <div class="cuarta">
+      <div class="cuartaTexto">
+        <strong>FECHA:</strong> {{c.fecha}} <br>
+        <strong>FINCA:</strong> {{c.laguna.finca.nombre}} <br>
+        <strong>LAGUNA:</strong> {{c.laguna.codLaguna}}
+        <strong>FECHA:</strong> {{c.laguna.codLaguna}}
 
-        </div>
-        <div class="cuartaTexto">
-            <strong>REMISION:</strong> {{c.remision.numRemision}} <br>
-            <strong>SENASA:</strong> {{c.remision.guia}} <br>
-            <strong>CONDUCTOR:</strong> {{c.remision.conductor}}
-        </div>
-          <table>
-              <thead>
-                  <tr id="encabezados">
-                      <th scope="col">#Bin</th>
-                      <th scope="col">Libras</th>
-                      <th scope="col">Observaciones</th>
-                      
-                  </tr>
-              </thead>
-              <tbody>
-                  
-                  {% for dc in c.detallecosecha_set.all  %}
-                  <tr>
-                      
-                      <td>{{dc.numeroBin.numero}}</td>
-                      <td>{{dc.libras}}</td>
-                      <td>{{dc.observaciones}}</td>
-                  </tr>
-                  {% endfor %}
-              </tbody>
-          </table>
       </div>
+      <div class="cuartaTexto">
+        <strong>REMISION:</strong> {{c.remision.numRemision}} <br>
+        <strong>SENASA:</strong> {{c.remision.guia}} <br>
+        <strong>CONDUCTOR:</strong> {{c.remision.conductor}}
+      </div>
+      <table>
+        <thead>
+          <tr id="encabezados">
+            <th scope="col">#Bin</th>
+            <th scope="col">Libras</th>
+            <th scope="col">Observaciones</th>
+
+          </tr>
+        </thead>
+        <tbody>
+
+          {% for dc in c.detallecosecha_set.all  %}
+          <tr>
+
+            <td>{{dc.numeroBin.numero}}</td>
+            <td>{{dc.libras}}</td>
+            <td>{{dc.observaciones}}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
     {% endfor %}
-   
-    
-    
-      
-    
- </article>
- 
 
 
- <!-- <button class="btn btn-danger">holaaaaa</button>
+
+
+
+  </article>
+
+
+
+  <!-- <button class="btn btn-danger">holaaaaa</button>
  {% load static %}
     <img src="{% static 'imgs/reportes.png' %}" alt="" /> -->
   <!-- <section>
@@ -246,10 +269,10 @@ td {
   <td>Monto</td>
 </tr> -->
 
-<!-- {% for resultado in inv %} -->
+  <!-- {% for resultado in inv %} -->
 
-<tr id="encabezadosInfe">
-  <!-- <td>{{resultado.codInversion}}</td>
+  <tr id="encabezadosInfe">
+    <!-- <td>{{resultado.codInversion}}</td>
   <td>{{resultado.filial.nomFilial}}</td>
   <td>{{resultado.banco.nomBanco }}</td>
   <td>{{resultado.fechaAperInversion|date:"d/m/y"}}</td>
@@ -257,11 +280,11 @@ td {
   <td>{{resultado.porceInversion}}%</td>
   <td>{{resultado.estadoInv}}</td>
   <td>Lps. {{resultado.Monto|floatformat:'2'|intcomma}}</td> -->
-</tr>
+  </tr>
 
-<!-- {% endfor%}  -->
- 
-<!-- </table>
+  <!-- {% endfor%}  -->
+
+  <!-- </table>
 {% if total %}
 <h2 align="right">Monto total de Inversiones Generales: Lps. {{total|floatformat:'2'|intcomma}}</h2> 
 {% else %}
@@ -271,4 +294,5 @@ td {
 </section> -->
 
 </body>
+
 </html>

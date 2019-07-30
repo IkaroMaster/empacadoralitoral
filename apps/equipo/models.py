@@ -6,7 +6,7 @@ class Estado(models.Model):
 	estado = models.CharField(max_length=30)
 
 	def __str__(self):
-		return '{} {}'.format(self.id,self.estado)
+		return '{}'.format(self.estado)
 
 	class Meta:
 		verbose_name_plural = 'Estados'
@@ -47,6 +47,13 @@ class Equipo(models.Model):
 	codigo_barras 	= models.CharField(verbose_name=u"Código de Barras",  max_length=160, blank=True , null=True,unique=True)
 	informacion 	= models.TextField(blank=True,  null=True)
 	def __str__(self):
-		return "({}){} - {} > {}".format(self.id,self.nombre,self.tamano,self.numero)
+		tamano = ''
+		if self.tamano.pk == 1:
+			tamano = 'G'
+		elif self.tamano.pk == 2:
+				tamano = 'P'
+		elif self.tamano.pk == 3:
+    			tamano = 'N'
+		return "{}  ({} {}.) ".format(self.numero,self.nombre,tamano)
 	class Meta:
 		verbose_name_plural = 'Equipos'

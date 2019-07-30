@@ -1,26 +1,88 @@
 $(function(){
-    if($('#crear').val() == 'True')
-    {
-        $('#divEstado').hide();
-        
-    }
-
-
+    
     $('.detalle-formset').formset({
-        addText: 'Agregar equipo',
-        deleteText: 'x',
-        addCssClass: 'add-row btn btn-outline-primary',
-        animateForms: true, 
+        addText: 'Agregar ',
+        deleteText: '',
+        deleteCssClass: 'delete-row',
+        addCssClass: 'add-row btn btn-primary',
+        animateForms: true,
+        added: function () {
+            
+            if ($('#id_form-TOTAL_FORMS').val() >= 2) {
+                $(".delete-row").show();
+            }
+        }, 
+        removed: function () {
+            
+            if ($('#id_form-TOTAL_FORMS').val() < 2) {
+                $(".delete-row").hide();
+            }
+        },
     });
-    $( ".delete-row" ).addClass( "btn btn-outline-danger " );
+    $( ".delete-row" ).addClass( "btn btn-danger fas fa-times " );
     $( ".add-row" ).on("click",function() {
        
-        $( ".delete-row" ).addClass( "btn btn-outline-danger" );
+        $( ".delete-row" ).addClass( "btn btn-danger fas fa-times " );
         $('.dx').selectpicker({
-            liveSearch: true
+            liveSearch: true,
+            size:3,
             // selectAll: true
         });        
     });
+    if($('#crear').val() == 'True')
+    {
+        $('#divEstado').hide();
+        $(".delete-row").hide();
+
+    }else{
+            if ($('#id_form-TOTAL_FORMS').val() < 2) {
+                $(".delete-row").hide();
+            }
+    }
+
+    $('.dx').selectpicker({
+        liveSearch: true,
+        size:3,
+        // selectAll: true
+    }); 
+
+    $('#guardarPrestamo').click(function () {
+        
+        if ($('#crear').val() != 'True') {
+            Swal.fire({
+                title: '¿Guardar las modificaciones del préstamo Nō ' + $('#crear').attr('data-prestamo') + ' ?',
+                text: "¡No podrás revertir esto!",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si, Modificar!',
+                cancelButtonText: 'Volver',
+                // showLoaderOnConfirm: true,
+            }).then((result) => {
+                if (result.value) {
+                    $("#enviarFormularioPrestamo").click();
+                }
+            })
+        } else {
+            Swal.fire({
+                title: '¿Guardar préstamo de equipo?',
+                text: "¡Se registrara un nuevo prestamo con los datos proporcionados!",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si, Guardar!',
+                cancelButtonText: 'Volver',
+                // showLoaderOnConfirm: true,
+            }).then((result) => {
+                if (result.value) {
+                    $("#enviarFormularioPrestamo").click();
+                }
+            });
+        }
+    });
+    
     $("#formPrestamo").submit(function(e){
         if ($('#id_form-TOTAL_FORMS').val() < 1) {
             alert('Se requiere que se inserte minimo un detalle en este prestamo!');
@@ -30,7 +92,7 @@ $(function(){
     });
 
     var tablex = $('#tablajs').DataTable({
-        "scrollY":      '50vh',
+        "scrollY":      '45vh',
         "scrollCollapse": true,
         "scrollX":      true,
         "deferRender":  true,
@@ -70,10 +132,11 @@ $(function(){
                         },
                         success: function (response) {
                             $('#fila-'+id).prop('class', 'table-danger');
-                            $('#col_estado-'+id).html('<p style="display: none">2</p>'+
-                            '<i class="fas fa-times"></i>');
+                            $('#col_estado-'+id).html('Anulado');
+                            // $('#col_estado-'+id).html('<p style="display: none">2</p>'+
+                            // '<i class="fas fa-times"></i>');
                             $('button[data-terminar = '+id+']').css('display', 'none');
-                            $('a[data-editar = '+id+']').css('display', 'none');
+                            $('button[data-editar = '+id+']').css('display', 'none');
                             $('button[data-anular = '+id+']').css('display', 'none');
                             // $('a[data-id = '+id+']').css('display', 'none');
                             Swal.fire({
@@ -82,7 +145,7 @@ $(function(){
                                 type:'success',
                                 showConfirmButton: false,
                                 timer: 2000
-                            });
+                            }); 
                         },
                         error: function(data){
                             Swal.fire({
@@ -100,6 +163,30 @@ $(function(){
             });
     });
     
+    $('.editarPrestamo').click(function(){
+        var id = $(this).attr('data-editar');
+        Swal.fire({
+            title: '¿Desea editar el préstamo de equipo Nō ' + id +'?',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si, Editar!',
+            cancelButtonText: 'Volver',
+            // showLoaderOnConfirm: true,
+        }).then((result) => {
+            if (result.value) {
+                $('#editar-' + id).get(0).click();
+                // con jquery $("#home-link").get(0).click();
+            } else {
+                Swal.fire({
+                    title: 'Operacion cancelada por el usuario.',
+                    type:'error',
+                    timer:'3000'
+                })
+            }
+        });
+    });
 
     $('.terminar').on('click',function(){
         var id = $(this).attr('data-terminar');
@@ -129,16 +216,16 @@ $(function(){
                 csrfmiddlewaretoken: getCookie('csrftoken')
             },
             success: function (data) {
-                alert(data.id)
-                $('#modalDetalleRemision').modal('hide');
+                $('#modalDetallePrestamo').modal('hide');
                 $('#fila-'+data.id).prop('class', 'table-success');
-                $('#col_estado-'+data.id).html('<p style="display: none">2</p>'+
-                '<i class="fas fa-check"></i>');
+                $('#col_estado-'+data.id).html('Terminado');
+                // $('#col_estado-'+data.id).html('<p style="display: none">3</p>'+
+                // '<i class="fas fa-check"></i>');
                 $('button[data-terminar='+data.id+']').hide();
                 // $('button[data-editar = '+id+']').css('display', 'none');
                 $('button[data-anular='+data.id+']').hide();
                 // $('#col_prestamo-'+data.id).html('None');
-                $('a[data-editar = '+data.id+']').css('display', 'none');                        $('a[data-id = '+id+']').css('display', 'none');
+                $('button[data-editar = '+data.id+']').css('display', 'none');                        $('a[data-id = '+id+']').css('display', 'none');
                 Swal.fire({
                     // 'Anulado!',
                     title:'La remision ha sido terminada exitosamente.',

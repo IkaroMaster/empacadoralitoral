@@ -8,10 +8,10 @@ from apps.empleado.models import Empleado
 from apps.equipo.models import Equipo
 
 class EstadoPrestamo(models.Model):
-    estado          = models.CharField(max_length=15)
-    def __str__(self):
-        return '{} {}'.format(self.id,self.estado)
-    
+	estado          = models.CharField(max_length=15)
+	def __str__(self):
+		return '{}'.format(self.estado)
+	
 # Create your models here.
 class PrestamoEquipo(models.Model):
 	numPrestamo 	= models.CharField(primary_key=True,max_length=6)
@@ -27,7 +27,15 @@ class PrestamoEquipo(models.Model):
 	
 	
 	def __str__(self):
-		return "{} -> {}".format(self.numPrestamo,self.compania)
+		return "{}".format(self.numPrestamo)
+	class Meta:
+		verbose_name_plural = 'Prestamo de equipos'
+		permissions	= [
+			("anular_prestamoequipo","Puede anular prestamos de equipo"),
+			("terminar_prestamoequipo","Puede terminar prestamos de equipo"),
+			("imprimir_prestamoequipo","Puede imprimir prestamos de equipo"),
+			("reporte_prestamoequipo","Puede generar reportes de prestamos de equipo"),
+		]
 
 	
 class DetallePrestamoEquipo(models.Model):
@@ -37,7 +45,7 @@ class DetallePrestamoEquipo(models.Model):
 	tapadera			= models.IntegerField(blank=True, null=True)
 
 	def __str__(self):
-		return "{} -> {}".format(self.prestamoEquipo,self.descripcion)
+		return "{}".format(self.equipo)
 	class Meta:
 		verbose_name_plural = 'Detalle de prestamo de equipo'
 	

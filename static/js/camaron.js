@@ -30,11 +30,17 @@ $(function () {
     
 
     $("#id_remision").change(function () {
-        var num = $(this).find(":selected").val(); 
+        var num = $(this).find(":selected").val();
+        var cosecha = $('#crear').attr('data-cosecha');
+        if (cosecha != '') {
+            var urls = '/camaron/modificar/'+cosecha+'/';
+        }else{
+           var urls = "/camaron/crear/";
+        }
         if (num != '') {
             $.ajax({
                 type: "POST",
-                url: "/camaron/crear/",
+                url: urls,
                 data: {
                     num: num,
                     csrfmiddlewaretoken: getCookie('csrftoken')
@@ -116,12 +122,12 @@ $(function () {
             $('.modalCuerpoReporte').empty().html(data.html);
             $('.modalCuerpoReporte').find('#selectMes').selectpicker({
                 liveSearch: true,
-                size:3,
+                size:6,
                 // selectAll: true
             }); 
             $('.modalCuerpoReporte').find('#selectAnio').selectpicker({
                 liveSearch: false,
-                size:3,
+                size:6,
                 // selectAll: true
             }); 
             
@@ -147,7 +153,70 @@ $(function () {
         // var anio = $('.modalCuerpoReporte').find('#selectAnio').val();
         $('.modalCuerpoReporte').find('#formReporteMensual').submit();
         $('#modalReporte').modal('hide');
-        
+       
+    });
+
+    $('.editarCosecha').click(function (e) {
+        var id = $(this).attr('data-id');
+        Swal.fire({
+            title: '¿Desea editar la nota de cosecha Nō ' + id + '?',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si, Editar!',
+            cancelButtonText: 'Volver',
+            // showLoaderOnConfirm: true,
+        }).then((result) => {
+            if (result.value) {
+                $('#editar-' + id).get(0).click();
+                // con jquery $("#home-link").get(0).click();
+            } else {
+                Swal.fire({
+                    title: 'Operacion cancelada por el usuario.',
+                    type:'error',
+                    timer:'3000'
+                })
+            }
+        });
+    });
+
+    $('#guardarCosecha').click(function () {
+        if ($('#crear').val() != 'True') {
+            Swal.fire({
+                title: '¿Desea modificar la nota de cosecha ' + $('#crear').attr('data-cosecha') + ' ?',
+                text: "¡No podrás revertir esto!",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si, Modificar!',
+                cancelButtonText: 'Volver',
+                // showLoaderOnConfirm: true,
+            }).then((result) => {
+                if (result.value) {
+                    // $("#formCosecha").submit();
+                    $('#enviarFormularioCosecha').click();
+                }
+            })
+        } else {
+            Swal.fire({
+                title: '¿Guardar Nota de Cosecha?',
+                text: "¡Se registrara una nueva cosecha con los datos proporcionados!",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si, Guardar!',
+                cancelButtonText: 'Volver',
+                // showLoaderOnConfirm: true,
+            }).then((result) => {
+                if (result.value) {
+                    // $("#formCosecha").submit();
+                    $('#enviarFormularioCosecha').click();
+                }
+            });
+        }
     });
 
 
@@ -170,7 +239,7 @@ $(function () {
 
 
     var tablex = $('#tablajs').DataTable({
-        "scrollY":      '50vh',
+        "scrollY":      '40vh',
         "scrollCollapse": true,
         "scrollX":      true,
         "deferRender":  true,

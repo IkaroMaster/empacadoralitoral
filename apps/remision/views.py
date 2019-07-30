@@ -19,10 +19,11 @@ from django.utils import formats
 from django.template.loader import render_to_string
 from weasyprint import HTML
 import tempfile
-from django.db.models import Count
+from django.db.models import Count,F
 from django.db.models import Sum
 from datetime import datetime, date, time, timedelta
 from django.conf import settings
+from django.middleware import csrf
 #----------
 #RECURSOS
 from .models import *
@@ -44,6 +45,8 @@ from django.core.mail import EmailMessage
 @login_required
 @permission_required('remision.add_remision',raise_exception=True)
 def CrearRemision(request): #,pk
+	if not request.user.empleado.actualizoContrasena:
+		return HttpResponseRedirect(reverse('seguridad:log_out-url'))	
 	
 	DetalleRemisionFormSet = formset_factory(DetalleRemisionForm, formset=BaseDetalleRemisionFormSet)
 
@@ -87,10 +90,11 @@ def CrearRemision(request): #,pk
 				with transaction.atomic():
 					DetalleRemision.objects.bulk_create(new_detallesRemision)
 					messages.success(request, 'Usted ha creado la remision.')
+					return redirect(reverse('remision:remision-url'))
+
 
 			except IntegrityError: #If the transaction failed
 				messages.error(request, 'Ha ocurrido un error al intentar guardar la remision.')
-				return redirect(reverse('remision:remision-url'))
 		else:
 			messages.error(request, 'Informacion requerida incompleta para crear la remision.')	
 
@@ -115,10 +119,12 @@ def CrearRemision(request): #,pk
 		remision_form.fields['prestamoEquipo'].widget.attrs['data-live-search'] = False		
 	
 	remision_form.fields['prestamoEquipo'].widget.attrs['id'] = 'prestamoEquipo_selected'
+	remision_form.fields['fecha'].widget.attrs['value'] = datetime.now().date()
 	comboboxBasico(remision_form,'conductor','Seleccione...','true',[])
 	comboboxBasico(remision_form,'entrego','Seleccione...','true',[])
 	comboboxBasico(remision_form,'placa','Seleccione...','true',[])
-	
+	remision_form.fields['estado'].widget.attrs['class'] = 'selectpicker form-control'
+
 	print(detalleRemision_formset.errors)
 	print(detalleRemision_formset.non_form_errors())
 	
@@ -139,8 +145,12 @@ def CrearRemision(request): #,pk
 	# email.send()
 	return render(request, 'remision/remision.html', context)
 
-# @login_required
+@login_required
+# @permission_required('remision.change_remision',raise_exception=True)
 def prestamoEquipo_asJson(request):
+	if not request.user.empleado.actualizoContrasena:
+		return HttpResponseRedirect(reverse('seguridad:log_out-url'))
+
 	if request.is_ajax():		
 		num = request.GET['num']
 		prestamoEquipo = PrestamoEquipo.objects.get(numPrestamo = num)
@@ -151,10 +161,14 @@ def prestamoEquipo_asJson(request):
 			}
 		return JsonResponse(data)
 	else:
-		pass
+		return render(request, "404.html")
 
 
+@login_required
+@permission_required('remision.view_remision',raise_exception=True)
 def detalleRemision_asJson(request):
+	if not request.user.empleado.actualizoContrasena:
+		return HttpResponseRedirect(reverse('seguridad:log_out-url'))	
 	if request.is_ajax():		
 		codRemision = request.GET['id']
 		remision = Remision.objects.get(pk=codRemision)
@@ -172,7 +186,8 @@ def detalleRemision_asJson(request):
 		htmlDetalleRemision = ''
 		htmlDetalleRemision += '''
 			<p>A continuacion detallamos los articulos que enviamos.</p>
-			<table class="table table-bordered">
+			<div class="table-responsive">
+			<table class="table table-bordered ">
 					<thead>
 					  <tr>
 						<th scope="col">Cantidad</th>
@@ -198,6 +213,7 @@ def detalleRemision_asJson(request):
 		htmlDetalleRemision += '''
 				</tbody>
 			</table>
+			</div>
 			<div class="row">
 				<div class="col-6 border"><p><strong>Entrego: </strong>{}</p></div>
 				<div class="col-6 border"><p><strong>Recibio: </strong>{}</p>
@@ -226,7 +242,8 @@ def detalleRemision_asJson(request):
 			
 			htmlDetallePrestamo += '''
 				<p>A continuacion detallamos los articulos que enviamos.</p>
-				<table class="table table-bordered">
+				<div class="table-responsive">
+				<table class="table table-bordered ">
 						<thead>
 						<tr>
 							<th scope="col">Equipo</th>
@@ -253,6 +270,7 @@ def detalleRemision_asJson(request):
 			htmlDetallePrestamo += '''
 					</tbody>
 				</table>
+				</div>
 				<div class="row container">
 					<div class="col-6"><p><strong>Numero de placa: </strong> {}</p></div>
 					<div class="col-6"><p><strong>Hora de salida: </strong> {}</p></div>
@@ -275,13 +293,15 @@ def detalleRemision_asJson(request):
 			}
 		return JsonResponse(data)
 	else:
-		pass
+		return render(request, "404.html")
 	
 
 
 @login_required
-@permission_required('remision.update_remision',raise_exception=True)
-def ModificarRemision(request,pk): #,pk
+@permission_required('remision.change_remision',raise_exception=True)
+def ModificarRemision(request,pk):
+	if not request.user.empleado.actualizoContrasena:
+		return HttpResponseRedirect(reverse('seguridad:log_out-url'))	 
 	"""
 	Allows a user to update their own profile.
 	"""
@@ -358,7 +378,6 @@ def ModificarRemision(request,pk): #,pk
 
 			
 			remision = Remision.objects.get(pk=remision_form.cleaned_data.get('numRemision'))
-			# Now save the data for each form in the formset
 			new_detallesRemision = []
 
 			for x in detalleRemision_formset:
@@ -379,10 +398,10 @@ def ModificarRemision(request,pk): #,pk
 
 					# And notify our users that it worked
 					messages.success(request, 'Usted ha actualizado la remision.')
+					return redirect(reverse('remision:remision-url'))
 
 			except IntegrityError: #If the transaction failed
 				messages.error(request, 'Ha ocurrido un error al intentar guardar la remision.')
-				return redirect(reverse('remision:remision-url'))
 
 	else:
 		remision_form = RemisionForm(instance=remision)
@@ -416,6 +435,8 @@ def ModificarRemision(request,pk): #,pk
 		'estilos':estilos,
 		'clases':clases,
 		'detalleRemision_formset': detalleRemision_formset,
+		'editar': True,
+		'remision': pk,
 	}
 
 	return render(request, 'remision/remision.html', context)
@@ -433,14 +454,19 @@ class ListadoRemisionList(ListView):
 		ctx = super(ListadoRemisionList, self).get_context_data(**kwargs)
 		ctx['estilos'] = estilos
 		ctx['clases'] = clases
+		ctx['listado'] = True
 		return ctx
+	@method_decorator(login_required)
 	@method_decorator(permission_required('remision.view_remision',raise_exception=True))
 	def dispatch(self, *args, **kwargs):
 		return super(ListadoRemisionList, self).dispatch(*args, **kwargs)
 
 @login_required()
-@permission_required('remision.delete_remision')
+@permission_required('remision.delete_remision',raise_exception=True)
 def anularRemision_asJson(request):
+	if not request.user.empleado.actualizoContrasena:
+		return HttpResponseRedirect(reverse('seguridad:log_out-url'))
+
 	if request.is_ajax():
 		id = request.GET['id']
 		remision = Remision.objects.get(pk = id)
@@ -493,8 +519,10 @@ def anularRemision_asJson(request):
 # 		pass
 
 @login_required()
-@permission_required('remision.terminar_remision')
+@permission_required('remision.terminar_remision',raise_exception=True)
 def terminarRemision_asJson(request):
+	if not request.user.empleado.actualizoContrasena:
+		return HttpResponseRedirect(reverse('seguridad:log_out-url'))
 	if request.is_ajax():
 		if request.method == 'POST':
 			devolucionRemisiones = request.POST['devolucionRemisiones']
@@ -537,7 +565,8 @@ def terminarRemision_asJson(request):
 			htmlDetalleRemision = ''
 			htmlDetalleRemision += '''
 				<p>A continuacion detallamos los articulos que enviamos.</p>
-				<table class="table table-bordered">
+				<div class="table-responsive">
+				<table class="table table-bordered ">
 						<thead>
 						<tr>
 							<th scope="col">Cantidad</th>
@@ -551,19 +580,23 @@ def terminarRemision_asJson(request):
 											
 			'''
 			for dR in detalleRemision:
+				xyz = ''
+				if dR.hielo.pk == 2:
+					xyz = 'readonly="True"'
 				htmlDetalleRemision +='''
 				<tr>
 					<th scope="row">{}</th>
 					<td>{}</td>
 					<td>{}</td>
-					<td><input type="text" class="devolucion text-success" value="{}"  data-id="{}"></td>
+					<td><input type="text" class="devolucion text-success form-control" value="{}"   data-id="{}" {}></td>
 					<td>{}</td>
 				</tr>
-				'''.format(dR.salida,dR.unidad,dR.hielo,dR.devolucion,dR.id,dR.cantidad)
+				'''.format(dR.salida,dR.unidad,dR.hielo,dR.devolucion,dR.id,xyz,dR.cantidad)
 				print(dR.id)
 			htmlDetalleRemision += '''
 					</tbody>
 				</table>
+				</div>
 				<div class="row container">
 					<div class="col-6 border"><p><strong>Entrego: </strong>{}</p></div>
 					<div class="col-6 border"><p><strong>Recibio: </strong>{}</p>
@@ -591,7 +624,7 @@ def terminarRemision_asJson(request):
 				
 				htmlDetallePrestamo += '''
 					<p>A continuacion detallamos los articulos que enviamos.</p>
-					<table class="table table-bordered">
+					<table class="table table-bordered table-responsive">
 							<thead>
 							<tr>
 								<th scope="col">Equipo</th>
@@ -641,7 +674,7 @@ def terminarRemision_asJson(request):
 				}
 			return JsonResponse(data)
 	else:
-		pass
+		return render(request,'404.html')
 
 
 
@@ -652,14 +685,14 @@ def terminarRemision_asJson(request):
 # Legal		216 x 356 mm		8,5 x 14,0 pulg
 # Foolscap	203 x 330 mm		8,0 x 13,0 pulg
 
-# **************** vistas que muestran reportes de inversiones ****************
+# **************** vistas que muestran reportes ****************
 
 
 
 @login_required()
 def ReporteRemision(request,pk):
-	# imagen en base64
-	
+	if not request.user.empleado.actualizoContrasena:
+		return HttpResponseRedirect(reverse('seguridad:log_out-url'))	
 	ahora = datetime.now()
 	remision = Remision.objects.get(pk = pk)
 	detalle_remision = DetalleRemision.objects.filter(remision= remision)
@@ -696,3 +729,111 @@ def ReporteRemision(request,pk):
 	# 	return response
 
 	# return HttpResponse('putitos')
+
+@login_required()
+def Fecha1_asJson(request):
+	if not request.user.empleado.actualizoContrasena:
+		return HttpResponseRedirect(reverse('seguridad:log_out-url'))	
+	if request.is_ajax():
+		mes = []
+		meses(mes)
+		html = ''
+		html +='''
+		<form action="/remision/reporte_mensual/" method="post" id="formReporteMensual" target="_blank">
+		<input type="hidden" name="csrfmiddlewaretoken" value="{}">
+		<div class="row">
+			<p>Para generar el reporte mensual seleccione la fecha:</p>
+			<div class=" col-6">
+				<label for="selectMes">Mes</label>
+				<select name="mes" class="form-control" id="selectMes" required>
+					
+		'''.format(csrf.get_token(request))
+		for mes in mes:
+			html+='''
+					<option value="{}">{}</option>
+			'''.format(mes[0],mes[1])
+		html+='''
+				</select>
+				</div>
+		'''
+
+		anio = []
+		anios(anio)
+		html +='''
+			<div class=" col-6">
+				<label for="selectMes">Año</label>
+				<select name="anio" class="form-control" id="selectAnio" required>
+					
+		'''
+		for anio in anio:
+			var = ''
+			if int(anio[0]) == 2019:
+				var= 'selected'
+			html+='''
+					<option value="{}" {}>{}</option>
+			'''.format(anio[0],var,anio[0])
+		html+='''
+				</select>
+				</div>
+		</div>
+		</form>
+		'''
+		data = {
+				'html':html,
+			}
+		return JsonResponse(data)
+	else:
+		pass
+
+@login_required
+@permission_required('remision.generar_reportes',raise_exception=True)
+def ReporteMensual(request):
+	if not request.user.empleado.actualizoContrasena:
+		return HttpResponseRedirect(reverse('seguridad:log_out-url'))	
+	if request.method == 'POST':
+		ahora = datetime.now()
+		mes = request.POST['mes']
+		anio = request.POST['anio']
+
+		# hielo = HieloProceso.objects.filter(fecha__month=int(mes),fecha__year=int(anio))
+		remisiones = Remision.objects.filter(fecha__month=int(mes),fecha__year=int(anio)).annotate(totalDevolucion=Sum(F('detalleremision__devolucion'))).order_by('fecha') 
+		remisionDevolucion = Remision.objects.filter(fecha__month=int(mes),fecha__year=int(anio),detalleremision__hielo__pk=1).annotate(devolucion=Sum(F('detalleremision__devolucion'))) 
+		totalDevoluciones = Remision.objects.filter(fecha__month=int(mes),fecha__year=int(anio),detalleremision__hielo__pk=1).aggregate(totalDevoluciones=Sum(F('detalleremision__devolucion'))) 
+		totalHieloLimpio = Remision.objects.filter(fecha__month=int(mes),fecha__year=int(anio),detalleremision__hielo__pk=1).aggregate(totalHielo=Sum(F('detalleremision__salida'))) 
+		totalHieloSucio = Remision.objects.filter(fecha__month=int(mes),fecha__year=int(anio),detalleremision__hielo__pk=2).aggregate(totalHielo=Sum(F('detalleremision__salida'))) 
+		if remisiones:
+			mesNombre = remisiones[0].fecha.strftime('%B')
+			data = {'tamano':'Letter', 
+					'posicion':'portrait', 
+					'remisiones':remisiones,
+					'remisionDevolucion':remisionDevolucion,
+					'totalDevoluciones':totalDevoluciones,
+					'totalHieloLimpio':totalHieloLimpio,
+					'totalHieloSucio':totalHieloSucio,
+					'mesNombre':mesNombre,
+					'anio': anio, 
+					'ahora':ahora,
+			}
+			html_string = render_to_string('remision/reportes/reporteMensual.html',data)
+			html = HTML(string=html_string,base_url=request.build_absolute_uri(),encoding="UTF-8")
+			
+			result = html.write_pdf(stylesheets=[
+				# Change this to suit your css path
+				## settings.BASE_DIR + '/static/bootstrap/css/bootstrap.css',
+			],)
+			# Creating http response
+			response = HttpResponse(content_type='application/pdf;')
+			response['Content-Disposition'] = 'inline; filename=remison-'+str(request.POST['mes'])+'-'+str(request.POST['anio'])+'.pdf'
+			response['Content-Transfer-Encoding'] = 'UTF-8'
+			with tempfile.NamedTemporaryFile(delete=True) as output:
+				output.write(result)
+				output.flush()
+				output = open(output.name, 'rb')
+				response.write(output.read())
+
+			return response
+		else:
+			return HttpResponse('<h1>No hay cosumo de hielo en el mes seleccionado<h1>')
+		
+	else:
+		return render(request,'404.html')

@@ -36,7 +36,7 @@ class Finca(models.Model):
 	compania 		= models.ForeignKey(Compania,verbose_name="Empresa",on_delete=models.PROTECT)
 
 	def __str__(self):
-		return "{} -> {}".format(self.codFinca,self.nombre)
+		return "{} > {}".format(self.codFinca,self.nombre)
 	class Meta:
 		verbose_name_plural = 'Fincas'
 
@@ -49,6 +49,6 @@ class Laguna(models.Model):
 	finca			= models.ForeignKey(Finca,on_delete=models.PROTECT)
 
 	def __str__(self):
-		return "{} -> {}".format(self.finca,self.codLaguna)
+		return "{}".format(self.codLaguna)
 	class Meta:
 		verbose_name_plural = 'Lagunas'

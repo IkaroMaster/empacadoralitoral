@@ -4,38 +4,52 @@ Hielo de proceso
 {% endblock titulo %}
 
 {% block estilos %}
-    <style>
-            tr.group,
-            tr.group:hover {
-                background-color: #ddd !important;
-            }
-            .total{
-                background-color: #ddd !important;
-            }
-    </style>
+<style>
+    tr.group,
+    tr.group:hover {
+        background-color: #ddd !important;
+    }
+
+    .total {
+        background-color: #ddd !important;
+    }
+</style>
 {% endblock estilos %}
 {% block l8 %}
 active
 {% endblock l8 %}
 {% block cuerpo %}
 <div class="card text-center">
-    <div class="panel-heading bg-primary" >
-        <h3 class="panel-title text-light">Hielo de proceso</h3>
-    </div>    
+    <div class="panel-heading bg-primary">
+        
+        {% if crear %}
+           <h4 class="panel-title text-light">Crear Nota de Consumo de Hielo</h4> 
+        {% elif editar %}
+           <h4 class="panel-title text-light">Modificar Nota de Consumo del {{fecha}}</h4> 
+        {% elif listado %}
+           <h4 class="panel-title text-light"> Notas de Consumo de Hielo en Proceso</h4> 
+        {% endif %}
+            
+        
+    </div>
     <div class="card-header">
         <ul class="nav nav-tabs card-header-tabs">
+
+            {% if perms.hielo_proceso.add_hieloproceso %}
             <li class="nav-item">
                 <a class="nav-link {{ clases.o1 }}" href="{% url 'hielo_proceso:crear-url'%}">Gestión de hielo</a>
             </li>
+            {% endif %}
+
+            {% if perms.hielo_proceso.view_hieloproceso %}
             <li class="nav-item">
-                <a class="nav-link {{ clases.o2 }}" href="">Dias</a>
+                <a class="nav-link {{ clases.o2 }}" href="{% url 'hielo_proceso:dias-url'%}">Dias</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link {{ clases.o3 }} " href="">...</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link {{ clases.o3 }}" href="#">...</a>
-            </li>
+            {% endif %}
+
+
+
+
         </ul>
     </div>
     <div class="card-body">
@@ -43,13 +57,14 @@ active
 
             {% if messages %}
             {% for message in messages %}
-                <p class="alert alert-danger alert-dismissible ">Error: {{ message|escape }}</p> <!--data-dismiss="alert"-->
-                <br><br>
+            <p class="alert alert-danger alert-dismissible ">Error: {{ message|escape }}</p>
+            <!--data-dismiss="alert"-->
+            <br><br>
             {% endfor %}
             {% endif %}
 
             <form method="POST" id="formPrestamo">
-                <input type="hidden" name="crear" id="crear" value="{{crear}}">
+                <input type="hidden" name="crear" id="crear" data-fecha="{{fecha}}" value="{{crear}}">
                 {% csrf_token %}
                 <div class="row container border">
                     <br><br>
@@ -76,75 +91,120 @@ active
                                 <th>Canasta pequeña roja</th>
                                 <th>Canasta pequeña azul</th>
                                 <th>Eliminar</th>
-                            </tr>     
+                            </tr>
                         </thead>
-                        <tbody>  
-                        {% for dp in detalleHielo_formset %}
+                        <tbody>
+                            {% for dp in detalleHielo_formset %}
                             <tr class="detalle-formset">
-                              <td>{{dp.departamento}}</td>  
-                              <td>{{dp.binGrande}}</td>  
-                              <td>{{dp.binPequeno}}</td>  
-                              <td>{{dp.carretonBlanco}}</td>  
-                              <td>{{dp.glaseo}}</td>  
-                              <td>{{dp.canastaA}}</td>  
-                              <td>{{dp.canastapRoja}}</td>  
-                              <td>{{dp.canastapAzul}}</td>  
-                              <td></td>
-                            </tr>    
-                        {% endfor %}                   
+                                <td>{{dp.departamento}}</td>
+                                <td>{{dp.binGrande}}</td>
+                                <td>{{dp.binPequeno}}</td>
+                                <td>{{dp.carretonBlanco}}</td>
+                                <td>{{dp.glaseo}}</td>
+                                <td>{{dp.canastaA}}</td>
+                                <td>{{dp.canastapRoja}}</td>
+                                <td>{{dp.canastapAzul}}</td>
+                                <td></td>
+                            </tr>
+                            {% endfor %}
                         </tbody>
                     </table>
 
                 </div>
                 <br>
-                <a href="{% url 'hielo_proceso:dias-url'%} " class="btn btn-secondary">Cancelar</a>
-                <input type="submit" class="btn btn-success" value="Guardar" class="button" />
+                <input type="submit"  id="enviarFormularioHielo" hidden/>
 
             </form>
+            <center>
+                         <button class="btn btn-success" id="guardarHielo" >
+                         {% if crear %}
+                             Guardar Consumo
+                        {% elif editar %}
+                            Modificar Consumo
+                         {% endif %}
+                             </button>
+               <a href="{% url 'hielo_proceso:dias-url'%} " class="btn btn-secondary">Cancelar</a>
 
-           
+            </center>
 
-            
+
         </div>
         <div style="{{estilos.o2}}">
-                <div class="row">
-                    <div class="col-3">
-                        <div class="btn-group" role="group">
-                            <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Reportes
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                                <button id="reporteMensual" data-toggle="modal" data-target="#modalReporte" class=" dropdown-item ">Reporte Mensual</button>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#">Reporte Anual</a>
-                            </div>
+            <div class="row">
+
+                {% if perms.hielo_proceso.imprimir_hieloproceso %}
+                <div class="col-2">
+                    <div class="btn-group" role="group">
+                        <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Reportes
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                            <button id="reporteMensual" data-toggle="modal" data-target="#modalReporte"
+                                class=" dropdown-item ">Reporte Mensual</button>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#">Reporte Anual</a>
                         </div>
                     </div>
                 </div>
-                <table id="tablajs" class="table table-striped table-bordered" style="width:100%" class="display">
-                    <thead>
-                        <tr>
-                            <th>Fecha</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        
-                        {% for hp in hieloProceso  %}
-                        <tr>
-                            <td>{{hp.fecha}}</td>
-                            <td>
-                               
-                                <a data-imprimir='{{hp.pk}}' href="{%url 'hielo_proceso:reporte_diario-url' hp.pk%}" class="imprimir btn btn-success fas fa-print" target="_blank"></a>
-                                <a data-editar='{{hp.pk}}' href="{%url 'hielo_proceso:modificar-url' hp.pk%}" class="editar btn btn-info fas fa-pen"></a>
-                                <button class="ver btn btn-warning fas fa-eye " data-ver='{{hp.pk}}'></button>
-                            </td>
-                        </tr>    
-                        {% endfor %}
-                            
-                        
-                    </tbody>
-                    <!-- <thead class="thead-inverse">
+                {% endif %}
+                
+                {% if perms.hielo_proceso.grafico_hieloproceso %}
+                    <div class="col-2">
+                    <div class="btn-group" role="group">
+                        <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Gráficos
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                            <a class="dropdown-item" href="{% url 'hielo_proceso:grafico-url'%}">Reporte de hielo
+                                mensual</a>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                    
+
+                
+            </div>
+
+            <table id="tablajs" class="table table-striped table-bordered" style="width:100%" class="display">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    {% for hp in hieloProceso  %}
+                    <tr>
+                        <td>{{hp.fecha}}</td>
+                        <td>
+
+                            {% if perms.hielo_proceso.imprimir_hieloproceso %}
+                            <a data-imprimir='{{hp.pk}}' href="{%url 'hielo_proceso:reporte_diario-url' hp.pk%}"
+                                class="imprimir btn btn-success fas fa-print" target="_blank"></a>
+
+                            {% endif %}
+                            {% if perms.hielo_proceso.change_hieloproceso %}
+                            <a id="editar-{{hp.pk}}" data-editar='{{hp.pk}}' href="{%url 'hielo_proceso:modificar-url' hp.pk%}"
+                            class="editar" ></a>
+                            <button class="editarHielo btn btn-info fas fa-pen" data-id='{{hp.pk}}' data-fecha='{{hp.fecha}}'></button>
+
+                            {% endif %}
+                            {% if perms.hielo_proceso.view_hieloproceso %}
+                            <button class="ver btn btn-warning fas fa-eye " data-ver='{{hp.pk}}'></button>
+
+                            {% endif %}
+
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+
+                </tbody>
+                <!-- <thead class="thead-inverse">
                         <tr>
                             <th>Fecha</th>
                             <th>Departamento</th>
@@ -189,55 +249,59 @@ active
                             
                        
                     </tbody> -->
-                </table>
-            
+            </table>
+
         </div>
     </div>
 
 </div>
 <!-- Modal -->
-<div class="modal fade" id="modalDetalleHielo" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+<div class="modal fade" id="modalDetalleHielo" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLongTitle">Visualizacion de Hielo de Proceso</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Visualizacion de Hielo de Proceso</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body modalCuerpoHielo">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary fas fa-times" id="cerrarModal" data-dismiss="modal">
+                    Cerrar</button>
+                <a href="" class="btn btn-warning fas fa-print" id="imprimir" target="_blank"> Imprimir</a>
+            </div>
         </div>
-        <div class="modal-body modalCuerpoHielo">
-          ...
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary fas fa-times" id="cerrarModal" data-dismiss="modal"> Cerrar</button>
-          <a href="" class="btn btn-warning fas fa-print" id="imprimir" target="_blank"> Imprimir</a>
-        </div>
-      </div>
     </div>
-  </div>
+</div>
 
-  <!-- Small modal 
+<!-- Small modal 
 {# <button type="button" class="btn btn-primary" >Small modal</button> #}-->
 
-<div class="modal fade" id="modalReporte" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-<div class="modal-dialog modal-sm modal-dialog-centered" role="document">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h5 class="modal-title" id="exampleModalLongTitle">Reporte Mensual</h5>
-      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>
+<div class="modal fade" id="modalReporte" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Reporte Mensual</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body modalCuerpoReporte">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary fas fa-times" id="cerrarModal" data-dismiss="modal">
+                    Cerrar</button>
+                <button class="btn btn-warning fas fa-print" id="imprimirReporte">Imprimir</button>
+                <!-- <a href="" class="btn btn-warning fas fa-print" id="imprimirReporte" target="_blank"> Imprimir</a> -->
+            </div>
+        </div>
     </div>
-    <div class="modal-body modalCuerpoReporte">
-      ...
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-secondary fas fa-times" id="cerrarModal" data-dismiss="modal"> Cerrar</button>
-      <button class="btn btn-warning fas fa-print" id="imprimirReporte">Imprimir</button>
-      <!-- <a href="" class="btn btn-warning fas fa-print" id="imprimirReporte" target="_blank"> Imprimir</a> -->
-    </div>
-  </div>
-</div>
 </div>
 {% endblock cuerpo %}
 {% load static %}

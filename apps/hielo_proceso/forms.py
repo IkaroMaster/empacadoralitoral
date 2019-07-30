@@ -29,7 +29,7 @@ class DetalleHieloForm(forms.ModelForm):
 				cl = []
 				for c in departamento:
 					cl.append([(str(c.pk)), str(c)])
-				self.fields[field].choices = [("","Seleccione...")] + cl
+				self.fields[field].choices = [('',"Seleccione...")] + cl
 				self.fields[field].widget.attrs['class'] = 'selectpicker form-control dx'
 				self.fields[field].widget.attrs['data-live-search'] = 'true'
 
