@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html class="translated-ltr">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <link rel="stylesheet" href="./live_files/styles.css">
+    <link rel="stylesheet" href="./live_files/example.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+<body cz-shortcut-listen="true">
+    <div class="wrapper">
+
+        <section>
+
+            <section id="container" class="container">
+                <div class="controls">
+                    <fieldset class="input-group">
+                        <button class="stop">
+                            <font style="vertical-align: inherit;">
+                                <font style="vertical-align: inherit;">Detener</font>
+                            </font>
+                        </button>
+                    </fieldset>
+                    <fieldset class="reader-config-group">
+                        <label>
+                            <span>
+                                <font style="vertical-align: inherit;">
+                                    <font style="vertical-align: inherit;">Tipo de código de barras</font>
+                                </font>
+                            </span>
+                            <select name="decoder_readers">
+                                <option value="code_128" selected="selected">
+                                    <font style="vertical-align: inherit;">
+                                        <font style="vertical-align: inherit;">Código 128</font>
+                                    </font>
+                                </option>
+                                <option value="code_39">
+                                    <font style="vertical-align: inherit;">
+                                        <font style="vertical-align: inherit;">Código 39</font>
+                                    </font>
+                                </option>
+                                <option value="code_39_vin">
+                                    <font style="vertical-align: inherit;">
+                                        <font style="vertical-align: inherit;">Código 39 VIN</font>
+                                    </font>
+                                </option>
+                                <option value="ean">
+                                    <font style="vertical-align: inherit;">
+                                        <font style="vertical-align: inherit;">EAN</font>
+                                    </font>
+                                </option>
+                                <option value="ean_extended">
+                                    <font style="vertical-align: inherit;">
+                                        <font style="vertical-align: inherit;">EAN-extendido</font>
+                                    </font>
+                                </option>
+                                <option value="ean_8">
+                                    <font style="vertical-align: inherit;">
+                                        <font style="vertical-align: inherit;">EAN-8</font>
+                                    </font>
+                                </option>
+                                <option value="upc">
+                                    <font style="vertical-align: inherit;">
+                                        <font style="vertical-align: inherit;">UPC</font>
+                                    </font>
+                                </option>
+                                <option value="upc_e">
+                                    <font style="vertical-align: inherit;">
+                                        <font style="vertical-align: inherit;">UPC-E</font>
+                                    </font>
+                                </option>
+                                <option value="codabar">
+                                    <font style="vertical-align: inherit;">
+                                        <font style="vertical-align: inherit;">Codabar</font>
+                                    </font>
+                                </option>
+                                <option value="i2of5">
+                                    <font style="vertical-align: inherit;">
+                                        <font style="vertical-align: inherit;">I2of5</font>
+                                    </font>
+                                </option>
+                                <option value="2of5">
+                                    <font style="vertical-align: inherit;">
+                                        <font style="vertical-align: inherit;">Estándar 2 de 5</font>
+                                    </font>
+                                </option>
+                                <option value="code_93">
+                                    <font style="vertical-align: inherit;">
+                                        <font style="vertical-align: inherit;">Código 93</font>
+                                    </font>
+                                </option>
+                            </select>
+                        </label>
+                        <label>
+                            <span>
+                                <font style="vertical-align: inherit;">
+                                    <font style="vertical-align: inherit;">Resolución (lado largo)</font>
+                                </font>
+                            </span>
+                            <select name="input-stream_constraints">
+                                <option value="320x240">
+                                    <font style="vertical-align: inherit;">
+                                        <font style="vertical-align: inherit;">320px</font>
+                                    </font>
+                                </option>
+                                <option selected="selected" value="640x480">
+                                    <font style="vertical-align: inherit;">
+                                        <font style="vertical-align: inherit;">640 px</font>
+                                    </font>
+                                </option>
+                                <option value="800x600">
+                                    <font style="vertical-align: inherit;">
+                                        <font style="vertical-align: inherit;">800px</font>
+                                    </font>
+                                </option>
+                                <option value="1280x720">
+                                    <font style="vertical-align: inherit;">
+                                        <font style="vertical-align: inherit;">1280px</font>
+                                    </font>
+                                </option>
+                                <option value="1600x960">
+                                    <font style="vertical-align: inherit;">
+                                        <font style="vertical-align: inherit;">1600px</font>
+                                    </font>
+                                </option>
+                                <option value="1920x1080">
+                                    <font style="vertical-align: inherit;">
+                                        <font style="vertical-align: inherit;">1920px</font>
+                                    </font>
+                                </option>
+                            </select>
+                        </label>
+                        <label>
+                            <span>
+                                <font style="vertical-align: inherit;">
+                                    <font style="vertical-align: inherit;">Tamaño de parche</font>
+                                </font>
+                            </span>
+                            <select name="locator_patch-size">
+                                <option value="x-small">
+                                    <font style="vertical-align: inherit;">
+                                        <font style="vertical-align: inherit;">x-pequeño</font>
+                                    </font>
+                                </option>
+                                <option value="small">
+                                    <font style="vertical-align: inherit;">
+                                        <font style="vertical-align: inherit;">pequeña</font>
+                                    </font>
+                                </option>
+                                <option selected="selected" value="medium">
+                                    <font style="vertical-align: inherit;">
+                                        <font style="vertical-align: inherit;">medio</font>
+                                    </font>
+                                </option>
+                                <option value="large">
+                                    <font style="vertical-align: inherit;">
+                                        <font style="vertical-align: inherit;">grande</font>
+                                    </font>
+                                </option>
+                                <option value="x-large">
+                                    <font style="vertical-align: inherit;">
+                                        <font style="vertical-align: inherit;">x-large</font>
+                                    </font>
+                                </option>
+                            </select>
+                        </label>
+                        <label>
+                            <span>
+                                <font style="vertical-align: inherit;">
+                                    <font style="vertical-align: inherit;">Media muestra</font>
+                                </font>
+                            </span>
+                            <input type="checkbox" checked="checked" name="locator_half-sample">
+                        </label>
+                        <label>
+                            <span>
+                                <font style="vertical-align: inherit;">
+                                    <font style="vertical-align: inherit;">Trabajadores</font>
+                                </font>
+                            </span>
+                            <select name="numOfWorkers">
+                                <option value="0">
+                                    <font style="vertical-align: inherit;">
+                                        <font style="vertical-align: inherit;">0 0</font>
+                                    </font>
+                                </option>
+                                <option value="1">
+                                    <font style="vertical-align: inherit;">
+                                        <font style="vertical-align: inherit;">1</font>
+                                    </font>
+                                </option>
+                                <option value="2">
+                                    <font style="vertical-align: inherit;">
+                                        <font style="vertical-align: inherit;">2</font>
+                                    </font>
+                                </option>
+                                <option selected="selected" value="4">
+                                    <font style="vertical-align: inherit;">
+                                        <font style="vertical-align: inherit;">4 4</font>
+                                    </font>
+                                </option>
+                                <option value="8">
+                                    <font style="vertical-align: inherit;">
+                                        <font style="vertical-align: inherit;">8</font>
+                                    </font>
+                                </option>
+                            </select>
+                        </label>
+                        <label>
+                            <span>
+                                <font style="vertical-align: inherit;">
+                                    <font style="vertical-align: inherit;">Cámara</font>
+                                </font>
+                            </span>
+                            <select name="input-stream_constraints" id="deviceSelection">
+                                <option value="1c9e852ea4c629ba9236f7e89b8d6cee05de4a3b5af54b82cd52e75aacce8bb7">Cámara
+                                    FaceTime HD (integrada)</option>
+                            </select>
+                        </label>
+                        <label style="display: none">
+                            <span>
+                                <font style="vertical-align: inherit;">
+                                    <font style="vertical-align: inherit;">Enfocar</font>
+                                </font>
+                            </span>
+                            <select name="settings_zoom"></select>
+                        </label>
+                        <label style="display: none">
+                            <span>
+                                <font style="vertical-align: inherit;">
+                                    <font style="vertical-align: inherit;">Antorcha</font>
+                                </font>
+                            </span>
+                            <input type="checkbox" name="settings_torch">
+                        </label>
+                    </fieldset>
+                </div>
+                <div id="result_strip">
+                    <ul class="thumbnails"></ul>
+                </div>
+                <div id="interactive" class="viewport"><video autoplay="true" preload="auto" src="" muted="true"
+                        playsinline="true"></video><canvas class="drawingBuffer" width="640" height="480"></canvas><br
+                        clear="all"></div>
+            </section>
+
+            <script src="./live_files/jquery-1.11.0.min.js"></script>
+            <!-- <script src="./live_files/adapter-latest.js" type="text/javascript"></script> -->
+            <script src="./live_files/quagga.min.js" type="text/javascript"></script>
+            <script src="./live_files/live_w_locator.js" type="text/javascript"></script>
+
+
+        </section>
+
+    </div>
+   

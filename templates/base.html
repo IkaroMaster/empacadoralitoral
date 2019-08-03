@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap-select.min.css' %}">
 	<link rel="stylesheet" href="{% static 'bootstrap/css/jasny-bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'bootstrap/css/datatables.min.css' %}">
+    <link rel="stylesheet" href="{% static 'bootstrap/css/pretty-checkbox.min.css' %}">
     <link rel="stylesheet" href="{% static 'fontawesome/css/all.min.css'%}">
 	<!-- <link rel="stylesheet" href="{% static 'bootstrap3/css/buttons_datatable.css' %}"> -->
     {% block estilos %}
@@ -24,8 +25,10 @@
 </head>
 <body>
     
-    {% block imagen %}
+    {% block imprimir %}
+    {% endblock imprimir %}
         
+    {% block imagen %}   
     {% endblock imagen %}
     
     <div id="contenedorPrincipal" class="container">

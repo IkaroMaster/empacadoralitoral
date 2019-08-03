@@ -1,11 +1,11 @@
 {% extends '../base_in.html' %}
 
 {% block titulo %}
-    Empresas
+Empresas
 {% endblock titulo %}
 
 {% block l4 %}
-    active
+active
 {% endblock l4 %}
 
 {% block cuerpo %}
@@ -14,125 +14,247 @@
         <h3 class="panel-title text-light">Inventario de equipo</h3>
     </div> -->
     <div class="card-header">
-    <ul class="nav nav-tabs card-header-tabs">
-        <li class="nav-item">
-        <a class="nav-link {{ clases.o1 }}" href="{% url 'compania:compania-url' 1 %}">Gestion de Empresa</a>
-        </li>
-        <li class="nav-item">
-        <a class="nav-link {{ clases.o2 }}" href="{% url 'compania:compania-url' 2 %}">Empresas</a>
-        </li>
-        <li class="nav-item">
-        <a class="nav-link {{ clases.o3 }} " href="{% url 'compania:compania-url' 3 %}">Gestion de Finca</a>
-        </li>
-        <li class="nav-item">
-        <a class="nav-link {{ clases.o4 }}" href="{% url 'compania:compania-url' 4 %}">Fincas</a>
-        </li>
-    </ul>
+        <ul class="nav nav-tabs card-header-tabs">
+            <li class="nav-item">
+                <a class="nav-link {{ clases.o1 }}" href="{% url 'compania:compania-url' 1 %}">Gestion de Empresa</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ clases.o2 }}" href="{% url 'compania:compania-url' 2 %}">Empresas</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ clases.o3 }} " href="{% url 'compania:compania-url' 3 %}">Gestion de Finca</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ clases.o4 }}" href="{% url 'compania:compania-url' 4 %}">Fincas</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ clases.o5 }}" href="{% url 'compania:compania-url' 4 %}">Gestión de Laguna</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ clases.o6 }}" href="{% url 'compania:lagunas-url' %}">Lagunas</a>
+            </li>
+        </ul>
     </div>
     <div class="card-body">
-            <div style="{{estilos.o1}}">
-            
-                    <form action=" {% url 'compania:guardar_compania-url' %}" class="row" method="POST">
-                            {% csrf_token %}	
-                            <input type="hidden" name="id_o" value="{{ id_o }}">	
-                            <div class="col-6">
-                                {{ form.as_p }}
-                                
-                                <a href="{% url 'compania:compania-url' 2 %}" class="btn btn-danger">Cancelar</a>
-                                <input class="btn btn-success" type="submit" value="Guardar"><br>
-                                         
-                            </div> 
-                            
-                    </form>        
-            </div>
-            <div style="{{estilos.o2}}">
-                <!-- <div class="table-responsive"> -->
-                    <table id="tablajs" class="table table-striped table-hover">
-                        <thead class="thead-inverse">
-                            <tr>
-                                <th>Cod.</th>
-                                <th>Nombre</th>
-                                <th>Direccion</th>
-                                <th>Abreviatura</th>
-                                <th>Tipo de Empresa</th>
-                                <th>Accion</th>
-                                <!-- <th>Añadir</th> -->
-                            </tr>
-                            </thead>
-                            <tbody>     
-                            {% for c in companias %}
-                                    <tr >
-                                        <td>{{ c.id }}</td>
-                                        <td>{{ c.nombre }}</td>
-                                        <td>{{ c.direccion }}</td>
-                                        <td>{{ c.abreviatura }}</td>
-                                        <td>{{ c.tipoCompania.tipo }}</td>
-                                        <td><a href="{% url 'compania:editar_compania-url' c.id %}" class="btn btn-primary">Editar </a></td>
-                                    <!-- <td><button class="btn btn-success">Añadir</button></td> -->
-    
-    
-                                    </tr>       
-                            {% endfor %}                            
-                            </tbody>
-                    </table>
-                <!-- </div>     -->
-                    
-            </div>
-            <div style="{{estilos.o3}}">
-                    <form action=" {% url 'compania:guardar_finca-url' %}" class="row" method="POST">
-                            {% csrf_token %}	
-                            <input type="hidden" name="id_o" value="{{ id_o }}">	
-                            <div class="col-6">
-                                {{ form.as_p }}
-                                
-                                <a href="{% url 'compania:compania-url' 4 %}" class="btn btn-danger">Cancelar</a>
-                                <input class="btn btn-success" type="submit" value="Guardar"><br>
-                                         
-                            </div> 
-                            
-                    </form>   
-            </div>
-            <div style="{{estilos.o4}}">
-                <!-- <div class="table-responsive"> -->
-                    <table id="tablajs2" class="table table-striped table-hover">
-                        <thead class="thead-inverse">
-                            <tr>
-                                <th>Codigo de Finca</th>
-                                <th>Nombre</th>
-                                <th>Abreviatura</th>
-                                <th>Direccion</th>
-                                <th>Empresa</th>
-                                <th>Accion</th>
-                                <!-- <th>Añadir</th> -->
-                            </tr>
-                            </thead>
-                            <tbody>     
-                            {% for f in fincas %}
-                                    <tr >
-                                        <td>{{ f.codFinca }}</td>
-                                        <td>{{ f.nombre }}</td>
-                                        <td>{{ f.abreviatura }}</td>
-                                        <td>{{ f.direccion }}</td>
-                                        <td>{{ f.compania.nombre }}</td>
-                                        <td><a  href="{% url 'compania:editar_finca-url' f.codFinca %}" class="btn btn-primary">Editar </a></td>
-                                    <!-- <td><button class="btn btn-success">Añadir</button></td> -->
-    
-    
-                                    </tr>       
-                            {% endfor %}                            
-                            </tbody>
-                    </table>
-                <!-- </div>     -->
-                    
+        <div style="{{estilos.o1}}">
+
+            <form action=" {% url 'compania:guardar_compania-url' %}" class="row" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="id_o" value="{{ id_o }}">
+
+                <div class="col-md-6 ">
+                    <label for="id_nombre">
+                        <font style="vertical-align: inherit;">
+                            <font style="vertical-align: inherit;">Nombre:</font>
+                        </font>
+                    </label>
+                    <p>{{form.nombre}}</p>
+
+                    <label for="id_direccion">
+                        <font style="vertical-align: inherit;">
+                            <font style="vertical-align: inherit;">Dirección:</font>
+                        </font>
+                    </label>
+                    <p>{{form.direccion}}</p>
+
+                    <label for="id_abreviatura">
+                        <font style="vertical-align: inherit;">
+                            <font style="vertical-align: inherit;">Abreviatura:</font>
+                        </font>
+                    </label>
+                    <p>{{form.abreviatura}}</p>
+
+                    <label for="id_tipoCompania">
+                        <font style="vertical-align: inherit;">
+                            <font style="vertical-align: inherit;">Tipo de Compañía:</font>
+                        </font>
+                    </label>
+                    <p>{{form.tipoCompania}}</p>
+
+                    <label for="id_estado" class="text-center">Estado: </label>
+                    <div class="pretty p-icon p-round p-pulse">
+                        {{form.estado}}
+                        <div class="state p-success">
+                            <i class="icon mdi mdi-check"></i>
+                            <label>Activo</label>
+                        </div>
+                    </div>
+                    <br><br>
+                </div>
+                <div class=" col-md-6"></div>
+
+                <div class="col-md-6">
+                    <a href="{% url 'compania:compania-url' 2 %}" class="btn btn-secondary">Cancelar</a>
+                    <input class="btn btn-success" type="submit" value="Guardar"><br>
+                </div>
+
+
+            </form>
+        </div>
+        <div style="{{estilos.o2}}">
+
+            <!-- <div class="table-responsive"> -->
+            <table id="tablajs" class="table table-striped table-hover">
+                <thead class="thead-inverse">
+                    <tr>
+                        <th>Cod.</th>
+                        <th>Nombre</th>
+                        <th>Estado</th>
+                        <th>Abreviatura</th>
+                        <th>Tipo de Empresa</th>
+                        <th>Acción</th>
+                        <!-- <th>Añadir</th> -->
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for c in companias %}
+                    <tr class="{%if not c.estado %}
+                            table-danger
+                        {% endif %}">
+
+
+
+                        <td>{{ c.id }}</td>
+                        <td>{{ c.nombre }}</td>
+                        <!-- <td>{{ c.direccion }}</td> -->
+                        <td>
+                            {% if c.estado %}
+                            Activa
+                            {%else%}
+                            Inactiva
+                            {% endif %}
+                        </td>
+                        <td>{{ c.abreviatura }}</td>
+                        <td>{{ c.tipoCompania.tipo }}</td>
+                        <a href=""></a>
+                        <td>
+                            <a id="editarCompania-{{c.pk}}" href="{% url 'compania:editar_compania-url' c.id %}"></a>
+                            <button class="editarCompania btn btn-info fas fa-pen" data-id="{{c.pk}}"></button>
+                        </td>
+                        <!-- <td><button class="btn btn-success">Añadir</button></td> -->
+
+
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <!-- </div>     -->
+
+        </div>
+        <div style="{{estilos.o3}}">
+            <form action=" {% url 'compania:guardar_finca-url' %}" class="row" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="id_o" value="{{ id_o }}">
+                <div class="col-md-6">
+                    <label class="text-center">Código de Finca:</label>
+                    <p>{{form.codFinca}}</p>
+                    <label class="text-center">Nombre:</label>
+                    <p>{{form.nombre}}</p>
+                    <label class="text-center">Abreviatura:</label>
+                    <p>{{form.abreviatura}}</p>
+                    <label class="text-center">Dirección:</label>
+                    <p>{{form.direccion}}</p>
+                    <label class="text-center">Empresa:</label>
+                    <p>{{form.compania}}</p>
+
+                    <a href="{% url 'compania:compania-url' 4 %}" class="btn btn-secondary">Cancelar</a>
+                    <input class="btn btn-success" type="submit" value="Guardar"><br>
+
+                </div>
+
+            </form>
+        </div>
+        <div style="{{estilos.o4}}">
+            <div class="table-responsive">
+                <table id="tablajs2" class="table table-striped table-hover ">
+                    <thead class="thead-inverse">
+                        <tr>
+                            <th>Código de Finca</th>
+                            <th>Nombre</th>
+                            <th>Abreviatura</th>
+                            <th>Empresa</th>
+                            <th>Dirección</th>
+                            <th>Acción</th>
+                            <!-- <th>Añadir</th> -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for f in fincas %}
+                        <tr>
+                            <td>{{ f.codFinca }}</td>
+                            <td>{{ f.nombre }}</td>
+                            <td>{{ f.abreviatura }}</td>
+                            <td>
+                                {% if f.compania.abreviatura %}
+                                {{ f.compania.abreviatura }}
+                                {% else %}
+                                {{ f.compania.nombre }}
+                                {% endif %}
+                            </td>
+                            <td>{{f.direccion}}</td>
+                            <td><a id="editarFinca-{{f.pk}}" href="{% url 'compania:editar_finca-url' f.codFinca %}">
+                                </a>
+                                <button data-id="{{f.pk}}" class="editarFinca btn btn-info fas fa-pen"></button>
+                            </td>
+                            <!-- <td><button class="btn btn-success">Añadir</button></td> -->
+
+
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
 
+        </div>
+        <div style="{{estilos.o5}}">
+
+        </div>
+        <div style="{{estilos.o6}}">
+            <table id="tablajs" class="table table-striped table-hover">
+                <thead class="thead-inverse">
+                    <tr>
+                        <th>Cod. Laguna</th>
+                        <th>Tamaño</th>
+                        <th>Ubicación</th>
+                        <th>Descripción</th>
+                        <th>Finca</th>
+                        <th>Acción</th>
+                        <!-- <th>Añadir</th> -->
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for l in lagunas %}
+                    <tr class="{%if not c.estado %}
+                                    table-danger
+                                {% endif %}">
+
+
+
+                        <td>{{ l.pk }}</td>
+                        <td>{{ l.tamano }}</td>
+                        <!-- <td>{{ c.direccion }}</td> -->
+                        <td>{{ l.ubicacion }}</td>
+                        <td>{{ l.descripcion }}</td>
+                        <td>{{l.finca}} </td>
+                        <td>
+                            <a id="editarCompania-{{c.pk}}" href=""></a>
+                            <button class="editarCompania btn btn-info fas fa-pen" data-id="{{c.pk}}"></button>
+                        </td>
+                        <!-- <td><button class="btn btn-success">Añadir</button></td> -->
+
+
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
     </div>
-        
+
 </div>
 {% endblock cuerpo %}
-    
+
 {% load static %}
 {% block script %}
-    <script src="{% static 'js/compania.js'%}"></script>
+<script src="{% static 'js/compania.js'%}"></script>
 {% endblock script %}
-    

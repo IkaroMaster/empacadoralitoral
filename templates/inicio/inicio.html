@@ -25,11 +25,11 @@
     </li>
   </ul>
   <ul class="nav navbar-nav ">
-      
-      <li class="nav-item ">
-          <a class="navbar-brand" href="#" >Bienvenido, {{user.get_full_name}}</a>
-          
-        </li>
+
+    <li class="nav-item ">
+      <a class="navbar-brand" href="#">Bienvenido, {{user.get_full_name}}</a>
+
+    </li>
   </ul>
 </nav>
 
@@ -37,8 +37,8 @@
 <br>
 
 <div class="row">
-  
-  
+
+
 
   {% if perms.prestamos.view_prestamoequipo %}
   <div class="col-md-3 mb-4">
@@ -56,10 +56,10 @@
   <div class="col-md-3 mb-4">
     <div class="card">
       <div class="card-body" style="text-align: center;">
-        <a href="{% url 'remision:remision-url' %}" ><strong class="">Remisiones </strong><span
+        <a href="{% url 'remision:remision-url' %}"><strong class="">Remisiones </strong><span
             class="badge badge-primary badge-pill">14</span></a><br>
-        <a href="{% url 'remision:remision-url' %}"  class=" align-items-center"><img
-          src="{% static 'imgs/remision.png' %}" width="38%" alt=""></a>
+        <a href="{% url 'remision:remision-url' %}" class=" align-items-center"><img
+            src="{% static 'imgs/remision.png' %}" width="38%" alt=""></a>
       </div>
     </div>
   </div>
@@ -68,23 +68,23 @@
   <div class="col-md-3 mb-4">
     <div class="card">
       <div class="card-body" style="text-align: center;">
-        <a href="{% url 'camaron:cosechas-url' %}" ><strong class="">Camarón </strong><span
+        <a href="{% url 'camaron:cosechas-url' %}"><strong class="">Camarón </strong><span
             class="badge badge-primary badge-pill">14</span></a><br>
-        <a href="{% url 'camaron:cosechas-url' %}"  class=" align-items-center"><img
-          src="{% static 'imgs/camaron.png' %}" width="40%" alt=""></a>
+        <a href="{% url 'camaron:cosechas-url' %}" class=" align-items-center"><img
+            src="{% static 'imgs/camaron.png' %}" width="40%" alt=""></a>
       </div>
     </div>
   </div>
   {% endif %}
-  
+
   {% if perms.hielo_proceso.view_hieloproceso %}
   <div class="col-md-3 mb-4">
     <div class="card">
       <div class="card-body" style="text-align: center;">
-        <a href="{% url 'hielo_proceso:dias-url' %}" ><strong class="">Hielo </strong><span
+        <a href="{% url 'hielo_proceso:dias-url' %}"><strong class="">Hielo </strong><span
             class="badge badge-primary badge-pill">14</span></a><br>
-        <a href="{% url 'hielo_proceso:dias-url' %}"  class=" align-items-center"><img
-          src="{% static 'imgs/hielo.png' %}" width="40%" alt=""></a>
+        <a href="{% url 'hielo_proceso:dias-url' %}" class=" align-items-center"><img
+            src="{% static 'imgs/hielo.png' %}" width="40%" alt=""></a>
       </div>
     </div>
   </div>
@@ -93,10 +93,10 @@
   <div class="col-md-3 mb-4">
     <div class="card">
       <div class="card-body" style="text-align: center;">
-        <a href="{% url 'equipo:equipo-url' 2 %}" ><strong class="">Bines y Equipo </strong><span
+        <a href="{% url 'equipo:equipo-url' 2 %}"><strong class="">Bines y Equipo </strong><span
             class="badge badge-primary badge-pill">14</span></a><br>
-        <a href="{% url 'equipo:equipo-url' 2 %}"  class=" align-items-center"><img
-          src="{% static 'imgs/almacen.png' %}" width="52%" alt=""></a>
+        <a href="{% url 'equipo:equipo-url' 2 %}" class=" align-items-center"><img src="{% static 'imgs/almacen.png' %}"
+            width="52%" alt=""></a>
       </div>
     </div>
   </div>
@@ -105,10 +105,10 @@
   <div class="col-md-3 mb-4">
     <div class="card">
       <div class="card-body" style="text-align: center;">
-        <a href="{% url 'compania:compania-url' 2 %}" ><strong class="">Empresas </strong><span
+        <a href="{% url 'compania:compania-url' 2 %}"><strong class="">Empresas </strong><span
             class="badge badge-primary badge-pill">14</span></a><br>
-        <a href="{% url 'compania:compania-url' 2 %}"  class=" align-items-center"><img
-          src="{% static 'imgs/compania2.png' %}" width="40%" alt=""></a>
+        <a href="{% url 'compania:compania-url' 2 %}" class=" align-items-center"><img
+            src="{% static 'imgs/compania2.png' %}" width="40%" alt=""></a>
       </div>
     </div>
   </div>
@@ -117,10 +117,10 @@
   <div class="col-md-3 mb-4">
     <div class="card">
       <div class="card-body" style="text-align: center;">
-        <a href="{% url 'vehiculo:vehiculos-url' %}"  ><strong class="">Vehículos </strong><span
+        <a href="{% url 'vehiculo:vehiculos-url' %}"><strong class="">Vehículos </strong><span
             class="badge badge-primary badge-pill">14</span></a><br>
-        <a href="{% url 'vehiculo:vehiculos-url' %}"   class=" align-items-center"><img
-          src="{% static 'imgs/vehiculo.png' %}" width="40%" alt=""></a>
+        <a href="{% url 'vehiculo:vehiculos-url' %}" class=" align-items-center"><img
+            src="{% static 'imgs/vehiculo.png' %}" width="40%" alt=""></a>
       </div>
     </div>
   </div>
@@ -129,10 +129,10 @@
   <div class="col-md-3 mb-4">
     <div class="card">
       <div class="card-body" style="text-align: center;">
-        <a href="{% url 'conductor:conductores-url' %}" ><strong class="">Motoristas </strong><span
+        <a href="{% url 'conductor:conductores-url' %}"><strong class="">Motoristas </strong><span
             class="badge badge-primary badge-pill">14</span></a><br>
-        <a href="{% url 'conductor:conductores-url' %}"  class=" align-items-center"><img
-          src="{% static 'imgs/conductor.png' %}" width="56%" alt=""></a>
+        <a href="{% url 'conductor:conductores-url' %}" class=" align-items-center"><img
+            src="{% static 'imgs/conductor.png' %}" width="56%" alt=""></a>
       </div>
     </div>
   </div>
@@ -141,10 +141,10 @@
   <div class="col-md-3 mb-4">
     <div class="card">
       <div class="card-body" style="text-align: center;">
-        <a href="{% url 'empleado:empleados-url'  %}" ><strong class="">Empleados </strong><span
+        <a href="{% url 'empleado:empleados-url'  %}"><strong class="">Empleados </strong><span
             class="badge badge-primary badge-pill">14</span></a><br>
-        <a href="{% url 'empleado:empleados-url'  %}"  class=" align-items-center"><img
-          src="{% static 'imgs/empleado.png' %}" width="40%" alt=""></a>
+        <a href="{% url 'empleado:empleados-url'  %}" class=" align-items-center"><img
+            src="{% static 'imgs/empleado.png' %}" width="40%" alt=""></a>
       </div>
     </div>
   </div>
@@ -152,53 +152,48 @@
   <div class="col-md-3 mb-4">
     <div class="card">
       <div class="card-body" style="text-align: center;">
-        <a href="{% url 'seguridad:log_out-url'%}" ><strong class=" text-black-50">Cerrar Sesión </strong></a><br>
-        <a href="{% url 'seguridad:log_out-url'%}"  class=" align-items-center"><img
-          src="{% static 'imgs/cerrarsesion.png' %}" width="40%" alt=""></a>
+        <a href="{% url 'seguridad:log_out-url'%}"><strong class=" text-black-50">Cerrar Sesión </strong></a><br>
+        <a href="{% url 'seguridad:log_out-url'%}" class=" align-items-center"><img
+            src="{% static 'imgs/cerrarsesion.png' %}" width="40%" alt=""></a>
       </div>
     </div>
   </div>
- 
-  
-  
+
+
+
 </div>
 
-<div class="escaner border-danger">
-  <div id="resultado"></div>
-    <div id="camera"></div>
-</div>
-
+<!-- <div id="resultado"></div>
+<div id="camera"></div>
+ -->
 
 {% endblock %}
- {% load static %}
- {% block script %}
-  <script  src="{%static 'js/quagga/quagga.min.js'%}"></script>
+{% load static %}
+{% block script %}
+ <!-- <script src="{%static 'js/quagga/quagga.min.js'%}"></script> -->
 
-  <script>
+<script>
+  /*Quagga.init({
+    inputStream: {
+      name: "Live",
+      type: "LiveStream",
+      target: document.querySelector('#camera') // Or '#yourElement' (optional)
+    },
+    decoder: {
+      readers: ["code_128_reader"]
+    }
+  }, function (err) {
+    if (err) {
+      console.log(err);
+      return
+    }
+    console.log("Initialization finished. Ready to start");
+    Quagga.start();
+  });
 
-        Quagga.init({
-            inputStream: {
-                name: "Live",
-                type: "LiveStream",
-                target: document.querySelector('#camera')    // Or '#yourElement' (optional)
-            },
-            decoder: {
-                readers: ["code_128_reader"]
-            }
-        }, function (err) {
-            if (err) {
-                console.log(err);
-                return
-            }
-            console.log("Initialization finished. Ready to start");
-            Quagga.start();
-        });
-
-        Quagga.onDetected(function (data) {
-            console.log(data.codeResult.code);
-            document.querySelector('#resultado').innerText = data.codeResult.code;
-        });
-
-    </script>
- {% endblock script %}
-   
+  Quagga.onDetected(function (data) {
+    console.log(data.codeResult.code);
+    document.querySelector('#resultado').innerText = data.codeResult.code;
+  });*/
+</script>
+{% endblock script %}

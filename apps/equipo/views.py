@@ -9,6 +9,17 @@ from .forms import *
 #FUNCIONES
 from apps.funciones import renderizado
 
+# Reportes
+from django.template.loader import render_to_string
+from weasyprint import HTML
+import tempfile
+from django.db.models import Count,F
+from django.db.models import Sum
+from datetime import datetime, date, time, timedelta
+from django.conf import settings
+from django.middleware import csrf
+from qr_code.qrcode.utils import QRCodeOptions
+
 #PERMISOS
 from django.contrib.auth.decorators import login_required,permission_required
 from django.utils.decorators import method_decorator
@@ -32,6 +43,7 @@ def equipo(request,opc):
 		form.fields['color'].widget.attrs['data-live-search'] = 'true'
 		form.fields['estado'].choices= [("","Seleccione el estado del equipo")] + list(form.fields['estado'].choices)[1:]
 		form.fields['estado'].widget.attrs['class'] = 'selectpicker form-control'
+		form.fields['codigo_barras'].widget.attrs['readonly'] = True
 
 		ctx = {
 			"estilos" : estilos,
@@ -70,6 +82,28 @@ def equipo(request,opc):
 				# "formDRemisionFS" : formDRemisionFS ,
 		}
 		return render(request,'equipo/equipo.html',ctx)
+	elif opc == 4:
+		estilos, clases = renderizado(4, 4)
+		form = CodigoQRForm()
+		for campo in form.fields:
+			form.fields[campo].widget.attrs['class'] = 'form-control'
+		form.fields['nombre'].choices= [("","Seleccione el nombre del equipo")] + list(form.fields['nombre'].choices)[1:]
+		form.fields['nombre'].widget.attrs['class'] = 'selectpicker form-control'
+		form.fields['nombre'].widget.attrs['data-live-search'] = 'true'
+		form.fields['tamano'].choices= [("","Seleccione el tamaño del equipo")] + list(form.fields['tamano'].choices)[1:]
+		form.fields['tamano'].widget.attrs['class'] = 'selectpicker form-control'
+		form.fields['color'].choices= [("","Seleccione el color del equipo")] + list(form.fields['color'].choices)[1:]
+		form.fields['color'].widget.attrs['class'] = 'selectpicker form-control'
+		form.fields['color'].widget.attrs['data-live-search'] = 'true'
+		ctx = {
+			"estilos" : estilos,
+			"clases"  : clases,
+			'crearCodigoQR':True,
+			'formQR':form,
+				# "formRemision" : formRemision,
+				# "formDRemisionFS" : formDRemisionFS ,
+		}
+		return render(request,'equipo/equipo.html',ctx)
 	else:
 		return render(request,'404.html')
 
@@ -80,15 +114,27 @@ def guardar_equipo(request):
 	# if verificarTipoUsuario(request.user):
 	# 	return HttpResponseRedirect(reverse('app:home_cliente'))
 	if request.method == 'POST':
-		form = EquipoForm(request.POST)
-		print(form)
+		form = ''
+		if not request.POST['id_o'].isnumeric():
+			form = EquipoForm(request.POST )
+		else:
+			form = EquipoForm(data = request.POST, instance = Equipo.objects.get(pk = int(request.POST['id_o'])))
+
+		
 		if form.is_valid():
-			if not request.POST['id_o'].isnumeric():
-				form.save()
-			else:
-				form = EquipoForm(data = request.POST, instance = Equipo.objects.get(pk = int(request.POST['id_o'])))
-				equipo = form.save(commit = False)
-				equipo.save()
+			codigo = 'EQEL-'+request.POST['nombre']+'-'+request.POST['numero']+'-'+request.POST['tamano']+'-'+request.POST['color']+'-1'
+			print(codigo)
+			# if not request.POST['id_o'].isnumeric():
+			equipo = form.save(commit = False)
+			equipo.codigo_barras = codigo
+			equipo.save()	
+				# form.save()
+			# else:
+			# 	form = EquipoForm(data = request.POST, instance = Equipo.objects.get(pk = int(request.POST['id_o'])))
+			# 	equipo = form.save(commit = False)
+			# 	equipo.codigo_barras = codigo
+			# 	equipo.save()
+
 			return HttpResponseRedirect(reverse('equipo:equipo-url', args= (2,)))
 		else:
 			return HttpResponseRedirect(reverse('equipo:equipo-url', args= (1,)))
@@ -113,6 +159,8 @@ def editar_equipo(request,id):
 	form.fields['color'].widget.attrs['data-live-search'] = 'true'
 	form.fields['estado'].choices= [("","Seleccione el estado del equipo")] + list(form.fields['estado'].choices)[1:]
 	form.fields['estado'].widget.attrs['class'] = 'selectpicker form-control'
+	form.fields['codigo_barras'].widget.attrs['readonly'] = True
+
 
 	eq = Equipo.objects.get(pk = id)
 	ctx = {
@@ -166,3 +214,32 @@ def editar_equipo_base(request,id):
 				# "formDRemisionFS" : formDRemisionFS ,
 		}
 	return render(request,'equipo/equipo.html',ctx)
+
+
+@login_required
+@permission_required('equipo.crearqr_equipo',raise_exception=True)
+def ReporteCodigoQR(request):
+	if not request.user.empleado.actualizoContrasena:
+		return HttpResponseRedirect(reverse('seguridad:log_out-url'))	
+	if request.method == 'POST':
+		ahora = datetime.now()
+		nombre = request.POST['nombre']
+		numero = request.POST['numero']
+		tamano = request.POST['tamano']
+		color = request.POST['color']
+		
+		codigoQR = 'EQEL-' + nombre + '-' + numero + '-' + tamano + '-' + color + '-2'
+
+		configuracionesQR = QRCodeOptions(size=100,border=0, error_correction='L')
+		
+		data = {'tamano':'Letter', 
+				'posicion':'portrait', 
+				'codigoQR': codigoQR,
+				'ahora': ahora,
+				'configuracionesQR':configuracionesQR,
+		}
+		
+		return render(request,'equipo/reportes/reporteCodigoQR.html',data)
+		
+	else:
+		pass

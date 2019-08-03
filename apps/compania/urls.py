@@ -12,4 +12,6 @@ urlpatterns = [
     #Fincas
     path('guardar-finca/',views.guardar_finca,name='guardar_finca-url'),
     path('editar-finca/<str:cod>/', views.editar_finca, name='editar_finca-url'),
+    #Lagunas
+    path('lagunas/listado/',views.Lagunas,name='lagunas-url'),
 ]

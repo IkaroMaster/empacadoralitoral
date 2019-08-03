@@ -40,12 +40,13 @@ class BaseEquipo(models.Model):
 	
 class Equipo(models.Model):
 	nombre			= models.ForeignKey(BaseEquipo,on_delete=models.PROTECT,help_text='Seleccione el tipo de equipo que va a registrar')
-	numero		 	= models.IntegerField(help_text="ingrese el numero unico del equipo")
+	numero		 	= models.PositiveIntegerField(help_text="ingrese el numero unico del equipo")
 	tamano 			= models.ForeignKey(Tamano,verbose_name="Tamaño" ,on_delete=models.PROTECT)
 	color 			= models.ForeignKey(Color,on_delete=models.PROTECT)
 	estado			= models.ForeignKey(Estado,on_delete=models.PROTECT)	
 	codigo_barras 	= models.CharField(verbose_name=u"Código de Barras",  max_length=160, blank=True , null=True,unique=True)
 	informacion 	= models.TextField(blank=True,  null=True)
+	
 	def __str__(self):
 		tamano = ''
 		if self.tamano.pk == 1:
@@ -57,3 +58,6 @@ class Equipo(models.Model):
 		return "{}  ({} {}.) ".format(self.numero,self.nombre,tamano)
 	class Meta:
 		verbose_name_plural = 'Equipos'
+		permissions = [
+            ("crearqr_equipo","Puede crear codigo qr para el inventario de equipo"),
+        ]

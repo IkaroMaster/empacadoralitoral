@@ -28,12 +28,18 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 DJANGO_APPS = [
+    # Servidor HTTPS para pruebas
+    # "sslserver",
+    #---------------------------
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    #generar qr con python
+    'qr_code',
+    #-----------------------
 ] 
 
 

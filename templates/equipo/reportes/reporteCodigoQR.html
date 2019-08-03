@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block estilos %}
+  {% load humanize %}
+  <title>Equipo-{{codigoQR}}</title>
+
+  <style>
+    @page {
+      size: {{tamano}} {{posicion}};
+      margin: 0 auto;
+    } 
+    body{
+
+    }
+  </style>
+{% endblock estilos%}
+{% block imprimir %}
+<br><br>
+  <div class="container row">
+    <div class="col-10">
+      {% load qr_code %}
+      {% qr_from_text codigoQR options=configuracionesQR %}
+      <h1 class="text-center m-0">{{codigoQR}}</h1>
+    </div>
+    
+  </div>
+  
+{% endblock imprimir %}
+{% block script %}
+  <script>
+    $(function(){
+      // window.print();
+      // window.onfocus=function(){ window.close();}
+      setTimeout(function (){ window.print(); }, 500);
+      window.onfocus = function () { setTimeout(function () { window.close(); }, 500); }
+
+    })
+  </script>
+{% endblock script %}
+  

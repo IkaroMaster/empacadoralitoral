@@ -11,3 +11,8 @@ class EquipoBaseForm(ModelForm):
 	class Meta:
 		model = BaseEquipo
 		fields = '__all__'
+
+class CodigoQRForm(ModelForm):
+	class Meta:
+		model = Equipo
+		fields = {'nombre','numero','tamano','color'}

@@ -36,7 +36,7 @@ class Finca(models.Model):
 	compania 		= models.ForeignKey(Compania,verbose_name="Empresa",on_delete=models.PROTECT)
 
 	def __str__(self):
-		return "{} > {}".format(self.codFinca,self.nombre)
+		return "{}".format(self.codFinca)
 	class Meta:
 		verbose_name_plural = 'Fincas'
 
@@ -44,8 +44,8 @@ class Finca(models.Model):
 class Laguna(models.Model):
 	codLaguna		= models.CharField(primary_key=True,max_length=10)
 	tamano			= models.IntegerField(blank=True, null=True)
-	ubicacion		= models.CharField(max_length=200)
-	descripcion		= models.CharField(max_length=100)
+	ubicacion		= models.CharField(max_length=200,blank=True, null=True)
+	descripcion		= models.CharField(max_length=100,blank=True, null=True)
 	finca			= models.ForeignKey(Finca,on_delete=models.PROTECT)
 
 	def __str__(self):

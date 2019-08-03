@@ -1,9 +1,90 @@
-$(function(){
+$(function () {
 
-    $("#limpiarFormEquipoBase").click(function(event) {
+    $("#limpiarFormEquipoBase").click(function (event) {
         $("#formEquipoBase")[0].reset();
     });
+    
+    let scanner = new Instascan.Scanner({
+        video: $('#video')[0]
+    });
 
+    $('#modalScanner').on('hidden.bs.modal', function (e) {
+            scanner.stop();
+    });
+
+
+    $('#scanner').click(function () {
+        $('#modalScanner').modal('show');
+
+
+        scanner.addListener('scan', function (content) {
+
+            let separador = "-";
+            let texto = content;
+            var textoSeparado = texto.split(separador);
+
+            var datosBin = {
+                'identificador': textoSeparado[0],
+                'nombreBase': textoSeparado[1],
+                'numero': textoSeparado[2],
+                'tamano': textoSeparado[3],
+                'color': textoSeparado[4],
+                'estado': textoSeparado[5],
+            }
+            if (textoSeparado.length == 6 && texto.length <= 20 && datosBin.identificador === 'EQEL' && datosBin.numero.length <= 5) {
+
+                $('#id_nombre').val(datosBin.nombreBase).selectpicker('refresh');
+                $('#id_numero').val(datosBin.numero);
+                $('#id_tamano').val(datosBin.tamano).selectpicker('refresh');
+                $('#id_color').val(datosBin.color).selectpicker('refresh');
+                $('#id_estado').val(datosBin.estado).selectpicker('refresh');
+                // $("#id_nombre option").each(function(){
+                //     if ($(this).val() != "" ){        
+                //      concatValor += $(this).val()+' - '+$(this).text()+'\n';
+                //     }
+                //  });
+                $('#id_codigo_barras').val(texto);
+                scanner.stop();
+                $('#modalScanner').modal('hide');
+
+
+
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+
+                Toast.fire({
+                    type: 'success',
+                    title: 'Codigo Escaneado'
+                })
+
+
+            } else {
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+
+                Toast.fire({
+                    type: 'error',
+                    title: texto + ' es un codigo de equipo invalido.'
+                })
+            }
+
+        });
+        Instascan.Camera.getCameras().then(cameras => {
+            if (cameras.length > 0) {
+                scanner.start(cameras[0]);
+            } else {
+                console.error("No Existe una camara en este dispositivo!");
+            }
+        });
+    });
     var tablex = $('#tablajs').DataTable({
         "scrollY": '45vh',
         "scrollCollapse": true,
@@ -21,47 +102,119 @@ $(function(){
         // "scrollCollapse": true
     });
 
-                 $('#tablajs2').DataTable({
-                    "language": {
-                     "lengthMenu": "Mostrar _MENU_ por páginas",
-                     "zeroRecords": "No se encontró ningún registro",
-                     "info": "Mostrando página _PAGE_ de _PAGES_",
-                     "infoEmpty": "Sin coincidencias",
-                     "infoFiltered": "( _MAX_ registros totales )",
-                     'search': 'Buscar:'
-                     /*'search': 'Buscar: _INPUT_ aqui'*/,
-                      "paginate": {
-                           "next": "Siguiente",
-                           'previous': 'Anterior'
-                      }
-                 }
-              });
+    $('#tablajs2').DataTable({
+        "language": {
+            "lengthMenu": "Mostrar _MENU_ por páginas",
+            "zeroRecords": "No se encontró ningún registro",
+            "info": "Mostrando página _PAGE_ de _PAGES_",
+            "infoEmpty": "Sin coincidencias",
+            "infoFiltered": "( _MAX_ registros totales )",
+            'search': 'Buscar:'
+                /*'search': 'Buscar: _INPUT_ aqui'*/
+                ,
+            "paginate": {
+                "next": "Siguiente",
+                'previous': 'Anterior'
+            }
+        }
+    });
 
-              $('.editarEquipo').click(function (e) {
-                var id = $(this).attr('data-id');
+    $('.editarEquipo').click(function (e) {
+        var id = $(this).attr('data-id');
+        Swal.fire({
+            title: '¿Desea editar el equipo Nō ' + id + '?',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si, Editar!',
+            cancelButtonText: 'Volver',
+            // showLoaderOnConfirm: true,
+        }).then((result) => {
+            if (result.value) {
+                $('#editar-' + id).get(0).click();
+                // con jquery $("#home-link").get(0).click();
+            } else {
                 Swal.fire({
-                    title: '¿Desea editar el equipo Nō ' + id + '?',
-                    type: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Si, Editar!',
-                    cancelButtonText: 'Volver',
-                    // showLoaderOnConfirm: true,
-                }).then((result) => {
-                    if (result.value) {
-                        $('#editar-' + id).get(0).click();
-                        // con jquery $("#home-link").get(0).click();
-                    } else {
-                        Swal.fire({
-                            title: 'Operacion cancelada por el usuario.',
-                            type:'error',
-                            timer:'3000'
-                        })
-                    }
-                });
+                    title: 'Operacion cancelada por el usuario.',
+                    type: 'error',
+                    timer: '3000'
+                })
+            }
+        });
+    });
+    $('#id_nombre').change(function () {
+        crearCodigoQR();
+    });
+    $('#id_numero').change(function () {
+        if ($(this).val().length > 5) {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 4000
             });
 
+            Toast.fire({
+                type: 'error',
+                title: 'Numero ingresado sobrepasa el limite permitido.'
+            })
+            $(this).val('').focus();
+        } else {
+            crearCodigoQR();
+        }
+    });
+    $('#id_tamano').change(function () {
+        crearCodigoQR();
+    });
+    $('#id_color').change(function () {
+        crearCodigoQR();
+    });
+    if ($(window).width() < 760) {
+        $('#qrcode').removeClass('pl-5');
+        $('#qrcode').removeClass('pr-5');
+    }
+
+
+    var qrcode = new QRCode("qrcode", {
+        text: 'EQEL-XX-XXXXX-X-XX-X',
+        width: $('#qrcode').width(),
+        height: $('#qrcode').width(),
+        colorDark: "black",
+        colorLight: "white",
+        correctLevel: QRCode.CorrectLevel.H
+    });
+
+
+
+
+    function crearCodigoQR() {
+        var nombre = $('#id_nombre').val();
+        var numero = $('#id_numero').val();
+        var tamano = $('#id_tamano').val();
+        var color = $('#id_color').val();
+
+        if (nombre.length == 0) {
+            nombre = 'XX'
+        }
+        if (numero.length == 0) {
+            numero = 'XXXXX'
+        }
+        if (tamano.length == 0) {
+            tamano = 'X'
+        }
+        if (color.length == 0) {
+            color = 'XX'
+        }
+
+        codigo = 'EQEL-' + nombre + '-' + numero + '-' + tamano + '-' + color + '-2';
+
+        qrcode.clear(); // clear the code.
+        qrcode.makeCode(codigo);
+        $('#qrcode-texto').html(codigo);
+    }
+
+    
     // // GENERAR TABLA
     // var dt = $('#tablajs').DataTable({
     //     "dom": 'Bfrtip',
@@ -92,7 +245,7 @@ $(function(){
     //         copy: 'Copiar'
     //         }
     //     }
-        
+
     // });
     // // Diseño a botones
     // // dt.buttons().container()
