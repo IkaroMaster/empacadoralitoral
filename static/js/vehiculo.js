@@ -1,4 +1,35 @@
 $(function () {
+    const Notificacion = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 4000
+    });
+    $('.editarVehiculo').click(function (e) {
+        var id = $(this).attr('data-id');
+        Swal.fire({
+            title: '¿Desea editar el vehículo con placa ' + id + '?',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si, Editar!',
+            cancelButtonText: 'Volver',
+            // showLoaderOnConfirm: true,
+        }).then((result) => {
+            if (result.value) {
+                $('#editar-' + id).get(0).click();
+                // con jquery $("#home-link").get(0).click();
+            } else {
+
+
+                Notificacion.fire({
+                    title: 'Operación cancelada por el usuario.',
+                    type: 'error',
+                })
+            }
+        });
+    });
     $('.eliminar').on('click',function(){
         var id = $(this).attr('data-eliminar');
             Swal.fire({
@@ -24,11 +55,9 @@ $(function () {
                         },
                         success: function (data) {
                             
-                            Swal.fire({
+                            Notificacion.fire({
                                 title:'El vehiculo con placa '+id+' ha sido eliminado exitosamente.',
                                 type:'success',
-                                showConfirmButton: false,
-                                timer: 2000
                             });
                             $('#fila-'+id).remove();
                             // tablex.ajax.reload();
@@ -46,6 +75,11 @@ $(function () {
                         }
         
                     }); 
+                }else{
+                    Notificacion.fire({
+                        title: 'Operación cancelada por el usuario.',
+                        type: 'error',
+                    })
                 }
               })
     })
@@ -54,7 +88,7 @@ $(function () {
 
 
     var tablex = $('#tablajs').DataTable({
-        "scrollY":      '50vh',
+        "scrollY":      '40vh',
         "scrollCollapse": true,
         "scrollX":      true,
         "deferRender":  true,

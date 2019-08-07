@@ -15,3 +15,6 @@ class Conductor(models.Model):
 		return "{} {}".format(self.nombre1,self.apellido1)
 	class Meta:
 		verbose_name_plural = 'Conductores'
+		permissions =[
+			("estado_conductor","Puede cambiar el estado del conductor"),
+		]

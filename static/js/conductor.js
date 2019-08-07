@@ -1,68 +1,159 @@
 $(function () {
-    $('.eliminar').on('click',function(){
-        var id = $(this).attr('data-eliminar');
+
+    const Notificacion = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 4000
+    });
+
+    $('#tablajs').on('click','.eliminar',function () {
+        var id = $(this).attr('data-id');
+        var estado = $(this).attr('data-estado');
+        var nombre = $(this).attr('data-nombre');
+        if (estado == 'True') {
             Swal.fire({
-                title: '¿Quieres eliminar el vehiculo con placa '+id+'?',
-                text: "¡No podrás revertir esto!",
+                title: '¿Quieres desactivar a ' + nombre + '?',
+                text: "¡Ya no podra utilizar este conductor en las operaciones!",
                 type: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Si, Eliminar!',
+                confirmButtonText: 'Si, Desactivar!',
                 cancelButtonText: 'Cancelar',
                 // showLoaderOnConfirm: true,
-              }).then((result) => {
+            }).then((result) => {
                 if (result.value) {
                     $.ajax({
                         type: "GET",
-                        url: "/vehiculo/ajax_eliminar_vehiculo/",
+                        url: "/conductor/ajax_estado_conductor/",
                         // headers: {
                         //     'Authorization': "Token " + localStorage.access_token
                         // },
                         data: {
-                            id:id,
+                            id: id,
                         },
                         success: function (data) {
-                            $('#col_estado-'+data.id).hide();
-                            Swal.fire({
-                                title:'El vehiculo con placa '+id+' ha sido eliminado exitosamente.',
-                                type:'success',
-                                showConfirmButton: false,
-                                timer: 2000
+                            $('#fila-'+id).addClass('table-danger');
+                            $('#estado-'+id).html('Inactivo');
+                            $('button[data-id=' + id + ']').prop('class','eliminar btn btn-success fas fa-check');
+                            $('button[data-id=' + id + ']').attr('data-estado','False');
+                            Notificacion.fire({
+                                title: 'El conductor ' + nombre + ' ha sido desactivado exitosamente.',
+                                type: 'success',
                             });
-        
-                        },error: function (data){
-                            Swal.fire({
+
+                        },
+                        error: function (data) {
+                            Notificacion.fire({
                                 type: 'error',
-                                title: 'Oops... Imposible Eliminar.',
-                                text: 'Este vehiculo ha sido utilizado en otras gestiones anteriorimente.',
-                                showConfirmButton: true,
-                                // timer: 3000
-                                // footer: '<a href>Why do I have this issue?</a>'
-                            })
+                                title: 'Oops... No se pudo desactivar a '+nombre+'.',
+                            });
                         }
-        
-                    }); 
+
+                    });
+                }else{
+                    Notificacion.fire({
+                        title: 'Operación cancelada por el usuario.',
+                        type: 'error',
+                    })
                 }
-              })
+            })
+        }else{
+            Swal.fire({
+                title: '¿Quieres activar a ' + nombre + '?',
+                text: "¡Podra utilizar este conductor en las operaciones!",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si, Activar!',
+                cancelButtonText: 'Cancelar',
+                // showLoaderOnConfirm: true,
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        type: "GET",
+                        url: "/conductor/ajax_estado_conductor/",
+                        // headers: {
+                        //     'Authorization': "Token " + localStorage.access_token
+                        // },
+                        data: {
+                            id: id,
+                        },
+                        success: function (data) {
+                            $('#fila-'+id).removeClass('table-danger');
+                            $('#estado-'+id).html('Activo');
+                            $('button[data-id=' + id + ']').attr('class','eliminar btn btn-danger fas fa-times');
+                            $('button[data-id=' + id + ']').attr('data-estado','True');
+                            // $('button[data-id=' + id + ']').prop('class','eliminar btn btn-success fas fa-check');
+                            // $('button[data-id=' + id + ']').attr('data-estado','False');
+                            Notificacion.fire({
+                                title:'El conductor ' + nombre + ' ha sido activado exitosamente.',
+                                type: 'success',
+                            });
+
+                        },
+                        error: function (data) {
+                            Notificacion.fire({
+                                type: 'error',
+                                title: 'Oops... No se pudo activar a '+nombre+'.',
+                            });
+                        }
+
+                    });
+                }else{
+                    Notificacion.fire({
+                        title: 'Operación cancelada por el usuario.',
+                        type: 'error',
+                    })
+                }
+            })
+        }
+
     })
 
+    $('.editar').click(function (e) {
+        var id = $(this).attr('data-id');
+        var nombre = $(this).attr('data-nombre');
+        Swal.fire({
+            title: '¿Desea editar a ' + nombre + '?',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si, Editar!',
+            cancelButtonText: 'Volver',
+            // showLoaderOnConfirm: true,
+        }).then((result) => {
+            if (result.value) {
+                $('#editar-' + id).get(0).click();
+                // con jquery $("#home-link").get(0).click();
+            } else {
 
+
+                Notificacion.fire({
+                    title: 'Operación cancelada por el usuario.',
+                    type: 'error',
+                })
+            }
+        });
+    });
 
 
     var tablex = $('#tablajs').DataTable({
-        "scrollY":      '50vh',
+        "scrollY": '50vh',
         "scrollCollapse": true,
-        "scrollX":      true,
-        "deferRender":  true,
+        "scrollX": true,
+        "deferRender": true,
         // responsive: true,
-        "scroller":     true,
-        "language":     {
-                            "zeroRecords": "No se ha encontrado nada, lo siento.",
-                            "infoEmpty": "No hay registros disponibles",
-                            "infoFiltered": "(filtrado de _MAX_ registros totales)",
-                            "info":      "Mostrando _START_ a _END_ de _TOTAL_ registros.",
-                            "search":         "Buscar:"
+        "scroller": true,
+        "language": {
+            "zeroRecords": "No se ha encontrado nada, lo siento.",
+            "infoEmpty": "No hay registros disponibles",
+            "infoFiltered": "(filtrado de _MAX_ registros totales)",
+            "info": "Mostrando _START_ a _END_ de _TOTAL_ registros.",
+            "search": "Buscar:"
         }
         // "scrollCollapse": true
     });

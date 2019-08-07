@@ -10,6 +10,10 @@ urlpatterns = [
     path("ajax_desactivar_empleado/", views.DesactivarEmpleado_asJson, name ="desactivar-url"),
     path("ajax_activar_empleado/", views.ActivarEmpleado_asJson, name ="activar-url"),
     path("ajax_validar_empleado/", views.ValidarEmpleado_asJson, name ="validar-url"),
+    path('cargos/',views.Grupos,name='grupos-url'),
+    path('crear-cargo/',views.CrearGrupo,name='crear_grupo-url'),
+    path("modificar-cargo/<int:pk>/",views.ModificarGrupo, name="modificar_grupo-url"),
+
 
     #REPORTE
     path("contrasena/",views.ReporteContrasena, name="reporte_contrasena-url"),

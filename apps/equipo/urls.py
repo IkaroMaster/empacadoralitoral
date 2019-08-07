@@ -11,5 +11,6 @@ urlpatterns = [
     path('guardar-equipo-base/',views.guardar_equipo_base,name='guardar_equipo_base-url'),
     path('equipo_base/editar/<int:id>/', views.editar_equipo_base, name='editar_equipo_base-url'),
     path("reporte_codigoQR/", views.ReporteCodigoQR, name ="reporte_codigoQR-url"),
+    path("reporte_obtenerQR/<int:pk>", views.ReporteObtenerQR, name ="obtener_qr-url"),
 
 ]

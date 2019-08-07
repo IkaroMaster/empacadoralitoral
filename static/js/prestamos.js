@@ -92,7 +92,7 @@ $(function(){
     });
 
     var tablex = $('#tablajs').DataTable({
-        "scrollY":      '45vh',
+        "scrollY":      '35vh',
         "scrollCollapse": true,
         "scrollX":      true,
         "deferRender":  true,

@@ -56,7 +56,7 @@ LOCAL_APPS = [
     'apps.vehiculo',
     'apps.hielo_proceso',
     'apps.camaron',
-    'debug_toolbar'
+    'debug_toolbar',
 ]
 # Application definition
 

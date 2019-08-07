@@ -11,3 +11,9 @@ class FincaForm(ModelForm):
 	class Meta:
 		model = Finca
 		fields = '__all__'
+
+class LagunaForm(ModelForm):
+	class Meta:
+		model = Laguna
+		fields = '__all__'
+	

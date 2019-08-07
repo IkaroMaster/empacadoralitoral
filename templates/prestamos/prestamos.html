@@ -73,27 +73,27 @@ active
                     {{ detallePrestamo_formset.management_form }}
                     <hr>
                     <div class="table-responsive">
-                    <table class="table table-striped  ">
-                        <thead class="thead-inverse">
-                            <tr>
-                                <th>Equipo Disponible</th>
-                                <th>Tapadera</th>
-                                <th>Descripción</th>
-                                <th>Acción</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for dp in detallePrestamo_formset %}
-                            <tr class="detalle-formset">
+                        <table class="table table-striped table-hover table-bordered ">
+                            <thead class="thead-inverse">
+                                <tr>
+                                    <th>Equipo Disponible</th>
+                                    <th>Tapadera</th>
+                                    <th>Descripción</th>
+                                    <th>Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for dp in detallePrestamo_formset %}
+                                <tr class="detalle-formset">
 
-                                <td>{{dp.equipo}}</td>
-                                <td>{{dp.tapadera}}</td>
-                                <td>{{dp.descripcion}}</td>
-                                <td></td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                                    <td>{{dp.equipo}}</td>
+                                    <td>{{dp.tapadera}}</td>
+                                    <td>{{dp.descripcion}}</td>
+                                    <td></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
                     <div class="form-group col-md-3">
                         <label>Numero de placa</label>
@@ -137,47 +137,55 @@ active
 
         </div>
         <div style="{{estilos.o2}}">
-            <table id="tablajs" class="table table-striped table-bordered">
-                <thead class="thead-inverse">
-                    <tr>
-                        <th>#</th>
-                        <th>Compañía</th>
-                        <th>Vehículo</th>
-                        <th>Hora de Salida</th>
-                        <th>Fecha de Salida</th>
-                        <th>Fecha de entrada</th>
-                        <th>Conductor</th>
-                        <th>Empleado</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for p in prestamos  %}
-                    <tr id="fila-{{p.numPrestamo}}" {% if p.estadoPrestamo.id == 1 %}
-                        {% elif p.estadoPrestamo.id == 2 %} class="table-danger" {% elif p.estadoPrestamo.id == 3 %}
-                        class="table-info" {% elif p.estadoPrestamo.id == 4 %} class="table-success" {% endif %}>
-                        <td scope="row">{{p.numPrestamo}}</td>
-                        <td>{% if p.compania.abreviatura %}
+            <div class="row">
+                <div class="col-md-3 mb-1">
+                    {% if perms.prestamos.add_prestamoequipo %}
+                    <a class="btn btn-success {{ clases.o1 }}" href="{% url 'prestamos:crear_prestamo-url' %}">Nuevo Prestamo</a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table id="tablajs" class="table table-striped table-hover table-bordered">
+                    <thead class="thead-inverse">
+                        <tr>
+                            <th>#</th>
+                            <th>Compañía</th>
+                            <th>Vehículo</th>
+                            <th>Hora de Salida</th>
+                            <th>Fecha de Salida</th>
+                            <th>Fecha de entrada</th>
+                            <th>Conductor</th>
+                            <th>Empleado</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in prestamos  %}
+                        <tr id="fila-{{p.numPrestamo}}" {% if p.estadoPrestamo.id == 1 %}
+                            {% elif p.estadoPrestamo.id == 2 %} class="table-danger" {% elif p.estadoPrestamo.id == 3 %}
+                            class="table-info" {% elif p.estadoPrestamo.id == 4 %} class="table-success" {% endif %}>
+                            <td scope="row">{{p.numPrestamo}}</td>
+                            <td>{% if p.compania.abreviatura %}
                                 {{p.compania.abreviatura}}
                                 {% else %}
                                 {{ p.compania }}
                                 {% endif %}</td>
-                        <td>{{p.placa}}</td>
-                        <td>{{p.horaSalida}}</td>
-                        <td>{{p.fechaSalida}}</td>
-                        <td>
-                            {% if p.fechaEntrada %}
-                            {{p.fechaEntrada}}
-                            {% else %}
-                            -
-                            {% endif %}
-                        </td>
-                        <td>{{p.conductor}}</td>
-                        <td>{{p.empleado}}</td>
-                        <td id="col_estado-{{p.numPrestamo}}">
-                            {{p.estadoPrestamo}}
-<!--                             
+                            <td>{{p.placa}}</td>
+                            <td>{{p.horaSalida}}</td>
+                            <td>{{p.fechaSalida}}</td>
+                            <td>
+                                {% if p.fechaEntrada %}
+                                {{p.fechaEntrada}}
+                                {% else %}
+                                -
+                                {% endif %}
+                            </td>
+                            <td>{{p.conductor}}</td>
+                            <td>{{p.empleado}}</td>
+                            <td id="col_estado-{{p.numPrestamo}}">
+                                {{p.estadoPrestamo}}
+                                <!--                             
                             {% if p.estadoPrestamo.id == 1 %}
                             <p style="display: none">1</p>
                             <i class="fas fa-exclamation"></i>
@@ -192,34 +200,36 @@ active
                             <i class="fas fa-check"></i>
                             {% endif %} -->
 
-                        </td>
-                        <td>
-                            {% if p.estadoPrestamo.id == 1 %}
-                            {% if perms.prestamos.terminar_prestamoequipo %}
-                            <button data-terminar='{{p.numPrestamo}}'
-                                class="terminar btn btn-success fas fa-check"></button>
-                            {% endif %}
-                            {% if perms.prestamos.change_prestamoequipo %}
-                            <a id="editar-{{p.numPrestamo}}" data-editar='{{p.numPrestamo}}'
-                                href="{% url 'prestamos:modificar_prestamo-url' p.numPrestamo %}">
-                            </a>
-                            <button data-editar='{{p.numPrestamo}}'
-                                class="editarPrestamo btn btn-info fas fa-pen"></button>
-                            {% endif %}
-                            {% if perms.prestamos.anular_prestamoequipo %}
-                            <button class="anular btn btn-danger fas fa-times" data-anular='{{p.numPrestamo}}'></button>
-                            {% endif %}
-                            {% endif %}
-                            {% if perms.prestamos.view_prestamoequipo %}
-                            <button class="ver btn btn-warning fas fa-eye " data-ver='{{p.numPrestamo}}'></button>
-                            {% endif %}
+                            </td>
+                            <td>
+                                {% if p.estadoPrestamo.id == 1 %}
+                                {% if perms.prestamos.terminar_prestamoequipo %}
+                                <button data-terminar='{{p.numPrestamo}}'
+                                    class="terminar btn btn-success fas fa-check"></button>
+                                {% endif %}
+                                {% if perms.prestamos.change_prestamoequipo %}
+                                <a id="editar-{{p.numPrestamo}}" data-editar='{{p.numPrestamo}}'
+                                    href="{% url 'prestamos:modificar_prestamo-url' p.numPrestamo %}">
+                                </a>
+                                <button data-editar='{{p.numPrestamo}}'
+                                    class="editarPrestamo btn btn-info fas fa-pen"></button>
+                                {% endif %}
+                                {% if perms.prestamos.anular_prestamoequipo %}
+                                <button class="anular btn btn-danger fas fa-times"
+                                    data-anular='{{p.numPrestamo}}'></button>
+                                {% endif %}
+                                {% endif %}
+                                {% if perms.prestamos.view_prestamoequipo %}
+                                <button class="ver btn btn-warning fas fa-eye " data-ver='{{p.numPrestamo}}'></button>
+                                {% endif %}
 
 
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 

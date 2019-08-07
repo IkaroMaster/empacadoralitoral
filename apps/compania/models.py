@@ -23,6 +23,9 @@ class Compania(models.Model):
 	class Meta:
 		verbose_name = ("Compañia")
 		verbose_name_plural = ("Compañias")
+		permissions = [
+            ("estado_compania","Puede cambiar el estado de la empresa"),
+        ]
 
 	def __str__(self):
 		return self.nombre
@@ -36,7 +39,7 @@ class Finca(models.Model):
 	compania 		= models.ForeignKey(Compania,verbose_name="Empresa",on_delete=models.PROTECT)
 
 	def __str__(self):
-		return "{}".format(self.codFinca)
+		return "{} | {}".format(self.codFinca,self.abreviatura)
 	class Meta:
 		verbose_name_plural = 'Fincas'
 

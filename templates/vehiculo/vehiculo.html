@@ -7,23 +7,33 @@ active
 {% endblock l5 %}
 {% block cuerpo %}
 <div class="card text-center">
-    <div class="panel-heading bg-primary" >
-        <h3 class="panel-title text-light">Vehículos</h3>
-    </div>    
+    <div class="panel-heading bg-primary">
+        <h4 class="panel-title text-light">
+
+            {% if crear %}
+            Nuevo Vehículo
+            {% elif editar%}
+            Editar Vehiculo {{vehiculo}}
+            {% elif listado%}
+            Vehiculos
+            {% endif %}
+
+        </h4>
+    </div>
     <div class="card-header">
         <ul class="nav nav-tabs card-header-tabs">
+
+            {% if perms.vehiculo.add_vehiculo or perms.vehiculo.change_vehiculo%}
             <li class="nav-item">
-                <a class="nav-link {{ clases.o1 }}" href="{% url 'vehiculo:crear-url' %}">Gestión de Vehiculo</a>
+                <a class="nav-link {{ clases.o1 }}" href="{%if perms.vehiculo.add_vehiculo and not editar%}{% url 'vehiculo:crear-url' %}{%endif%}">Gestión de Vehiculo</a>
             </li>
+            {% endif %}
+
+
             <li class="nav-item">
                 <a class="nav-link {{ clases.o2 }}" href="{% url 'vehiculo:vehiculos-url' %} ">Vehiculos</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link {{ clases.o3 }} " href="">...</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link {{ clases.o3 }}" href="#">...</a>
-            </li>
+
         </ul>
     </div>
     <div class="card-body">
@@ -31,14 +41,15 @@ active
 
             {% if messages %}
             {% for message in messages %}
-                <span class="alert alert-danger alert-dismissible ">Error: {{ message|escape }}</span> <!--data-dismiss="alert"-->
-                <br><br>
+            <span class="alert alert-danger alert-dismissible ">Error: {{ message|escape }}</span>
+            <!--data-dismiss="alert"-->
+            <br><br>
             {% endfor %}
             {% endif %}
             <form method="post" id="formRemision">
                 <input type="hidden" name="crear" id="crear" value="{{ crear }}">
                 {% csrf_token %}
-                <div class="row container border p-2">
+                <div class="row container ">
                     <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ">
                         <label for="">Placa:</label>
                         {{vehiculo_form.placa}}
@@ -51,11 +62,11 @@ active
                         <label for="">Modelo:</label>
                         {{vehiculo_form.modelo}}
                         <br>
-                    
+
                     </div>
 
                     <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-                        
+
                         <label for="">Año:</label>
                         {{vehiculo_form.anio}}
                         <br>
@@ -72,97 +83,119 @@ active
                 </div>
                 <br>
                 <a href="{% url 'vehiculo:vehiculos-url'%} " class="btn btn-secondary">Cancelar</a>
-                <input type="submit" class="btn btn-success" value="Guardar" class="button" />
+                <input type="submit" class="btn btn-success"
+                    value="{% if crear %}Guardar{% elif editar%}Modificar{% endif %}" class="button" />
             </form>
-            
+
+
+
 
         </div>
-        <div style="{{estilos.o2}}">
-            
-            <table id="tablajs" class="table table-striped table-bordered" style="width:100%" class="display">
-                <thead class="thead-inverse">
-                    <tr>
-                        <th data-priority="1">Placa</th>
-                        <th>Marca</th>
-                        <th>Modelo</th>
-                        <th>Año</th>
-                        <th>Color</th>
-                        <th>Empresa</th>
-                        <th data-priority="2">Acciones</th>
-                        <!-- <th>Añadir</th> -->
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for v in vehiculos %}
-                    <tr id="fila-{{v.pk}}">
-                        <td>{{ v.placa }}</td>
-                        <td>{{ v.marca }}</td>
-                        <td>{{ v.modelo }}</td>
-                        <td>{{ v.anio }}</td>
-                        <td>{{ v.color }}</td>
-                        <td>{{ v.empresaFlete }} </td>
-                        <td> 
-                            {% if perms.vehiculo.update_vehiculo %}
-                            <a href="{% url 'vehiculo:modificar-url' v.pk %}" class="btn btn-info fas fa-pen " data-editar="{{ v.pk }}"></a>  
-                            {% endif %}
-                            {% if perms.vehiculo.delete_vehiculo %}
-                            <button class="eliminar btn btn-danger fas fa-trash-alt " data-eliminar="{{v.pk}}"></button>
-                            {% endif %}
-                        </td>
-                        
+        <div style="{{estilos.o2}}" class="table-responsive">
+            <div class="row">
 
-                        <!-- <td><button class="btn btn-success">Añadir</button></td> -->
+                <div class="col-md-3 mb-1">
 
-                        
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                    {% if perms.vehiculo.add_vehiculo %}
+                    <a class="btn btn-success {{ clases.o1 }}" href="{% url 'vehiculo:crear-url'  %}">Nuevo
+                        Vehículo</a>
+                    {% endif %}
 
-            
+
+                </div>
+
+            </div>
+            <div class="table-responsive">
+                <table id="tablajs" class="table table-striped table-hover table-bordered" width='100%'>
+                    <thead class="thead-inverse">
+                        <tr>
+                            <th data-priority="1">Placa</th>
+                            <th>Marca</th>
+                            <th>Modelo</th>
+                            <th>Año</th>
+                            <th>Color</th>
+                            <th>Empresa</th>
+                            <th data-priority="2">Acciones</th>
+                            <!-- <th>Añadir</th> -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for v in vehiculos %}
+                        <tr id="fila-{{v.pk}}">
+                            <td>{{ v.placa }}</td>
+                            <td>{{ v.marca }}</td>
+                            <td>{{ v.modelo }}</td>
+                            <td>{{ v.anio }}</td>
+                            <td>{{ v.color }}</td>
+                            <td>{{ v.empresaFlete }} </td>
+                            <td>
+                                {% if perms.vehiculo.change_vehiculo %}
+                                <a id="editar-{{v.pk}}" href="{% url 'vehiculo:modificar-url' v.pk %}"></a>
+                                <button class="editarVehiculo btn btn-info fas fa-pen " data-id="{{ v.pk }}"></button>
+                                {% endif %}
+                                {% if perms.vehiculo.delete_vehiculo %}
+                                <button class="eliminar btn btn-danger fas fa-trash-alt "
+                                    data-eliminar="{{v.pk}}"></button>
+                                {% endif %}
+                            </td>
+
+
+                            <!-- <td><button class="btn btn-success">Añadir</button></td> -->
+
+
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
         </div>
     </div>
 
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="modalDetalleCosecha" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-    <div class="modal-content">
-    <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Visualización De Nota De Cosecha</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-        </button>
+<div class="modal fade" id="modalDetalleCosecha" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Visualización De Nota De Cosecha</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body modalCuerpoCosecha">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary fas fa-times" id="cerrarModal" data-dismiss="modal">
+                    Cerrar</button>
+                <button type="submit" id="imprimir" class="imprimir btn btn-success fas fa-print"></button>
+            </div>
+        </div>
     </div>
-    <div class="modal-body modalCuerpoCosecha">
-        ...
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-secondary fas fa-times" id="cerrarModal" data-dismiss="modal"> Cerrar</button>
-        <button type="submit" id="imprimir" class="imprimir btn btn-success fas fa-print"></button>
-    </div>
-    </div>
-</div>
 </div>
 <!-- Modal Reporte-->
-<div class="modal fade" id="modalReporte" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+<div class="modal fade" id="modalReporte" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
     <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
         <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLongTitle">Reporte Mensual</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="modal-body modalCuerpoReporte">
-            ...
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary fas fa-times" id="cerrarModal" data-dismiss="modal"> Cerrar</button>
-            <button class="btn btn-warning fas fa-print" id="imprimirReporte">Imprimir</button>
-            <!-- <a href="" class="btn btn-warning fas fa-print" id="imprimirReporte" target="_blank"> Imprimir</a> -->
-        </div>
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Reporte Mensual</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body modalCuerpoReporte">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary fas fa-times" id="cerrarModal" data-dismiss="modal">
+                    Cerrar</button>
+                <button class="btn btn-warning fas fa-print" id="imprimirReporte">Imprimir</button>
+                <!-- <a href="" class="btn btn-warning fas fa-print" id="imprimirReporte" target="_blank"> Imprimir</a> -->
+            </div>
         </div>
     </div>
 </div>

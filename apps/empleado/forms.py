@@ -1,12 +1,20 @@
 from django.forms import ModelForm
 from django import forms
 from .models import *
+from django.contrib.auth.models import Group
 
 class EmpleadoForm(forms.ModelForm):
 	class Meta:
 		model = Empleado
 		fields = '__all__'
 
+class GrupoForm(forms.ModelForm):
+	class Meta:
+		model = Group
+		fields = '__all__'
+
+
+	
 
 # class DetalleCosechaForm(forms.ModelForm):
 # 	class Meta:

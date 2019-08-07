@@ -2,7 +2,7 @@ from django.shortcuts import render
 
 
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required,permission_required
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.urls import reverse, reverse_lazy
 
@@ -20,7 +20,7 @@ from django.contrib.auth import authenticate
 #RECURSOS
 from .models import *
 from .forms import *
-from django.contrib.auth.models import User,Group
+from django.contrib.auth.models import User,Group,Permission
 from django.contrib.auth.forms import UserCreationForm
 
 #FUNCIONES
@@ -39,6 +39,8 @@ from django.middleware import csrf
 #CORREOS
 from django.core.mail import EmailMessage
 from django.core.mail import EmailMultiAlternatives
+
+
 # from django.template import Context
 # from django.template.loader import render_to_string
 
@@ -51,6 +53,8 @@ from django.core.mail import EmailMultiAlternatives
 # email.to = ['to@example.com']
 # email.send()
 
+@login_required()
+@permission_required('empleado.view_empleado',raise_exception=True)
 def Empleados(request):
 	estilos, clases = renderizado(2, 4)
 	empleados = Empleado.objects.all().exclude(usuario=request.user)#.order_by('-fecha')
@@ -59,9 +63,12 @@ def Empleados(request):
 		'estilos': estilos,
 		 'clases': clases,
 		 'empleados': empleados,
+		 'listadoEmpleados':True,
 	 }
 	return render(request, 'empleado/empleado.html', context)
 
+@login_required()
+@permission_required('empleado.add_empleado',raise_exception=True)
 def CrearEmpleado(request):
 	estilos, clases = renderizado(1, 4)
 	if request.method == 'POST':
@@ -115,16 +122,19 @@ def CrearEmpleado(request):
 	form_usuario.fields['password2'].widget.attrs['readonly']='True'
 	form_usuario.fields['password2'].widget.attrs['value']=contra
 	# form_usuario.fields['password2'].widget = forms.HiddenInput()
-
+	comboboxBasico(form_empleado,'cargo','Seleccione...','True',[])
 	context = {
 		'estilos': estilos,
 		 'clases': clases,
 		 'form_usuario': form_usuario,
 		 'form_empleado': form_empleado,
-		 'crear':True,
+		 'crearEmpleado':True,
 	 }
 	return render(request,'empleado/empleado.html',context)
 
+
+@login_required()
+@permission_required('empleado.change_empleado',raise_exception=True)
 def ModificarEmpleado(request,pk):
 	empleado = Empleado.objects.get(pk=pk)
 	usuario = User.objects.get(pk= empleado.usuario.pk)
@@ -178,18 +188,20 @@ def ModificarEmpleado(request,pk):
 	form_usuario.fields['username'].widget.attrs['readonly']='True'
 	# form_usuario.fields['password2'].widget.attrs['value']=contra
 	# form_usuario.fields['password2'].widget = forms.HiddenInput()
-
+	comboboxBasico(form_empleado,'cargo','Seleccione...','True',[])
 	context = {
 		'estilos': estilos,
 		'clases': clases,
 		'form_usuario': form_usuario,
 		'form_empleado': form_empleado,
-		'crear':False,
+		'editarEmpleado':True,
 		'correo':usuario.email,
-
+		'empleado':empleado.nombre+' '+empleado.apellido,
 	 }
 	return render(request,'empleado/empleado.html',context)
 
+@login_required()
+@permission_required('empleado.estado_empleado',raise_exception=True)
 def DesactivarEmpleado_asJson(request):
 	if request.is_ajax() and request.method == 'GET':		
 		id = request.GET['id']
@@ -204,6 +216,9 @@ def DesactivarEmpleado_asJson(request):
 		return JsonResponse(data)
 	else:
 		pass
+
+@login_required()
+@permission_required('empleado.estado_empleado',raise_exception=True)
 def ActivarEmpleado_asJson(request):
 	if request.is_ajax() and request.method == 'GET':		
 		id = request.GET['id']
@@ -219,6 +234,8 @@ def ActivarEmpleado_asJson(request):
 	else:
 		pass
 
+@login_required()
+@permission_required('empleado.restablecer_contrasena',raise_exception=True)
 def ValidarEmpleado_asJson(request):
 	if request.is_ajax() and request.method == 'POST':		
 		usuario = request.POST['usuario']
@@ -245,6 +262,7 @@ def ValidarEmpleado_asJson(request):
 		pass
 
 @login_required()
+@permission_required('empleado.obtener_contrasena',raise_exception=True)
 def ReporteContrasena(request):
 	if request.method == 'POST':
 		id = request.POST['codEmpleado'] 
@@ -299,5 +317,126 @@ def ReporteContrasena(request):
 
 def generate_key(length):
 	return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(length))
+
+@login_required()
+@permission_required('empleado.view_cargo',raise_exception=True)
+def Grupos(request):
+	estilos, clases = renderizado(4, 4)
+	grupos = Group.objects.all()
+
+	ctx = {
+		'estilos':estilos,
+		'clases':clases,
+		'grupos':grupos,
+		'listadoGrupos':True,
+	}
+	return render(request,'empleado/empleado.html',ctx)
+
+@login_required()
+@permission_required('empleado.add_cargo',raise_exception=True)
+def CrearGrupo(request):
+	estilos, clases = renderizado(3, 4)
+	# grupos = Group.objects.all()
+	permisosx = Permission.objects.all()
+	permisos = Permission.objects.filter(Q(content_type_id=37) 
+										| Q(content_type_id=9) 
+										| Q(content_type_id=8)
+										| Q(content_type_id=7)
+										| Q(content_type_id=14)
+										| Q(content_type_id=39)
+										| Q(content_type_id=12)
+										| Q(content_type_id=17)
+										| Q(content_type_id=31)
+										| Q(content_type_id=23)
+										| Q(content_type_id=27)
+										| Q(content_type_id=20))
+	# pe = PrestamoEquipo.objects.filter(Q(estadoPrestamo = EstadoPrestamo.objects.get(pk = 1)))
+	print(permisos)
+	if request.method == 'POST':
+		grupo_form = GrupoForm(request.POST)
+
+		if grupo_form.is_valid:
+			grupo = grupo_form.save()
+			cargo = Cargo(cargo=grupo.name,grupo = grupo)
+			cargo.save()
+			print(cargo.cargo+' ha sido creado con exito');
+			return redirect(reverse('empleado:grupos-url'))
+
+
+	else:
+		grupo_form = GrupoForm()
+	FormControl(grupo_form)
+
+	cl = []
+	for c in permisos:
+		cl.append([c.pk ,str(c.content_type.app_label)+' | '+str(c.name)])
+		print(c)
+	grupo_form.fields['permissions'].choices =  cl
+	grupo_form.fields['permissions'].widget.attrs['class'] = 'selectpicker form-control  show-tick'
+	grupo_form.fields['permissions'].widget.attrs['data-live-search'] = 'True'
+	grupo_form.fields['permissions'].widget.attrs['multiple'] = 'True'
+	grupo_form.fields['permissions'].widget.attrs['title'] = 'Seleccione permisos para el cargo...'
+	# grupo_form.fields['permissions'].widget.attrs['data-size'] = 8
+
+	ctx = {
+		'estilos':estilos,
+		'clases':clases,
+		'grupo_form':grupo_form,
+		'crearGrupo':True,
+	}
+	return render(request,'empleado/empleado.html',ctx)
+
+
+@login_required()
+@permission_required('empleado.change_cargo',raise_exception=True)
+def ModificarGrupo(request,pk):
+	estilos, clases = renderizado(3, 4)
+	grupoCargo = Group.objects.get(pk=pk)
+	permisos = Permission.objects.filter(Q(content_type_id=37) 
+										| Q(content_type_id=9) 
+										| Q(content_type_id=8)
+										| Q(content_type_id=7)
+										| Q(content_type_id=14)
+										| Q(content_type_id=39)
+										| Q(content_type_id=12)
+										| Q(content_type_id=17)
+										| Q(content_type_id=31)
+										| Q(content_type_id=23)
+										| Q(content_type_id=27)
+										| Q(content_type_id=20))
+	if request.method == 'POST':
+		grupo_form = GrupoForm(request.POST,instance=grupoCargo)
+		if grupo_form.is_valid:
+			grupo = grupo_form.save()
+			cargo = Cargo.objects.get(grupo=grupo)
+			cargo.cargo = grupo.name
+			cargo.save()
+			print(cargo.cargo+' ha sido actualizado con exito');
+			return redirect(reverse('empleado:grupos-url'))
+
+
+	else:
+		grupo_form = GrupoForm(instance=grupoCargo)
+	FormControl(grupo_form)
+
+	cl = []
+	for c in permisos:
+		cl.append([c.pk ,str(c.content_type.app_label)+' | '+str(c.name)])
+		# print(cl)
+	grupo_form.fields['permissions'].choices =  cl
+	grupo_form.fields['permissions'].widget.attrs['class'] = 'selectpicker form-control  show-tick'
+	grupo_form.fields['permissions'].widget.attrs['data-live-search'] = 'True'
+	grupo_form.fields['permissions'].widget.attrs['multiple'] = 'True'
+	grupo_form.fields['permissions'].widget.attrs['title'] = 'Seleccione permisos para el cargo...'
+	# grupo_form.fields['permissions'].widget.attrs['data-size'] = 8
+
+	ctx = {
+		'estilos':estilos,
+		'clases':clases,
+		'grupo_form':grupo_form,
+		'editarGrupo':True,
+		'grupo': grupoCargo ,
+	}
+	return render(request,'empleado/empleado.html',ctx)
 
 

@@ -33,6 +33,8 @@ from datetime import datetime, date, time, timedelta
 from django.conf import settings
 from django.middleware import csrf
 
+@login_required()
+@permission_required('conductor.view_conductor',raise_exception=True)
 def Conductores(request):
 	estilos, clases = renderizado(2, 4)
 	conductores = Conductor.objects.all().order_by('numIdentidad')
@@ -41,10 +43,12 @@ def Conductores(request):
 		'estilos': estilos,
 		 'clases': clases,
 		 'conductores': conductores,
+		 'listado':True,
 	 }
 	return render(request, 'conductor/conductor.html', context)
 
 @login_required
+@permission_required('conductor.add_conductor',raise_exception=True)
 def CrearConductor(request): 
 	estilos, clases = renderizado(1, 4)
 	if request.method == 'POST':
@@ -71,6 +75,7 @@ def CrearConductor(request):
 	return render(request, 'conductor/conductor.html', context)
 
 @login_required
+@permission_required('conductor.change_conductor',raise_exception=True)
 def ModificarConductor(request,pk): 
 	estilos, clases = renderizado(1, 4)
 	conductor = Conductor.objects.get(pk=pk)
@@ -94,26 +99,25 @@ def ModificarConductor(request,pk):
 		'conductor_form': conductor_form,
 		'estilos':estilos,
 		'clases':clases,
-		'crear':False,
+		'editar':True,
+		'conductor':conductor.pk,
 	}
 
 	return render(request, 'conductor/conductor.html', context)
 
 @login_required()
-@permission_required('conductor.delete_conductor')
+@permission_required('conductor.estado_conductor',raise_exception=True)
 def EstadoConductor_asJson(request):
 	if request.is_ajax() and request.method == 'GET':
 		id = request.GET['id']
 		conductor = Conductor.objects.get(pk = id)
-		if conductor.estado:
-			conductor.estado = False
+		if conductor.activo:
+			conductor.activo = False
 			print('Conductor Desactivado.')
 		else:
-			conductor.estado = True
+			conductor.activo = True
 			print('Conductor Activado.')
-
 		conductor.save()
 		return JsonResponse({})
-		
 	else:
 		print('remision no anulada porque la peticion no cumple con los requisitos.')

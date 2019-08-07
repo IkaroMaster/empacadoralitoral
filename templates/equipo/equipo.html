@@ -45,9 +45,9 @@ active
                 <a class="nav-link {{ clases.o3 }} " href="{% url 'equipo:equipo-url' 3 %}">Equipo base</a>
             </li>
             {% endif %}
-            
+
             {% if perms.equipo.crearqr_equipo %}
-                <li class="nav-item">
+            <li class="nav-item">
                 <a class="nav-link {{ clases.o4 }} " href="{% url 'equipo:equipo-url' 4 %}">Generar QR</a>
             </li>
             {% endif %}
@@ -100,23 +100,24 @@ active
                             <font style="vertical-align: inherit;">Codigo Unico de Bin:</font>
                         </font>
                     </label>
-                    
+
                     {% if crear %}
-                       <div class="row container">
+                    <div class="row container">
 
                         <div class="col-10 " style="margin: 0 auto;">
                             <p>{{form.codigo_barras}} </p>
                         </div>
-                        <div class="col-2 " style="float: right"><button type="button" id="scanner"
+                        <div class="col-2 " style="float: right">
+                            <button type="button" id="scanner"
                                 class=" btn-lg btn-outline-dark fas fa-qrcode "></button>
                         </div>
-                    </div> 
+                    </div>
                     {% else %}
                     <p>{{form.codigo_barras}} </p>
 
                     {% endif %}
-                        
-                    
+
+
                     <label for="id_informacion">
                         <font style="vertical-align: inherit;">
                             <font style="vertical-align: inherit;">Información:</font>
@@ -134,58 +135,64 @@ active
             </form>
         </div>
         <div style="{{estilos.o2}}">
+            <div class="row col-md-3 mb-1">
+                {% if perms.equipo.add_equipo %}
+                <div class="col">
+                    <a class=" btn btn-success {{ clases.o1 }}" href="{% url 'equipo:equipo-url' 1 %}">Nuevo
+                        Equipo</a>
+                </div>
+                {% endif %}
+            </div>
 
-            <!-- <div class="table-responsive"> -->
-            <table id="tablajs" class="table table-striped table-hover">
-                <thead class="thead-inverse">
-                    <tr>
-                        <th>Cod.</th>
-                        <th>Codigo QR</th>
-                        <th>Nombre</th>
-                        <th>Numero</th>
-                        <th>Tamaño</th>
-                        <th>Color</th>
-                        <th>Estado</th>
-                        <th>Descripcion</th>
-                        <th>Edicion</th>
-                        <!-- <th>Añadir</th> -->
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for e in equipos %}
-                    <tr {% if e.estado.id == 1 %} class="table-primary" {% elif e.estado.id == 2 %}
-                        class="table-success" {% elif e.estado.id == 3 %} class="table-danger" {% endif %}>
-                        <td>{{ e.pk }}</td>
-                        <td>{{ e.codigo_barras }}</td>
-                        <td>{{ e.nombre }}</td>
-                        <td><a href="">{{ e.numero }}</a></td>
-                        <td>{{ e.tamano }}</td>
-                        <td>{{ e.color }}</td>
-                        <td>{{ e.estado }}</td>
-                        <td>
-                            {% if e.informacion  %}
-                            {{ e.informacion}}
-                            {% else %}
-                            <l5>sin descripcion</l5>
-                            {% endif %}
-                        </td>
-                        <td>
+            <div class="table-responsive">
+                <table id="tablajs" class="table table-striped table-hover table-bordered">
+                    <thead class="thead-inverse">
+                        <tr>
+                            <th>Cod.</th>
+                            <th>Codigo QR</th>
+                            <th>Nombre</th>
+                            <th>Numero</th>
+                            <th>Tamaño</th>
+                            <th>Color</th>
+                            <th>Estado</th>
+                            <th>Descripcion</th>
+                            <th>Edicion</th>
+                            <!-- <th>Añadir</th> -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for e in equipos %}
+                        <tr {% if e.estado.id == 1 %} class="table-primary" {% elif e.estado.id == 2 %}
+                            class="table-success" {% elif e.estado.id == 3 %} class="table-danger" {% endif %}>
+                            <td>{{ e.pk }}</td>
+                            <td>{{ e.codigo_barras }}</td>
+                            <td>{{ e.nombre }}</td>
+                            <td><a href="">{{ e.numero }}</a></td>
+                            <td>{{ e.tamano }}</td>
+                            <td>{{ e.color }}</td>
+                            <td>{{ e.estado }}</td>
+                            <td>
+                                
+                                {{ e.informacion}}
+                                
+                            </td>
+                            <td>
 
-                            {% if perms.equipo.change_equipo %}
-                            <a id="editar-{{e.pk}}" data-editar='{{e.pk}}'
-                                href="{% url 'equipo:editar_equipo-url' e.id %}" class="editar"></a>
-                            <button class="editarEquipo btn btn-info fas fa-pen" data-id='{{e.pk}}'></button>
-
-                            {% endif %}
-                        </td>
-                        <!-- <td><button class="btn btn-success">Añadir</button></td> -->
+                                {% if perms.equipo.change_equipo %}
+                                <a id="editar-{{e.pk}}" data-editar='{{e.pk}}'
+                                    href="{% url 'equipo:editar_equipo-url' e.id %}" class="editar"></a>
+                                <button class="editarEquipo btn btn-info fas fa-pen" data-id='{{e.pk}}'></button>
+                                {% endif %}
+                                <a href="{% url 'equipo:obtener_qr-url' e.pk %}" class="btn btn-primary fas fa-qrcode "  target="_blank"></a>
+                            </td>
+                            <!-- <td><button class="btn btn-success">Añadir</button></td> -->
 
 
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            <!-- </div>     -->
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
 
         </div>
 
@@ -218,7 +225,7 @@ active
             {% endif %}
 
             <div class="col-8 table-responsive ">
-                <table id="tablajs2" class="table table-striped table-hover">
+                <table id="tablajs2" class="table table-striped table-hover table-bordered">
                     <thead class="thead-inverse">
                         <tr>
                             <th>Cod.</th>
@@ -288,13 +295,13 @@ active
                             <h4 class="panel-title text-light">Vista Previa</h4>
                         </div>
                         <div id="qrcode" class=" pl-5 pr-5 pt-1"></div>
-                        
 
-                            <p id="qrcode-texto" class=" text-center">EQEL-XX-XXXXX-X-XX-X</p>
+
+                        <p id="qrcode-texto" class=" text-center">EQEL-XX-XXXXX-X-XX-X</p>
                     </div>
                 </div>
-                
-                    <input type="submit" value="Imprimir Codigo QR" class="btn-lg btn-warning fas fa-qrcode" readonly>
+
+                <input type="submit" value="Imprimir Codigo QR" class="btn-lg btn-warning fas fa-qrcode" readonly>
 
             </form>
         </div>

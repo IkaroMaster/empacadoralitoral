@@ -236,91 +236,98 @@ active
 
         </div>
         <div style="{{estilos.o2}}">
-            <div class="row">
-                {% if perms.camaron.imprimir_cosecha %}
-                <div class="col-3">
-                    <div class="btn-group" role="group">
-                        <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Reportes
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                            <button id="reporteMensual" data-toggle="modal" data-target="#modalReporte"
-                                class=" dropdown-item ">Reporte Mensual</button>
-                            <div class="dropdown-divider"></div>
-                            <button id="reporteIntervalo" data-toggle="modal" data-target="#modalReporte"
-                                class=" dropdown-item ">Reporte Con Intervalo De Fechas</button>
-                        </div>
-                    </div>
+            <div class="row col-md-6 mb-1">
+                {% if perms.camaron.add_cosecha %}
+                <div class="col">
+                    <a class=" btn btn-success {{ clases.o1 }}" href="{% url 'camaron:crear-url' %}">Nueva
+                        Cosecha</a>
                 </div>
                 {% endif %}
 
+                {% if perms.camaron.imprimir_cosecha %}
+                <div class="col btn-group" role="group">
+                    <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Reportes
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                        <button id="reporteMensual" data-toggle="modal" data-target="#modalReporte"
+                            class=" dropdown-item ">Reporte Mensual</button>
+                        <div class="dropdown-divider"></div>
+                        <button id="reporteIntervalo" data-toggle="modal" data-target="#modalReporte"
+                            class=" dropdown-item ">Reporte Con Intervalo De Fechas</button>
+                    </div>
+                </div>
+                {% endif %}
             </div>
-            <table id="tablajs" class="table table-striped table-bordered" style="width:100%" class="display">
-                <thead class="thead-inverse">
-                    <tr>
-                        <th data-priority="1">Cod.</th>
-                        <th>Remision</th>
-                        <th>Guia</th>
-                        <th>Fecha</th>
-                        <th>Hora</th>
-                        <th>Laguna</th>
-                        <th>Motorista</th>
-                        <th>Marca</th>
-                        <th>Placa</th>
-                        <th data-priority="2">Acciones</th>
-                        <!-- <th>Añadir</th> -->
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for c in cosecha %}
-                    <tr id="fila-{{c.codCosecha}}">
-                        <td>{{ c.codCosecha }}</td>
-                        <td>{{ c.remision }}</td>
-                        <td>{{ c.remision.guia }}</td>
-                        <td>{{c.fecha}} </td>
-                        <td>{{c.horaInicio}} - {{c.horaFinal}} </td>
-                        <td>{{c.laguna}} </td>
-                        <td>{{c.remision.conductor}} </td>
-                        <td>{{c.remision.placa.marca}} </td>
-                        <td>{{c.remision.placa}} </td>
 
-                        <td>
+            <div class="table-responsive">
+                <table id="tablajs" class="table table-striped table-hover table-bordered" style="width:100%"
+                    class="display">
+                    <thead class="thead-inverse">
+                        <tr>
+                            <th data-priority="1">Cod.</th>
+                            <th>Remision</th>
+                            <th>Guia</th>
+                            <th>Fecha</th>
+                            <th>Hora</th>
+                            <th>Laguna</th>
+                            <th>Motorista</th>
+                            <th>Marca</th>
+                            <th>Placa</th>
+                            <th data-priority="2">Acciones</th>
+                            <!-- <th>Añadir</th> -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for c in cosecha %}
+                        <tr id="fila-{{c.codCosecha}}">
+                            <td>{{ c.codCosecha }}</td>
+                            <td>{{ c.remision }}</td>
+                            <td>{{ c.remision.guia }}</td>
+                            <td>{{c.fecha}} </td>
+                            <td>{{c.horaInicio}} - {{c.horaFinal}} </td>
+                            <td>{{c.laguna}} </td>
+                            <td>{{c.remision.conductor}} </td>
+                            <td>{{c.remision.placa.marca}} </td>
+                            <td>{{c.remision.placa}} </td>
 
-                            {% if perms.camaron.imprimir_cosecha %}
-                            <button type="submit" class="imprimir btn btn-success fas fa-print"
-                                form="formReporteCosecha-{{c.pk}}"></button>
-                            {% endif %}
+                            <td>
 
-                            {% if perms.camaron.change_cosecha %}
-                            <a id="editar-{{c.pk}}" data-editar='{{c.pk}}' href="{% url 'camaron:modificar-url' c.pk%}"
-                                class="editar "></a>
-                            <button data-id="{{c.pk}}" class="editarCosecha btn btn-info fas fa-pen"></button>
-                            {% endif %}
-                            {% if perms.camaron.view_cosecha %}
-                            <button class="ver btn btn-warning fas fa-eye " data-ver='{{c.pk}}'></button>
-                            {% endif %}
+                                {% if perms.camaron.imprimir_cosecha %}
+                                <button type="submit" class="imprimir btn btn-success fas fa-print"
+                                    form="formReporteCosecha-{{c.pk}}"></button>
+                                {% endif %}
+
+                                {% if perms.camaron.change_cosecha %}
+                                <a id="editar-{{c.pk}}" data-editar='{{c.pk}}'
+                                    href="{% url 'camaron:modificar-url' c.pk%}" class="editar "></a>
+                                <button data-id="{{c.pk}}" class="editarCosecha btn btn-info fas fa-pen"></button>
+                                {% endif %}
+                                {% if perms.camaron.view_cosecha %}
+                                <button class="ver btn btn-warning fas fa-eye " data-ver='{{c.pk}}'></button>
+                                {% endif %}
 
 
-                            <!-- <a data-imprimir='{{c.pk}}' href="" class="imprimir btn btn-success fas fa-print" target="_blank"></a> -->
+                                <!-- <a data-imprimir='{{c.pk}}' href="" class="imprimir btn btn-success fas fa-print" target="_blank"></a> -->
 
 
+                                </form>
+                            </td>
+                            <form action="{% url 'camaron:reporte_cosecha-url' %}" method="post" target="_blank"
+                                id="formReporteCosecha-{{c.pk}}">
+                                {% csrf_token %}
+                                <input type="hidden" name="codCosecha" value="{{c.pk}}" id="">
                             </form>
-                        </td>
-                        <form action="{% url 'camaron:reporte_cosecha-url' %}" method="post" target="_blank"
-                            id="formReporteCosecha-{{c.pk}}">
-                            {% csrf_token %}
-                            <input type="hidden" name="codCosecha" value="{{c.pk}}" id="">
-                        </form>
 
-                        <!-- <td><button class="btn btn-success">Añadir</button></td> -->
+                            <!-- <td><button class="btn btn-success">Añadir</button></td> -->
 
 
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
 
         </div>
     </div>

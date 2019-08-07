@@ -243,3 +243,26 @@ def ReporteCodigoQR(request):
 		
 	else:
 		pass
+
+@login_required
+@permission_required('equipo.crearqr_equipo',raise_exception=True)
+def ReporteObtenerQR(request,pk):
+	if not request.user.empleado.actualizoContrasena:
+		return HttpResponseRedirect(reverse('seguridad:log_out-url'))	
+	if request.method == 'GET':
+		ahora = datetime.now()
+		codigoQR = Equipo.objects.get(pk=pk).codigo_barras
+	
+		configuracionesQR = QRCodeOptions(size=100,border=0, error_correction='L')
+		
+		data = {'tamano':'Letter', 
+				'posicion':'portrait', 
+				'codigoQR': codigoQR,
+				'ahora': ahora,
+				'configuracionesQR':configuracionesQR,
+		}
+		
+		return render(request,'equipo/reportes/reporteCodigoQR.html',data)
+		
+	else:
+		pass

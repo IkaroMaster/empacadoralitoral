@@ -34,6 +34,8 @@ def comboboxBasico(objeto,campo,mensaje,buscador,queryset):
 	objeto.fields[campo].widget.attrs['data-size'] = 4
 	# objeto.fields[campo].widget.attrs['data-show-subtext'] = buscador
 
+def inputReadonly(objeto,campo):
+    objeto.fields[campo].widget.attrs['Readonly'] = True
 
 def fechaBasico(objeto,campo,mensaje):
 	objeto.fields[campo].label = mensaje

@@ -47,7 +47,7 @@ active
             <form method="post" id="formRemision">
                 <input type="hidden" name="crear" id="crear" value="{{ crear }}" data-remision="{{remision}}">
                 {% csrf_token %}
-                <div class="row container border p-2">
+                <div class="row container ">
                     <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ">
                         <label for="">Numero:</label>
                         {{remision_form.numRemision}}
@@ -126,51 +126,53 @@ active
 
                 {{ detalleRemision_formset.management_form }}
                 <hr>
-                <table class="table table-striped table-inverse table-responsive">
-                    <thead class="thead-inverse">
-                        <tr>
-                            <th>Salida</th>
-                            <th>Unidad de medida</th>
-                            <th>Tipo de Hielo</th>
-                            <th>Devolucion</th>
-                            <th>Accion</th>
-                        </tr>
-                    </thead>
-                    <tbody id="probando">
-                        {% for dr in detalleRemision_formset %}
-                        <tr class="detalle-formset">
-                            <!-- <td>{{ dr.remision }}</td> -->
-                            <td scope="row">{{dr.salida}}
-                                {% if dr.salida.errors %}
-                                {% for error in dr.salida.errors %}
-                                <span class="text-danger">{{ error|escape }}</span>
-                                {% endfor %}
-                                {% endif %}
-                            </td>
-                            <td>{{dr.unidad}}
-                                {% if dr.unidad.errors %}
-                                {% for error in dr.unidad.errors %}
-                                <span class="text-danger">{{ error|escape }}</span>
-                                {% endfor %}
-                                {% endif %}
-                            </td>
-                            <td>
-                                {{ dr.hielo }}
-                                {% if dr.hielo.errors %}
-                                {% for error in dr.hielo.errors %}
-                                <span class="text-danger">{{ error|escape }}</span>
-                                {% endfor %}
-                                {% endif %}
-                            </td>
-                            <!-- <td>{{dr.hielo}}</td> -->
-                            <td>{{dr.devolucion}}</td>
-                            <td></td>
-                            <!-- <a name="" id="" class="btn btn-primary" href="#" role="button"></a> -->
-                        </tr>
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover table-bordered">
+                        <thead class="thead-inverse">
+                            <tr>
+                                <th>Salida</th>
+                                <th>Unidad de medida</th>
+                                <th>Tipo de Hielo</th>
+                                <th>Devolucion</th>
+                                <th>Accion</th>
+                            </tr>
+                        </thead>
+                        <tbody id="probando">
+                            {% for dr in detalleRemision_formset %}
+                            <tr class="detalle-formset">
+                                <!-- <td>{{ dr.remision }}</td> -->
+                                <td scope="row">{{dr.salida}}
+                                    {% if dr.salida.errors %}
+                                    {% for error in dr.salida.errors %}
+                                    <span class="text-danger">{{ error|escape }}</span>
+                                    {% endfor %}
+                                    {% endif %}
+                                </td>
+                                <td>{{dr.unidad}}
+                                    {% if dr.unidad.errors %}
+                                    {% for error in dr.unidad.errors %}
+                                    <span class="text-danger">{{ error|escape }}</span>
+                                    {% endfor %}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {{ dr.hielo }}
+                                    {% if dr.hielo.errors %}
+                                    {% for error in dr.hielo.errors %}
+                                    <span class="text-danger">{{ error|escape }}</span>
+                                    {% endfor %}
+                                    {% endif %}
+                                </td>
+                                <!-- <td>{{dr.hielo}}</td> -->
+                                <td>{{dr.devolucion}}</td>
+                                <td></td>
+                                <!-- <a name="" id="" class="btn btn-primary" href="#" role="button"></a> -->
+                            </tr>
 
-                        {% endfor %}
-                    </tbody>
-                </table>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
                 {# {{ detalleRemision_formset.as_p }} #}
                 <!-- {% for dr in detalleRemision_formset %}
                     <div class="detalle-formset">
@@ -203,10 +205,17 @@ active
         </div>
         <div style="{{estilos.o2}}">
 
-            {% if perms.remision.generar_reportes %}
-            <div class="row">
-                <div class="col-3">
-                    <div class="btn-group" role="group">
+            
+            <div class="row col-md-6 mb-1"> 
+                {% if perms.remision.add_remision %}
+                <div class="col">
+                    <a class=" btn btn-success {{ clases.o1 }}" href="{% url 'remision:crear_remision-url' %}">Nueva Remision</a>
+                </div>
+                {% endif %}
+
+                {% if perms.remision.generar_reportes %}
+                <!-- <div class=""> -->
+                    <div class="col btn-group" role="group">
                         <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Reportes
@@ -218,50 +227,53 @@ active
 
                         </div>
                     </div>
-                </div>
+                <!-- </div> -->
+                {% endif %}
             </div>
-            {% endif %}
-            <table id="tablajs" class="table table-striped table-bordered" style="width:100%" class="display">
-                <thead class="thead-inverse">
-                    <tr>
-                        <th data-priority="1">Cod.</th>
-                        <th>Tipo de remision</th>
-                        <th>Guia</th>
-                        <th>Compania</th>
-                        <th>Fecha</th>
-                        <th>Estado</th>
-                        <th>Prestamo de equipo</th>
-                        <th>Conductor</th>
-                        <th>Entregado por</th>
-                        <th>Placa</th>
-                        <th data-priority="2">Acciones</th>
-                        <!-- <th>Añadir</th> -->
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for r in remisiones %}
-                    <tr id="fila-{{r.numRemision}}" {% if r.estado.id == 1 %} {% elif r.estado.id == 2 %}
-                        class="table-success" {% elif r.estado.id == 3 %} class="table-danger" {% endif %}>
-                        <td>{{ r.numRemision }}</td>
-                        <td>{{ r.tipoRemision }}</td>
-                        <td>
-                            {% if r.guia %}
-                            <a href="">{{ r.guia }}</a>
-                            {% else %}
-                            -
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if r.compania.abreviatura %}
-                            {{r.compania.abreviatura}}
-                            {% else %}
-                            {{ r.compania }}
-                            {% endif %}
-                        </td>
-                        <td>{{ r.fecha }}</td>
-                        <td id="col_estado-{{ r.numRemision }}">
-                            {{r.estado}}
-                            <!-- {% if r.estado.id == 1 %}
+            
+            <div class="table-responsive">
+                <table id="tablajs" class="table table-striped  table-hover table-bordered" style="width:100%"
+                    class="display">
+                    <thead class="thead-inverse">
+                        <tr>
+                            <th data-priority="1">Cod.</th>
+                            <th>Tipo de remision</th>
+                            <th>Guia</th>
+                            <th>Compania</th>
+                            <th>Fecha</th>
+                            <th>Estado</th>
+                            <th>Prestamo de equipo</th>
+                            <th>Conductor</th>
+                            <th>Entregado por</th>
+                            <th>Placa</th>
+                            <th data-priority="2">Acciones</th>
+                            <!-- <th>Añadir</th> -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for r in remisiones %}
+                        <tr id="fila-{{r.numRemision}}" {% if r.estado.id == 1 %} {% elif r.estado.id == 2 %}
+                            class="table-success" {% elif r.estado.id == 3 %} class="table-danger" {% endif %}>
+                            <td>{{ r.numRemision }}</td>
+                            <td>{{ r.tipoRemision }}</td>
+                            <td>
+                                {% if r.guia %}
+                                <a href="">{{ r.guia }}</a>
+                                {% else %}
+                                -
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if r.compania.abreviatura %}
+                                {{r.compania.abreviatura}}
+                                {% else %}
+                                {{ r.compania }}
+                                {% endif %}
+                            </td>
+                            <td>{{ r.fecha }}</td>
+                            <td id="col_estado-{{ r.numRemision }}">
+                                {{r.estado}}
+                                <!-- {% if r.estado.id == 1 %}
                             <p style="display: none">1</p>
                             <i class="fas fa-exclamation"></i>
                             {% elif r.estado.id == 2 %}
@@ -271,64 +283,65 @@ active
                             <p style="display: none">3</p>
                             <i class="fas fa-times"></i>
                             {% endif %} -->
-                        </td>
-                        <td id="col_prestamo-{{ r.numRemision }}">
-                            {% if r.prestamoEquipo  %}
-                            {{ r.prestamoEquipo }}
-                            {% else %}
-                            -
-                            {% endif %}
-                        </td>
-                        <td>{{ r.conductor }}</td>
-                        <td>{{ r.entrego }}</td>
-                        <td>{{ r.placa }}</td>
-                        <td>
+                            </td>
+                            <td id="col_prestamo-{{ r.numRemision }}">
+                                {% if r.prestamoEquipo  %}
+                                {{ r.prestamoEquipo }}
+                                {% else %}
+                                -
+                                {% endif %}
+                            </td>
+                            <td>{{ r.conductor }}</td>
+                            <td>{{ r.entrego }}</td>
+                            <td>{{ r.placa }}</td>
+                            <td>
 
-                            {% if r.estado.id == 1 %}
+                                {% if r.estado.id == 1 %}
 
-                            {% if perms.remision.terminar_remision %}
-                            <button class="btn btn-success fas fa-check terminarRemision" data-id="{{ r.numRemision }}"
-                                data-terminar="{{ r.numRemision }}"></button>
-                            {% endif %}
-                            {% if perms.remision.change_remision %}
-                            <a id="editar-{{ r.numRemision }}"
-                                href="{% url 'remision:modificar_remision-url' r.numRemision %}"
-                                data-id="{{ r.numRemision }}" data-editar="{{ r.numRemision }}"></a>
-                            <button class="btn btn-info fas fa-pen editarRemision "
-                                data-id="{{ r.numRemision }}"></button>
-                            {% endif %}
-                            {% if perms.remision.delete_remision %}
-                            <button class="btn btn-danger anularRemision fas fa-times" data-id="{{ r.numRemision }}"
-                                data-anular="{{ r.numRemision }}"></button>
-                            {% endif %}
-                            <button class="btn btn-warning verRemision fas fa-eye "
-                                data-id="{{ r.numRemision }}"></button>
-                            {% elif r.estado.id == 2 %}
-                            {% if perms.remision.change_remision %}
-                            <a id="editar-{{ r.numRemision }}"
-                                href="{% url 'remision:modificar_remision-url' r.numRemision %}"
-                                data-id="{{ r.numRemision }}"></a>
-                            <button class="btn btn-info fas fa-pen editarRemision "
-                                data-id="{{ r.numRemision }}"></button>
-                            {% endif %}
+                                {% if perms.remision.terminar_remision %}
+                                <button class="btn btn-success fas fa-check terminarRemision"
+                                    data-id="{{ r.numRemision }}" data-terminar="{{ r.numRemision }}"></button>
+                                {% endif %}
+                                {% if perms.remision.change_remision %}
+                                <a id="editar-{{ r.numRemision }}"
+                                    href="{% url 'remision:modificar_remision-url' r.numRemision %}"
+                                    data-id="{{ r.numRemision }}" data-editar="{{ r.numRemision }}"></a>
+                                <button class="btn btn-info fas fa-pen editarRemision "
+                                    data-id="{{ r.numRemision }}"></button>
+                                {% endif %}
+                                {% if perms.remision.delete_remision %}
+                                <button class="btn btn-danger anularRemision fas fa-times" data-id="{{ r.numRemision }}"
+                                    data-anular="{{ r.numRemision }}"></button>
+                                {% endif %}
+                                <button class="btn btn-warning verRemision fas fa-eye "
+                                    data-id="{{ r.numRemision }}"></button>
+                                {% elif r.estado.id == 2 %}
+                                {% if perms.remision.change_remision %}
+                                <a id="editar-{{ r.numRemision }}"
+                                    href="{% url 'remision:modificar_remision-url' r.numRemision %}"
+                                    data-id="{{ r.numRemision }}"></a>
+                                <button class="btn btn-info fas fa-pen editarRemision "
+                                    data-id="{{ r.numRemision }}"></button>
+                                {% endif %}
 
-                            <button class="btn btn-warning verRemision fas fa-eye "
-                                data-id="{{ r.numRemision }}"></button>
-                            {% else %}
-                            <button class="btn btn-warning verRemision fas fa-eye "
-                                data-id="{{ r.numRemision }}"></button>
-                            {% endif %}
+                                <button class="btn btn-warning verRemision fas fa-eye "
+                                    data-id="{{ r.numRemision }}"></button>
+                                {% else %}
+                                <button class="btn btn-warning verRemision fas fa-eye "
+                                    data-id="{{ r.numRemision }}"></button>
+                                {% endif %}
 
-                        </td>
-
-
-                        <!-- <td><button class="btn btn-success">Añadir</button></td> -->
+                            </td>
 
 
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                            <!-- <td><button class="btn btn-success">Añadir</button></td> -->
+
+
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 

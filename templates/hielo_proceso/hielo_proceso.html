@@ -21,16 +21,16 @@ active
 {% block cuerpo %}
 <div class="card text-center">
     <div class="panel-heading bg-primary">
-        
+
         {% if crear %}
-           <h4 class="panel-title text-light">Crear Nota de Consumo de Hielo</h4> 
+        <h4 class="panel-title text-light">Crear Nota de Consumo de Hielo</h4>
         {% elif editar %}
-           <h4 class="panel-title text-light">Modificar Nota de Consumo del {{fecha}}</h4> 
+        <h4 class="panel-title text-light">Modificar Nota de Consumo del {{fecha}}</h4>
         {% elif listado %}
-           <h4 class="panel-title text-light"> Notas de Consumo de Hielo en Proceso</h4> 
+        <h4 class="panel-title text-light"> Notas de Consumo de Hielo en Proceso</h4>
         {% endif %}
-            
-        
+
+
     </div>
     <div class="card-header">
         <ul class="nav nav-tabs card-header-tabs">
@@ -79,62 +79,69 @@ active
                     </div>
                     {{detalleHielo_formset.management_form}}
                     <!-- <hr> -->
-                    <table class="table table-striped table-inverse table-responsive">
-                        <thead class="thead-inverse">
-                            <tr>
-                                <th>Departamento\Recipiente</th>
-                                <th>Bin grande</th>
-                                <th>Bin pequeño</th>
-                                <th>Carretón blanco</th>
-                                <th>Glaseo</th>
-                                <th>Canasta Naranja o Azul</th>
-                                <th>Canasta pequeña roja</th>
-                                <th>Canasta pequeña azul</th>
-                                <th>Eliminar</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for dp in detalleHielo_formset %}
-                            <tr class="detalle-formset">
-                                <td>{{dp.departamento}}</td>
-                                <td>{{dp.binGrande}}</td>
-                                <td>{{dp.binPequeno}}</td>
-                                <td>{{dp.carretonBlanco}}</td>
-                                <td>{{dp.glaseo}}</td>
-                                <td>{{dp.canastaA}}</td>
-                                <td>{{dp.canastapRoja}}</td>
-                                <td>{{dp.canastapAzul}}</td>
-                                <td></td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered">
+                            <thead class="thead-inverse">
+                                <tr>
+                                    <th>Departamento\Recipiente</th>
+                                    <th>Bin grande</th>
+                                    <th>Bin pequeño</th>
+                                    <th>Carretón blanco</th>
+                                    <th>Glaseo</th>
+                                    <th>Canasta Naranja o Azul</th>
+                                    <th>Canasta pequeña roja</th>
+                                    <th>Canasta pequeña azul</th>
+                                    <th>Eliminar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for dp in detalleHielo_formset %}
+                                <tr class="detalle-formset">
+                                    <td>{{dp.departamento}}</td>
+                                    <td>{{dp.binGrande}}</td>
+                                    <td>{{dp.binPequeno}}</td>
+                                    <td>{{dp.carretonBlanco}}</td>
+                                    <td>{{dp.glaseo}}</td>
+                                    <td>{{dp.canastaA}}</td>
+                                    <td>{{dp.canastapRoja}}</td>
+                                    <td>{{dp.canastapAzul}}</td>
+                                    <td></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <br>
-                <input type="submit"  id="enviarFormularioHielo" hidden/>
+                <input type="submit" id="enviarFormularioHielo" hidden />
 
             </form>
             <center>
-                         <button class="btn btn-success" id="guardarHielo" >
-                         {% if crear %}
-                             Guardar Consumo
-                        {% elif editar %}
-                            Modificar Consumo
-                         {% endif %}
-                             </button>
-               <a href="{% url 'hielo_proceso:dias-url'%} " class="btn btn-secondary">Cancelar</a>
+                <button class="btn btn-success" id="guardarHielo">
+                    {% if crear %}
+                    Guardar Consumo
+                    {% elif editar %}
+                    Modificar Consumo
+                    {% endif %}
+                </button>
+                <a href="{% url 'hielo_proceso:dias-url'%} " class="btn btn-secondary">Cancelar</a>
 
             </center>
 
 
         </div>
         <div style="{{estilos.o2}}">
-            <div class="row">
+            <div class="row col-md-9 mb-1">
+                {% if perms.hielo_proceso.add_hieloproceso %}
+                <div class="col">
+                    <a class=" btn btn-success {{ clases.o1 }}" href="{% url 'hielo_proceso:crear-url' %}">Nuevo
+                        Consumo Diario</a>
+                </div>
+                {% endif %}
 
                 {% if perms.hielo_proceso.imprimir_hieloproceso %}
-                <div class="col-2">
-                    <div class="btn-group" role="group">
+                
+                    <div class="col btn-group" role="group">
                         <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Reportes
@@ -146,12 +153,10 @@ active
                             <a class="dropdown-item" href="#">Reporte Anual</a>
                         </div>
                     </div>
-                </div>
                 {% endif %}
-                
+
                 {% if perms.hielo_proceso.grafico_hieloproceso %}
-                    <div class="col-2">
-                    <div class="btn-group" role="group">
+                    <div class="col btn-group" role="group">
                         <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Gráficos
@@ -161,50 +166,49 @@ active
                                 mensual</a>
                         </div>
                     </div>
-                </div>
                 {% endif %}
-                    
-
-                
             </div>
+            
+            <div class="table-responsive">
+                <table id="tablajs" class="table table-striped table-hover table-bordered" style="width:100%"
+                    class="display">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
 
-            <table id="tablajs" class="table table-striped table-bordered" style="width:100%" class="display">
-                <thead>
-                    <tr>
-                        <th>Fecha</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
+                        {% for hp in hieloProceso  %}
+                        <tr>
+                            <td>{{hp.fecha}}</td>
+                            <td>
 
-                    {% for hp in hieloProceso  %}
-                    <tr>
-                        <td>{{hp.fecha}}</td>
-                        <td>
+                                {% if perms.hielo_proceso.imprimir_hieloproceso %}
+                                <a data-imprimir='{{hp.pk}}' href="{%url 'hielo_proceso:reporte_diario-url' hp.pk%}"
+                                    class="imprimir btn btn-success fas fa-print" target="_blank"></a>
 
-                            {% if perms.hielo_proceso.imprimir_hieloproceso %}
-                            <a data-imprimir='{{hp.pk}}' href="{%url 'hielo_proceso:reporte_diario-url' hp.pk%}"
-                                class="imprimir btn btn-success fas fa-print" target="_blank"></a>
+                                {% endif %}
+                                {% if perms.hielo_proceso.change_hieloproceso %}
+                                <a id="editar-{{hp.pk}}" data-editar='{{hp.pk}}'
+                                    href="{%url 'hielo_proceso:modificar-url' hp.pk%}" class="editar"></a>
+                                <button class="editarHielo btn btn-info fas fa-pen" data-id='{{hp.pk}}'
+                                    data-fecha='{{hp.fecha}}'></button>
 
-                            {% endif %}
-                            {% if perms.hielo_proceso.change_hieloproceso %}
-                            <a id="editar-{{hp.pk}}" data-editar='{{hp.pk}}' href="{%url 'hielo_proceso:modificar-url' hp.pk%}"
-                            class="editar" ></a>
-                            <button class="editarHielo btn btn-info fas fa-pen" data-id='{{hp.pk}}' data-fecha='{{hp.fecha}}'></button>
+                                {% endif %}
+                                {% if perms.hielo_proceso.view_hieloproceso %}
+                                <button class="ver btn btn-warning fas fa-eye " data-ver='{{hp.pk}}'></button>
 
-                            {% endif %}
-                            {% if perms.hielo_proceso.view_hieloproceso %}
-                            <button class="ver btn btn-warning fas fa-eye " data-ver='{{hp.pk}}'></button>
+                                {% endif %}
 
-                            {% endif %}
-
-                        </td>
-                    </tr>
-                    {% endfor %}
+                            </td>
+                        </tr>
+                        {% endfor %}
 
 
-                </tbody>
-                <!-- <thead class="thead-inverse">
+                    </tbody>
+                    <!-- <thead class="thead-inverse">
                         <tr>
                             <th>Fecha</th>
                             <th>Departamento</th>
@@ -249,8 +253,8 @@ active
                             
                        
                     </tbody> -->
-            </table>
-
+                </table>
+            </div>
         </div>
     </div>
 

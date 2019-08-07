@@ -21,7 +21,7 @@ class Cargo(models.Model):
 	cargo			= models.CharField(max_length=50)
 	grupo				= models.ForeignKey(Group,on_delete=models.PROTECT,blank=True, null=True)
 	def __str__(self):
-		return "{} -> {}".format(self.id,self.cargo)
+		return "{}".format(self.cargo)
 	class Meta:
 		verbose_name_plural = 'Cargos'
 
@@ -47,6 +47,7 @@ class Empleado(models.Model):
 		permissions	= [
 			("restablecer_contrasena","Puede restablecer la contraseña del empleado"),
 			("obtener_contrasena","Puede obtener la contraseña del empleado"),
+			("estado_empleado","Puede cambiar el estado del empleado"),
 		]
 
 # @receiver(post_save,sender=User)

@@ -3,13 +3,13 @@ $(function () {
     $("#limpiarFormEquipoBase").click(function (event) {
         $("#formEquipoBase")[0].reset();
     });
-    
+
     let scanner = new Instascan.Scanner({
         video: $('#video')[0]
     });
 
     $('#modalScanner').on('hidden.bs.modal', function (e) {
-            scanner.stop();
+        scanner.stop();
     });
 
 
@@ -86,7 +86,7 @@ $(function () {
         });
     });
     var tablex = $('#tablajs').DataTable({
-        "scrollY": '45vh',
+        "scrollY": '40vh',
         "scrollCollapse": true,
         "scrollX": true,
         "deferRender": true,
@@ -175,6 +175,33 @@ $(function () {
         $('#qrcode').removeClass('pr-5');
     }
 
+    $('.codigoBin').click(function () {
+        var id = $(this).attr('data-id');
+        $.ajax({
+            type: "POST",
+            url: "/equipo/reporte_codigoQR/",
+            data: {
+                id: id,
+                csrfmiddlewaretoken: getCookie('csrftoken'),
+            },
+        });
+    });
+
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
 
     var qrcode = new QRCode("qrcode", {
         text: 'EQEL-XX-XXXXX-X-XX-X',
@@ -214,7 +241,7 @@ $(function () {
         $('#qrcode-texto').html(codigo);
     }
 
-    
+
     // // GENERAR TABLA
     // var dt = $('#tablajs').DataTable({
     //     "dom": 'Bfrtip',

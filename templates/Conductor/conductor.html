@@ -7,23 +7,36 @@ active
 {% endblock l6 %}
 {% block cuerpo %}
 <div class="card text-center">
-    <div class="panel-heading bg-primary" >
-        <h3 class="panel-title text-light">Conductores</h3>
-    </div>    
+    <div class="panel-heading bg-primary">
+
+
+
+        <h4 class="panel-title text-light">{% if crear %}
+            Nuevo Conductor
+            {% elif editar%}
+            Modificar Conductor {{conductor}}
+            {% elif listado%}
+            Conductores
+            {% endif %}</h4>
+    </div>
     <div class="card-header">
         <ul class="nav nav-tabs card-header-tabs">
+            {% if perms.conductor.add_conductor or perms.conductor.change_conductor %}
             <li class="nav-item">
-                <a class="nav-link {{ clases.o1 }}" href="{% url 'conductor:crear-url' %}">Gestión de Conductor</a>
+                <a class="nav-link {{ clases.o1 }}"
+                    href="{% if perms.conductor.add_conductor and not editar%}{% url 'conductor:crear-url' %}{%endif%}">Gestión
+                    de Conductor</a>
             </li>
+            {% endif %}
+
+            {% if perms.conductor.view_conductor %}
             <li class="nav-item">
                 <a class="nav-link {{ clases.o2 }}" href="{% url 'conductor:conductores-url' %} ">Conductores</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link {{ clases.o3 }} " href="">...</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link {{ clases.o3 }}" href="#">...</a>
-            </li>
+            {% endif %}
+
+
+
         </ul>
     </div>
     <div class="card-body">
@@ -31,14 +44,15 @@ active
 
             {% if messages %}
             {% for message in messages %}
-                <span class="alert alert-danger alert-dismissible ">Error: {{ message|escape }}</span> <!--data-dismiss="alert"-->
-                <br><br>
+            <span class="alert alert-danger alert-dismissible ">Error: {{ message|escape }}</span>
+            <!--data-dismiss="alert"-->
+            <br><br>
             {% endfor %}
             {% endif %}
             <form method="post" id="formRemision">
                 <input type="hidden" name="crear" id="crear" value="{{ crear }}">
                 {% csrf_token %}
-                <div class="row container border p-2">
+                <div class="row container ">
                     <div class="col-12 row">
                         <div class="col-4">
                             <label for="">Numero de Identidad:</label>
@@ -57,7 +71,7 @@ active
                         </div>
                     </div>
                     <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ">
-                        
+
 
                         <label for="">Primer Nombre:</label>
                         {{conductor_form.nombre1}}
@@ -66,15 +80,15 @@ active
                         <label for="">Primer Apellido:</label>
                         {{conductor_form.apellido1}}
                         <div style="display:none">
-                             {{conductor_form.activo}}
+                            {{conductor_form.activo}}
                         </div>
                         <br>
-                    
-                        
+
+
                     </div>
 
                     <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-                        
+
                         <label for="">Segundo Nombre:</label>
                         {{conductor_form.nombre2}}
                         <br>
@@ -85,101 +99,83 @@ active
                     </div>
                 </div>
                 <br>
-                <a href="{% url 'vehiculo:vehiculos-url'%} " class="btn btn-secondary">Cancelar</a>
-                <input type="submit" class="btn btn-success" value="Guardar" class="button" />
+                <a href="{% url 'conductor:conductores-url'%} " class="btn btn-secondary">Cancelar</a>
+                <input type="submit" class="btn btn-success"
+                    value="{% if crear %}Guardar{% elif editar %}Modificar{% endif %}" class="button" />
+
+
             </form>
-            
+
 
         </div>
         <div style="{{estilos.o2}}">
-            
-            <table id="tablajs" class="table table-striped table-bordered" style="width:100%" class="display">
-                <thead class="thead-inverse">
-                    <tr>
-                        <th data-priority="1">Identidad</th>
-                        <th>Nombre Completo</th>
-                        <th>Fecha de nacimiento</th>
-                        <th>celular</th>
-                        <th data-priority="2">Acciones</th>
-                        <!-- <th>Añadir</th> -->
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for c in conductores %}
-                    <tr id="fila-{{v.pk}}" 
-                    {% if not c.activo %}
-                        class="table-danger"
+            <div class="row">
+                <div class="col-md-3 mb-1">
+                    {% if perms.conductor.add_conductor %}
+                    <a class="btn btn-success {{ clases.o1 }}" href="{% url 'conductor:crear-url'  %}">Nuevo
+                        Conductor</a>
                     {% endif %}
-                        >
-                        <td>{{ c.pk }}</td>
-                        <td>{{ c.nombre1 }} {{ c.nombre2 }} {{ c.apellido1 }} {{ c.apellido2 }}</td>
-                        <td>{{ c.fechaNacimiento }}</td>
-                        <td>{{ c.celular }}</td>
-                        <td> 
-                            {% if perms.vehiculo.update_vehiculo %}
-                            <a href="{% url 'conductor:modificar-url' c.pk %}" class="btn btn-info fas fa-pen " data-editar="{{ v.pk }}"></a>  
-                            {% endif %}
-                            {% if perms.vehiculo.delete_vehiculo %}
-                            <button class="eliminar btn btn-danger fas fa-trash-alt " data-eliminar="{{v.pk}}"></button>
-                            {% endif %}
-                        </td>
-                        
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table id="tablajs" class="table table-striped table-hover table-bordered">
+                    <thead class="thead-inverse">
+                        <tr>
+                            <th data-priority="1">Identidad</th>
+                            <th>Nombre Completo</th>
+                            <th>Fecha de nacimiento</th>
+                            <th>celular</th>
+                            <th>Estado</th>
+                            <th data-priority="2">Acciones</th>
 
-                        <!-- <td><button class="btn btn-success">Añadir</button></td> -->
+                            <!-- <th>Añadir</th> -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for c in conductores %}
+                        <tr id="fila-{{c.pk}}" {% if not c.activo %} class="table-danger" {% endif %}>
+                            <td>{{ c.pk }}</td>
+                            <td>{{ c.nombre1 }} {{ c.nombre2 }} {{ c.apellido1 }} {{ c.apellido2 }}</td>
+                            <td>{{ c.fechaNacimiento }}</td>
+                            <td>{{ c.celular }}</td>
+                            <td id="estado-{{c.pk}}">
+                                {% if c.activo %}
+                                Activo
+                                {% else %}
+                                Inactivo
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if perms.conductor.change_conductor %}
+                                <a id="editar-{{c.pk}}" href="{% url 'conductor:modificar-url' c.pk %}" ></a>
+                                <button class="editar btn btn-info fas fa-pen " data-id="{{ c.pk }}" data-nombre="{{c.nombre1}} {{c.apellido1}}"></button>
+                                {% endif %}
+                                {% if perms.conductor.estado_conductor %}
+                                <button class=" {% if c.activo %}
+                                eliminar btn btn-danger fas fa-times
+                            {% else %}
+                            eliminar btn btn-success fas fa-check
+                            {% endif %} " data-id="{{c.pk}}" data-estado="{{c.activo}}"
+                                    data-nombre="{{c.nombre1}} {{c.apellido1}}"></button>
+                                {% endif %}
+                            </td>
 
-                        
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
 
-            
+                            <!-- <td><button class="btn btn-success">Añadir</button></td> -->
+
+
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
         </div>
     </div>
 
 </div>
 
-<!-- Modal -->
-<div class="modal fade" id="modalDetalleCosecha" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-    <div class="modal-content">
-    <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Visualización De Nota De Cosecha</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-    <div class="modal-body modalCuerpoCosecha">
-        ...
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-secondary fas fa-times" id="cerrarModal" data-dismiss="modal"> Cerrar</button>
-        <button type="submit" id="imprimir" class="imprimir btn btn-success fas fa-print"></button>
-    </div>
-    </div>
-</div>
-</div>
-<!-- Modal Reporte-->
-<div class="modal fade" id="modalReporte" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
-        <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLongTitle">Reporte Mensual</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="modal-body modalCuerpoReporte">
-            ...
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary fas fa-times" id="cerrarModal" data-dismiss="modal"> Cerrar</button>
-            <button class="btn btn-warning fas fa-print" id="imprimirReporte">Imprimir</button>
-            <!-- <a href="" class="btn btn-warning fas fa-print" id="imprimirReporte" target="_blank"> Imprimir</a> -->
-        </div>
-        </div>
-    </div>
-</div>
+
 
 {% endblock cuerpo %}
 {% load static %}

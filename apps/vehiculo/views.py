@@ -33,6 +33,8 @@ from datetime import datetime, date, time, timedelta
 from django.conf import settings
 from django.middleware import csrf
 
+@login_required()
+@permission_required('vehiculo.view_vehiculo',raise_exception=True)
 def Vehiculos(request):
 	estilos, clases = renderizado(2, 4)
 	vehiculos = Vehiculo.objects.all().order_by('empresaFlete')
@@ -42,10 +44,12 @@ def Vehiculos(request):
 		'estilos': estilos,
 		 'clases': clases,
 		 'vehiculos': vehiculos,
+		 'listado':True,
 	 }
 	return render(request, 'vehiculo/vehiculo.html', context)
 
 @login_required
+@permission_required('vehiculo.add_vehiculo',raise_exception=True)
 def CrearVehiculo(request): 
 	estilos, clases = renderizado(1, 4)
 
@@ -70,11 +74,13 @@ def CrearVehiculo(request):
 		'estilos':estilos,
 		'clases':clases,
 		'crear':True,
+		
 	}
 
 	return render(request, 'vehiculo/vehiculo.html', context)
 
 @login_required
+@permission_required('vehiculo.change_vehiculo',raise_exception=True)
 def ModificarVehiculo(request,pk): 
 	estilos, clases = renderizado(1, 4)
 	vehiculo = Vehiculo.objects.get(pk=pk)
@@ -101,7 +107,8 @@ def ModificarVehiculo(request,pk):
 		'vehiculo_form': vehiculo_form,
 		'estilos':estilos,
 		'clases':clases,
-		'crear':True,
+		'editar':True,
+		'vehiculo': vehiculo.placa,
 	}
 
 	return render(request, 'vehiculo/vehiculo.html', context)
