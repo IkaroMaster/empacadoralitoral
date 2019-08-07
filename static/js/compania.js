@@ -2,9 +2,9 @@ $(function () {
 
 
     var tablex = $('#tablajs').DataTable({
-        "scrollY": '35vh',
+        "scrollY": '40vh',
         "scrollCollapse": true,
-        "scrollX": true,
+        // "scrollX": true,
         "deferRender": true,
         // responsive: true,
         "scroller": true,
@@ -48,7 +48,7 @@ $(function () {
     var tablex = $('#tablajs2').DataTable({
         "scrollY": '40vh',
         "scrollCollapse": true,
-        "scrollX": true,
+        // "scrollX": true,
         "deferRender": true,
         // responsive: true,
         "scroller": true,
@@ -63,7 +63,7 @@ $(function () {
     var tablex = $('#tablajs3').DataTable({
         "scrollY": '40vh',
         "scrollCollapse": true,
-        "scrollX": true,
+        // "scrollX": true,
         "deferRender": true,
         // responsive: true,
         "scroller": true,
