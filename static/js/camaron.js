@@ -270,4 +270,19 @@ $(function () {
         }
         return cookieValue;
     }
+
+    //######## FORMATEO DE CAMPOS
+    if ($('#id_codCosecha').length) {
+        new Cleave('#id_codCosecha', {
+            blocks: [6],
+            numericOnly: true
+        });
+
+        if ($('#crear').val() != 'True') {
+            new Cleave('#id_fecha', {
+                date: true,
+                datePattern: ['d', 'm', 'Y']
+            });
+        }
+    }
 });

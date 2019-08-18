@@ -64,6 +64,9 @@ def CrearConductor(request):
 			
 	FormControl(conductor_form)
 	fechaBasico(conductor_form,'fechaNacimiento','')
+	conductor_form.fields['nombre1'].widget.attrs['pattern'] = '[A-Za-z]{2-30}'
+	conductor_form.fields['nombre1'].widget.attrs['title'] = 'Debe de contener solo letras.'
+
 	
 	context = {
 		'conductor_form': conductor_form,

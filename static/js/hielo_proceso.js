@@ -217,6 +217,15 @@ $(function () {
     //     }
     // } );
 
-
+    //######## FORMATEO DE CAMPOS
+    if ($('#id_fecha').length) {
+       
+        if ($('#crear').val() != 'True') {
+            new Cleave('#id_fecha', {
+                date: true,
+                datePattern: ['d', 'm', 'Y']
+            });
+        }
+    }
 
 });

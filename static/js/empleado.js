@@ -311,5 +311,32 @@ $(function () {
         }
         return cookieValue;
     }
+    //######## FORMATEO DE CAMPOS
+    if ($('#id_codEmpleado').length) {
+        new Cleave('#id_codEmpleado', {
+            blocks: [4],
+            numericOnly: true
+        });
+        new Cleave('#id_identidad', {
+            blocks: [4,4,5],
+            delimiter:'-',
+            numericOnly: true
+        });
+        new Cleave('#id_telefono', {
+            blocks: [4,4],
+            delimiter:'-',
+            numericOnly: true
+        });
+        $('#id_nombre').upperFirst();
+        $('#id_segundoNombre').upperFirst();
+        $('#id_apellido').upperFirst();
+        $('#id_segundoApellido').upperFirst();
+        // if ($('#crear').val() != 'True') {
+        //     new Cleave('#id_fecha', {
+        //         date: true,
+        //         datePattern: ['d', 'm', 'Y']
+        //     });
+        // }
+    }
     
 });

@@ -40,6 +40,8 @@ active
         </ul>
     </div>
     <div class="card-body">
+        
+        {% if editar or crear %}    
         <div style="{{estilos.o1}}">
 
             {% if messages %}
@@ -108,6 +110,10 @@ active
 
 
         </div>
+        {% endif %}
+        
+        {% if listado %}
+        
         <div style="{{estilos.o2}}">
             <div class="row">
                 <div class="col-md-3 mb-1">
@@ -135,7 +141,7 @@ active
                         {% for c in conductores %}
                         <tr id="fila-{{c.pk}}" {% if not c.activo %} class="table-danger" {% endif %}>
                             <td>{{ c.pk }}</td>
-                            <td>{{ c.nombre1 }} {{ c.nombre2 }} {{ c.apellido1 }} {{ c.apellido2 }}</td>
+                            <td>{{ c.nombre1 }} {% if c.nombre2 %}{{ c.nombre2 }} {% endif %}{{ c.apellido1 }} {% if c.apellido2 %}{{ c.apellido2 }}{% endif %}</td>
                             <td>{{ c.fechaNacimiento }}</td>
                             <td>{{ c.celular }}</td>
                             <td id="estado-{{c.pk}}">
@@ -148,7 +154,7 @@ active
                             <td>
                                 {% if perms.conductor.change_conductor %}
                                 <a id="editar-{{c.pk}}" href="{% url 'conductor:modificar-url' c.pk %}" ></a>
-                                <button class="editar btn btn-info fas fa-pen " data-id="{{ c.pk }}" data-nombre="{{c.nombre1}} {{c.apellido1}}"></button>
+                                <button class="editar btn btn-info fas fa-pen " data-editar="{{ c.pk }}" data-nombre="{{c.nombre1}} {{c.apellido1}}"></button>
                                 {% endif %}
                                 {% if perms.conductor.estado_conductor %}
                                 <button class=" {% if c.activo %}
@@ -171,6 +177,9 @@ active
             </div>
 
         </div>
+            
+        {% endif %}
+            
     </div>
 
 </div>

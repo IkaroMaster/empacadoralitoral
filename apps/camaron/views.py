@@ -188,7 +188,8 @@ def CrearCosecha(request):
 		cosecha_form.fields['remision'].choices = [("",'No hay Remisiones disponibles')] 
 		cosecha_form.fields['remision'].widget.attrs['class'] = ' form-control selectpicker'
 		cosecha_form.fields['remision'].widget.attrs['data-live-search'] = False
-	
+	cosecha_form.fields['fecha'].widget.attrs['value'] = datetime.now().date()
+
 	
 	context = {
 		'cosecha_form': cosecha_form,

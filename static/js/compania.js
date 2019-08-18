@@ -292,4 +292,39 @@ $(function () {
         }
     });
 
+    //######## FORMATEO DE CAMPOS
+    if ($('#id_nombre').length) {
+        $('#id_nombre').upperFirstAll();
+        $('#id_direccion').upperFirstAll();
+        new Cleave('#id_abreviatura', {
+            blocks: [10],
+            uppercase: true
+        });
+
+        
+    }
+    
+
+    if ($('#id_codFinca').length) {
+        new Cleave('#id_codFinca', {
+            blocks: [10],
+            uppercase: true
+        });
+    }
+
+    if ($('#id_codLaguna').length) {
+        
+        new Cleave('#id_codLaguna', {
+            blocks: [5],
+            uppercase: true
+        });
+        new Cleave('#id_tamano', {
+            blocks: [6],
+            numericOnly: true
+        });
+
+        $('#id_ubicacion').upperFirstAll();
+        
+    }
+
 });

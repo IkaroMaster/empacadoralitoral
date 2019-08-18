@@ -131,6 +131,7 @@ def CrearPrestamo(request):
 	comboboxBasico(prestamo_form,'placa','Seleccione...','true',[])
 	comboboxBasico(prestamo_form,'conductor','Seleccione...','true',[])
 	comboboxBasico(prestamo_form,'empleado','Seleccione...','true',[])
+	# capitalize(prestamo_form,'observaciones')
 	
 	prestamo_form.fields['fechaSalida'].widget.attrs['value'] = datetime.now().date()
 

@@ -114,7 +114,7 @@ $(function () {
     })
 
     $('.editar').click(function (e) {
-        var id = $(this).attr('data-id');
+        var id = $(this).attr('data-editar');
         var nombre = $(this).attr('data-nombre');
         Swal.fire({
             title: '¿Desea editar a ' + nombre + '?',
@@ -157,4 +157,26 @@ $(function () {
         }
         // "scrollCollapse": true
     });
+
+    //######## FORMATEO DE CAMPOS
+    if ($('#id_numIdentidad').length) {
+        new Cleave('#id_numIdentidad', {
+            blocks: [4,4,5],
+            delimiter:'-',
+            numericOnly: true
+        });
+
+        $('#id_nombre1').upperFirstAll();
+        $('#id_nombre2').upperFirstAll();
+        $('#id_apellido1').upperFirstAll();
+        $('#id_apellido2').upperFirstAll();
+
+
+        if ($('#crear').val() != 'True' && $('#id_fechaNacimiento').val() != '') {
+            new Cleave('#id_fechaNacimiento', {
+                date: true,
+                datePattern: ['d', 'm', 'Y']
+            });
+        }
+    }
 });

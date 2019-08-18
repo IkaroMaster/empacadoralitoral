@@ -536,10 +536,25 @@ $(document).ready(function () {
 
     });
 
-
+    
     // $("#tablajs").on("click","tr",function(){
     //     var c = $(this).attr('id');
     //     Swal.fire('hello '+c,'success');
     // });
+
+    //######## FORMATEO DE CAMPOS
+    if ($('#id_numRemision').length) {
+        new Cleave('#id_numRemision', {
+            blocks: [6],
+            numericOnly: true
+        });
+
+        if ($('#crear').val() != 'True') {
+            new Cleave('#id_fecha', {
+                date: true,
+                datePattern: ['d', 'm', 'Y']
+            });
+        }
+    }
 
 });

@@ -103,4 +103,21 @@ $(function () {
         }
         // "scrollCollapse": true
     });
+
+    if ($('#id_placa').length) {
+        new Cleave('#id_placa', {
+            blocks: [7],
+            uppercase :  true
+
+        });
+        // new Cleave('#id_marca', {
+        //     blocks: [30],
+        //     uppercase :  true
+
+        // });
+
+        $('#id_marca').upperCase();
+        $('#id_modelo').upperCase();
+        
+    }
 });

@@ -277,5 +277,12 @@ $(function () {
     // // Diseño a botones
     // // dt.buttons().container()
     // //         .appendTo('#tb_wrapper .col-sm-6:eq(0)');
+    //######## FORMATEO DE CAMPOS
+    if ($('#id_numero').length) {
+        new Cleave('#id_numero', {
+            blocks: [5],
+            numericOnly: true
+        });
 
+    }
 });
