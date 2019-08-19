@@ -16,6 +16,21 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `auth_group`
+--
+
+DROP TABLE IF EXISTS `auth_group`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `auth_group` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(150) COLLATE utf8_spanish_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Dumping data for table `auth_group`
 --
 
@@ -24,6 +39,25 @@ LOCK TABLES `auth_group` WRITE;
 INSERT INTO `auth_group` VALUES (3,'descabezado'),(7,'Javier'),(6,'Jorge'),(4,'prueba2'),(1,'pruebaEditar'),(5,'pruebaMaziza'),(2,'Supervisor de hielo');
 /*!40000 ALTER TABLE `auth_group` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `auth_group_permissions`
+--
+
+DROP TABLE IF EXISTS `auth_group_permissions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `auth_group_permissions` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `group_id` int(11) NOT NULL,
+  `permission_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `auth_group_permissions_group_id_permission_id_0cd325b0_uniq` (`group_id`,`permission_id`),
+  KEY `auth_group_permissio_permission_id_84c5c92e_fk_auth_perm` (`permission_id`),
+  CONSTRAINT `auth_group_permissio_permission_id_84c5c92e_fk_auth_perm` FOREIGN KEY (`permission_id`) REFERENCES `auth_permission` (`id`),
+  CONSTRAINT `auth_group_permissions_group_id_b120cbf9_fk_auth_group_id` FOREIGN KEY (`group_id`) REFERENCES `auth_group` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=267 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `auth_group_permissions`
@@ -36,6 +70,24 @@ INSERT INTO `auth_group_permissions` VALUES (1,1,105),(2,1,106),(3,1,107),(4,1,1
 UNLOCK TABLES;
 
 --
+-- Table structure for table `auth_permission`
+--
+
+DROP TABLE IF EXISTS `auth_permission`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `auth_permission` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8_spanish_ci NOT NULL,
+  `content_type_id` int(11) NOT NULL,
+  `codename` varchar(100) COLLATE utf8_spanish_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `auth_permission_content_type_id_codename_01ab375a_uniq` (`content_type_id`,`codename`),
+  CONSTRAINT `auth_permission_content_type_id_2f476e4b_fk_django_co` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=173 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Dumping data for table `auth_permission`
 --
 
@@ -44,6 +96,30 @@ LOCK TABLES `auth_permission` WRITE;
 INSERT INTO `auth_permission` VALUES (1,'Can add log entry',1,'add_logentry'),(2,'Can change log entry',1,'change_logentry'),(3,'Can delete log entry',1,'delete_logentry'),(4,'Can view log entry',1,'view_logentry'),(5,'Can add permission',2,'add_permission'),(6,'Can change permission',2,'change_permission'),(7,'Can delete permission',2,'delete_permission'),(8,'Can view permission',2,'view_permission'),(9,'Can add group',3,'add_group'),(10,'Can change group',3,'change_group'),(11,'Can delete group',3,'delete_group'),(12,'Can view group',3,'view_group'),(13,'Can add user',4,'add_user'),(14,'Can change user',4,'change_user'),(15,'Can delete user',4,'delete_user'),(16,'Can view user',4,'view_user'),(17,'Can add content type',5,'add_contenttype'),(18,'Can change content type',5,'change_contenttype'),(19,'Can delete content type',5,'delete_contenttype'),(20,'Can view content type',5,'view_contenttype'),(21,'Can add session',6,'add_session'),(22,'Can change session',6,'change_session'),(23,'Can delete session',6,'delete_session'),(24,'Can view session',6,'view_session'),(25,'Can add laguna',7,'add_laguna'),(26,'Can change laguna',7,'change_laguna'),(27,'Can delete laguna',7,'delete_laguna'),(28,'Can view laguna',7,'view_laguna'),(29,'Can add finca',8,'add_finca'),(30,'Can change finca',8,'change_finca'),(31,'Can delete finca',8,'delete_finca'),(32,'Can view finca',8,'view_finca'),(33,'Can add Compañia',9,'add_compania'),(34,'Can change Compañia',9,'change_compania'),(35,'Can delete Compañia',9,'delete_compania'),(36,'Can view Compañia',9,'view_compania'),(37,'Can add Tipo de Compañia',10,'add_tipocompania'),(38,'Can change Tipo de Compañia',10,'change_tipocompania'),(39,'Can delete Tipo de Compañia',10,'delete_tipocompania'),(40,'Can view Tipo de Compañia',10,'view_tipocompania'),(41,'Can add permiso',11,'add_permiso'),(42,'Can change permiso',11,'change_permiso'),(43,'Can delete permiso',11,'delete_permiso'),(44,'Can view permiso',11,'view_permiso'),(45,'Can add empleado',12,'add_empleado'),(46,'Can change empleado',12,'change_empleado'),(47,'Can delete empleado',12,'delete_empleado'),(48,'Can view empleado',12,'view_empleado'),(49,'Can add Tipo de Empleado',13,'add_tipoempleado'),(50,'Can change Tipo de Empleado',13,'change_tipoempleado'),(51,'Can delete Tipo de Empleado',13,'delete_tipoempleado'),(52,'Can view Tipo de Empleado',13,'view_tipoempleado'),(53,'Can add conductor',14,'add_conductor'),(54,'Can change conductor',14,'change_conductor'),(55,'Can delete conductor',14,'delete_conductor'),(56,'Can view conductor',14,'view_conductor'),(57,'Can add color',15,'add_color'),(58,'Can change color',15,'change_color'),(59,'Can delete color',15,'delete_color'),(60,'Can view color',15,'view_color'),(61,'Can add tamano',16,'add_tamano'),(62,'Can change tamano',16,'change_tamano'),(63,'Can delete tamano',16,'delete_tamano'),(64,'Can view tamano',16,'view_tamano'),(65,'Can add equipo',17,'add_equipo'),(66,'Can change equipo',17,'change_equipo'),(67,'Can delete equipo',17,'delete_equipo'),(68,'Can view equipo',17,'view_equipo'),(69,'Can add estado',18,'add_estado'),(70,'Can change estado',18,'change_estado'),(71,'Can delete estado',18,'delete_estado'),(72,'Can view estado',18,'view_estado'),(73,'Can add base equipo',19,'add_baseequipo'),(74,'Can change base equipo',19,'change_baseequipo'),(75,'Can delete base equipo',19,'delete_baseequipo'),(76,'Can view base equipo',19,'view_baseequipo'),(77,'Can add vehiculo',20,'add_vehiculo'),(78,'Can change vehiculo',20,'change_vehiculo'),(79,'Can delete vehiculo',20,'delete_vehiculo'),(80,'Can view vehiculo',20,'view_vehiculo'),(81,'Can add detalle prestamo equipo',21,'add_detalleprestamoequipo'),(82,'Can change detalle prestamo equipo',21,'change_detalleprestamoequipo'),(83,'Can delete detalle prestamo equipo',21,'delete_detalleprestamoequipo'),(84,'Can view detalle prestamo equipo',21,'view_detalleprestamoequipo'),(85,'Can add estado prestamo',22,'add_estadoprestamo'),(86,'Can change estado prestamo',22,'change_estadoprestamo'),(87,'Can delete estado prestamo',22,'delete_estadoprestamo'),(88,'Can view estado prestamo',22,'view_estadoprestamo'),(89,'Can add prestamo equipo',23,'add_prestamoequipo'),(90,'Can change prestamo equipo',23,'change_prestamoequipo'),(91,'Can delete prestamo equipo',23,'delete_prestamoequipo'),(92,'Can view prestamo equipo',23,'view_prestamoequipo'),(93,'Can add hielo',24,'add_hielo'),(94,'Can change hielo',24,'change_hielo'),(95,'Can delete hielo',24,'delete_hielo'),(96,'Can view hielo',24,'view_hielo'),(97,'Can add detalle remision',25,'add_detalleremision'),(98,'Can change detalle remision',25,'change_detalleremision'),(99,'Can delete detalle remision',25,'delete_detalleremision'),(100,'Can view detalle remision',25,'view_detalleremision'),(101,'Can add medida',26,'add_medida'),(102,'Can change medida',26,'change_medida'),(103,'Can delete medida',26,'delete_medida'),(104,'Can view medida',26,'view_medida'),(105,'Can add remision',27,'add_remision'),(106,'Can change remision',27,'change_remision'),(107,'Can delete remision',27,'delete_remision'),(108,'Can view remision',27,'view_remision'),(109,'Can add tipo remision',28,'add_tiporemision'),(110,'Can change tipo remision',28,'change_tiporemision'),(111,'Can delete tipo remision',28,'delete_tiporemision'),(112,'Can view tipo remision',28,'view_tiporemision'),(113,'Can add estado remision',29,'add_estadoremision'),(114,'Can change estado remision',29,'change_estadoremision'),(115,'Can delete estado remision',29,'delete_estadoremision'),(116,'Can view estado remision',29,'view_estadoremision'),(117,'Can add recipiente',30,'add_recipiente'),(118,'Can change recipiente',30,'change_recipiente'),(119,'Can delete recipiente',30,'delete_recipiente'),(120,'Can view recipiente',30,'view_recipiente'),(121,'Can add hielo proceso',31,'add_hieloproceso'),(122,'Can change hielo proceso',31,'change_hieloproceso'),(123,'Can delete hielo proceso',31,'delete_hieloproceso'),(124,'Can view hielo proceso',31,'view_hieloproceso'),(125,'Can add departamento proceso',32,'add_departamentoproceso'),(126,'Can change departamento proceso',32,'change_departamentoproceso'),(127,'Can delete departamento proceso',32,'delete_departamentoproceso'),(128,'Can view departamento proceso',32,'view_departamentoproceso'),(129,'Can add recipiente detalle hielo proceso',33,'add_recipientedetallehieloproceso'),(130,'Can change recipiente detalle hielo proceso',33,'change_recipientedetallehieloproceso'),(131,'Can delete recipiente detalle hielo proceso',33,'delete_recipientedetallehieloproceso'),(132,'Can view recipiente detalle hielo proceso',33,'view_recipientedetallehieloproceso'),(133,'Can add detalle hielo proceso',34,'add_detallehieloproceso'),(134,'Can change detalle hielo proceso',34,'change_detallehieloproceso'),(135,'Can delete detalle hielo proceso',34,'delete_detallehieloproceso'),(136,'Can view detalle hielo proceso',34,'view_detallehieloproceso'),(137,'Can add entrada camaron',35,'add_entradacamaron'),(138,'Can change entrada camaron',35,'change_entradacamaron'),(139,'Can delete entrada camaron',35,'delete_entradacamaron'),(140,'Can view entrada camaron',35,'view_entradacamaron'),(141,'Can add detalle entrada camaron',36,'add_detalleentradacamaron'),(142,'Can change detalle entrada camaron',36,'change_detalleentradacamaron'),(143,'Can delete detalle entrada camaron',36,'delete_detalleentradacamaron'),(144,'Can view detalle entrada camaron',36,'view_detalleentradacamaron'),(145,'Can add cosecha',37,'add_cosecha'),(146,'Can change cosecha',37,'change_cosecha'),(147,'Can delete cosecha',37,'delete_cosecha'),(148,'Can view cosecha',37,'view_cosecha'),(149,'Can add detalle cosecha',38,'add_detallecosecha'),(150,'Can change detalle cosecha',38,'change_detallecosecha'),(151,'Can delete detalle cosecha',38,'delete_detallecosecha'),(152,'Can view detalle cosecha',38,'view_detallecosecha'),(153,'Puede terminar la remision de hielo',26,'terminar_remision'),(154,'Puede terminar la remision de hielo',27,'terminar_remision'),(155,'Can add cargo',39,'add_cargo'),(156,'Can change cargo',39,'change_cargo'),(157,'Can delete cargo',39,'delete_cargo'),(158,'Can view cargo',39,'view_cargo'),(159,'Puede restablecer la contraseña del empleado',12,'restablecer_contrasena'),(160,'Puede obtener la contraseña del empleado',12,'obtener_contrasena'),(161,'Puede generar reportes de remision de hielo',27,'generar_reportes'),(162,'Puede anular prestamos de equipo',23,'anular_prestamoequipo'),(163,'Puede terminar prestamos de equipo',23,'terminar_prestamoequipo'),(164,'Puede imprimir prestamos de equipo',23,'imprimir_prestamoequipo'),(165,'Puede generar reportes de prestamos de equipo',23,'reporte_prestamoequipo'),(166,'Puede imprimir las cosechas',37,'imprimir_cosecha'),(167,'Puede imprimir el consumo de hielo en proceso',31,'imprimir_hieloproceso'),(168,'Puede graficar el consumo de hielo en proceso',31,'grafico_hieloproceso'),(169,'Puede crear codigo qr para el inventario de equipo',17,'crearqr_equipo'),(170,'Puede cambiar el estado de la empresa',9,'estado_compania'),(171,'Puede cambiar el estado del conductor',14,'estado_conductor'),(172,'Puede cambiar el estado del empleado',12,'estado_empleado');
 /*!40000 ALTER TABLE `auth_permission` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `auth_user`
+--
+
+DROP TABLE IF EXISTS `auth_user`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `auth_user` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `password` varchar(128) COLLATE utf8_spanish_ci NOT NULL,
+  `last_login` datetime(6) DEFAULT NULL,
+  `is_superuser` tinyint(1) NOT NULL,
+  `username` varchar(150) COLLATE utf8_spanish_ci NOT NULL,
+  `first_name` varchar(30) COLLATE utf8_spanish_ci NOT NULL,
+  `last_name` varchar(150) COLLATE utf8_spanish_ci NOT NULL,
+  `email` varchar(254) COLLATE utf8_spanish_ci NOT NULL,
+  `is_staff` tinyint(1) NOT NULL,
+  `is_active` tinyint(1) NOT NULL,
+  `date_joined` datetime(6) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `username` (`username`)
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `auth_user`
@@ -56,6 +132,25 @@ INSERT INTO `auth_user` VALUES (1,'pbkdf2_sha256$150000$m7qrGWlVWgGT$wYWlOuCk10t
 UNLOCK TABLES;
 
 --
+-- Table structure for table `auth_user_groups`
+--
+
+DROP TABLE IF EXISTS `auth_user_groups`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `auth_user_groups` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `group_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `auth_user_groups_user_id_group_id_94350c0c_uniq` (`user_id`,`group_id`),
+  KEY `auth_user_groups_group_id_97559544_fk_auth_group_id` (`group_id`),
+  CONSTRAINT `auth_user_groups_group_id_97559544_fk_auth_group_id` FOREIGN KEY (`group_id`) REFERENCES `auth_group` (`id`),
+  CONSTRAINT `auth_user_groups_user_id_6a12ed8b_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Dumping data for table `auth_user_groups`
 --
 
@@ -64,6 +159,25 @@ LOCK TABLES `auth_user_groups` WRITE;
 INSERT INTO `auth_user_groups` VALUES (1,2,1),(2,3,2),(3,8,2),(4,9,2),(8,13,2),(9,14,2),(10,15,2),(11,16,2),(12,17,2),(13,18,2),(14,19,3),(15,20,2);
 /*!40000 ALTER TABLE `auth_user_groups` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `auth_user_user_permissions`
+--
+
+DROP TABLE IF EXISTS `auth_user_user_permissions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `auth_user_user_permissions` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `permission_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `auth_user_user_permissions_user_id_permission_id_14a6b632_uniq` (`user_id`,`permission_id`),
+  KEY `auth_user_user_permi_permission_id_1fbb5f2c_fk_auth_perm` (`permission_id`),
+  CONSTRAINT `auth_user_user_permi_permission_id_1fbb5f2c_fk_auth_perm` FOREIGN KEY (`permission_id`) REFERENCES `auth_permission` (`id`),
+  CONSTRAINT `auth_user_user_permissions_user_id_a95ead1b_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `auth_user_user_permissions`
@@ -76,6 +190,34 @@ INSERT INTO `auth_user_user_permissions` VALUES (3,18,1);
 UNLOCK TABLES;
 
 --
+-- Table structure for table `camaron_cosecha`
+--
+
+DROP TABLE IF EXISTS `camaron_cosecha`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `camaron_cosecha` (
+  `codCosecha` varchar(10) COLLATE utf8_spanish_ci NOT NULL,
+  `fecha` date NOT NULL,
+  `horaInicio` time(6) NOT NULL,
+  `horaFinal` time(6) NOT NULL,
+  `entrego_id` int(11) NOT NULL,
+  `laguna_id` varchar(10) COLLATE utf8_spanish_ci NOT NULL,
+  `registro_id` int(11) NOT NULL,
+  `remision_id` varchar(6) COLLATE utf8_spanish_ci NOT NULL,
+  PRIMARY KEY (`codCosecha`),
+  KEY `camaron_cosecha_entrego_id_bf66e5c9_fk_empleado_` (`entrego_id`),
+  KEY `camaron_cosecha_laguna_id_c1e7cb15_fk_compania_laguna_codLaguna` (`laguna_id`),
+  KEY `camaron_cosecha_registro_id_9ea3151f_fk_auth_user_id` (`registro_id`),
+  KEY `camaron_cosecha_remision_id_e133b41c_fk_remision_` (`remision_id`),
+  CONSTRAINT `camaron_cosecha_entrego_id_bf66e5c9_fk_empleado_` FOREIGN KEY (`entrego_id`) REFERENCES `empleado_empleado` (`codEmpleado`),
+  CONSTRAINT `camaron_cosecha_laguna_id_c1e7cb15_fk_compania_laguna_codLaguna` FOREIGN KEY (`laguna_id`) REFERENCES `compania_laguna` (`codLaguna`),
+  CONSTRAINT `camaron_cosecha_registro_id_9ea3151f_fk_auth_user_id` FOREIGN KEY (`registro_id`) REFERENCES `auth_user` (`id`),
+  CONSTRAINT `camaron_cosecha_remision_id_e133b41c_fk_remision_` FOREIGN KEY (`remision_id`) REFERENCES `remision_remision` (`numRemision`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Dumping data for table `camaron_cosecha`
 --
 
@@ -84,6 +226,28 @@ LOCK TABLES `camaron_cosecha` WRITE;
 INSERT INTO `camaron_cosecha` VALUES ('008856','2019-07-07','01:02:52.000000','06:00:00.000000',1,'f1',1,'000006'),('51101','2019-07-18','00:00:00.000000','00:01:00.000000',909090,'f1',18,'000001'),('fff','2019-07-11','22:00:00.000000','00:00:00.000000',1,'f1',1,'000002');
 /*!40000 ALTER TABLE `camaron_cosecha` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `camaron_detallecosecha`
+--
+
+DROP TABLE IF EXISTS `camaron_detallecosecha`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `camaron_detallecosecha` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `totalCanasta` int(10) unsigned NOT NULL,
+  `libras` decimal(5,2) NOT NULL,
+  `observaciones` longtext COLLATE utf8_spanish_ci,
+  `cosecha_id` varchar(10) COLLATE utf8_spanish_ci DEFAULT NULL,
+  `numeroBin_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `camaron_detallecosecha_numeroBin_id_0af50705_fk_equipo_equipo_id` (`numeroBin_id`),
+  KEY `camaron_detallecosec_cosecha_id_e835fef8_fk_camaron_c` (`cosecha_id`),
+  CONSTRAINT `camaron_detallecosec_cosecha_id_e835fef8_fk_camaron_c` FOREIGN KEY (`cosecha_id`) REFERENCES `camaron_cosecha` (`codCosecha`),
+  CONSTRAINT `camaron_detallecosecha_numeroBin_id_0af50705_fk_equipo_equipo_id` FOREIGN KEY (`numeroBin_id`) REFERENCES `equipo_equipo` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `camaron_detallecosecha`
@@ -96,6 +260,26 @@ INSERT INTO `camaron_detallecosecha` VALUES (21,15,800.00,'','fff',5),(24,10,100
 UNLOCK TABLES;
 
 --
+-- Table structure for table `compania_compania`
+--
+
+DROP TABLE IF EXISTS `compania_compania`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `compania_compania` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(50) COLLATE utf8_spanish_ci NOT NULL,
+  `direccion` varchar(200) COLLATE utf8_spanish_ci NOT NULL,
+  `abreviatura` varchar(10) COLLATE utf8_spanish_ci DEFAULT NULL,
+  `tipoCompania_id` int(11) NOT NULL,
+  `estado` tinyint(1) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `compania_compania_tipoCompania_id_def61f1c_fk_compania_` (`tipoCompania_id`),
+  CONSTRAINT `compania_compania_tipoCompania_id_def61f1c_fk_compania_` FOREIGN KEY (`tipoCompania_id`) REFERENCES `compania_tipocompania` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Dumping data for table `compania_compania`
 --
 
@@ -104,6 +288,25 @@ LOCK TABLES `compania_compania` WRITE;
 INSERT INTO `compania_compania` VALUES (1,'Cultivos Marinos Del Sur','Choluteca','CULMASA',1,1),(2,'CARGIL S.A','choluteca, choluteca,honduras',NULL,2,1),(3,'Cultivos Marinos','choluteca,honduras, san marcos de colon,choluteca,honduras','CUMAR',1,1),(4,'Obek Escoto','choluteca,honduras, san marcos de colon,choluteca,honduras',NULL,2,1);
 /*!40000 ALTER TABLE `compania_compania` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `compania_finca`
+--
+
+DROP TABLE IF EXISTS `compania_finca`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `compania_finca` (
+  `codFinca` varchar(10) COLLATE utf8_spanish_ci NOT NULL,
+  `nombre` varchar(50) COLLATE utf8_spanish_ci NOT NULL,
+  `abreviatura` varchar(10) COLLATE utf8_spanish_ci DEFAULT NULL,
+  `direccion` varchar(200) COLLATE utf8_spanish_ci NOT NULL,
+  `compania_id` int(11) NOT NULL,
+  PRIMARY KEY (`codFinca`),
+  KEY `compania_finca_compania_id_2bef22f0_fk_compania_compania_id` (`compania_id`),
+  CONSTRAINT `compania_finca_compania_id_2bef22f0_fk_compania_compania_id` FOREIGN KEY (`compania_id`) REFERENCES `compania_compania` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `compania_finca`
@@ -116,6 +319,25 @@ INSERT INTO `compania_finca` VALUES ('05','nuevo2','nv','aya por cedeño',1),('0
 UNLOCK TABLES;
 
 --
+-- Table structure for table `compania_laguna`
+--
+
+DROP TABLE IF EXISTS `compania_laguna`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `compania_laguna` (
+  `codLaguna` varchar(10) COLLATE utf8_spanish_ci NOT NULL,
+  `tamano` int(11) DEFAULT NULL,
+  `ubicacion` varchar(200) COLLATE utf8_spanish_ci DEFAULT NULL,
+  `descripcion` varchar(100) COLLATE utf8_spanish_ci DEFAULT NULL,
+  `finca_id` varchar(10) COLLATE utf8_spanish_ci NOT NULL,
+  PRIMARY KEY (`codLaguna`),
+  KEY `compania_laguna_finca_id_da5aec11_fk_compania_finca_codFinca` (`finca_id`),
+  CONSTRAINT `compania_laguna_finca_id_da5aec11_fk_compania_finca_codFinca` FOREIGN KEY (`finca_id`) REFERENCES `compania_finca` (`codFinca`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Dumping data for table `compania_laguna`
 --
 
@@ -124,6 +346,20 @@ LOCK TABLES `compania_laguna` WRITE;
 INSERT INTO `compania_laguna` VALUES ('f1',100,'aya por cedeno','unica finca de prueba','05'),('F6',100,'aya por cedeñito jaajajaj','una laguna bien grande','05'),('F7',3,'aya por cedeñito jaajajaj','una laguna bien grande','06f4'),('F8',10,'aya por cedeñito jaajajaj','una laguna bien grande','1q2');
 /*!40000 ALTER TABLE `compania_laguna` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `compania_tipocompania`
+--
+
+DROP TABLE IF EXISTS `compania_tipocompania`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `compania_tipocompania` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `tipo` varchar(50) COLLATE utf8_spanish_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `compania_tipocompania`
@@ -136,6 +372,26 @@ INSERT INTO `compania_tipocompania` VALUES (1,'CAMARONERA'),(2,'Flete');
 UNLOCK TABLES;
 
 --
+-- Table structure for table `conductor_conductor`
+--
+
+DROP TABLE IF EXISTS `conductor_conductor`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `conductor_conductor` (
+  `numIdentidad` varchar(15) COLLATE utf8_spanish_ci NOT NULL,
+  `nombre1` varchar(30) COLLATE utf8_spanish_ci NOT NULL,
+  `nombre2` varchar(30) COLLATE utf8_spanish_ci DEFAULT NULL,
+  `apellido1` varchar(30) COLLATE utf8_spanish_ci NOT NULL,
+  `apellido2` varchar(30) COLLATE utf8_spanish_ci DEFAULT NULL,
+  `fechaNacimiento` date DEFAULT NULL,
+  `celular` int(11) DEFAULT NULL,
+  `activo` tinyint(1) NOT NULL,
+  PRIMARY KEY (`numIdentidad`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Dumping data for table `conductor_conductor`
 --
 
@@ -144,6 +400,30 @@ LOCK TABLES `conductor_conductor` WRITE;
 INSERT INTO `conductor_conductor` VALUES ('0000-0000-00001','Juan','Roberto','Molina','Mendoza','2019-08-16',99999999,1),('0801-1997-17105','Jorge','Obek','Escoto','Ponce','2019-07-20',98118623,1),('1111-1111-11111','Jorge',NULL,'Escoto',NULL,NULL,94763554,1);
 /*!40000 ALTER TABLE `conductor_conductor` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `django_admin_log`
+--
+
+DROP TABLE IF EXISTS `django_admin_log`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `django_admin_log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `action_time` datetime(6) NOT NULL,
+  `object_id` longtext COLLATE utf8_spanish_ci,
+  `object_repr` varchar(200) COLLATE utf8_spanish_ci NOT NULL,
+  `action_flag` smallint(5) unsigned NOT NULL,
+  `change_message` longtext COLLATE utf8_spanish_ci NOT NULL,
+  `content_type_id` int(11) DEFAULT NULL,
+  `user_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `django_admin_log_content_type_id_c4bce8eb_fk_django_co` (`content_type_id`),
+  KEY `django_admin_log_user_id_c564eba6_fk_auth_user_id` (`user_id`),
+  CONSTRAINT `django_admin_log_content_type_id_c4bce8eb_fk_django_co` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`),
+  CONSTRAINT `django_admin_log_user_id_c564eba6_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=329 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `django_admin_log`
@@ -156,6 +436,22 @@ INSERT INTO `django_admin_log` VALUES (1,'2019-04-08 16:17:18.491825','1','Admin
 UNLOCK TABLES;
 
 --
+-- Table structure for table `django_content_type`
+--
+
+DROP TABLE IF EXISTS `django_content_type`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `django_content_type` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `app_label` varchar(100) COLLATE utf8_spanish_ci NOT NULL,
+  `model` varchar(100) COLLATE utf8_spanish_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `django_content_type_app_label_model_76bd3d3b_uniq` (`app_label`,`model`)
+) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Dumping data for table `django_content_type`
 --
 
@@ -164,6 +460,22 @@ LOCK TABLES `django_content_type` WRITE;
 INSERT INTO `django_content_type` VALUES (1,'admin','logentry'),(3,'auth','group'),(2,'auth','permission'),(4,'auth','user'),(37,'camaron','cosecha'),(38,'camaron','detallecosecha'),(36,'camaron','detalleentradacamaron'),(35,'camaron','entradacamaron'),(9,'compania','compania'),(8,'compania','finca'),(7,'compania','laguna'),(10,'compania','tipocompania'),(14,'conductor','conductor'),(5,'contenttypes','contenttype'),(39,'empleado','cargo'),(12,'empleado','empleado'),(11,'empleado','permiso'),(13,'empleado','tipoempleado'),(19,'equipo','baseequipo'),(15,'equipo','color'),(17,'equipo','equipo'),(18,'equipo','estado'),(16,'equipo','tamano'),(32,'hielo_proceso','departamentoproceso'),(34,'hielo_proceso','detallehieloproceso'),(31,'hielo_proceso','hieloproceso'),(30,'hielo_proceso','recipiente'),(33,'hielo_proceso','recipientedetallehieloproceso'),(21,'prestamos','detalleprestamoequipo'),(22,'prestamos','estadoprestamo'),(23,'prestamos','prestamoequipo'),(25,'remision','detalleremision'),(29,'remision','estadoremision'),(24,'remision','hielo'),(26,'remision','medida'),(27,'remision','remision'),(28,'remision','tiporemision'),(6,'sessions','session'),(20,'vehiculo','vehiculo');
 /*!40000 ALTER TABLE `django_content_type` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `django_migrations`
+--
+
+DROP TABLE IF EXISTS `django_migrations`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `django_migrations` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `app` varchar(255) COLLATE utf8_spanish_ci NOT NULL,
+  `name` varchar(255) COLLATE utf8_spanish_ci NOT NULL,
+  `applied` datetime(6) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=91 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `django_migrations`
@@ -176,6 +488,22 @@ INSERT INTO `django_migrations` VALUES (1,'contenttypes','0001_initial','2019-04
 UNLOCK TABLES;
 
 --
+-- Table structure for table `django_session`
+--
+
+DROP TABLE IF EXISTS `django_session`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `django_session` (
+  `session_key` varchar(40) COLLATE utf8_spanish_ci NOT NULL,
+  `session_data` longtext COLLATE utf8_spanish_ci NOT NULL,
+  `expire_date` datetime(6) NOT NULL,
+  PRIMARY KEY (`session_key`),
+  KEY `django_session_expire_date_a5c62663` (`expire_date`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Dumping data for table `django_session`
 --
 
@@ -184,6 +512,23 @@ LOCK TABLES `django_session` WRITE;
 INSERT INTO `django_session` VALUES ('06ssdfq088s27vo02riwovs9inrx1h02','ODdlODc0NzlkMmRmNGE4ZDljOWU5NWEwNGEyMWUwMTk0MTdkOTVmMjp7fQ==','2019-04-22 15:46:37.395092'),('08jrs18v7mcqptv47uzir1921e3ct3bg','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-08-12 17:04:00.913711'),('0w5w42t9h114hmib6kio3gmdahz6qsl8','ODdlODc0NzlkMmRmNGE4ZDljOWU5NWEwNGEyMWUwMTk0MTdkOTVmMjp7fQ==','2019-04-19 23:00:21.338089'),('2f9yrnptxv0gznk4e5gz39gqfw7as188','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-08-14 22:26:27.708714'),('2ybdb99qhf437l89ozrn9t7h4qsojybi','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-05-16 20:36:17.405795'),('33hrwzuw15q4cto9z3d19ls5hz4d3xhw','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-04-22 21:42:04.141628'),('3ibpa8judhylsn0wkj60r5qsm4tfox7q','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-06-05 17:58:42.018536'),('4byahamaapaa3omntre4hqi9s8i3swg0','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-04-26 22:34:06.283642'),('68zq7vpf6df4vygr49d4jfcz5mqpv3uf','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-07-09 04:38:52.946389'),('6fbc8huo1decy7rny8ok5qiu0zkcwr45','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-07-29 21:17:03.583615'),('6greq08jjs015rsu10qxqd88637xm2gm','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-05-16 20:01:30.484273'),('6ymceqccldyl5gl0c0l07ssw0l71x216','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-04-26 16:01:25.073893'),('789z4ryuucinh0jv9mle0xuxoqe5ef2a','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-07-31 06:25:43.045410'),('7m2nx1ig2cjc57yaaj1ixqs9dv2r3479','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-05-16 19:27:15.797903'),('8x4gv1r66i5e3wbp07oegyf05guoav50','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-08-07 04:41:05.392972'),('9ecxvb3v55mrslgypm8kofhj2s6yop3e','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-06-07 15:47:36.065767'),('9ljlxetn1oosj58meee7xaaeykdtu4yo','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-08-16 21:25:28.917026'),('ag2c0p7y2w9d19m0lfu5j5fnmfglj7q9','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-08-13 04:09:31.991356'),('ajql356vlnzp23vb5nm8b5g88k12kz3c','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-08-13 15:53:09.638237'),('b6sjkyzxhu644c1z52tzfdhsn4danb8k','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-04-22 23:05:22.910769'),('bn77mru6x5klfk5g830uvohlsgr7pd5y','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-07-11 02:42:49.735848'),('ctawb612fupdls1ch0agv0xee293n1sx','ZDVhM2RlODc5ZmMwZjJmMjFlYmExMWQxOTM1NDkzYWQ4MjAyYTc5Nzp7Il9hdXRoX3VzZXJfaWQiOiIxOCIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiY2VkODk1MDA5NzUyYmQxOTA1MzFiODRmZmM4Y2IzZjQ4MGZiY2VkZiJ9','2019-08-12 19:18:41.973798'),('einyfl1u77y6tm8dgbov4itybet01t8j','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-06-18 14:18:17.549503'),('eztexg0hp0k7pbhcu85wk7gtaa3yjipe','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-07-31 15:20:31.714642'),('f5kmiacund7ktjjcxmxuc9npwr9iwim9','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-05-16 20:06:18.256831'),('f7z9kuxfirq9ylw34eiyrk6f7gd23vrx','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-08-12 15:03:13.279749'),('f9wm99imayo5g6y7yz83wgcl1vs7ri12','ODdlODc0NzlkMmRmNGE4ZDljOWU5NWEwNGEyMWUwMTk0MTdkOTVmMjp7fQ==','2019-07-27 04:35:14.221393'),('fhxjudt1vms442gd1h1wz0fd5ocbv60k','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-07-02 17:12:52.379613'),('g1oj5wgagxshxdjp25ogam0cgnoq5kak','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-07-09 01:07:15.752621'),('gi0cyst6ogxoso1820o1s8hptj25ne2n','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-07-06 21:42:17.120995'),('gif9oi7wvzeou0cnvpgjk8awna7h9uz9','ODdlODc0NzlkMmRmNGE4ZDljOWU5NWEwNGEyMWUwMTk0MTdkOTVmMjp7fQ==','2019-04-19 23:03:57.185561'),('gu8lew4qybsktp03556k6hravejnlxm8','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-08-21 08:21:29.106682'),('gxo8efnzqr26th02sis893lkioo3nqau','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-05-16 20:27:06.799473'),('i3echng64g1aus9l3wbrxu9qlzp3tn1c','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-04-26 15:10:31.104050'),('is4urifqnkk9avrmeaed5509ipdqye2a','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-08-13 02:33:22.309507'),('j2oscpf341chetyb0owvzyy5aket9tzz','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-05-30 20:37:49.397835'),('jsobic3ek794rkpqq7ugc3020njwbyg8','ODdlODc0NzlkMmRmNGE4ZDljOWU5NWEwNGEyMWUwMTk0MTdkOTVmMjp7fQ==','2019-04-22 16:25:02.524026'),('kfl1luzhi1yoyd729tfd7f8m6v8od3y6','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-05-13 20:11:19.446415'),('l1e31i1itbnepyqibkm5978o3bnz5yu0','ZDVhM2RlODc5ZmMwZjJmMjFlYmExMWQxOTM1NDkzYWQ4MjAyYTc5Nzp7Il9hdXRoX3VzZXJfaWQiOiIxOCIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiY2VkODk1MDA5NzUyYmQxOTA1MzFiODRmZmM4Y2IzZjQ4MGZiY2VkZiJ9','2019-08-12 14:35:26.619891'),('l601dsa6k0aei9nrs7uzzf1i71g72txk','ODdlODc0NzlkMmRmNGE4ZDljOWU5NWEwNGEyMWUwMTk0MTdkOTVmMjp7fQ==','2019-04-22 16:23:49.355573'),('lv6bu413ttk92tv3ruokexcmb07ugvmh','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-05-14 21:00:03.926279'),('lv90tcxmy3858c24aid3lt3h0cp003cz','YTBkOTgyODk5ZTkzNDc4MmMwZWY5OGE3Y2U2NGY0ODllZDcxMTY3Zjp7Il9hdXRoX3VzZXJfaWQiOiIyMCIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiMmQ2MWMyOTk0YzhkY2M3MDNmY2U5MWU2ZWRlNjY2Nzg2OTU4MWE3YSJ9','2019-08-12 19:22:51.540375'),('m6ev7ufjwej0w94ajsuh98f7mgof3abb','ODdlODc0NzlkMmRmNGE4ZDljOWU5NWEwNGEyMWUwMTk0MTdkOTVmMjp7fQ==','2019-07-30 00:35:45.633242'),('mmd0yeycohirvxmnhhc9ojl7mu6kv7au','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-05-16 18:40:11.747889'),('muzb4ctht03ft51lhr2dqtm6s09hzrre','ZDVhM2RlODc5ZmMwZjJmMjFlYmExMWQxOTM1NDkzYWQ4MjAyYTc5Nzp7Il9hdXRoX3VzZXJfaWQiOiIxOCIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiY2VkODk1MDA5NzUyYmQxOTA1MzFiODRmZmM4Y2IzZjQ4MGZiY2VkZiJ9','2019-08-21 05:22:12.866366'),('n9po8u5e57s590oqq6yp63yj0vzrf9qm','ZDVhM2RlODc5ZmMwZjJmMjFlYmExMWQxOTM1NDkzYWQ4MjAyYTc5Nzp7Il9hdXRoX3VzZXJfaWQiOiIxOCIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiY2VkODk1MDA5NzUyYmQxOTA1MzFiODRmZmM4Y2IzZjQ4MGZiY2VkZiJ9','2019-08-23 18:15:32.223586'),('o05esfmxg1m6h717f2x8q6ivx7mm7u42','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-05-16 20:25:35.083867'),('o5872boufe0op90zlcglwqx2saqes6gg','ODdlODc0NzlkMmRmNGE4ZDljOWU5NWEwNGEyMWUwMTk0MTdkOTVmMjp7fQ==','2019-04-22 16:19:04.680416'),('op3dzzmqmjjdr41pfgrk8wux0bkk36g4','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-06-05 03:08:10.044374'),('pn3hchaf4ipmcpp585wk3mfyh2xnec4d','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-04-23 22:59:13.013927'),('ppjkd00jnnpo8j3v5hs9ayezlv2wlw09','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-04-23 20:01:18.324370'),('qchbkx99n4gcv6mppm371wmcq040wlqd','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-08-13 15:58:12.015049'),('rlp6hmke26lqs7r3k5pdqs8c28a5vd0w','ODdlODc0NzlkMmRmNGE4ZDljOWU5NWEwNGEyMWUwMTk0MTdkOTVmMjp7fQ==','2019-07-29 20:21:01.398816'),('rnmwdnot22j3om0uxq5kdiek416gx6cx','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-04-26 15:25:07.117015'),('rsg1vi9qqy67g2w5d8rn5bofzjmfpk7u','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-05-13 19:15:44.742057'),('rz507unqw70g7ngkyggjoqg91n0jppus','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-05-20 18:20:08.838659'),('s6taralgki21b2g0sh0p3r6f83vxj2n6','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-06-07 17:42:11.236741'),('sxdcj702jbkpt21zc8595j7imvble0pr','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-07-09 16:27:44.600584'),('u7q233rwo903fwg3sv751vac6y2dx4q6','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-07-09 21:59:17.923338'),('ug5ef1s2unn0aixkd8a566trx57rczhh','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-04-23 17:24:55.537986'),('veihdletw5qswukr5nfr70tytqed7sw2','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-07-26 06:55:01.915330'),('vtdmjbe4zkpfcukh4nkcn5xt03qvwfgd','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-05-13 15:24:25.317252'),('vuhnxjyjoo5pebsbre9h2yub6fj62f6r','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-06-08 16:13:23.009510'),('vuuxeg119seavgyg490oaqmsa3vmjoip','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-06-06 22:51:37.300716'),('w3d6qtk6fuk6xqxhsqcu3vxi0mhy5eah','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-07-06 22:38:34.619500'),('wmaxbtmxmzyg8uvf7kpo6u23e6br2f36','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-08-15 21:45:01.324989'),('ye7xmna6ph8lqb4u6afzmfzdgi21p8bi','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-05-16 20:34:50.993505'),('yzwv894fen7xnvhonoo59igm3cm75yo6','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-06-05 20:54:10.595529'),('zi3q7r46dkzr8538i16pk6qbmttjfjlz','NTdlOGQzMjQxNDZlNTEyMGNiMDBlZTAzODAyNmNmZDU0MDg1YTk0Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJmYTBhNGIxNDc1ZTI2MzMzMGZlY2Q2NTcyMWFkMTEyNmZjYmU2ZjVmIn0=','2019-05-14 22:12:33.889679');
 /*!40000 ALTER TABLE `django_session` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `empleado_cargo`
+--
+
+DROP TABLE IF EXISTS `empleado_cargo`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `empleado_cargo` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `cargo` varchar(50) COLLATE utf8_spanish_ci NOT NULL,
+  `grupo_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `empleado_cargo_grupo_id_a2ff8bf6_fk_auth_group_id` (`grupo_id`),
+  CONSTRAINT `empleado_cargo_grupo_id_a2ff8bf6_fk_auth_group_id` FOREIGN KEY (`grupo_id`) REFERENCES `auth_group` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `empleado_cargo`
@@ -196,6 +541,32 @@ INSERT INTO `empleado_cargo` VALUES (1,'Supervisor de hielo',2),(2,'Descabezado'
 UNLOCK TABLES;
 
 --
+-- Table structure for table `empleado_empleado`
+--
+
+DROP TABLE IF EXISTS `empleado_empleado`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `empleado_empleado` (
+  `codEmpleado` int(11) NOT NULL,
+  `identidad` varchar(15) COLLATE utf8_spanish_ci DEFAULT NULL,
+  `nombre` varchar(15) COLLATE utf8_spanish_ci NOT NULL,
+  `telefono` varchar(9) COLLATE utf8_spanish_ci NOT NULL,
+  `actualizoContrasena` tinyint(1) NOT NULL,
+  `usuario_id` int(11) DEFAULT NULL,
+  `cargo_id` int(11) NOT NULL,
+  `apellido` varchar(15) COLLATE utf8_spanish_ci NOT NULL,
+  `segundoApellido` varchar(15) COLLATE utf8_spanish_ci DEFAULT NULL,
+  `segundoNombre` varchar(15) COLLATE utf8_spanish_ci DEFAULT NULL,
+  PRIMARY KEY (`codEmpleado`),
+  UNIQUE KEY `usuario_id` (`usuario_id`),
+  KEY `empleado_empleado_cargo_id_bb586569_fk_empleado_cargo_id` (`cargo_id`),
+  CONSTRAINT `empleado_empleado_cargo_id_bb586569_fk_empleado_cargo_id` FOREIGN KEY (`cargo_id`) REFERENCES `empleado_cargo` (`id`),
+  CONSTRAINT `empleado_empleado_usuario_id_f52cee6d_fk_auth_user_id` FOREIGN KEY (`usuario_id`) REFERENCES `auth_user` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Dumping data for table `empleado_empleado`
 --
 
@@ -204,6 +575,20 @@ LOCK TABLES `empleado_empleado` WRITE;
 INSERT INTO `empleado_empleado` VALUES (1,'0801-1997-17105','Jorge','94763554',1,1,1,'escoto',NULL,NULL),(2,'0801-1997-17100','Obek','94763554',1,2,1,'escoto',NULL,NULL),(118,'0611198900693','Maryori','',1,20,1,'Burke','Ortiz','yanini'),(1000,'0615199700410','Kenssy12','99999999',0,4,1,'Medina','Izaguirre','Abigail'),(1231,NULL,'Kevin','',0,7,1,'Escoto',NULL,NULL),(1232,NULL,'Kevin','',0,8,1,'Escoto',NULL,NULL),(1233,NULL,'Kevin','',0,9,1,'Escoto',NULL,NULL),(1234,'080120019850','Nicol','94763554',0,3,1,'escoto',NULL,NULL),(1235,NULL,'Kevin','',0,13,1,'Escoto',NULL,NULL),(1360,'0601198500064','Edgar','',1,19,2,'Ordoñez','Motiño','Jair'),(12311,NULL,'Kevin','',0,6,1,'Escoto',NULL,NULL),(23456,NULL,'Nicol','',0,14,1,'Giron',NULL,NULL),(23457,NULL,'Nicol','',0,15,1,'Giron',NULL,NULL),(51101,'0801199717105','Kenssy','94763554',0,5,1,'Medina','Izaguirre','Abigail'),(678956,NULL,'Obek','',0,16,1,'Escoto','Escoto','Jorge'),(678957,NULL,'Obek','94763554',0,17,1,'Escoto Ponce','Escoto Ponce','Jorge'),(909090,'9090990','Kenner2','999090909',1,18,1,'Mendez2','Ponce2','Aaron2');
 /*!40000 ALTER TABLE `empleado_empleado` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `equipo_baseequipo`
+--
+
+DROP TABLE IF EXISTS `equipo_baseequipo`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `equipo_baseequipo` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(50) COLLATE utf8_spanish_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `equipo_baseequipo`
@@ -216,6 +601,20 @@ INSERT INTO `equipo_baseequipo` VALUES (1,'Bin'),(2,'Pallet'),(3,'Canasta');
 UNLOCK TABLES;
 
 --
+-- Table structure for table `equipo_color`
+--
+
+DROP TABLE IF EXISTS `equipo_color`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `equipo_color` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `color` varchar(30) COLLATE utf8_spanish_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Dumping data for table `equipo_color`
 --
 
@@ -224,6 +623,35 @@ LOCK TABLES `equipo_color` WRITE;
 INSERT INTO `equipo_color` VALUES (1,'Blanco'),(2,'Negro'),(3,'Azul');
 /*!40000 ALTER TABLE `equipo_color` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `equipo_equipo`
+--
+
+DROP TABLE IF EXISTS `equipo_equipo`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `equipo_equipo` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `numero` int(10) unsigned NOT NULL,
+  `codigo_barras` varchar(160) COLLATE utf8_spanish_ci DEFAULT NULL,
+  `informacion` longtext COLLATE utf8_spanish_ci,
+  `estado_id` int(11) NOT NULL,
+  `color_id` int(11) NOT NULL,
+  `nombre_id` int(11) NOT NULL,
+  `tamano_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `codigo_barras` (`codigo_barras`),
+  KEY `equipo_equipo_color_id_8895e078_fk_equipo_color_id` (`color_id`),
+  KEY `equipo_equipo_nombre_id_06f31cb7_fk_equipo_baseequipo_id` (`nombre_id`),
+  KEY `equipo_equipo_estado_id_c677b784_fk_equipo_estado_id` (`estado_id`),
+  KEY `equipo_equipo_tamano_id_6783c29f_fk_equipo_tamano_id` (`tamano_id`),
+  CONSTRAINT `equipo_equipo_color_id_8895e078_fk_equipo_color_id` FOREIGN KEY (`color_id`) REFERENCES `equipo_color` (`id`),
+  CONSTRAINT `equipo_equipo_estado_id_c677b784_fk_equipo_estado_id` FOREIGN KEY (`estado_id`) REFERENCES `equipo_estado` (`id`),
+  CONSTRAINT `equipo_equipo_nombre_id_06f31cb7_fk_equipo_baseequipo_id` FOREIGN KEY (`nombre_id`) REFERENCES `equipo_baseequipo` (`id`),
+  CONSTRAINT `equipo_equipo_tamano_id_6783c29f_fk_equipo_tamano_id` FOREIGN KEY (`tamano_id`) REFERENCES `equipo_tamano` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `equipo_equipo`
@@ -236,6 +664,20 @@ INSERT INTO `equipo_equipo` VALUES (1,11,'EQEL-1-11-2-3-1','ahora si',2,3,1,2),(
 UNLOCK TABLES;
 
 --
+-- Table structure for table `equipo_estado`
+--
+
+DROP TABLE IF EXISTS `equipo_estado`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `equipo_estado` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `estado` varchar(30) COLLATE utf8_spanish_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Dumping data for table `equipo_estado`
 --
 
@@ -244,6 +686,20 @@ LOCK TABLES `equipo_estado` WRITE;
 INSERT INTO `equipo_estado` VALUES (1,'Asignado'),(2,'Disponible'),(3,'Fuera de Servicio');
 /*!40000 ALTER TABLE `equipo_estado` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `equipo_tamano`
+--
+
+DROP TABLE IF EXISTS `equipo_tamano`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `equipo_tamano` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `tamano` varchar(30) COLLATE utf8_spanish_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `equipo_tamano`
@@ -256,6 +712,20 @@ INSERT INTO `equipo_tamano` VALUES (1,'Grande'),(2,'Pequeño'),(3,'Normal');
 UNLOCK TABLES;
 
 --
+-- Table structure for table `hielo_proceso_departamentoproceso`
+--
+
+DROP TABLE IF EXISTS `hielo_proceso_departamentoproceso`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `hielo_proceso_departamentoproceso` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `departamento` varchar(25) COLLATE utf8_spanish_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Dumping data for table `hielo_proceso_departamentoproceso`
 --
 
@@ -264,6 +734,32 @@ LOCK TABLES `hielo_proceso_departamentoproceso` WRITE;
 INSERT INTO `hielo_proceso_departamentoproceso` VALUES (2,'Maquina 1'),(3,'Maquina 2'),(4,'Maquina 3'),(5,'Maquina 4'),(6,'Empaque fresco'),(7,'Descabezado'),(8,'Reenhielado'),(9,'Clasificado'),(10,'Reproceso'),(11,'Langosta'),(12,'Pelado'),(13,'Descongelado');
 /*!40000 ALTER TABLE `hielo_proceso_departamentoproceso` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `hielo_proceso_detallehieloproceso`
+--
+
+DROP TABLE IF EXISTS `hielo_proceso_detallehieloproceso`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `hielo_proceso_detallehieloproceso` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `hieloProceso_id` int(11) DEFAULT NULL,
+  `departamento_id` int(11) NOT NULL,
+  `binGrande` int(10) unsigned NOT NULL,
+  `binPequeno` int(10) unsigned NOT NULL,
+  `canastaA` int(10) unsigned NOT NULL,
+  `canastapAzul` int(10) unsigned NOT NULL,
+  `canastapRoja` int(10) unsigned NOT NULL,
+  `carretonBlanco` int(10) unsigned NOT NULL,
+  `glaseo` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `hielo_proceso_detall_hieloProceso_id_225a9404_fk_hielo_pro` (`hieloProceso_id`),
+  KEY `hielo_proceso_detall_departamento_id_7ec3a715_fk_hielo_pro` (`departamento_id`),
+  CONSTRAINT `hielo_proceso_detall_departamento_id_7ec3a715_fk_hielo_pro` FOREIGN KEY (`departamento_id`) REFERENCES `hielo_proceso_departamentoproceso` (`id`),
+  CONSTRAINT `hielo_proceso_detall_hieloProceso_id_225a9404_fk_hielo_pro` FOREIGN KEY (`hieloProceso_id`) REFERENCES `hielo_proceso_hieloproceso` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=63 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `hielo_proceso_detallehieloproceso`
@@ -276,6 +772,24 @@ INSERT INTO `hielo_proceso_detallehieloproceso` VALUES (16,10,2,1,0,0,0,0,0,0),(
 UNLOCK TABLES;
 
 --
+-- Table structure for table `hielo_proceso_hieloproceso`
+--
+
+DROP TABLE IF EXISTS `hielo_proceso_hieloproceso`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `hielo_proceso_hieloproceso` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `fecha` date NOT NULL,
+  `registrado_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `hielo_proceso_hieloproceso_fecha_98b5df34_uniq` (`fecha`),
+  KEY `hielo_proceso_hielop_registrado_id_4af33447_fk_empleado_` (`registrado_id`),
+  CONSTRAINT `hielo_proceso_hielop_registrado_id_4af33447_fk_empleado_` FOREIGN KEY (`registrado_id`) REFERENCES `empleado_empleado` (`codEmpleado`)
+) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Dumping data for table `hielo_proceso_hieloproceso`
 --
 
@@ -284,6 +798,27 @@ LOCK TABLES `hielo_proceso_hieloproceso` WRITE;
 INSERT INTO `hielo_proceso_hieloproceso` VALUES (10,'2019-06-29',1),(11,'2019-06-30',1),(12,'2019-06-28',1),(26,'2019-07-05',1),(27,'2019-07-04',1),(28,'2019-07-20',909090),(29,'2019-07-21',909090),(30,'2019-07-22',909090),(31,'2019-08-01',1);
 /*!40000 ALTER TABLE `hielo_proceso_hieloproceso` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `prestamos_detalleprestamoequipo`
+--
+
+DROP TABLE IF EXISTS `prestamos_detalleprestamoequipo`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `prestamos_detalleprestamoequipo` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `descripcion` varchar(100) COLLATE utf8_spanish_ci DEFAULT NULL,
+  `tapadera` int(11) DEFAULT NULL,
+  `equipo_id` int(11) NOT NULL,
+  `prestamoEquipo_id` varchar(6) COLLATE utf8_spanish_ci DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `prestamos_detallepre_equipo_id_9ee8a488_fk_equipo_eq` (`equipo_id`),
+  KEY `prestamos_detallepre_prestamoEquipo_id_4074fcbc_fk_prestamos` (`prestamoEquipo_id`),
+  CONSTRAINT `prestamos_detallepre_equipo_id_9ee8a488_fk_equipo_eq` FOREIGN KEY (`equipo_id`) REFERENCES `equipo_equipo` (`id`),
+  CONSTRAINT `prestamos_detallepre_prestamoEquipo_id_4074fcbc_fk_prestamos` FOREIGN KEY (`prestamoEquipo_id`) REFERENCES `prestamos_prestamoequipo` (`numPrestamo`)
+) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `prestamos_detalleprestamoequipo`
@@ -296,6 +831,20 @@ INSERT INTO `prestamos_detalleprestamoequipo` VALUES (21,NULL,14,3,'000011'),(25
 UNLOCK TABLES;
 
 --
+-- Table structure for table `prestamos_estadoprestamo`
+--
+
+DROP TABLE IF EXISTS `prestamos_estadoprestamo`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `prestamos_estadoprestamo` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `estado` varchar(15) COLLATE utf8_spanish_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Dumping data for table `prestamos_estadoprestamo`
 --
 
@@ -304,6 +853,38 @@ LOCK TABLES `prestamos_estadoprestamo` WRITE;
 INSERT INTO `prestamos_estadoprestamo` VALUES (1,'Activo'),(2,'Anulado'),(3,'Asignado'),(4,'Terminado');
 /*!40000 ALTER TABLE `prestamos_estadoprestamo` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `prestamos_prestamoequipo`
+--
+
+DROP TABLE IF EXISTS `prestamos_prestamoequipo`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `prestamos_prestamoequipo` (
+  `numPrestamo` varchar(6) COLLATE utf8_spanish_ci NOT NULL,
+  `horaSalida` time(6) NOT NULL,
+  `fechaSalida` date NOT NULL,
+  `fechaEntrada` date DEFAULT NULL,
+  `observaciones` longtext COLLATE utf8_spanish_ci,
+  `compania_id` int(11) NOT NULL,
+  `conductor_id` varchar(15) COLLATE utf8_spanish_ci NOT NULL,
+  `empleado_id` int(11) NOT NULL,
+  `estadoPrestamo_id` int(11) NOT NULL,
+  `placa_id` varchar(7) COLLATE utf8_spanish_ci NOT NULL,
+  PRIMARY KEY (`numPrestamo`),
+  KEY `prestamos_prestamoeq_compania_id_6b75f608_fk_compania_` (`compania_id`),
+  KEY `prestamos_prestamoeq_conductor_id_f392e338_fk_conductor` (`conductor_id`),
+  KEY `prestamos_prestamoeq_empleado_id_8e5fd1ff_fk_empleado_` (`empleado_id`),
+  KEY `prestamos_prestamoeq_estadoPrestamo_id_40fa0176_fk_prestamos` (`estadoPrestamo_id`),
+  KEY `prestamos_prestamoeq_placa_id_c8be6980_fk_vehiculo_` (`placa_id`),
+  CONSTRAINT `prestamos_prestamoeq_compania_id_6b75f608_fk_compania_` FOREIGN KEY (`compania_id`) REFERENCES `compania_compania` (`id`),
+  CONSTRAINT `prestamos_prestamoeq_conductor_id_f392e338_fk_conductor` FOREIGN KEY (`conductor_id`) REFERENCES `conductor_conductor` (`numIdentidad`),
+  CONSTRAINT `prestamos_prestamoeq_empleado_id_8e5fd1ff_fk_empleado_` FOREIGN KEY (`empleado_id`) REFERENCES `empleado_empleado` (`codEmpleado`),
+  CONSTRAINT `prestamos_prestamoeq_estadoPrestamo_id_40fa0176_fk_prestamos` FOREIGN KEY (`estadoPrestamo_id`) REFERENCES `prestamos_estadoprestamo` (`id`),
+  CONSTRAINT `prestamos_prestamoeq_placa_id_c8be6980_fk_vehiculo_` FOREIGN KEY (`placa_id`) REFERENCES `vehiculo_vehiculo` (`placa`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `prestamos_prestamoequipo`
@@ -316,6 +897,30 @@ INSERT INTO `prestamos_prestamoequipo` VALUES ('000001','14:14:16.000000','2019-
 UNLOCK TABLES;
 
 --
+-- Table structure for table `remision_detalleremision`
+--
+
+DROP TABLE IF EXISTS `remision_detalleremision`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `remision_detalleremision` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `salida` int(11) NOT NULL,
+  `devolucion` int(11) NOT NULL,
+  `hielo_id` int(11) NOT NULL,
+  `remision_id` varchar(6) COLLATE utf8_spanish_ci DEFAULT NULL,
+  `unidad_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `remision_detalleremision_hielo_id_89b3047b_fk_remision_hielo_id` (`hielo_id`),
+  KEY `remision_detalleremi_unidad_id_0e308672_fk_remision_` (`unidad_id`),
+  KEY `remision_detalleremi_remision_id_c3192fdb_fk_remision_` (`remision_id`),
+  CONSTRAINT `remision_detalleremi_remision_id_c3192fdb_fk_remision_` FOREIGN KEY (`remision_id`) REFERENCES `remision_remision` (`numRemision`),
+  CONSTRAINT `remision_detalleremi_unidad_id_0e308672_fk_remision_` FOREIGN KEY (`unidad_id`) REFERENCES `remision_medida` (`id`),
+  CONSTRAINT `remision_detalleremision_hielo_id_89b3047b_fk_remision_hielo_id` FOREIGN KEY (`hielo_id`) REFERENCES `remision_hielo` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=137 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Dumping data for table `remision_detalleremision`
 --
 
@@ -324,6 +929,20 @@ LOCK TABLES `remision_detalleremision` WRITE;
 INSERT INTO `remision_detalleremision` VALUES (9,15,0,1,'000003',1),(101,10,0,1,'000008',1),(109,12,0,1,'000007',1),(110,13,0,2,'000007',1),(111,100,0,1,'000006',1),(115,150,0,1,'000002',1),(131,10,8,2,'000001',1),(132,11,10,1,'000001',1),(134,150,50,1,'018197',1),(135,10,0,1,'000010',1),(136,100,0,1,'000111',1);
 /*!40000 ALTER TABLE `remision_detalleremision` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `remision_estadoremision`
+--
+
+DROP TABLE IF EXISTS `remision_estadoremision`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `remision_estadoremision` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `estado` varchar(15) COLLATE utf8_spanish_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `remision_estadoremision`
@@ -336,6 +955,21 @@ INSERT INTO `remision_estadoremision` VALUES (1,'Activo'),(2,'Terminado'),(3,'An
 UNLOCK TABLES;
 
 --
+-- Table structure for table `remision_hielo`
+--
+
+DROP TABLE IF EXISTS `remision_hielo`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `remision_hielo` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `estadoHielo` varchar(30) COLLATE utf8_spanish_ci NOT NULL,
+  `precioQuintal` decimal(6,2) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Dumping data for table `remision_hielo`
 --
 
@@ -344,6 +978,22 @@ LOCK TABLES `remision_hielo` WRITE;
 INSERT INTO `remision_hielo` VALUES (1,'Limpio',60.00),(2,'Sucio',10.00);
 /*!40000 ALTER TABLE `remision_hielo` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `remision_medida`
+--
+
+DROP TABLE IF EXISTS `remision_medida`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `remision_medida` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `magnitud` varchar(30) COLLATE utf8_spanish_ci NOT NULL,
+  `unidad` varchar(30) COLLATE utf8_spanish_ci NOT NULL,
+  `abreviatura` varchar(30) COLLATE utf8_spanish_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `remision_medida`
@@ -356,6 +1006,42 @@ INSERT INTO `remision_medida` VALUES (1,'Masa','Quintal','Q');
 UNLOCK TABLES;
 
 --
+-- Table structure for table `remision_remision`
+--
+
+DROP TABLE IF EXISTS `remision_remision`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `remision_remision` (
+  `numRemision` varchar(6) COLLATE utf8_spanish_ci NOT NULL,
+  `guia` int(11) DEFAULT NULL,
+  `fecha` date NOT NULL,
+  `estado_id` int(11) DEFAULT NULL,
+  `compania_id` int(11) NOT NULL,
+  `conductor_id` varchar(15) COLLATE utf8_spanish_ci DEFAULT NULL,
+  `entrego_id` int(11) NOT NULL,
+  `placa_id` varchar(7) COLLATE utf8_spanish_ci DEFAULT NULL,
+  `prestamoEquipo_id` varchar(6) COLLATE utf8_spanish_ci DEFAULT NULL,
+  `tipoRemision_id` int(11) NOT NULL,
+  `observacion` longtext COLLATE utf8_spanish_ci,
+  PRIMARY KEY (`numRemision`),
+  UNIQUE KEY `prestamoEquipo_id` (`prestamoEquipo_id`),
+  KEY `remision_remision_compania_id_fa2fa9ac_fk_compania_compania_id` (`compania_id`),
+  KEY `remision_remision_conductor_id_c476febe_fk_conductor` (`conductor_id`),
+  KEY `remision_remision_placa_id_60eb933e_fk_vehiculo_vehiculo_placa` (`placa_id`),
+  KEY `remision_remision_tipoRemision_id_ede822ae_fk_remision_` (`tipoRemision_id`),
+  KEY `remision_remision_entrego_id_fc9fdc38_fk_empleado_` (`entrego_id`),
+  KEY `remision_remision_estado_id_315928ef` (`estado_id`),
+  CONSTRAINT `remision_remision_compania_id_fa2fa9ac_fk_compania_compania_id` FOREIGN KEY (`compania_id`) REFERENCES `compania_compania` (`id`),
+  CONSTRAINT `remision_remision_conductor_id_c476febe_fk_conductor` FOREIGN KEY (`conductor_id`) REFERENCES `conductor_conductor` (`numIdentidad`),
+  CONSTRAINT `remision_remision_entrego_id_fc9fdc38_fk_empleado_` FOREIGN KEY (`entrego_id`) REFERENCES `empleado_empleado` (`codEmpleado`),
+  CONSTRAINT `remision_remision_placa_id_60eb933e_fk_vehiculo_vehiculo_placa` FOREIGN KEY (`placa_id`) REFERENCES `vehiculo_vehiculo` (`placa`),
+  CONSTRAINT `remision_remision_prestamoEquipo_id_9b6f9286_fk_prestamos` FOREIGN KEY (`prestamoEquipo_id`) REFERENCES `prestamos_prestamoequipo` (`numPrestamo`),
+  CONSTRAINT `remision_remision_tipoRemision_id_ede822ae_fk_remision_` FOREIGN KEY (`tipoRemision_id`) REFERENCES `remision_tiporemision` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Dumping data for table `remision_remision`
 --
 
@@ -366,6 +1052,20 @@ INSERT INTO `remision_remision` VALUES ('000001',1,'2019-04-08',2,1,'0000-0000-0
 UNLOCK TABLES;
 
 --
+-- Table structure for table `remision_tiporemision`
+--
+
+DROP TABLE IF EXISTS `remision_tiporemision`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `remision_tiporemision` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `movimiento` varchar(30) COLLATE utf8_spanish_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Dumping data for table `remision_tiporemision`
 --
 
@@ -374,6 +1074,28 @@ LOCK TABLES `remision_tiporemision` WRITE;
 INSERT INTO `remision_tiporemision` VALUES (1,'Maquila');
 /*!40000 ALTER TABLE `remision_tiporemision` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `vehiculo_vehiculo`
+--
+
+DROP TABLE IF EXISTS `vehiculo_vehiculo`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `vehiculo_vehiculo` (
+  `placa` varchar(7) COLLATE utf8_spanish_ci NOT NULL,
+  `marca` varchar(30) COLLATE utf8_spanish_ci NOT NULL,
+  `modelo` varchar(30) COLLATE utf8_spanish_ci DEFAULT NULL,
+  `anio` int(10) unsigned NOT NULL,
+  `color_id` int(11) NOT NULL,
+  `empresaFlete_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`placa`),
+  KEY `vehiculo_vehiculo_color_id_80a97ffb_fk_equipo_color_id` (`color_id`),
+  KEY `vehiculo_vehiculo_empresaFlete_id_5b66f4f6_fk_compania_` (`empresaFlete_id`),
+  CONSTRAINT `vehiculo_vehiculo_color_id_80a97ffb_fk_equipo_color_id` FOREIGN KEY (`color_id`) REFERENCES `equipo_color` (`id`),
+  CONSTRAINT `vehiculo_vehiculo_empresaFlete_id_5b66f4f6_fk_compania_` FOREIGN KEY (`empresaFlete_id`) REFERENCES `compania_compania` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `vehiculo_vehiculo`
@@ -394,4 +1116,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-08-19 14:58:43
+-- Dump completed on 2019-08-19 15:04:37
