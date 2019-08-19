@@ -8,7 +8,7 @@ django-debug-toolbar==1.11
 django-qr-code==1.0.0
 html5lib==1.0.1
 mysql-connector-python==8.0.15
-mysqlclient==1.4.2.post1
+mysqlclient==1.4.4
 Pillow==6.0.0
 protobuf==3.7.1
 pycparser==2.19
