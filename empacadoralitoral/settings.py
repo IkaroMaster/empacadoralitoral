@@ -181,13 +181,14 @@ USE_TZ = True
 
 
 LOGIN_URL = '/'
-
+STATIC_URL = '/static/'
 # STATICFILES_DIRS = (
     # os.path.join(BASE_DIR, 'global_static'),
 # )
-STATICFILES_DIRS = [os.path.join(BASE_DIR,'static'),]
+STATICFILES_DIRS = [os.path.join(BASE_DIR,'static/'),]
+
+# STATIC_ROOT = os.path.join(BASE_DIR, 'staticos/')
 TEMPLATE_DIRS=(BASE_DIR, 'templates')
-STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 # STATIC_URL = '/static/'
@@ -206,8 +207,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'jorgeescoto18@gmail.com'
-EMAIL_HOST_PASSWORD = 'escoto100'
+EMAIL_HOST_USER = 'control.hielo.litoral@gmail.com'
+EMAIL_HOST_PASSWORD = 'Litoral100'
 
 
 # DEBUG TOOLBAR
