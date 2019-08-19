@@ -114,12 +114,22 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'empacadoralitoral',
-        'USER': 'root',
-        'PASSWORD': 'dimeobek',
-        'HOST': '127.0.0.1',
+        'USER': 'empacadoralitoral',
+        'PASSWORD': '668246Litoral',
+        'HOST': 'localhost',
         'PORT': '3306',
     }
 }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'empacadoralitoral',
+#         'USER': 'root',
+#         'PASSWORD': 'dimeobek',
+#         'HOST': '127.0.0.1',
+#         'PORT': '3306',
+#     }
+# }
 
 
 # Password validation
