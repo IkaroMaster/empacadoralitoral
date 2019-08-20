@@ -78,13 +78,43 @@ $(function () {
 
         });
         Instascan.Camera.getCameras().then(cameras => {
+            let camaras = cameras;
+            console.log(camaras);
+            camaras.forEach(camara => {
+                $('#camaras').append('<option value="' + camara.id + '">' + camara.name + '</option>');
+            });
+
             if (cameras.length > 0) {
                 scanner.start(cameras[0]);
+                $('#camaras option').each(function () { 
+                    if ($(this).val() == cameras[0].id) {
+                        $(this).attr('selected','True');
+                        $('#camaras').selectpicker('refresh');
+                    }
+                });
+                // $('#camaras').find(cameras[0].id).attr(':selected',true);
+
             } else {
-                console.error("No Existe una camara en este dispositivo!");
+                $('#camaras').append('<option>No se ha encontrado camara.</option>');
+                alert("No Existe una camara en este dispositivo!");
             }
         });
     });
+
+    $('#camaras').change(function () {
+        var id = $(this).find(":selected").val();
+        scanner.activeCameraId = id;
+        Instascan.Camera.getCameras().then(cameras => {
+            // console.log($.inArray(id, cameras));
+            cameras.forEach(camara => {
+                if(camara.id == id){
+                    scanner.start(camara);
+                }
+            });
+        })
+
+    });
+
     var tablex = $('#tablajs').DataTable({
         "scrollY": '40vh',
         "scrollCollapse": true,
