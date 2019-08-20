@@ -80,6 +80,7 @@ $(function () {
         Instascan.Camera.getCameras().then(cameras => {
             let camaras = cameras;
             console.log(camaras);
+            $('#camaras').html('');
             camaras.forEach(camara => {
                 $('#camaras').append('<option value="' + camara.id + '">' + camara.name + '</option>');
             });
