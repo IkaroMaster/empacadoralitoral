@@ -17,7 +17,10 @@ urlpatterns = [
 
     #Graficos
     path("grafico/",views.Grafico, name="grafico-url"),
+    path("ajax_fecha_grafico_mensual/", views.FechaGraficoMensual_asJson, name ="fecha_grafico_mensual-url"),
     path("data/",views.GraficoData, name="data-url"),
+    path("grafico_mensual/", views.GraficoMensual, name ="grafico_mensual-url"),
+
 
     # path("crear/",views.CrearPrestamo,name="crear_prestamo-url"),
     # path("anular/",views.anularPrestamo_asJson,name="ajax_anular_prestamo-url"),

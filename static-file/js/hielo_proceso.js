@@ -116,6 +116,22 @@ $(function () {
             
         });
     });
+    $('#graficoMensual').on('click',function(){
+        $.get('/hielo_proceso/ajax_fecha_grafico_mensual/',function(data) {
+            $('.modalCuerpoGrafico').empty().html(data.html);
+            $('.modalCuerpoGrafico').find('#selectMes').selectpicker({
+                liveSearch: true,
+                size:5,
+                // selectAll: true
+            }); 
+            $('.modalCuerpoGrafico').find('#selectAnio').selectpicker({
+                liveSearch: false,
+                size:5,
+                // selectAll: true
+            }); 
+            
+        });
+    });
 
     $('.editarHielo').click(function (e) {
         var fecha = $(this).attr('data-fecha');
@@ -148,6 +164,12 @@ $(function () {
         // var anio = $('.modalCuerpoReporte').find('#selectAnio').val();
         $('.modalCuerpoReporte').find('#formReporteMensual').submit();
         $('#modalReporte').modal('hide');
+        
+    });
+    $('#imprimirGrafico').on('click',function(){
+        // var anio = $('.modalCuerpoReporte').find('#selectAnio').val();
+        $('.modalCuerpoGrafico').find('#formGraficoMensual').submit();
+        $('#modalGrafico').modal('hide');
         
     });
     function getCookie(name) {

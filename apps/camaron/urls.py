@@ -20,6 +20,10 @@ urlpatterns = [
     path("ajax_fecha_intervalo/", views.FechaIntervalo_asJson, name ="fecha_intervalo-url"),
     path("reporte_mensual/", views.ReporteMensual, name ="reporte_mensual-url"),
     path("reporte_intervalo/", views.ReporteIntervalo, name ="reporte_intervalo-url"),
+    path("ajax_fecha_grafico_mensual/", views.FechaGraficoMensual_asJson, name ="fecha_grafico_mensual-url"),
+    path("grafico_mensual/", views.GraficoMensual, name ="grafico_mensual-url"),
+
+
 
    
 ]

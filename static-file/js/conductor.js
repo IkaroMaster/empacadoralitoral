@@ -179,4 +179,27 @@ $(function () {
             });
         }
     }
+
+    $('#reporteMensual').on('click',function(){
+        $.get('/conductor/ajax_fecha/',function(data) {
+            $('.modalCuerpoReporte').empty().html(data.html);
+            $('.modalCuerpoReporte').find('#selectMes').selectpicker({
+                liveSearch: true,
+                size:6,
+                // selectAll: true
+            }); 
+            $('.modalCuerpoReporte').find('#selectAnio').selectpicker({
+                liveSearch: false,
+                size:6,
+                // selectAll: true
+            }); 
+            
+        });
+    });
+    $('#imprimirReporte').on('click',function(){
+        // var anio = $('.modalCuerpoReporte').find('#selectAnio').val();
+        $('.modalCuerpoReporte').find('#formReporteMensual').submit();
+        $('#modalReporte').modal('hide');
+       
+    });
 });

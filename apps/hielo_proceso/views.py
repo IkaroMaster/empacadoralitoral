@@ -590,3 +590,175 @@ def GraficoData(request):
 	#         data: [1052, 954, 4250, 740, 38]
 	#     }]
 	# });
+
+
+
+@login_required()
+def FechaGraficoMensual_asJson(request):
+	if not request.user.empleado.actualizoContrasena:
+		return HttpResponseRedirect(reverse('seguridad:log_out-url'))	
+	if request.is_ajax():
+		mes = []
+		meses(mes)
+		html = ''
+		html +='''
+		<form action="/hielo_proceso/grafico_mensual/" method="post" id="formGraficoMensual" target="_blank">
+		<input type="hidden" name="csrfmiddlewaretoken" value="{}">
+		<div class="row">
+			<p>Para generar el grafico mensual seleccione la fecha:</p>
+			<div class=" col-6">
+				<label for="selectMes">Mes</label>
+				<select name="mes" class="form-control" id="selectMes" required>
+					
+		'''.format(csrf.get_token(request))
+		for mes in mes:
+			html+='''
+					<option value="{}">{}</option>
+			'''.format(mes[0],mes[1])
+		html+='''
+				</select>
+				</div>
+		'''
+
+		anio = []
+		anios(anio)
+		html +='''
+			<div class=" col-6">
+				<label for="selectMes">Año</label>
+				<select name="anio" class="form-control" id="selectAnio" required>
+					
+		'''
+		for anio in anio:
+			var = ''
+			if int(anio[0]) == 2019:
+				var= 'selected'
+			html+='''
+					<option value="{}" {}>{}</option>
+			'''.format(anio[0],var,anio[0])
+		html+='''
+				</select>
+				</div>
+		</div>
+		</form>
+		'''
+		data = {
+				'html':html,
+			}
+		return JsonResponse(data)
+	else:
+		pass
+
+
+
+@login_required
+@permission_required('hielo_proceso.grafico_hieloproceso',raise_exception=True)
+def GraficoMensual(request):
+	if not request.user.empleado.actualizoContrasena:
+		return HttpResponseRedirect(reverse('seguridad:log_out-url'))	
+	if request.method == 'POST':
+		mes = request.POST['mes']
+		anio = request.POST['anio']
+		estilos, clases = renderizado(1, 4)
+		var = []
+		context = {
+			'estilos': estilos,
+			 'clases': clases,
+			 'mes':mes,
+			 'anio':anio,
+			 'nombreMes':meses(var)[int(mes)-1][1]
+		}
+		return render(request, 'hielo_proceso/graficos/grafico_mensual.html', context)
+	elif request.method == 'GET':
+		mes = request.GET['mes']
+		anio = request.GET['anio']
+		dataset = HieloProceso.objects.values('fecha').filter(fecha__month=mes,fecha__year=anio).annotate(quintales=Cast(Sum((F('detallehieloproceso__binGrande') * binGrande())+(F('detallehieloproceso__binPequeno') * binPequeno())+(F('detallehieloproceso__carretonBlanco') * carretonBlanco())+(F('detallehieloproceso__glaseo') * glaseo())+(F('detallehieloproceso__canastaA') * canastaA())+(F('detallehieloproceso__canastapRoja') * canastapRoja())+(F('detallehieloproceso__canastapAzul') * canastapAzul())),FloatField())).order_by('fecha')
+		# print(dataset)
+		
+		# dias = dict()
+		# for ds in dataset:
+		# 	dias[ds[0]] = ds[1]
+		# print(dias)
+		chart = {
+			'chart': {'type': 'spline'},
+			'title': {'text': 'Consumo diario de hielo en proceso'},
+			'xAxis': {
+				'categories': list(map(lambda row: row['fecha'],dataset))
+			},
+			'yAxis': {'title': {'text': 'Quintal (Q)'}},
+			'plotOptions': {
+				'line': {
+					'dataLabels': {
+						'enabled': 'true'
+					},
+					'enableMouseTracking': 'false'
+				}
+			},
+			'series': [{
+				'name':'Fecha',
+				'data':list(map(lambda row: row['quintales'],dataset))
+			}],
+				# 'data': list(map(lambda row: {'name': port_display_name[row['embarked']], 'y': row['total']}, dataset))
+			
+		}
+		# chart = {
+		# 	'chart': {'type': 'column'},
+		# 	'title': {'text': 'Consumo diario de hielo en proceso'},
+		# 	'xAxis': {
+		#         'categories': ['Total de hielo']
+		#     },
+		# 	'series': list(map(lambda row: {'name':row['fecha'],'data':str(row['quintales'],)},dataset))
+		# 		# 'data': list(map(lambda row: {'name': port_display_name[row['embarked']], 'y': row['total']}, dataset))
+			
+		# }
+		print(chart)
+		return JsonResponse(chart)
+
+
+@login_required
+@permission_required('hielo_proceso.grafico_hieloproceso',raise_exception=True)
+def GraficoData(request):
+	if not request.user.empleado.actualizoContrasena:
+		return HttpResponseRedirect(reverse('seguridad:log_out-url'))	
+
+	estilos, clases = renderizado(1, 4)
+	dataset = HieloProceso.objects.values('fecha').annotate(quintales=Cast(Sum((F('detallehieloproceso__binGrande') * binGrande())+(F('detallehieloproceso__binPequeno') * binPequeno())+(F('detallehieloproceso__carretonBlanco') * carretonBlanco())+(F('detallehieloproceso__glaseo') * glaseo())+(F('detallehieloproceso__canastaA') * canastaA())+(F('detallehieloproceso__canastapRoja') * canastapRoja())+(F('detallehieloproceso__canastapAzul') * canastapAzul())),FloatField())).order_by('fecha')
+	# print(dataset)
+	
+	# dias = dict()
+	# for ds in dataset:
+	# 	dias[ds[0]] = ds[1]
+	# print(dias)
+	chart = {
+		'chart': {'type': 'spline'},
+		'title': {'text': 'Consumo diario de hielo en proceso'},
+		'xAxis': {
+			'categories': list(map(lambda row: row['fecha'],dataset))
+		},
+		'yAxis': {'title': {'text': 'Quintal (Q)'}},
+		'plotOptions': {
+			'line': {
+				'dataLabels': {
+					'enabled': 'true'
+				},
+				'enableMouseTracking': 'false'
+			}
+		},
+		'series': [{
+			'name':'Fecha',
+			'data':list(map(lambda row: row['quintales'],dataset))
+		}],
+			# 'data': list(map(lambda row: {'name': port_display_name[row['embarked']], 'y': row['total']}, dataset))
+		
+	}
+	# chart = {
+	# 	'chart': {'type': 'column'},
+	# 	'title': {'text': 'Consumo diario de hielo en proceso'},
+	# 	'xAxis': {
+	#         'categories': ['Total de hielo']
+	#     },
+	# 	'series': list(map(lambda row: {'name':row['fecha'],'data':str(row['quintales'],)},dataset))
+	# 		# 'data': list(map(lambda row: {'name': port_display_name[row['embarked']], 'y': row['total']}, dataset))
+		
+	# }
+	print(chart)
+	return JsonResponse(chart)

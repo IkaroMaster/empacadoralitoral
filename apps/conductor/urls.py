@@ -11,4 +11,7 @@ urlpatterns = [
 
     #JSON
     path("ajax_estado_conductor/", views.EstadoConductor_asJson, name ="estado_conductor-url"),
+    path("ajax_fecha/", views.Fecha_asJson, name ="fecha-url"),
+    path("reporte_mensual_viajes/", views.ReporteMensualViajes, name ="reporte_mensual_viajes-url"),
+
 ]

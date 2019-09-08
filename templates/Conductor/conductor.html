@@ -40,8 +40,8 @@ active
         </ul>
     </div>
     <div class="card-body">
-        
-        {% if editar or crear %}    
+
+        {% if editar or crear %}
         <div style="{{estilos.o1}}">
 
             {% if messages %}
@@ -111,9 +111,9 @@ active
 
         </div>
         {% endif %}
-        
+
         {% if listado %}
-        
+
         <div style="{{estilos.o2}}">
             <div class="row">
                 <div class="col-md-3 mb-1">
@@ -122,65 +122,107 @@ active
                         Conductor</a>
                     {% endif %}
                 </div>
-            </div>
-            <div class="table-responsive">
-                <table id="tablajs" class="table table-striped table-hover table-bordered">
-                    <thead class="thead-inverse">
-                        <tr>
-                            <th data-priority="1">Identidad</th>
-                            <th>Nombre Completo</th>
-                            <th>Fecha de nacimiento</th>
-                            <th>celular</th>
-                            <th>Estado</th>
-                            <th data-priority="2">Acciones</th>
 
-                            <!-- <th>Añadir</th> -->
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for c in conductores %}
-                        <tr id="fila-{{c.pk}}" {% if not c.activo %} class="table-danger" {% endif %}>
-                            <td>{{ c.pk }}</td>
-                            <td>{{ c.nombre1 }} {% if c.nombre2 %}{{ c.nombre2 }} {% endif %}{{ c.apellido1 }} {% if c.apellido2 %}{{ c.apellido2 }}{% endif %}</td>
-                            <td>{{ c.fechaNacimiento }}</td>
-                            <td>{{ c.celular }}</td>
-                            <td id="estado-{{c.pk}}">
-                                {% if c.activo %}
-                                Activo
-                                {% else %}
-                                Inactivo
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% if perms.conductor.change_conductor %}
-                                <a id="editar-{{c.pk}}" href="{% url 'conductor:modificar-url' c.pk %}" ></a>
-                                <button class="editar btn btn-info fas fa-pen " data-editar="{{ c.pk }}" data-nombre="{{c.nombre1}} {{c.apellido1}}"></button>
-                                {% endif %}
-                                {% if perms.conductor.estado_conductor %}
-                                <button class=" {% if c.activo %}
+
+
+                <div class="col-md-3 btn-group" role="group">
+                    <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Reportes
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                        <button id="reporteMensual" data-toggle="modal" data-target="#modalReporte"
+                            class=" dropdown-item ">Reporte Mensual de Viajes</button>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+        <div class="table-responsive">
+            <table id="tablajs" class="table table-striped table-hover table-bordered">
+                <thead class="thead-inverse">
+                    <tr>
+                        <th data-priority="1">Identidad</th>
+                        <th>Nombre Completo</th>
+                        <th>Fecha de nacimiento</th>
+                        <th>celular</th>
+                        <th>Estado</th>
+                        <th data-priority="2">Acciones</th>
+
+                        <!-- <th>Añadir</th> -->
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for c in conductores %}
+                    <tr id="fila-{{c.pk}}" {% if not c.activo %} class="table-danger" {% endif %}>
+                        <td>{{ c.pk }}</td>
+                        <td>{{ c.nombre1 }} {% if c.nombre2 %}{{ c.nombre2 }} {% endif %}{{ c.apellido1 }}
+                            {% if c.apellido2 %}{{ c.apellido2 }}{% endif %}</td>
+                        <td>{{ c.fechaNacimiento }}</td>
+                        <td>{{ c.celular }}</td>
+                        <td id="estado-{{c.pk}}">
+                            {% if c.activo %}
+                            Activo
+                            {% else %}
+                            Inactivo
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if perms.conductor.change_conductor %}
+                            <a id="editar-{{c.pk}}" href="{% url 'conductor:modificar-url' c.pk %}"></a>
+                            <button class="editar btn btn-info fas fa-pen " data-editar="{{ c.pk }}"
+                                data-nombre="{{c.nombre1}} {{c.apellido1}}"></button>
+                            {% endif %}
+                            {% if perms.conductor.estado_conductor %}
+                            <button class=" {% if c.activo %}
                                 eliminar btn btn-danger fas fa-times
                             {% else %}
                             eliminar btn btn-success fas fa-check
                             {% endif %} " data-id="{{c.pk}}" data-estado="{{c.activo}}"
-                                    data-nombre="{{c.nombre1}} {{c.apellido1}}"></button>
-                                {% endif %}
-                            </td>
+                                data-nombre="{{c.nombre1}} {{c.apellido1}}"></button>
+                            {% endif %}
+                        </td>
 
 
-                            <!-- <td><button class="btn btn-success">Añadir</button></td> -->
+                        <!-- <td><button class="btn btn-success">Añadir</button></td> -->
 
 
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
-            
-        {% endif %}
-            
+
     </div>
+
+    {% endif %}
+
+    <!-- Modal Reporte-->
+<div class="modal fade" id="modalReporte" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+aria-hidden="true">
+<div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Reporte Mensual</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body modalCuerpoReporte">
+            ...
+        </div>
+        <div class="modal-footer">
+            <!-- <button type="button" class="btn btn-secondary fas fa-times" id="cerrarModal" data-dismiss="modal">
+                Cerrar</button> -->
+            <button class="btn-lg btn-warning fas fa-print" id="imprimirReporte"></button>
+            <!-- <a href="" class="btn btn-warning fas fa-print" id="imprimirReporte" target="_blank"> Imprimir</a> -->
+        </div>
+    </div>
+</div>
+</div>
+
+</div>
 
 </div>
 

@@ -138,12 +138,12 @@ $(function () {
             $('.modalCuerpoReporte').empty().html(data.html);
             $('.modalCuerpoReporte').find('#selectMes').selectpicker({
                 liveSearch: true,
-                size:3,
+                size:5,
                 // selectAll: true
             }); 
             $('.modalCuerpoReporte').find('#selectAnio').selectpicker({
                 liveSearch: false,
-                size:3,
+                size:5,
                 // selectAll: true
             }); 
             
@@ -270,6 +270,30 @@ $(function () {
         }
         return cookieValue;
     }
+
+
+    $('#graficoMensual').on('click',function(){
+        $.get('/camaron/ajax_fecha_grafico_mensual/',function(data) {
+            $('.modalCuerpoGrafico').empty().html(data.html);
+            $('.modalCuerpoGrafico').find('#selectMes').selectpicker({
+                liveSearch: true,
+                size:5,
+                // selectAll: true
+            }); 
+            $('.modalCuerpoGrafico').find('#selectAnio').selectpicker({
+                liveSearch: false,
+                size:5,
+                // selectAll: true
+            }); 
+            
+        });
+    });
+    $('#imprimirGrafico').on('click',function(){
+        // var anio = $('.modalCuerpoReporte').find('#selectAnio').val();
+        $('.modalCuerpoGrafico').find('#formGraficoMensual').submit();
+        $('#modalGrafico').modal('hide');
+        
+    });
 
     //######## FORMATEO DE CAMPOS
     if ($('#id_codCosecha').length) {

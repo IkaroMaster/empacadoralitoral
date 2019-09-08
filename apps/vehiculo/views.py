@@ -68,7 +68,7 @@ def CrearVehiculo(request):
 
 	comboboxBasico(vehiculo_form,'empresaFlete','Seleccione...','true',c)
 	comboboxBasico(vehiculo_form,'color','Seleccione...','true',[])
-	vehiculo_form.fields['placa'].widget.attrs['pattern'] = '[A-Z]{7}'
+	vehiculo_form.fields['placa'].widget.attrs['pattern'] = '[A-Z]{3}[0-9]{4}'
 	vehiculo_form.fields['placa'].widget.attrs['title'] = 'La placa debe contener 3 letras y 4 números ej. AAA000'
 
 	

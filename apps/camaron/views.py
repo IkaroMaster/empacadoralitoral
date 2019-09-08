@@ -728,3 +728,113 @@ def ReporteIntervalo(request):
 		
 	else:
 		pass
+
+
+@login_required()
+def FechaGraficoMensual_asJson(request):
+	if not request.user.empleado.actualizoContrasena:
+		return HttpResponseRedirect(reverse('seguridad:log_out-url'))	
+	if request.is_ajax():
+		mes = []
+		meses(mes)
+		html = ''
+		html +='''
+		<form action="/camaron/grafico_mensual/" method="post" id="formGraficoMensual" target="_blank">
+		<input type="hidden" name="csrfmiddlewaretoken" value="{}">
+		<div class="row">
+			<p>Para generar el grafico mensual seleccione la fecha:</p>
+			<div class=" col-6">
+				<label for="selectMes">Mes</label>
+				<select name="mes" class="form-control" id="selectMes" required>
+					
+		'''.format(csrf.get_token(request))
+		for mes in mes:
+			html+='''
+					<option value="{}">{}</option>
+			'''.format(mes[0],mes[1])
+		html+='''
+				</select>
+				</div>
+		'''
+
+		anio = []
+		anios(anio)
+		html +='''
+			<div class=" col-6">
+				<label for="selectMes">Año</label>
+				<select name="anio" class="form-control" id="selectAnio" required>
+					
+		'''
+		for anio in anio:
+			var = ''
+			if int(anio[0]) == 2019:
+				var= 'selected'
+			html+='''
+					<option value="{}" {}>{}</option>
+			'''.format(anio[0],var,anio[0])
+		html+='''
+				</select>
+				</div>
+		</div>
+		</form>
+		'''
+		data = {
+				'html':html,
+			}
+		return JsonResponse(data)
+	else:
+		pass
+
+
+@login_required
+def GraficoMensual(request):
+	if not request.user.empleado.actualizoContrasena:
+		return HttpResponseRedirect(reverse('seguridad:log_out-url'))	
+	if request.method == 'POST':
+		mes = request.POST['mes']
+		anio = request.POST['anio']
+		estilos, clases = renderizado(1, 6)
+		var = []
+		context = {
+			'estilos': estilos,
+			 'clases': clases,
+			 'mes':mes,
+			 'anio':anio,
+			 'nombreMes':meses(var)[int(mes)-1][1]
+		}
+		return render(request, 'camaron/graficos/grafico_mensual.html', context)
+	elif request.method == 'GET':
+		mes = request.GET['mes']
+		anio = request.GET['anio']
+		dataset = Cosecha.objects.values('fecha').filter(fecha__month=mes,fecha__year=anio).annotate(libras=Cast(Sum(F('detallecosecha__libras')),FloatField())) #.annotate(quintales=Cast(Sum((F('detallehieloproceso__binGrande') * binGrande())+(F('detallehieloproceso__binPequeno') * binPequeno())+(F('detallehieloproceso__carretonBlanco') * carretonBlanco())+(F('detallehieloproceso__glaseo') * glaseo())+(F('detallehieloproceso__canastaA') * canastaA())+(F('detallehieloproceso__canastapRoja') * canastapRoja())+(F('detallehieloproceso__canastapAzul') * canastapAzul())),FloatField())).order_by('fecha')
+		print('8888888888888888888888888888888888888888888888888888888888888888')
+		print(dataset)
+		print('8888888888888888888888888888888888888888888888888888888888888888')
+		# dias = dict()
+		# for ds in dataset:
+		# 	dias[ds[0]] = ds[1]
+		# print(dias)
+		chart = {
+			'chart': {'type': 'spline'},
+			'title': {'text': 'Cosecha diaria recibida en proceso'},
+			'xAxis': {
+				'categories': list(map(lambda row: row['fecha'],dataset))
+			},
+			'yAxis': {'title': {'text': 'Libras (Lbs)'}},
+			'plotOptions': {
+				'line': {
+					'dataLabels': {
+						'enabled': 'true'
+					},
+					'enableMouseTracking': 'false'
+				}
+			},
+			'series': [{
+				'name':'Fecha',
+				'data':list(map(lambda row: row['libras'],dataset))
+			}],			
+		}
+		
+		print(chart)
+		return JsonResponse(chart)
+

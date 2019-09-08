@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% block estilos %}
+{% load humanize %}
+<title>Equipo-{{codigoQR}}</title>
+
+<style>
+  @page {
+    size: Letter portrait;
+    margin: 0 auto; 
+  }
+
+  body {}
+</style>
+{% endblock estilos%}
+{% block imprimir %}
+<br><br>
+
+<div class="container ">
+  <div class="row">
+    <div class="col-2">
+      {% load static %}
+      <img src="{% static 'imgs/logo_litoral.png'%}" width="100pt">
+    </div>
+    <div class="col-8">
+        <h2 class="text-center">Empacadora Litoral S.A de C.V</h2>
+        <h3 class="text-center">Reporte de viajes realizados en {{mes}} del {{anio}}</h3>
+    </div>
+  </div>
+  <br>
+  <h4><strong>Prestamos de Equipo:</strong></h4>
+  <div class=" table-responsive">
+    
+      <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+              <th>Empresa</th>
+              <th>Conductor</th>
+              <th>Fecha</th>
+              <th>Destino</th>
+            </tr>
+        </thead>
+        <tbody>
+          
+          {% for p in prestamos  %}
+          <tr>
+            <td>{{p.placa.empresaFlete}}</td>
+            <td>{{p.conductor.nombre1}} {{p.conductor.nombre2}} {{p.conductor.apellido1}} {{p.conductor.apellido2}}</td>
+            <td>{{p.fechaSalida}}</td>
+            <td>{{p.compania}}</td>
+          </tr>
+          {%empty%}
+          <tr>
+            <td colspan="4">Sin prestamos de equipo para cancelar en el mes de {{mes}}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    <br>
+    <h4><strong>Remisiones:</strong></h4>
+  <div class=" table-responsive">
+    
+    <table class="table table-bordered table-hover">
+      <thead>
+          <tr>
+            <th>Empresa</th>
+            <th>Conductor</th>
+            <th>Fecha</th>
+            <th>Destino</th>
+          </tr>
+      </thead>
+      <tbody>
+        
+        {% for r in remisiones  %}
+        <tr>
+          <td>{{r.placa.empresaFlete}}</td>
+          <td>{{r.conductor.nombre1}} {{r.conductor.nombre2}} {{r.conductor.apellido1}} {{r.conductor.apellido2}}</td>
+          <td>{{r.fecha}}</td>
+          <td>{{r.compania}}</td>
+        </tr>
+        {%empty%}
+        <tr colspan="4">
+          <p>Sin Remisiones por cancelar en el mes de {{mes}}</p>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+
+  </div>
+
+</div>
+
+{% endblock imprimir %}
+{% block script %}
+<script>
+  $(function () {
+
+    setTimeout(function () {
+      window.print();
+    }, 500);
+    // -----window.onfocus = function () { setTimeout(function () { window.close(); }, 500); }
+
+  })
+</script>
+{% endblock script %}

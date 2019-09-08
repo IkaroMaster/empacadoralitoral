@@ -349,7 +349,8 @@ def CrearGrupo(request):
 										| Q(content_type_id=31)
 										| Q(content_type_id=23)
 										| Q(content_type_id=27)
-										| Q(content_type_id=20))
+										| Q(content_type_id=20)
+										| Q(content_type_id=19))
 	# pe = PrestamoEquipo.objects.filter(Q(estadoPrestamo = EstadoPrestamo.objects.get(pk = 1)))
 	print(permisos)
 	if request.method == 'POST':
@@ -403,7 +404,8 @@ def ModificarGrupo(request,pk):
 										| Q(content_type_id=31)
 										| Q(content_type_id=23)
 										| Q(content_type_id=27)
-										| Q(content_type_id=20))
+										| Q(content_type_id=20)
+										| Q(content_type_id=19))
 	if request.method == 'POST':
 		grupo_form = GrupoForm(request.POST,instance=grupoCargo)
 		if grupo_form.is_valid:
