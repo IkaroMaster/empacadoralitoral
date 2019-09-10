@@ -43,7 +43,7 @@ class DetallePrestamoEquipo(models.Model):
 	descripcion			= models.CharField(max_length=100,blank=True, null=True)
 	equipo				= models.ForeignKey(Equipo,on_delete=models.PROTECT,related_name='equipos')
 	tapadera			= models.IntegerField(blank=True, null=True)
-
+	devuelto			= models.BooleanField(default=False, blank=True, null=True)
 	def __str__(self):
 		return "{}".format(self.equipo)
 	class Meta:

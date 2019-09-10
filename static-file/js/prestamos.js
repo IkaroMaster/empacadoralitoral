@@ -1,5 +1,22 @@
 $(function () {
 
+    var requeridos = $(document).find(':required').filter(':visible');
+    console.log(requeridos);
+    requeridos.each(function(r, requerido){
+        $(requerido).hide();
+        // var obj = {
+        //     'id':$(devuelto).attr('data-id'),
+        //     'devuelto':$(devuelto).is(':checked')
+        // }
+        // datos.push(obj);
+    });
+    const notificacion = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 5000
+    });
+
     $('.detalle-formset').formset({
         addText: 'Agregar ',
         deleteText: '',
@@ -199,58 +216,77 @@ $(function () {
         }, 'json');
 
         $('#modalDetallePrestamo').modal('show');
-
     });
+
+    
+    
     $('#terminarPrestamo').on('click', function () {
 
         var fecha = $(document).find('.fechaEntrada').val();
         var id = $(document).find('.fechaEntrada').attr('data-id');
-        Swal.fire(id);
+        if(fecha != ''){
+            
+            var devueltos = $('.modalCuerpoPrestamo').find('.devueltos').filter(':visible');
+            var datos = [];
+            devueltos.each(function(d, devuelto){
+                var obj = {
+                    'id':$(devuelto).attr('data-id'),
+                    'devuelto':$(devuelto).is(':checked')
+                }
+                datos.push(obj);
+            });
 
-        $.ajax({
-            type: "POST",
-            url: "/prestamos/ajax_terminar_prestamo/",
-            // headers: {
-            //     'Authorization': "Token " + localStorage.access_token
-            // },
-            data: {
-                id: id,
-                fecha: fecha,
-                csrfmiddlewaretoken: getCookie('csrftoken')
-            },
-            success: function (data) {
-                $('#modalDetallePrestamo').modal('hide');
-                $('#fila-' + data.id).prop('class', 'table-success');
-                $('#col_estado-' + data.id).html('Terminado');
-                // $('#col_estado-'+data.id).html('<p style="display: none">3</p>'+
-                // '<i class="fas fa-check"></i>');
-                $('button[data-terminar=' + data.id + ']').hide();
-                // $('button[data-editar = '+id+']').css('display', 'none');
-                $('button[data-anular=' + data.id + ']').hide();
-                // $('#col_prestamo-'+data.id).html('None');
-                $('button[data-editar = ' + data.id + ']').css('display', 'none');
-                $('a[data-id = ' + id + ']').css('display', 'none');
-                Swal.fire({
-                    // 'Anulado!',
-                    title: 'La remision ha sido terminada exitosamente.',
-                    type: 'success',
-                    showConfirmButton: false,
-                    timer: 2000
-                });
+            $.ajax({
+                type: "POST",
+                url: "/prestamos/ajax_terminar_prestamo/",
+                // headers: {
+                //     'Authorization': "Token " + localStorage.access_token
+                // },
+                data: {
+                    id: id,
+                    fecha: fecha,
+                    datos : JSON.stringify(datos),
+                    csrfmiddlewaretoken: getCookie('csrftoken')
+                },
+                success: function (data) {
+                    $('#modalDetallePrestamo').modal('hide');
+                    $('#fila-' + data.id).prop('class', 'table-success');
+                    $('#col_estado-' + data.id).html('Terminado');
+                    
+                    $('button[data-terminar=' + data.id + ']').hide();
+                    $('button[data-anular=' + data.id + ']').hide();
+                    $('button[data-editar = ' + data.id + ']').css('display', 'none');
+                    $('a[data-id = ' + id + ']').css('display', 'none');
+                    Swal.fire({
+                        // 'Anulado!',
+                        title: 'La remision ha sido terminada exitosamente.',
+                        type: 'success',
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
 
-            },
-            error: function (data) {
-                Swal.fire({
-                    type: 'error',
-                    title: 'Oops...',
-                    text: '¡Algo salió mal!',
-                    showConfirmButton: false,
-                    timer: 3000
-                    // footer: '<a href>Why do I have this issue?</a>'
-                })
-            }
+                },
+                error: function (data) {
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: '¡Algo salió mal!',
+                        showConfirmButton: false,
+                        timer: 3000
+                        // footer: '<a href>Why do I have this issue?</a>'
+                    })
+                }
 
-        });
+            });
+        }else{
+            $(document).find('.fechaEntrada').focus();
+            notificacion.fire({
+                type:'error',
+                title:'Fecha de entrada requerida'
+            });
+        }
+
+        
     });
 
     $('.ver').click('click', function () {

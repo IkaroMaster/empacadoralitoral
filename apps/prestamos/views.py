@@ -283,21 +283,33 @@ def terminarPrestamo_asJson(request):
 			prestamo = PrestamoEquipo.objects.get(pk=request.POST['id'])
 			prestamo.estadoPrestamo = EstadoPrestamo.objects.get(pk = 4)
 			prestamo.fechaEntrada = request.POST['fecha']
-			prestamo.save()
-			detallePrestamo = DetallePrestamoEquipo.objects.filter(prestamoEquipo= prestamo)
-			for r in detallePrestamo:
-				e = Equipo.objects.get(pk=r.equipo.pk)
-				e.estado = Estado.objects.get(pk=2)
-				e.save()
-			return JsonResponse({'id':prestamo.pk,'fecha':prestamo.fechaEntrada})
+			# prestamo.save()
+			detallePrestamo = DetallePrestamoEquipo.objects.filter(prestamoEquipo= prestamo).count()
+			array_datos = request.POST['datos']
+			datos = json.loads(array_datos)
+			print(datos)
+			if detallePrestamo == len(datos):
+				for d in datos:
+					if d['devuelto']:
+						e = Equipo.objects.get(pk=d['id'])
+						e.estado = Estado.objects.get(pk=2)
+						# e.save()
+						dp = DetallePrestamoEquipo.objects.get(prestamoEquipo= prestamo,equipo=e)
+						dp.devuelto = True
+						# dp.save()
+						
+			# for r in detallePrestamo:
+			# 	e = Equipo.objects.get(pk=r.equipo.pk)
+			# 	e.estado = Estado.objects.get(pk=2)
+			# 	# e.save()
+				return JsonResponse({'id':prestamo.pk,'fecha':prestamo.fechaEntrada})
 		else:
 			numPrestamo = request.GET['id']
 			prestamo = PrestamoEquipo.objects.get(pk=numPrestamo)
 			detallePrestamo = DetallePrestamoEquipo.objects.filter(prestamoEquipo= prestamo)
 			htmlPrestamo ='' 
 			htmlPrestamo +='''
-				<span class="alert alert-warning alert-dismissible ">Atencion: Solo debe finalizar el prestamo si todo el equipo prestado ha sido devuelto.</span>
-				<br><br>
+				<div class="alert alert-warning alert-dismissible ">Alerta: Desmarque el equipo que no ha sido devuelto.</div>
 				<div class="row container">
 					<div class="col-6"><p><strong>Numero de prestamo: </strong> {}</p></div>
 					<div class="col-6"><p><strong>Empresa: </strong> {}</p></div>
@@ -310,9 +322,10 @@ def terminarPrestamo_asJson(request):
 				<table class="table table-bordered">
 						<thead>
 						<tr>
+							<th scope="col">Estado</th>
 							<th scope="col">Equipo</th>
 							<th scope="col">Tapadera</th>
-							<th scope="col">Descripcion</th>
+							<th scope="col">Descripción</th>
 						</tr>
 						</thead>
 						<tbody>	
@@ -321,11 +334,21 @@ def terminarPrestamo_asJson(request):
 			for dP in detallePrestamo:
 				htmlDetallePrestamo +='''
 				<tr>
+					<td>
+						<div class="pretty p-svg p-round p-plain p-jelly">
+							<input data-id="{}" class="devueltos" type="checkbox" checked />
+							<div class="state p-success">
+								<span class="svg" uk-icon="icon: check"></span>
+								<label>Devuelto</label>
+							</div>
+						</div>
+						
+					</td>
 					<td scope="row">{}</td>
 					<td>{}</td>
 					<td>{}</td>
 				</tr>
-				'''.format(dP.equipo,dP.tapadera,dP.descripcion)
+				'''.format(dP.equipo.pk,dP.equipo,dP.tapadera,dP.descripcion)
 
 			fecha = ''
 			if prestamo.fechaEntrada:
@@ -343,13 +366,13 @@ def terminarPrestamo_asJson(request):
 					<div class="col-6"><p><strong>Fecha de salida: </strong> {}</p></div>
 					<div class="col-6">
 						<label><strong>Fecha de entrada</strong></label>
-						<input type="date" class="fechaEntrada form-control datetimepicker" value="{}"  data-id="{}" >
+						<input type="date" class="fechaEntrada form-control datetimepicker" value="{}" id="fechaEntrada" data-id="{}" required >
 					</div>
 					<div class="col-12"><p><strong>Observaciones: </strong> {}</p></div>
 				</div>
 			'''.format(prestamo.placa,prestamo.horaSalida,prestamo.fechaSalida,fecha,prestamo.numPrestamo,prestamo.observaciones)
 
-			print(htmlDetallePrestamo)
+			# print(htmlDetallePrestamo)
 
 			data = {
 					'htmlPrestamo':htmlPrestamo,
@@ -388,19 +411,24 @@ def detallePrestamo_asJson(request):
 						<th scope="col">Equipo</th>
 						<th scope="col">Tapadera</th>
 						<th scope="col">Descripcion</th>
+						<th scope="col">Devuelto</th>
 					</tr>
 					</thead>
 					<tbody>	
 										
 		'''
 		for dP in detallePrestamo:
+			devuelto = 'No'
+			if dP.devuelto:
+				devuelto = 'Si'
 			htmlDetallePrestamo +='''
 			<tr>
 				<td scope="row">{}</td>
 				<td>{}</td>
 				<td>{}</td>
+				<td>{}</td>
 			</tr>
-			'''.format(dP.equipo,dP.tapadera,dP.descripcion)
+			'''.format(dP.equipo,dP.tapadera,dP.descripcion,devuelto)
 
 		fecha = ''
 		if prestamo.fechaEntrada:
