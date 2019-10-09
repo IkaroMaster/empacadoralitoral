@@ -1,10 +1,20 @@
 $(function () {
-    const Notificacion = Swal.mixin({
+    const notificacion = Swal.mixin({
         toast: true,
         position: 'top-end',
         showConfirmButton: false,
-        timer: 4000
+        timer: 5000
     });
+
+    var requeridos = $(document).find(':required');
+    requeridos.each(function (r, requerido) {
+        if ($(requerido).prop('tagName') == 'SELECT') {
+            $(requerido).selectpicker('setStyle', 'border border-warning');
+        } else {
+            $(requerido).addClass('border border-warning');
+        }
+    });
+    
     $('.editarVehiculo').click(function (e) {
         var id = $(this).attr('data-id');
         Swal.fire({
@@ -23,7 +33,7 @@ $(function () {
             } else {
 
 
-                Notificacion.fire({
+                notificacion.fire({
                     title: 'Operación cancelada por el usuario.',
                     type: 'error',
                 })
@@ -55,7 +65,7 @@ $(function () {
                         },
                         success: function (data) {
                             
-                            Notificacion.fire({
+                            notificacion.fire({
                                 title:'El vehiculo con placa '+id+' ha sido eliminado exitosamente.',
                                 type:'success',
                             });
@@ -76,7 +86,7 @@ $(function () {
         
                     }); 
                 }else{
-                    Notificacion.fire({
+                    notificacion.fire({
                         title: 'Operación cancelada por el usuario.',
                         type: 'error',
                     })
@@ -120,4 +130,72 @@ $(function () {
         $('#id_modelo').upperCase();
         
     }
+    // Creacion de Nuevos registros mediante ajax
+    $('#agregarEmpresa').click(function (e) {
+        e.preventDefault();
+        $.get($(this).attr('data-url'), {
+            uso: 2
+        }, function (data) {
+            $('#modalNuevoContenedor').empty().html(data.html);
+            $('#modalNuevo').find('#id_tipoCompania option').each(function () {
+                if ($(this).val() != 2) {
+                    $(this).prop('disabled', 'true');
+                } else {
+                    $(this).prop('selected', 'True');
+                }
+            });
+            var d = $(document).find('#id_tipoCompania').selectpicker({
+                size: 3,
+            });
+            d.selectpicker('refresh');
+            $('#guardarNuevo').attr('class','btn btn-primary nuevaEmpresa');
+
+            var requeridos = $('#modalNuevoContenedor').find(':required');
+            requeridos.each(function (r, requerido) {
+                if ($(requerido).prop('tagName') == 'SELECT') {
+                    $(requerido).selectpicker('setStyle', 'border border-warning');
+                } else {
+                    $(requerido).addClass('border border-warning');
+                }
+            });
+            if ($('#modalNuevoContenedor').find('#id_nombre').length) {
+                $('#modalNuevoContenedor').find('#id_nombre').upperFirstAll();
+                $('#modalNuevoContenedor').find('#id_direccion').upperFirstAll();
+                new Cleave('#id_abreviatura', {
+                    blocks: [10],
+                    uppercase: true
+                });
+            }
+            $('#modalNuevo').modal('show');
+        });
+    });
+
+    $('#modalNuevo').on('click','.nuevaEmpresa',function () {
+        var form = $(document).find('#formNuevo');
+        // $(form).submit();
+        console.log(form);
+        $(document).find('#formNuevo').submit(function (e) {
+            e.preventDefault();
+            $.ajax({
+                type: $(this).attr('method'),
+                url: $(this).attr('action'),
+                data: $(this).serialize(),
+                success: function (response) {
+                    $('#id_empresaFlete').empty().html(response.html).selectpicker('refresh');
+                    $('#modalNuevo').modal('hide');
+                    notificacion.fire({
+                        type: 'success',
+                        title: 'Empresa Registrada'
+                    })
+                },
+                error: function (response) {
+                    $('#modalNuevo').modal('hide');
+                    notificacion.fire({
+                        type: 'error',
+                        title: 'Error al registrar la empresa'
+                    })
+                }
+            });
+        });
+    });
 });

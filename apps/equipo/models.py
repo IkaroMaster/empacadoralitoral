@@ -55,7 +55,7 @@ class Equipo(models.Model):
 				tamano = 'P'
 		elif self.tamano.pk == 3:
     			tamano = 'N'
-		return "{}  ({} {}.) ".format(self.numero,self.nombre,tamano)
+		return "{} ({})".format(self.numero,self.nombre)
 	class Meta:
 		verbose_name_plural = 'Equipos'
 		permissions = [

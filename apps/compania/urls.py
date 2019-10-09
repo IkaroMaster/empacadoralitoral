@@ -20,4 +20,10 @@ urlpatterns = [
 
     #AJAX
     path('estado/',views.EstadoCompania_asJson,name='estado_compania-url'),
+
+    #AGREGAR REGISTROS
+    path('agregarEmpresa/',views.agregarEmpresa_asJson,name='agregar-empresa-url'),
+    path('agregarFinca/',views.agregarFinca_asJson,name='agregar-finca-url'),
+    path('agregarLaguna/',views.agregarLaguna_asJson,name='agregar-laguna-url'),
+
 ]

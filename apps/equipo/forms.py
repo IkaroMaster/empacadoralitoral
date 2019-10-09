@@ -6,6 +6,13 @@ class EquipoForm(ModelForm):
 	class Meta:
 		model = Equipo
 		fields = '__all__'
+		widgets = {
+			'informacion': forms.Textarea(attrs = {
+			'class' 	: 'form-control',
+				'rows': 1,
+				'placeholder' : 'Aa',
+			})
+		}
 
 class EquipoBaseForm(ModelForm):
 	class Meta:

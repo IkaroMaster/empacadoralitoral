@@ -4,28 +4,18 @@ Prestamo de Equipo
 {% endblock titulo %}
 
 {% block l3 %}
-active
+bg-success
 {% endblock l3 %}
 
 
-    
-    
 
-    
+
+
+
 {% block cuerpo %}
 <style></style>
 <div class="card text-center">
-    <div class="panel-heading bg-primary">
-        <h4 class="panel-title text-light">
-            {% if crear%}
-            Crear Préstamo de Equipo
-            {% elif editar %}
-            Editar Préstamo Nō {{prestamo}}
-            {% elif listado %}
-            Prestamos de Equipo
-            {% endif %}
-        </h4>
-    </div>
+
     <div class="card-header">
         <ul class="nav nav-tabs card-header-tabs">
 
@@ -46,6 +36,12 @@ active
         </ul>
     </div>
     <div class="card-body ">
+
+        <h4 class=""><strong>{% if crear%}Crear Préstamo de Equipo{% elif editar %}Editar Préstamo Nō
+                {{prestamo}}{% elif listado %}Prestamos de Equipo{% endif %}</strong>
+        </h4>
+
+        {% if crear or editar %}
         <div class="container " style="{{estilos.o1}}">
             {% if messages %}
             {% for message in messages %}
@@ -55,98 +51,124 @@ active
             {% endfor %}
             {% endif %}
 
-            <form method="post" id="formPrestamo">
+            <form method="post" id="formPrestamo" class="was-validatedx">
                 <input type="hidden" name="crear" id="crear" data-prestamo="{{prestamo}}" value="{{ crear }}">
                 {% csrf_token %}
-                <div class="row">
+                <div class="form-row">
 
-                    <div class="col-md-2 ">
-                        <label>Numero</label>
+                    <!-- <div class="col-md-6 form-row"> -->
+                    <div class="col-md-2 input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon1">Numero</span>
+                        </div>
+                        <!-- <label>Numero</label> -->
                         {{prestamo_form.numPrestamo}}
+                        <div class='valid-feedback'>Looks good!</div>
                     </div>
-
-                    <div class="col-md-3 ">
-                        <label>Empresa</label>
-                        <div class="input-group">
-                            {{prestamo_form.compania}}
-                            <a id="agregarEmpresa" data-url="{% url 'compania:agregar-empresa-url' %}" class="btn-lg text-success fas fa-plus ml-1 p-0 pl-1 pt-2 "></a>
-                            
+                    <div class="col-md-4 input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon1">Fecha de Salida</span>
                         </div>
-                    </div>
-                    <div class="col-md-3">
-                        <label>Conductor</label>
-                        <div class="input-group">
-                            {{prestamo_form.conductor}}
-                            <a id="agregarConductor" data-url="{% url 'conductor:agregar-conductor-url' %}" class="btn-lg text-success fas fa-plus ml-1 p-0 pl-1 pt-2"></a>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <label>Entrego</label>
-                        <div class="input-group">
-                            {{prestamo_form.empleado}}
-                            <a id="agregarEmpleado" data-url="{% url 'empleado:agregar-empleado-url' %}" class="btn-lg text-success fas fa-plus ml-1 p-0 pl-1 pt-2"></a>
-                        </div>
-                    </div>
-                    
-                        
-                    
-                    
-
-                    {{ detallePrestamo_formset.management_form }}
-                     <p><strong>A continuación ingrese la descripción del prestamo:</strong> </p>
-                    <div class="col-md-12 table-responsive">
-                        <table class="table table-striped table-hover table-bordered ">
-                            <thead class="thead-inverse">
-                                <tr>
-                                    <th>Equipo Asignado</th>
-                                    <th>Tapadera</th>
-                                    <th>Descripción</th>
-                                    <th>Acción</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for dp in detallePrestamo_formset %}
-                                <tr class="detalle-formset">
-
-                                    <td>{{dp.equipo}}</td>
-                                    <td>{{dp.tapadera}}</td>
-                                    <td>{{dp.descripcion}}</td>
-                                    <td></td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="col-md-3">
-                        <label>Numero de placa</label>
-                        <div class="input-group">
-                            {{prestamo_form.placa}}
-                            <a id="agregarVehiculo" data-url="{% url 'vehiculo:agregar-vehiculo-url' %}" class="btn-lg text-success fas fa-plus ml-1 p-0 pl-1 pt-2"></a>
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-3">
-                        <label>Hora de salida</label>
-                        {{prestamo_form.horaSalida}}
-                    </div>
-                    <div class="col-md-3">
-                        <label>Fecha de salida</label>
                         {{prestamo_form.fechaSalida}}
                     </div>
-                    <div class="col-md-3 ">
-                        <label>Fecha de Entrada</label>
+                    <div hidden class="col-md-3 input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon1">Fecha de Entrada</span>
+                        </div>
                         {{prestamo_form.fechaEntrada}}
                         <br>
                     </div>
-                    <div class=" col-md-12">
-                        <label>Observaciones</label>
+                    <div class="col-md-3 input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon1">Hora de Salida</span>
+                        </div>
+                        {{prestamo_form.horaSalida}}
+                    </div>
+
+                    <div class="col-md-3 input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon1">Empresa</span>
+                        </div>
+                        {{prestamo_form.compania}}
+                        <a id="agregarEmpresa" data-url="{% url 'compania:agregar-empresa-url' %}"
+                            class="btn-lg text-success fas fa-plus ml-1 p-0 pl-1 pt-2 "></a>
+                    </div>
+                    <div class="col-md-4 input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon1">Conductor</span>
+                        </div>
+                        {{prestamo_form.conductor}}
+                        <a id="agregarConductor" data-url="{% url 'conductor:agregar-conductor-url' %}"
+                            class="btn-lg text-success fas fa-plus ml-1 p-0 pl-1 pt-2"></a>
+
+                    </div>
+
+                    <div class="col-md-4 input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon1">Numero de placa</span>
+                        </div>
+                        {{prestamo_form.placa}}
+                        <a id="agregarVehiculo" data-url="{% url 'vehiculo:agregar-vehiculo-url' %}"
+                            class="btn-lg text-success fas fa-plus ml-1 p-0 pl-1 pt-2"></a>
+                    </div>
+                    <div class="col-md-4 input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon1">Entrego</span>
+                        </div>
+                        {{prestamo_form.empleado}}
+                        <a id="agregarEmpleado" data-url="{% url 'empleado:agregar-empleado-url' %}"
+                            class="btn-lg text-success fas fa-plus ml-1 p-0 pl-1 pt-2"></a>
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon1">Observaciones</span>
+                        </div>
                         {{prestamo_form.observaciones}}
                     </div>
-                    <div class="col-md-3" id="divEstado">
-                        <label>Estado</label>
-                        {{prestamo_form.estadoPrestamo}}
-                    </div>
+
+
+                    <!-- </div> -->
+
                 </div>
+
+
+
+
+
+                {{ detallePrestamo_formset.management_form }}
+
+                <div class=" table-responsive">
+                    <p class="m-0"><strong>A continuación ingrese la descripción del prestamo:</strong></p>
+                    <table class="table table-striped table-hover table-bordered ">
+                        <thead class="thead-inverse">
+                            <tr>
+                                <th>Equipo Asignado</th>
+                                <th>Tapadera</th>
+                                <th>Descripción</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for dp in detallePrestamo_formset %}
+                            <tr class="detalle-formset ">
+
+                                <td class="m-0 p-0">{{dp.equipo}}</td>
+                                <td class="m-0 p-0">{{dp.tapadera}}</td>
+                                <td class="m-0 p-0">{{dp.descripcion}}</td>
+                                <td class="m-0 p-0"></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+
+
+                <div class="col-md-3" id="divEstado">
+                    <label>Estado</label>
+                    {{prestamo_form.estadoPrestamo}}
+                </div>
+
                 <br>
                 <input type="submit" id="enviarFormularioPrestamo" hidden>
             </form>
@@ -158,12 +180,13 @@ active
             </center>
 
         </div>
+        {% else %}
         <div style="{{estilos.o2}}">
             <div class="row">
                 <div class="col-md-3 mb-1">
                     {% if perms.prestamos.add_prestamoequipo %}
-                    <a class="btn btn-success {{ clases.o1 }}" href="{% url 'prestamos:crear_prestamo-url' %}">Nuevo
-                        Prestamo</a>
+                    <i id="add_prestamoequipo"></i>
+                    <!-- <a class="btn btn-success {{ clases.o1 }} " href="{% url 'prestamos:crear_prestamo-url' %}">Nuevo Prestamo</a> -->
                     {% endif %}
                 </div>
             </div>
@@ -176,7 +199,6 @@ active
                             <th>Vehículo</th>
                             <th>Hora de Salida</th>
                             <th>Fecha de Salida</th>
-                            <th>Fecha de entrada</th>
                             <th>Conductor</th>
                             <th>Empleado</th>
                             <th>Estado</th>
@@ -196,14 +218,7 @@ active
                                 {% endif %}</td>
                             <td>{{p.placa}}</td>
                             <td>{{p.horaSalida}}</td>
-                            <td>{{p.fechaSalida}}</td>
-                            <td>
-                                {% if p.fechaEntrada %}
-                                {{p.fechaEntrada}}
-                                {% else %}
-                                -
-                                {% endif %}
-                            </td>
+                            <td>{{p.fechaSalida|date:'Y/m/d'}}</td>
                             <td>{{p.conductor}}</td>
                             <td>{{p.empleado}}</td>
                             <td id="col_estado-{{p.numPrestamo}}">
@@ -273,7 +288,7 @@ active
                 ...
             </div>
             <div class="modal-footer">
-                <button id="boton">boton</button>
+                <!-- <button id="boton">boton</button> -->
                 <button type="button" class="btn-lg btn-success fas fa-check" id="terminarPrestamo"></button>
                 <button type="button" class="btn-lg btn-secondary fa fa-times" id="cerrarModal"
                     data-dismiss="modal"></button>
@@ -281,9 +296,15 @@ active
         </div>
     </div>
 </div>
+{% endif %}
 
 
-<!-- Modal -->
+
+
+
+
+{% if crear or editar %}
+    <!-- Modal -->
 <div class="modal fade" id="modalNuevo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
     aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -293,11 +314,14 @@ active
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                <button id="guardarNuevo" type="submit" form="formNuevo"  class="btn btn-primary">Guardar</button>
+                <button id="guardarNuevo" type="submit" form="formNuevo" class="btn btn-primary">Guardar</button>
             </div>
         </div>
     </div>
 </div>
+{% endif %}
+    
+
 
 {% endblock cuerpo %}
 {% load static %}

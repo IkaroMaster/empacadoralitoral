@@ -1,8 +1,43 @@
 $(document).ready(function () {
+
+    const notificacion = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 5000
+    });
+
+    var requeridos = $(document).find(':required');
+    requeridos.each(function (r, requerido) {
+        if ($(requerido).prop('tagName') == 'SELECT') {
+            $(requerido).selectpicker('setStyle', 'border border-warning');
+        } else {
+            $(requerido).addClass('border border-warning');
+        }
+    });
+
+
+    $('#id_guia').prop('readonly','true');
+    $('#id_tipoRemision').change(function(){
+        var seleccionado = $(this).find(':selected');
+        if (seleccionado.val()=='1') {
+            $('#id_guia').removeAttr('readonly');
+            $('#id_guia').prop('required','true');
+            $('#id_guia').addClass('border border-warning');
+
+        }else{
+            $('#id_guia').prop('readonly','true');
+            $('#id_guia').removeAttr('required');
+            $('#id_guia').removeClass('border border-warning');
+
+        }
+    })
+
+
     $('.detalle-formset').formset({
         addText: 'Nuevo Detalle',
         deleteText: 'x',
-        addCssClass: 'add-row btn btn-outline-primary',
+        addCssClass: 'add-row btn btn-outline-primary mt-2',
         deleteCssClass: 'delete-row',
         animateForms: true,
         formTemplate: null,
@@ -242,41 +277,23 @@ $(document).ready(function () {
             num: num
         }, function (data) {
 
-            // alert(data.compania);
-            // alert(data.conductor);
-            // alert(data.placa);
-
-            // ASIGNADO A (AJAX):
+            
             $('#id_compania').val(data.compania);
             $('#id_compania').prop('disabled', true);
             $('#id_compania').selectpicker('refresh');
-            // $('#id_compania').selectpicker('toggle');
-
-
-            // readonly('#id_compania',false);
-            // readonly('#id_compania',true);
-            // $('#id_compania').readonly(true);
-
-            // $("#compania").prop('disabled',true);
-            // $('#id_compania option:not(:selected)').prop('disabled',true);
-            // $('#id_compania option:(:selected)').prop('disabled',false);
-            // $("#compania").find("select").prop("disabled",true);
-            // $('#id_compania').attr('disabled', 'disabled');
-            // x$('#id_compania').prop('disabled', true);
-
-            // RECIBIO (AJAX):
+            
             $('#id_conductor').val(data.conductor);
             $('#id_conductor').prop('disabled', true);
             $('#id_conductor').selectpicker('refresh');
-            // readonly('#id_conductor');
-            // $('#id_conductor').prop('disabled', true);
-
-            // PLACA (AJAX):
+            
             $('#id_placa').val(data.placa);
             $('#id_placa').prop('disabled', true);
             $('#id_placa').selectpicker('refresh');
-            // readonly('#id_placa');
-            // $('#id_placa').prop('disabled', true);
+
+            $('#agregarEmpresa').hide();
+            $('#agregarConductor').hide();
+            $('#agregarVehiculo').hide();
+            
         }, 'json');
     });
 
@@ -556,5 +573,256 @@ $(document).ready(function () {
             });
         }
     }
+
+    // Creacion de Nuevos registros mediante ajax
+    $('#agregarEmpresa').click(function (e) {
+        e.preventDefault();
+        $.get($(this).attr('data-url'), {
+            uso: 1
+        }, function (data) {
+            $('#modalNuevoContenedor').empty().html(data.html);
+            $('#modalNuevo').find('#id_tipoCompania option').each(function () {
+                if ($(this).val() != 1) {
+                    $(this).prop('disabled', 'true');
+                } else {
+                    $(this).prop('selected', 'True');
+                }
+            });
+            var d = $(document).find('#id_tipoCompania').selectpicker({
+                size: 3,
+            });
+            d.selectpicker('refresh');
+            $('#guardarNuevo').attr('class','btn btn-primary nuevaEmpresa');
+
+            var requeridos = $('#modalNuevoContenedor').find(':required');
+            requeridos.each(function (r, requerido) {
+                if ($(requerido).prop('tagName') == 'SELECT') {
+                    $(requerido).selectpicker('setStyle', 'border border-warning');
+                } else {
+                    $(requerido).addClass('border border-warning');
+                }
+            });
+            $('#modalNuevo').modal('show');
+        });
+    });
+
+    $('#modalNuevo').on('click','.nuevaEmpresa',function () {
+        var form = $(document).find('#formNuevo');
+        // $(form).submit();
+        console.log(form);
+        $(document).find('#formNuevo').submit(function (e) {
+            e.preventDefault();
+            $.ajax({
+                type: $(this).attr('method'),
+                url: $(this).attr('action'),
+                data: $(this).serialize(),
+                success: function (response) {
+                    $('#id_compania').empty().html(response.html).selectpicker('refresh');
+                    $('#modalNuevo').modal('hide');
+                    notificacion.fire({
+                        type: 'success',
+                        title: 'Empresa Registrada'
+                    })
+                },
+                error: function (response) {
+                    $('#modalNuevo').modal('hide');
+                    notificacion.fire({
+                        type: 'error',
+                        title: 'Error al registrar la empresa'
+                    })
+                }
+            });
+        });
+    });
+
+    //------- --------- ---------- -----------------
+    $('#agregarConductor').click(function (e) {
+        e.preventDefault();
+        $.get($(this).attr('data-url'), function (data) {
+            //######## FORMATEO DE CAMPOS
+             //if ($('#modalNuevoContenedor').find('#id_numIdentidad').length) {
+                
+            // }
+            $('#modalNuevoContenedor').empty().html(data.html);
+            new Cleave('#id_numIdentidad', {
+                blocks: [4, 4, 5],
+                delimiter: '-',
+                numericOnly: true
+            });
+
+            $('#modalNuevoContenedor').find('#id_nombre1').upperFirstAll();
+            $('#modalNuevoContenedor').find('#id_nombre2').upperFirstAll();
+            $('#modalNuevoContenedor').find('#id_apellido1').upperFirstAll();
+            $('#modalNuevoContenedor').find('#id_apellido2').upperFirstAll();
+
+            
+            $('#guardarNuevo').attr('class','btn btn-primary nuevoConductor');
+
+            var requeridos = $('#modalNuevoContenedor').find(':required');
+            requeridos.each(function (r, requerido) {
+                if ($(requerido).prop('tagName') == 'SELECT') {
+                    $(requerido).selectpicker('setStyle', 'border border-warning');
+                } else {
+                    $(requerido).addClass('border border-warning');
+                }
+            });
+            $('#modalNuevo').modal('show');
+        });
+
+
+    });
+
+    $('#modalNuevo').on('click','.nuevoConductor',function () {
+        var form = $(document).find('#formNuevo');
+        // $(form).submit();
+        // console.log(form);
+        $(document).find('#formNuevo').submit(function (e) {
+            e.preventDefault();
+            $.ajax({
+                type: $(this).attr('method'),
+                url: $(this).attr('action'),
+                data: $(this).serialize(),
+                success: function (response) {
+                    $('#id_conductor').empty().html(response.html);
+                    $('#id_conductor').selectpicker('refresh');
+                    $('#modalNuevo').modal('hide');
+                    notificacion.fire({
+                        type: 'success',
+                        title: 'Conductor Registrado'
+                    });
+                },
+                error: function (response) {
+                    $('#modalNuevo').modal('hide');
+                    notificacion.fire({
+                        type: 'error',
+                        title: 'Error al registrar el conductor'
+                    })
+                }
+            });
+        });
+    });
+
+    //------- --------- ---------- -----------------
+    $('#agregarVehiculo').click(function (e) {
+        e.preventDefault();
+        $.get($(this).attr('data-url'), function (data) {
+            
+            $('#modalNuevoContenedor').empty().html(data.html);
+
+            var requeridos = $('#modalNuevoContenedor').find(':required');
+            requeridos.each(function (r, requerido) {
+                if ($(requerido).prop('tagName') == 'SELECT') {
+                    $(requerido).selectpicker('setStyle', 'border border-warning');
+                } else {
+                    $(requerido).addClass('border border-warning');
+                }
+            });
+
+            $('#guardarNuevo').attr('class','btn btn-primary nuevoVehiculo');
+            $('#modalNuevo').modal('show');
+        });
+
+
+    });
+
+    $('#modalNuevo').on('click','.nuevoVehiculo',function () {
+
+        $(document).find('#formNuevo').submit(function (e) {
+            e.preventDefault();
+            $.ajax({
+                type: $(this).attr('method'),
+                url: $(this).attr('action'),
+                data: $(this).serialize(),
+                success: function (response) {
+                    $('#id_placa').empty().html(response.html);
+                    $('#id_placa').selectpicker('refresh');
+                    $('#modalNuevo').modal('hide');
+                    notificacion.fire({
+                        type: 'success',
+                        title: 'Vehiculo Registrado'
+                    });
+                },
+                error: function (response) {
+                    $('#modalNuevo').modal('hide');
+                    notificacion.fire({
+                        type: 'error',
+                        title: 'Error al registrar el vehiculo'
+                    })
+                }
+            });
+        });
+    });
+
+    //------- --------- ---------- -----------------
+    $('#agregarEmpleado').click(function (e) {
+        e.preventDefault();
+        $.get($(this).attr('data-url'), function (data) {
+            
+            $('#modalNuevoContenedor').empty().html(data.html);
+
+            var requeridos = $('#modalNuevoContenedor').find(':required');
+            requeridos.each(function (r, requerido) {
+                if ($(requerido).prop('tagName') == 'SELECT') {
+                    $(requerido).selectpicker('setStyle', 'border border-warning');
+                } else {
+                    $(requerido).addClass('border border-warning');
+                }
+            });
+
+            new Cleave('#id_codEmpleado', {
+                blocks: [4],
+                numericOnly: true
+            });
+            new Cleave('#id_identidad', {
+                blocks: [4,4,5],
+                delimiter:'-',
+                numericOnly: true
+            });
+            new Cleave('#id_telefono', {
+                blocks: [4,4],
+                delimiter:'-',
+                numericOnly: true
+            });
+            $('#id_nombre').upperFirst();
+            $('#id_segundoNombre').upperFirst();
+            $('#id_apellido').upperFirst();
+            $('#id_segundoApellido').upperFirst();
+
+            $('#guardarNuevo').attr('class','btn btn-primary nuevoEmpleado');
+            $('#modalNuevo').modal('show');
+        });
+
+
+    });
+
+    $('#modalNuevo').on('click','.nuevoEmpleado',function () {
+
+        $(document).find('#formNuevo').submit(function (e) {
+            e.preventDefault();
+            $.ajax({
+                type: $(this).attr('method'),
+                url: $(this).attr('action'),
+                data: $(this).serialize(),
+                success: function (response) {
+                    $('#id_entrego').empty().html(response.html);
+                    $('#id_entrego').selectpicker('refresh');
+                    $('#modalNuevo').modal('hide');
+                    notificacion.fire({
+                        type: 'success',
+                        title: 'Empleado Registrado'
+                    });
+                },
+                error: function (response) {
+                    $('#modalNuevo').modal('hide');
+                    notificacion.fire({
+                        type: 'error',
+                        title: 'Error al registrar el empleado'
+                    })
+                }
+            });
+        });
+    });
+
+
 
 });

@@ -12,4 +12,8 @@ urlpatterns = [
     #JSON
     path("ajax_eliminar_vehiculo/", views.EliminarVehiculo_asJson, name ="eliminarVehiculo_asJson-url"),
 
+     #AGREGAR REGISTROS
+    path('agregarVehiculo/',views.agregarVehiculo_asJson,name='agregar-vehiculo-url'),
+
+
 ]

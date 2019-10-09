@@ -57,7 +57,7 @@ LOCAL_APPS = [
     'apps.hielo_proceso',
     'apps.camaron',
     # DEBUG TOOLBAR
-    # 'debug_toolbar',
+    'debug_toolbar',
     #-----------------
 ]
 # Application definition
@@ -73,7 +73,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     # 'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     # DEBUG TOOLBAR
-    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     #---------------
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -222,15 +222,15 @@ EMAIL_HOST_PASSWORD = 'Litoral100'
 
 
 # DEBUG TOOLBAR
-# def show_toolbar(request):
-#     if not request.is_ajax() and request.user and request.user.username == 'admin':
-#         return True
-#     return False
+def show_toolbar(request):
+    if not request.is_ajax() and request.user and request.user.username == 'admin':
+        return True
+    return False
 
-# DEBUG_TOOLBAR_CONFIG = {
+DEBUG_TOOLBAR_CONFIG = {
 
-#     'SHOW_TOOLBAR_CALLBACK' : 'empacadoralitoral.settings.show_toolbar',
+    'SHOW_TOOLBAR_CALLBACK' : 'empacadoralitoral.settings.show_toolbar',
 
-# }
+}
 #----------------------------------
 

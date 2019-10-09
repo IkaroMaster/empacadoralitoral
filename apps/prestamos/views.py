@@ -21,6 +21,7 @@ from ..equipo.models import *
 from ..compania.models import  *
 from ..remision.models import  *
 from .forms import *
+from  ..conductor.models import *
 #FUNCIONES
 from apps.funciones import renderizado
 
@@ -34,6 +35,8 @@ class ListadoPrestamoList(ListView):
 	model = PrestamoEquipo
 	context_object_name = 'prestamos'
 	template_name='prestamos/prestamos.html'
+	# El de ordenar se encarga datatable
+	# ordering = ['-fechaSalida']
 	def get_context_data(self, **kwargs):
 		estilos, clases = renderizado(2, 4)
 		ctx = super(ListadoPrestamoList, self).get_context_data(**kwargs)
@@ -129,6 +132,7 @@ def CrearPrestamo(request):
 	em = Compania.objects.filter(tipoCompania = TipoCompania.objects.get(pk = 1))
 	comboboxBasico(prestamo_form,'compania','Seleccione...','true',em)
 	comboboxBasico(prestamo_form,'placa','Seleccione...','true',[])
+	con = Conductor.objects.filter(activo=True)
 	comboboxBasico(prestamo_form,'conductor','Seleccione...','true',[])
 	comboboxBasico(prestamo_form,'empleado','Seleccione...','true',[])
 	# capitalize(prestamo_form,'observaciones')
@@ -358,6 +362,7 @@ def terminarPrestamo_asJson(request):
 				fecha = formats.date_format(r,"SHORT_DATETIME_FORMAT")
 
 			htmlDetallePrestamo += '''
+				
 					</tbody>
 				</table>
 				<div class="row container">

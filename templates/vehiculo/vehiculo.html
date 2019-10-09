@@ -25,7 +25,9 @@ active
 
             {% if perms.vehiculo.add_vehiculo or perms.vehiculo.change_vehiculo%}
             <li class="nav-item">
-                <a class="nav-link {{ clases.o1 }}" href="{%if perms.vehiculo.add_vehiculo and not editar%}{% url 'vehiculo:crear-url' %}{%endif%}">Gestión de Vehiculo</a>
+                <a class="nav-link {{ clases.o1 }}"
+                    href="{%if perms.vehiculo.add_vehiculo and not editar%}{% url 'vehiculo:crear-url' %}{%endif%}">Gestión
+                    de Vehiculo</a>
             </li>
             {% endif %}
 
@@ -76,7 +78,12 @@ active
                         <br><br>
 
                         <label for="">Empresa:</label>
-                        {{vehiculo_form.empresaFlete}}
+                        <div class="input-group">
+                            {{vehiculo_form.empresaFlete}}
+                            <a id="agregarEmpresa" data-url="{% url 'compania:agregar-empresa-url' %}"
+                                class="btn-lg text-success fas fa-plus ml-1 p-0 pl-1 pt-2 "></a>
+
+                        </div>
                         <br><br>
 
                     </div>
@@ -195,6 +202,23 @@ active
                     Cerrar</button>
                 <button class="btn btn-warning fas fa-print" id="imprimirReporte">Imprimir</button>
                 <!-- <a href="" class="btn btn-warning fas fa-print" id="imprimirReporte" target="_blank"> Imprimir</a> -->
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="modalNuevo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div id="modalNuevoContenedor" class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button id="guardarNuevo" type="submit" form="formNuevo" class="btn btn-primary">Guardar</button>
             </div>
         </div>
     </div>

@@ -1,54 +1,65 @@
 {% extends "base_out.html" %}
 
 {% block titulo %}
-	Cambiar Contraseña
+Cambiar Contraseña
 {% endblock titulo %}
 
 {% block contenido %}
-	<br><br>
-	<div class="panel panel-primary">
-	  <div class="panel-heading">
-	    <h3 class="panel-title">Cambiar Contraseña: {{ user }}</h3>
-	  </div>
-	  <div class="panel-body">
+<br><br>
+<div class="container row">
+	
+		
+	<div class="col-md-3"></div>
+	<div class="col-md-6">
+		<h3 class="panel-title">Cambiar Contraseña: {{ user }}</h3>
 		<form action="{% url 'seguridad:cambiar_contrasena' %}" method="post">
 			{% csrf_token %}
 
-		<p>Ingrese una nueva contraseña para <strong>{{ user }}</strong>.</p>
+			<p>Ingrese una nueva contraseña para <strong>{{ user }}</strong>.</p>
 
-		<fieldset class="module aligned">
+			<fieldset class="module aligned">
 
-		<div class="form-group">
-		  
-		  <label class="required" for="id_password1">
-		  Contraseña:</label> <input autofocus="" class="form-control" style="width:300px" id="id_password1" name="password1" type="password" required minlength="8" />
-		  
-		  <p class="help"><ul><li>Su contraseña no puede ser muy similar a su otra información personal.</li><li>Su contraseña debe contener al menos 8 caracteres.</li><li>Su contraseña no puede ser una contraseña de uso común.</li><li>Su contraseña no puede ser completamente numérica.</li></ul></p>
-		  
-		</div>
+				<div class="form-group">
 
-		<div class="form-group">
-		  
-		  <label class="required" for="id_password2">Repetir Contraseña:</label> <input id="id_password2" class="form-control" style="width:300px" name="password2" type="password" required  minlength="8"/>
-		  
-		  <p class="help">Ingrese la misma contraseña que antes, para verificación.</p>
-		  
-		</div>
+					<label class="required" for="id_password1">
+						Contraseña:</label> <input autofocus="" class="form-control" style="width:300px"
+						id="id_password1" name="password1" type="password" required minlength="8" />
 
-		</fieldset>
+					<p class="help">
+						<ul>
+							<li>Su contraseña no puede ser muy similar a su otra información personal.</li>
+							<li>Su contraseña debe contener al menos 8 caracteres.</li>
+							<li>Su contraseña no puede ser una contraseña de uso común.</li>
+							<li>Su contraseña no puede ser completamente numérica.</li>
+						</ul>
+					</p>
 
-		<div class="form-group">
-		<input type="submit" class="btn btn-primary" value="Cambiar contraseña" class="default" />
-		<br>
-		<br>
-		  {% if message %}
-	  	<div style="font-size:14px" class="alert alert-danger" role="alert">
- 		 {{ message }}
-		</div>
-	  {% endif %}
-		</div>
-		</div>
-		</form>
-	  </div>
+				</div>
+
+				<div class="form-group">
+
+					<label class="required" for="id_password2">Repetir Contraseña:</label> <input id="id_password2"
+						class="form-control" style="width:300px" name="password2" type="password" required
+						minlength="8" />
+
+					<p class="help">Ingrese la misma contraseña que antes, para verificación.</p>
+
+				</div>
+
+			</fieldset>
+
+			<div class="form-group">
+				<input type="submit" class="btn btn-primary" value="Cambiar contraseña" class="default" />
+				<br>
+				<br>
+				{% if message %}
+				<div style="font-size:14px" class="alert alert-danger" role="alert">
+					{{ message }}
+				</div>
+				{% endif %}
+			</div>
 	</div>
+	</form>
+</div>
+</div>
 {% endblock  %}

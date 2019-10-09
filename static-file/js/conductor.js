@@ -1,11 +1,21 @@
 $(function () {
 
-    const Notificacion = Swal.mixin({
+    const notificacion = Swal.mixin({
         toast: true,
         position: 'top-end',
         showConfirmButton: false,
-        timer: 4000
+        timer: 5000
     });
+
+    var requeridos = $(document).find(':required');
+    requeridos.each(function (r, requerido) {
+        if ($(requerido).prop('tagName') == 'SELECT') {
+            $(requerido).selectpicker('setStyle', 'border border-warning');
+        } else {
+            $(requerido).addClass('border border-warning');
+        }
+    });
+    
 
     $('#tablajs').on('click','.eliminar',function () {
         var id = $(this).attr('data-id');
@@ -38,14 +48,14 @@ $(function () {
                             $('#estado-'+id).html('Inactivo');
                             $('button[data-id=' + id + ']').prop('class','eliminar btn btn-success fas fa-check');
                             $('button[data-id=' + id + ']').attr('data-estado','False');
-                            Notificacion.fire({
+                            notificacion.fire({
                                 title: 'El conductor ' + nombre + ' ha sido desactivado exitosamente.',
                                 type: 'success',
                             });
 
                         },
                         error: function (data) {
-                            Notificacion.fire({
+                            notificacion.fire({
                                 type: 'error',
                                 title: 'Oops... No se pudo desactivar a '+nombre+'.',
                             });
@@ -53,7 +63,7 @@ $(function () {
 
                     });
                 }else{
-                    Notificacion.fire({
+                    notificacion.fire({
                         title: 'Operación cancelada por el usuario.',
                         type: 'error',
                     })
@@ -88,14 +98,14 @@ $(function () {
                             $('button[data-id=' + id + ']').attr('data-estado','True');
                             // $('button[data-id=' + id + ']').prop('class','eliminar btn btn-success fas fa-check');
                             // $('button[data-id=' + id + ']').attr('data-estado','False');
-                            Notificacion.fire({
+                            notificacion.fire({
                                 title:'El conductor ' + nombre + ' ha sido activado exitosamente.',
                                 type: 'success',
                             });
 
                         },
                         error: function (data) {
-                            Notificacion.fire({
+                            notificacion.fire({
                                 type: 'error',
                                 title: 'Oops... No se pudo activar a '+nombre+'.',
                             });
@@ -103,7 +113,7 @@ $(function () {
 
                     });
                 }else{
-                    Notificacion.fire({
+                    notificacion.fire({
                         title: 'Operación cancelada por el usuario.',
                         type: 'error',
                     })
@@ -132,7 +142,7 @@ $(function () {
             } else {
 
 
-                Notificacion.fire({
+                notificacion.fire({
                     title: 'Operación cancelada por el usuario.',
                     type: 'error',
                 })

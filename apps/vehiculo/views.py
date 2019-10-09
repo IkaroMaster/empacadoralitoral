@@ -134,3 +134,78 @@ def EliminarVehiculo_asJson(request):
 	else:
 		print('remision no anulada porque la peticion no cumple con los requisitos.')
 	
+
+@login_required()
+@permission_required('vehiculo.add_vehiculo',raise_exception=True)
+def agregarVehiculo_asJson(request):
+	if request.method == 'GET':
+		html = ''
+		html += '''
+		<h1>Registrar Vehiculo</h1>
+		<form class="row"  method="POST" id="formNuevo" action="/vehiculo/agregarVehiculo/">
+				<input type="hidden" name="csrfmiddlewaretoken" value="{}">
+				
+					<div class="col-md-6">
+						<label for="">Placa:</label>
+						<input type="text" name="placa" maxlength="7" class="form-control" pattern="{}" title="La placa debe contener 3 letras y 4 números ej. AAA000" required="" id="id_placa">
+						<br>
+
+						<label for="">Marca:</label>
+						<input type="text" name="marca" maxlength="30" class="form-control" required="" id="id_marca">
+						<br>
+
+						<label for="">Modelo:</label>
+						<input type="text" name="modelo" maxlength="30" class="form-control" id="id_modelo">
+						<br>
+
+					</div>
+
+					<div class="col-md-6">
+
+						<label for="">Año:</label>
+						<input type="number" name="anio" min="0" class="form-control" required="" id="id_anio">
+						<br>
+
+						<label for="">Color:</label>
+						<select name="color" class="selectpicker form-control show-tick" data-live-search="true" data-size="4" required="" id="id_color" >
+						'''.format(csrf.get_token(request),'[A-Z]{3}[0-9]{4}')
+		colores = Color.objects.all()
+		for c in colores:
+			html += '<option value="{}" >{}</option>'.format(c.pk,c)
+		html += '''
+						</select>
+						<br><br>
+						<label for="">Empresa:</label>
+						<select name="empresaFlete" class="selectpicker form-control show-tick" data-live-search="true" data-size="4" required="" id="id_empresaFlete">'''
+
+		empresas = Compania.objects.all()
+		for e in empresas:
+			html += '<option value="{}" >{}</option>'.format(e.pk,e)				
+		html += '''</select>
+
+					</div>
+				<br>
+			</form>
+		'''
+		return JsonResponse({'html':html})
+
+	elif request.method == 'POST':
+		vehiculo_form = VehiculoForm(request.POST)
+		if vehiculo_form.is_valid():
+			vehiculo = vehiculo_form.save()
+			vehiculos = Vehiculo.objects.all()
+			html = ''
+			for v in vehiculos:
+				activo = ''
+				if v.pk == vehiculo.pk:
+					activo = 'selected'
+				html += '<option value="{}" {}>{}</option>'.format(v.pk,activo,v)
+			return JsonResponse({'html':html})
+		else:
+			response = JsonResponse({'error':"información brindada incompleta."})
+			response.status_code = 403
+			return response
+	else:
+		return render(request, '404.html')
+
+		

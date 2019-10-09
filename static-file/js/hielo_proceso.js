@@ -1,4 +1,21 @@
 $(function () {
+
+    const notificacion = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 5000
+    });
+
+    var requeridos = $(document).find(':required');
+    requeridos.each(function (r, requerido) {
+        if ($(requerido).prop('tagName') == 'SELECT') {
+            $(requerido).selectpicker('setStyle', 'border border-warning');
+        } else {
+            $(requerido).addClass('border border-warning');
+        }
+    });
+
     $('#tablajs').DataTable({
         "order":[[ 0, 'desc' ]],
         "scrollY":      '35vh',

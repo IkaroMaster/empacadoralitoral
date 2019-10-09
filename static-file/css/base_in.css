@@ -1,84 +1,47 @@
-/* navbar */
-.navbar-default {
-    background-color: #C4E3F5;
-    border-color: #31708F;
-    box-shadow: 1px 1px 10px #9D9A9A;
+body{background:#D7D5D3;}
+#wrapper{padding:30px 0px;}
+.navbar-expand-lg .navbar-nav.side-nav{flex-direction: column;}
+/* Targetas con efecto */
+.card{margin-bottom: 15px; border-radius:0; box-shadow: 0 3px 5px rgba(0,0,0,.1); }
+
+/* SOMBREADO DE LA BARRA SUPERIOR */
+.header-top{box-shadow: 0 3px 5px rgba(0,0,0,.1)}
+
+/* CUANDO EL NAVEGADOR SE MINIMIZA OCULTA LOS ICONOS SECUNDARIOS */
+.leftmenutrigger, .navbar-nav li a .shortmenu{display: none}
+
+/* TITULO DE LAS TARGETAS */
+.card-title{ font-size: 28px}
+
+
+@media(min-width:992px) {
+
+/* MANTIENE EL CONTENIDO BAJO EL SLIDENAV */
+#wrapper{padding: 60px 5px 5px 75px; }
+
+/* CREA EL EFECTO DE MOSTRAR EL MENU DESPLEGABLE LATERAL */
+.navbar-nav.side-nav:hover {left:0;width:200px}
+
+/* CREA LAS DISTANCIAS ENTRE LOS ELEMENTOS DEL MENU DESPLEGABLE LATERAL */
+.side-nav li a {padding: 10px}
+
+/* Muestra los iconos en el Menu Desplegable Lateral cuando esta contraido  */
+.navbar-nav li a .shortmenu {float: right;display: block;opacity: 1}
+
+/*OCULTA LOS ICONOS DEL MENU DESPLEGABLE LATERAL CUANDO ESTA VISIBLE  */
+.navbar-nav.side-nav:hover li a .shortmenu{opacity: 0}
+
+/* COLORES Y DISEÑOS DEL MENU DESPLEGABLE LATERAL */
+.navbar-nav.side-nav{background: #585f66;box-shadow: 2px 1px 2px rgba(0,0,0,.1);position:fixed;top:56px;flex-direction: column!important;left:-240px;width:300px;overflow-y:auto;bottom:0;overflow-x:hidden;padding-bottom:40px}
+
 }
-/* title */	
-    /* navbar */
-.navbar-default {
-    background-color: #C4E3F5;
-    border-color: #31708F;
-    box-shadow: 1px 1px 10px #9D9A9A;
-}
-/* title */
-.navbar-default .navbar-brand {
-    color: #31708F;
-    font-weight: bold;
-}
-.navbar-default .navbar-brand:hover,
-.navbar-default .navbar-brand:focus {
-    color: #5E5E5E;
-}
-/* link */
-.navbar-default .navbar-nav > li > a {
-    color: #31708F;
-    font-weight: bold;
-}
-.navbar-default .navbar-nav > li > a:hover,
-.navbar-default .navbar-nav > li > a:focus {
-        color: white;
-    font-weight: bold;
-    background-color: #31708F 
-}
-.navbar-default .navbar-nav > .active > a, 
-.navbar-default .navbar-nav > .active > a:hover, 
-.navbar-default .navbar-nav > .active > a:focus {
-    color: white;
-    font-weight: bold;
-    background-color: 	#31708F;
-}
-.navbar-default .navbar-nav > .open > a, 
-.navbar-default .navbar-nav > .open > a:hover, 
-.navbar-default .navbar-nav > .open > a:focus {
-    color: white;
-    font-weight: bold;
-    background-color: #31708F 
-}
-/* caret */
-.navbar-default .navbar-nav > .dropdown > a .caret {
-    border-top-color: #777;
-    border-bottom-color: #777;
-}
-.navbar-default .navbar-nav > .dropdown > a:hover .caret,
-.navbar-default .navbar-nav > .dropdown > a:focus .caret {
-    border-top-color: #333;
-    border-bottom-color: #333;
-}
-.navbar-default .navbar-nav > .open > a .caret, 
-.navbar-default .navbar-nav > .open > a:hover .caret, 
-.navbar-default .navbar-nav > .open > a:focus .caret {
-    border-top-color: #555;
-    border-bottom-color: #555;
-}
-/* mobile version */
-.navbar-default .navbar-toggle {
-    border-color: #DDD;
-}
-.navbar-default .navbar-toggle:hover,
-.navbar-default .navbar-toggle:focus {
-    background-color: #DDD;
-}
-.navbar-default .navbar-toggle .icon-bar {
-    background-color: #31708F;
-}
-@media (max-width: 767px) {
-    .navbar-default .navbar-nav .open .dropdown-menu > li > a {
-        color: #777;
-    }
-    .navbar-default .navbar-nav .open .dropdown-menu > li > a:hover,
-    .navbar-default .navbar-nav .open .dropdown-menu > li > a:focus {
-        color: #333;
-    }
-}
-    
+
+/* EFECTO DE DESPLAZAMIENTO AL MENU DESPLEGABLE LATERAL */
+.animate{-webkit-transition:all .2s ease-in-out;-moz-transition:all .2s ease-in-out;-o-transition:all .2s ease-in-out;-ms-transition:all .2s ease-in-out;transition:all .2s ease-in-out}
+
+
+.navbar-nav li a svg{font-size: 25px;float: left;margin: 0 10px 0 5px;}
+
+/* SEPARADORES EN EL MENU DESPLEGABLE LATERAL */
+.side-nav li { border-bottom: 1px solid #50575d;}
+

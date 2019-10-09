@@ -166,10 +166,10 @@ active
                         <tr id="fila-{{e.pk}}" {% if e.usuario.is_active %} {% else %} class="table-danger" {% endif %}>
                             <td>{{ e.pk }}</td>
                             <td>{{ e.usuario }}</td>
-                            <td>{{ e.identidad }}</td>
-                            <td>{{ e.nombre }} {{e.apellido}}</td>
-                            <td>{{e.telefono}} </td>
-                            <td>{{e.usuario.email}}</td>
+                            <td class="identidad">{{ e.identidad }}</td>
+                            <td class="nombre">{{ e.nombre }} {{e.apellido}}</td>
+                            <td class="telefono">{{e.telefono}} </td>
+                            <td >{{e.usuario.email}}</td>
 
                             <td id="col_estado-{{ e.pk }}">
 
@@ -180,44 +180,57 @@ active
                                 {% endif %}
                             </td>
 
-                            <td>{{e.cargo}} </td>
+                            <td class="cargo">{{e.cargo}} </td>
 
                             <td>
-
+                                
+                                
+                                    
                                 {% if e.usuario.is_active %}
 
-                                {% if perms.empleado.estado_empleado %}
-                                <button class="desactivar btn btn-danger fas fa-user-minus" data-desactivar="{{ e.pk }}"
-                                    data-nombre="{{e.nombre}} {{e.apellido}}"></button>
-                                {% endif %}
+                                    {% if perms.empleado.estado_empleado %}
+                                    <button class="desactivar btn btn-danger fas fa-user-minus" data-desactivar="{{ e.pk }}"
+                                        data-nombre="{{e.nombre}} {{e.apellido}}"></button>
+                                    {% endif %}
 
+                                    {% if not e.actualizoContrasena %}
+                                        {% if perms.empleado.obtener_contrasena %}
+                                        <button type="submit" class="imprimir btn btn-warning fas fa-key"
+                                            form="formObtenerContrasena-{{e.pk}}"></button>
+                                        {% endif %}
+                                    {% endif %}
+
+                                    {% if e.actualizoContrasena %}
+                                        {% if perms.empleado.restablecer_contrasena %}
+                                        <button type="button" class="validarEmpleado btn btn-primary fas fa-user-lock"
+                                            data-empleado="{{e.pk}}" data-toggle="modal" data-target="#modalReporte"></button>
+                                        {% endif %}
+                                    {% endif %}
+                                    
                                 {% else %}
-                                {% if perms.empleado.estado_empleado %}
-                                <button class="activar btn btn-success fas fa-check " data-activar="{{ e.pk }}"
-                                    data-nombre="{{e.nombre}} {{e.apellido}}"></button>
-                                {% endif %}
+                                    {% if perms.empleado.estado_empleado %}
+                                        
+                                        {% if  e.usuario%}
+                                            <button class="activar btn btn-success fas fa-user-check " data-activar="{{ e.pk }}"
+                                         data-nombre="{{e.nombre}} {{e.apellido}}"></button>
+                                         {% else %}
+                                         <button class="crearUsuario btn btn-success fas fa-user-plus " data-activar="{{ e.pk }}"
+                                         data-empleado="{{e.pk}}" data-url="{% url 'empleado:agregar-usuario-url' %}"></button>
+                                        {% endif %}
+                                            
+                                    
+                                    {% endif %}
                                 {% endif %}
                                 {% if perms.empleado.change_empleado %}
-                                <a href="{% url 'empleado:modificar-url' e.pk %}" class="btn btn-info fas fa-pen "
+                                    {% if e.usuario %}
+                                    <a href="{% url 'empleado:modificar-url' e.pk %}" class="btn btn-info fas fa-user-edit "
                                     data-editar="{{ e.pk }}"></a>
+                                    {% else %}
+                                    <a href="{% url 'empleado:editar-empleado-url' %}" class="editarEmpleado btn btn-info fas fa-user-edit "
+                                    data-editar="{{ e.pk }}"></a>
+                                    {% endif %}
                                 {% endif %}
-
-                                {% if e.usuario.is_active %}
-                                {% if not e.actualizoContrasena %}
-                                {% if perms.empleado.obtener_contrasena %}
-                                <button type="submit" class="imprimir btn btn-warning fas fa-key"
-                                    form="formObtenerContrasena-{{e.pk}}"></button>
-                                {% endif %}
-                                {% endif %}
-
-                                {% if e.actualizoContrasena %}
-                                {% if perms.empleado.restablecer_contrasena %}
-                                <button type="button" class="validarEmpleado btn btn-primary fas fa-user-lock"
-                                    data-empleado="{{e.pk}}" data-toggle="modal" data-target="#modalReporte"></button>
-                                {% endif %}
-                                {% endif %}
-                                {% endif %}
-
+                                
 
                                 <form action="{% url 'empleado:reporte_contrasena-url' %}" method="post" target="_blank"
                                     id="formObtenerContrasena-{{e.pk}}">
@@ -380,6 +393,21 @@ active
     </div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="modalNuevo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div id="modalNuevoContenedor" class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button id="guardarNuevo" type="submit" form="formNuevo"  class="btn btn-primary">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock cuerpo %}
 {% load static %}
 {% block script %}

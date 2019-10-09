@@ -169,7 +169,7 @@ def CrearCosecha(request):
 			html2 +='''
 			<option value="{}">{}</option>
 			'''.format(f.pk,f)
-		return JsonResponse({'html':html,'html2':html2})
+		return JsonResponse({'html':html,'html2':html2,'empresa':remision.compania.pk})
 	else:
 		empleado = Empleado.objects.get(usuario = request.user)
 		cosecha_form = CosechaForm(initial = {'entrego':empleado,'registro':request.user})
@@ -417,6 +417,7 @@ def ModificarCosecha(request,pk):
 		'htmlFincas' : htmlFincas,
 		'editar':True,
 		'pk':cosecha.pk,
+		'empresa':cosecha.remision.compania.pk
 	}
 
 	return render(request, 'camaron/camaron.html', context)

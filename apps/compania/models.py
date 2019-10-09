@@ -13,9 +13,9 @@ class TipoCompania(models.Model):
 		return self.tipo
 
 class Compania(models.Model):
-	nombre		= models.CharField(max_length=50)
+	nombre		= models.CharField(max_length=50,unique=True )
 	direccion	= models.CharField(max_length=200)
-	abreviatura		= models.CharField(max_length=10,blank=True, null=True)
+	abreviatura		= models.CharField(max_length=10,blank=True, null=True, unique= True)
 	tipoCompania 	= models.ForeignKey(TipoCompania, on_delete=models.PROTECT)
 	estado			= models.BooleanField(default= True)
 

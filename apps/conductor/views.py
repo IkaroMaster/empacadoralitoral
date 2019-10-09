@@ -35,6 +35,7 @@ from datetime import datetime, date, time, timedelta
 from django.conf import settings
 from django.middleware import csrf
 
+
 @login_required()
 @permission_required('conductor.view_conductor',raise_exception=True)
 def Conductores(request):
@@ -203,3 +204,79 @@ def Fecha_asJson(request):
 		return JsonResponse(data)
 	else:
 		pass
+
+
+
+@login_required()
+@permission_required('conductor.add_conductor',raise_exception=True)
+def agregarConductor_asJson(request):
+	if request.method == 'GET':
+		html = ''
+		html += '''
+		<h1>Registrar Conductor</h1>
+		<form id="formNuevo" class="row" method="POST" action="/conductor/agregarConductor/">
+			<input type="hidden" name="csrfmiddlewaretoken" value="{}">
+			<div class="col-md-4">
+				<label for="">Num. Identidad:</label>
+				<input type="text" name="numIdentidad" maxlength="15" class="form-control" required="" id="id_numIdentidad">
+				<br>
+			</div>	
+			<div class="col-md-5">
+				<label for="">F. Nacimiento:</label>
+				<input type="date" name="fechaNacimiento" class="form-control" id="id_fechaNacimiento">
+				<br>
+			</div>
+			<div class="col-md-3">
+				<label for="">Celular:</label>
+				<input type="number" name="celular" class="form-control" id="id_celular">
+				<br>
+			</div>
+			<div class="col-md-6 ">
+
+
+				<label for="">Primer Nombre:</label>
+				<input type="text" name="nombre1" maxlength="30" class="form-control" title="Debe de contener solo letras." required="" id="id_nombre1">
+				<br>
+
+				<label for="">Primer Apellido:</label>
+				<input type="text" name="apellido1" maxlength="30" class="form-control" required="" id="id_apellido1">
+				<div style="display:none">
+					<input type="checkbox" name="activo" class="form-control" id="id_activo" checked="">
+				</div>
+				<br>
+
+
+			</div>
+			<div class="col-md-6">
+
+				<label for="">Segundo Nombre:</label>
+				<input type="text" name="nombre2" maxlength="30" class="form-control" id="id_nombre2">
+				<br>
+
+				<label for="">Segundo Apellido:</label>
+				<input type="text" name="apellido2" maxlength="30" class="form-control" id="id_apellido2">
+				<br>
+			</div>
+			
+		</form>
+		'''.format(csrf.get_token(request))
+		return JsonResponse({'html':html})
+
+	elif request.method == 'POST':
+		conductor_form = ConductorForm(request.POST)
+		if conductor_form.is_valid():
+			conductor = conductor_form.save()
+			conductores = Conductor.objects.filter(activo=True)
+			html = ''
+			for c in conductores:
+				activo = ''
+				if c.pk == conductor.pk:
+					activo = 'selected'
+				html += '<option value="{}" {}>{}</option>'.format(c.pk,activo,c)
+			return JsonResponse({'html':html})
+		else:
+			response = JsonResponse({'error':"información brindada incompleta."})
+			response.status_code = 403
+			return response
+	else:
+		return render(request, '404.html')

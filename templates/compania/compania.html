@@ -5,8 +5,12 @@ Empresas
 {% endblock titulo %}
 
 {% block l4 %}
-active
+bg-success
 {% endblock l4 %}
+
+{% block estilos %}
+<link rel="stylesheet" href="//cdn.materialdesignicons.com/4.4.95/css/materialdesignicons.min.css">
+{% endblock estilos %}
 
 {% block cuerpo %}
 <div class="card text-center">
@@ -96,65 +100,66 @@ active
         </ul>
     </div>
     <div class="card-body">
-        
+
         {% if crearCompania or editarCompania %}
-            
-        
-            
+
+
+
         <div style="{{estilos.o1}}">
 
             <form action=" {% url 'compania:guardar_compania-url' %}" class="row" method="POST">
                 {% csrf_token %}
                 <input type="hidden" name="id_o" value="{{ id_o }}">
 
-                <div class="col-md-6 ">
-                    <label for="id_nombre">
-                        <font style="vertical-align: inherit;">
-                            <font style="vertical-align: inherit;">Nombre:</font>
-                        </font>
-                    </label>
-                    <p>{{form.nombre}}</p>
+                <div class="col-md-6 row">
+                    <div class="col-md-12">
+                        <label for="">Nombre:</label>
+                        {{form.nombre}}
+                    </div>
+                    <div class="col-md-12">
+                        <br>
+                        <label for="">Dirección:</label>
+                        {{form.direccion}}
+                    </div>
+                    <div class="col-md-6">
+                        <br>
+                        <label for="">Abreviatura:</label>
+                        {{form.abreviatura}}
+                    </div>
+                    <div class="col-md-6">
+                        <br>
+                        <label for="">Tipo de Compañía:</label>
+                        {{form.tipoCompania}}
+                    </div>
+                    <div class="col-md-12">
+                        <br>
+                        <label for="id_estado" class="text-center">Estado: </label>
+                        <br>
 
-                    <label for="id_direccion">
-                        <font style="vertical-align: inherit;">
-                            <font style="vertical-align: inherit;">Dirección:</font>
-                        </font>
-                    </label>
-                    <p>{{form.direccion}}</p>
+                        <div class="pretty p-icon p-round p-pulse">
+                            {{form.estado}}
+                            <!-- <div class="state p-success">
+                                <span class="svg" uk-icon="icon: check"></span>
+                                <label>Activo</label>
+                            </div> -->
 
-                    <label for="id_abreviatura">
-                        <font style="vertical-align: inherit;">
-                            <font style="vertical-align: inherit;">Abreviatura:</font>
-                        </font>
-                    </label>
-                    <p>{{form.abreviatura}}</p>
-
-                    <label for="id_tipoCompania">
-                        <font style="vertical-align: inherit;">
-                            <font style="vertical-align: inherit;">Tipo de Compañía:</font>
-                        </font>
-                    </label>
-                    <p>{{form.tipoCompania}}</p>
-
-                    <label for="id_estado" class="text-center">Estado: </label>
-                    <div class="pretty p-icon p-round p-pulse">
-                        {{form.estado}}
-                        <div class="state p-success">
-                            <i class="icon mdi mdi-check"></i>
-                            <label>Activo</label>
+                            <div class="state p-success">
+                                <i class="icon mdi mdi-check"></i>
+                                <label>Activo</label>
+                            </div>
                         </div>
                     </div>
-                    <br><br>
+
+
+
                 </div>
                 <div class=" col-md-6"></div>
 
                 <div class="col-md-6">
+                    <br>
                     <a href="{% url 'compania:compania-url' 2 %}" class="btn btn-secondary">Cancelar</a>
-                    <input class="btn btn-success" type="submit" value="{% if crearCompania %}
-                    Guardar
-                    {% else  %}
-                    Modificar
-                    {% endif %}"><br>
+                    <input class="btn btn-success" type="submit"
+                        value="{% if crearCompania %}Guardar{% else  %}Modificar{% endif %}"><br>
                 </div>
 
 
@@ -163,9 +168,9 @@ active
             </form>
         </div>
         {% endif %}
-        
+
         {% if listadoCompanias %}
-        
+
         <div style="{{estilos.o2}}">
             <div class="row">
                 <div class="col-md-3 mb-1">
@@ -236,24 +241,52 @@ active
             </div>
 
         </div>
-            
+
         {% endif %}
-        {% if crearFinca or editarFinca %}            
+        {% if crearFinca or editarFinca %}
         <div style="{{estilos.o3}}">
             <form action=" {% url 'compania:guardar_finca-url' %}" class="row" method="POST">
                 {% csrf_token %}
                 <input type="hidden" name="id_o" value="{{ id_o }}">
-                <div class="col-md-6">
-                    <label class="text-center">Código de Finca:</label>
-                    <p>{{form.codFinca}}</p>
-                    <label class="text-center">Nombre:</label>
-                    <p>{{form.nombre}}</p>
-                    <label class="text-center">Abreviatura:</label>
-                    <p>{{form.abreviatura}}</p>
-                    <label class="text-center">Dirección:</label>
-                    <p>{{form.direccion}}</p>
-                    <label class="text-center">Empresa:</label>
-                    <p>{{form.compania}}</p>
+                <div class="col-md-6 ">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <label class="text-center">Código de Finca:</label>
+                            {{form.codFinca}}
+                        </div>
+                        <div class="col-md-7">
+                            <label class="text-center">Abreviatura:</label>
+                            {{form.abreviatura}}
+
+                        </div>
+                        <div class="col-md-12">
+                            <br>
+                            <label class="text-center">Nombre:</label>
+                            {{form.nombre}}
+                        </div>
+                        <div class="col-md-12">
+                            <br>
+                            <label class="text-center">Dirección:</label>
+                            {{form.direccion}}
+                        </div>
+                        <div class="col-md-12">
+                            <br>
+                            <label class="text-center">Empresa:</label>
+                            <div class="input-group">
+                                {{form.compania}}
+                                <a id="agregarEmpresa" data-url="{% url 'compania:agregar-empresa-url' %}"
+                                    class="btn-lg text-success fas fa-plus ml-1 p-0 pl-1 pt-2 "></a>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <br>
+
+
+
+
 
                     <a href="{% url 'compania:compania-url' 4 %}" class="btn btn-secondary">Cancelar</a>
                     <input class="btn btn-success" type="submit" value="Guardar"><br>
@@ -263,8 +296,8 @@ active
             </form>
         </div>
         {% endif %}
-        
-        {% if listadoFincas %}    
+
+        {% if listadoFincas %}
         <div style="{{estilos.o4}}">
             <div class="row">
 
@@ -327,7 +360,7 @@ active
         </div>
         {% endif %}
         {% if crearLaguna or editarLaguna %}
-        
+
         <div style="{{estilos.o5}}">
 
 
@@ -341,23 +374,46 @@ active
                     <!--data-dismiss="alert"-->
                     {% endfor %}
                     {% endif %}
-                    <label class="text-center">Código de Laguna:</label>
-                    <p>{{laguna_form.codLaguna}}</p>
-                    <label class="text-center">Tamaño:</label>
-                    <p>{{laguna_form.tamano}}</p>
-                    <label class="text-center">Ubicación:</label>
-                    <p>{{laguna_form.ubicacion}}</p>
-                    <label class="text-center">Descripción:</label>
-                    <p>{{laguna_form.descripcion}}</p>
-                    <label class="text-center">Finca:</label>
-                    <p>{{laguna_form.finca}}</p>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="text-center">Código de Laguna:</label>
+                            {{laguna_form.codLaguna}}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="text-center">Tamaño(mts):</label>
+                            {{laguna_form.tamano}}
+                        </div>
+                        <div class="col-md-12">
+                            <br>
+                            <label class="text-center">Ubicación:</label>
+                            {{laguna_form.ubicacion}}
+                        </div>
+                        <div class="col-md-12">
+                            <br>
+                            <label class="text-center">Descripción:</label>
+                            {{laguna_form.descripcion}}
+                        </div>
+                        <div class="col-md-12">
+                            <br>
+                            <label class="text-center">Finca:</label>
+
+                            <div class="input-group">
+                                {{laguna_form.finca}}
+                                <a id="agregarFinca" data-url="{% url 'compania:agregar-finca-url' %}"
+                                    class="btn-lg text-success fas fa-plus ml-1 p-0 pl-1 pt-2"></a>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+
+
+                    <br>
 
                     <a href="{% url 'compania:lagunas-url'  %}" class="btn btn-secondary">Cancelar</a>
-                    <input type="button" class="btn btn-success" id="guardarLaguna" value="{% if crearLaguna %}
-                    Guardar
-                    {% elif editarLaguna %}
-                    Modificar
-                    {% endif %}"><br>
+                    <input type="button" class="btn btn-success" id="guardarLaguna"
+                        value="{% if crearLaguna %}Guardar{% elif editarLaguna %}Modificar{% endif %}"><br>
                     <input type="submit" id="enviarFormularioLaguna" hidden>
 
 
@@ -366,9 +422,9 @@ active
 
             </form>
         </div>
-            
+
         {% endif %}
-        
+
         {% if listadoLagunas %}
         <div style="{{estilos.o6}}">
             <div class="row">
@@ -428,6 +484,24 @@ active
     </div>
 
 </div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="modalNuevo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div id="modalNuevoContenedor" class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button id="guardarNuevo" type="submit" form="formNuevo" class="btn btn-primary">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock cuerpo %}
 
 {% load static %}

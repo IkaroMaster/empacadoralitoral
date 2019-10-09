@@ -46,12 +46,13 @@
 
 
     <div>
-
+        <br><br>
     </div>
     <script src="{% static 'bootstrap/js/jquery.min.js' %}"></script>
     <!-- <script src="{% static 'bootstrap/js/jquery.formset.js' %}"></script> -->
     <script src="{% static 'bootstrap/js/popper.min.js' %}"></script>
     <script src="{% static 'bootstrap-4.3.1/js/bootstrap.js' %}"></script>
+    <script src="{% static 'bootstrap-4.3.1/js/bootstrap.bundle.min.js' %}"></script>
 
     <script src="{% static 'bootstrap/js/bootstrap-select.min.js' %}"></script>
 
@@ -89,8 +90,12 @@
     <!--UIkit :iconos-->
     <script src="{% static 'js/uikit-3.2.0/js/uikit.min.js' %}"></script>
     <script src="{% static 'js/uikit-3.2.0/js/uikit-icons.min.js' %}"></script>
+
+    <!-- MOMENT.JS se utiliza para formatear hora y fechas -->
+    <script src="{% static 'js/moment.js' %}"></script>
+    <script src="{% static 'js/datetime.js' %}"></script>
     {% block script %}
-    {% endblock  %}
+    {% endblock script %}
 </body>
 
 </html>

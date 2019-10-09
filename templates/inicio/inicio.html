@@ -18,13 +18,13 @@
 
 
 {% block contenido %}
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top ">
+<nav class="navbar header-top fixed-top navbar-expand-lg navbar-dark  bg-primary ">
   <ul class="nav navbar-nav mr-auto">
     <li class="nav-item">
       <a class="navbar-brand" href="#">Control de Hielo de Empacadora Litoral</a>
     </li>
   </ul>
-  <ul class="nav navbar-nav ">
+  <ul class="nav navbar-nav m-0 ">
 
     <li class="nav-item ">
       <a class="navbar-brand" href="#">Bienvenido, {{user.get_full_name}}</a>
@@ -36,7 +36,7 @@
 
 <br>
 
-<div class="container-fluid row">
+<div class="container-fluid row mt-5">
 
 
 
@@ -155,7 +155,10 @@
 
 
 </div>
-
+<!-- <div>
+  <br>
+  <br>
+</div> -->
 <!-- <div id="resultado"></div>
 <div id="camera"></div>
  -->
@@ -166,6 +169,22 @@
  <!-- <script src="{%static 'js/quagga/quagga.min.js'%}"></script> -->
 
 <script>
+    $(document).ready(function() {
+      // executes when HTML-Document is loaded and DOM is ready
+       
+     
+       $( ".card" ).hover(
+       function() {
+         $(this).addClass('shadow').css('cursor', 'pointer'); 
+         $(this).addClass('alert-info').css('cursor', 'pointer'); 
+       }, function() {
+         $(this).removeClass('shadow');
+         $(this).removeClass('alert-info');
+       }
+     );
+       
+     // document ready  
+     });
   /*Quagga.init({
     inputStream: {
       name: "Live",

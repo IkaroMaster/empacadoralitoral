@@ -7,7 +7,7 @@
 {% block contenido %}
 	<br>
 	<div style="width:350px; margin: 70px auto;border:1px solid gray;border-radius: 5px; padding: 50px;background:#143458;color:white">
-		<h1>Login</h1>
+		<h2 class=" text-white">Inicio de Sesión</h2>
 		  <div class="dropdown-divider"></div>
 	  <form action="{% url 'seguridad:log_in-url' %}" method="post">
 	  		{% csrf_token %}

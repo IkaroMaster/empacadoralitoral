@@ -1,5 +1,22 @@
 $(function () {
 
+    const notificacion = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 5000
+    });
+
+    var requeridos = $(document).find(':required');
+    requeridos.each(function (r, requerido) {
+        if ($(requerido).prop('tagName') == 'SELECT') {
+            $(requerido).selectpicker('setStyle', 'border border-warning');
+        } else {
+            $(requerido).addClass('border border-warning');
+        }
+    });
+
+
     $("#limpiarFormEquipoBase").click(function (event) {
         $("#formEquipoBase")[0].reset();
     });

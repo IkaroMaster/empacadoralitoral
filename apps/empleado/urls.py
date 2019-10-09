@@ -17,7 +17,10 @@ urlpatterns = [
 
     #REPORTE
     path("contrasena/",views.ReporteContrasena, name="reporte_contrasena-url"),
-    # path("ajax_lagunas/", views.Lagunas_asJson, name ="lagunas-url"),
-    # path("modificar/<slug:pk>/",views.ModificarCosecha, name="modificar-url"),
-    # path("ajax_detalle_cosecha/", views.detalleCosecha_asJson, name ="ver-url"),
+    
+    #AGREGAR REGISTROS
+    path('agregarEmpleado/',views.agregarEmpleado_asJson,name='agregar-empleado-url'),
+    path('agregarUsuario/',views.agregarUsuario_asJson,name='agregar-usuario-url'),
+    path('editarEmpleado/',views.editarEmpleado_asJson,name='editar-empleado-url'),
+
 ]

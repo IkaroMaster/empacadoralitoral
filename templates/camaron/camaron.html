@@ -3,7 +3,7 @@
 Remisiones
 {% endblock titulo %}
 {% block l9 %}
-active
+bg-success
 {% endblock l9 %}
 {% block cuerpo %}
 <div class="card text-center">
@@ -47,92 +47,76 @@ active
             {% endfor %}
             {% endif %}
 
-            <form method="post" id="formCosecha">
+            <form class="row" method="post" id="formCosecha">
                 <input type="hidden" name="crear" id="crear" data-cosecha="{{pk}}" value="{{ crear }}">
                 {% csrf_token %}
-                <div class="row container border p-2">
-                    <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ">
-                        <div class="row">
 
-                            <div class="col-6">
-                                <label for="">Codigo:</label>
-                                {{cosecha_form.codCosecha}}
-                                <br>
-                            </div>
-                            <div class="col-6">
-                                <label for="">Remisión:</label>
-                                {{cosecha_form.remision}}
-                                <br><br>
-                            </div>
+                <div class="col-md-2">
+                    <label for="">Codigo:</label>
+                    {{cosecha_form.codCosecha}}
+                    <br>
+                </div>
+                <div class="col-md-3">
+                    <label for="">Remisión:</label>
+                    {{cosecha_form.remision}}
+                    <br><br>
+                </div>
 
-
-                        </div>
-
-                        <div class="row">
-                            <div class="col-6">
-                                <label for="">Finca:</label>
-                                <select name="" class="form-control selectpicker show-tick" data-live-search="true"
-                                    id="finca" required>
-                                    {% if htmlFincas %}
-                                    {{htmlFincas|safe}}
-                                    {% else %}
-                                    <option value="">Seleccione... </option>
-                                    {% endif %}
-                                </select>
-                            </div>
-                            <div class="col-6">
-                                <label for="">Laguna:</label>
-                                {{cosecha_form.laguna}}
-                            </div>
-                        </div>
-                        <label for="">Nombre:</label>
-                        {{cosecha_form.entrego}}
-                        <br>
-
-
-
-
-                        <!-- {{cosecha_form.estado}} -->
-
-
+                <div class="col-md-3">
+                    <label>Finca:</label>
+                    <div class="input-group">
+                        <select name="" class="form-control selectpicker show-tick" data-live-search="true" id="finca"
+                            required>
+                            {% if htmlFincas %}
+                            {{htmlFincas|safe}}
+                            {% else %}
+                            <option value="">Seleccione... </option>
+                            {% endif %}
+                        </select>
+                        <a hidden id="agregarFinca" data-url="{% url 'compania:agregar-finca-url' %}"
+                            class="btn-lg text-success fas fa-plus ml-1 p-0 pl-1 pt-2"></a>
                     </div>
-
-                    <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-
-
-                        <!-- <p>{{cosecha_form.prestamoEquipo.pk}}</p> -->
-
-                        <div class="" id="conductor">
-                            <div class="row">
-                                <div class="col-7">
-                                    <label for="">Fecha:</label>
-                                    {{cosecha_form.fecha}}
-                                    <br>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-6">
-                                    <label for="">Hora Inicio:</label>
-                                    {{cosecha_form.horaInicio}}
-                                    <br>
-                                </div>
-                                <div class="col-6">
-                                    <label for="">Hora Final:</label>
-                                    {{cosecha_form.horaFinal}}
-                                    <br>
-                                </div>
-                            </div>
-                            <div style="display: none">{{cosecha_form.registro}}</div>
-                        </div>
-
-                    </div>
-
-
                 </div>
 
 
+                <div class="col-md-3">
+                    <label for="">Laguna:</label>
+                    <div class="input-group">
+                        {{cosecha_form.laguna}}
+                        <a hidden id="agregarLaguna" data-url="{% url 'compania:agregar-laguna-url' %}"
+                            class="btn-lg text-success fas fa-plus ml-1 p-0 pl-1 pt-2"></a>
+                    </div>
+                    
+                    
+                </div>
 
+                <div class="col-md-3">
+                    <label for="">Fecha:</label>
+                    {{cosecha_form.fecha}}
+                    <br>
+                </div>
+
+                <div class="col-md-2">
+                    <label for="">Hora Inicio:</label>
+                    {{cosecha_form.horaInicio}}
+                    <br>
+                </div>
+                <div class="col-md-2">
+                    <label for="">Hora Final:</label>
+                    {{cosecha_form.horaFinal}}
+                    <br>
+                </div>
+                <div class="col-md-4">
+                    <label for="">Nombre:</label>
+                    <div class="input-group">
+                        {{cosecha_form.entrego}}
+                        <a id="agregarEmpleado" data-url="{% url 'empleado:agregar-empleado-url' %}" class="btn-lg text-success fas fa-plus ml-1 p-0 pl-1 pt-2"></a>
+                    </div>
+                </div>
+                <div style="display: none">{{cosecha_form.registro}}</div>
+
+
+                
 
 
 
@@ -261,14 +245,15 @@ active
                 {% endif %}
 
                 <div class="col-md-2 btn-group" role="group">
-                        <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Gráficos
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                            <button id="graficoMensual" class="dropdown-item" data-toggle="modal" data-target="#modalGrafico">Consumo de Hielo Mensual</button> 
-                        </div>
+                    <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Gráficos
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                        <button id="graficoMensual" class="dropdown-item" data-toggle="modal"
+                            data-target="#modalGrafico">Consumo de Hielo Mensual</button>
                     </div>
+                </div>
             </div>
             <br>
 
@@ -411,9 +396,25 @@ active
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn-lg btn-secondary fas fa-times" id="cerrarModal" data-dismiss="modal">
-                    </button>
+                </button>
                 <button class="btn-lg btn-warning fas fa-print" id="imprimirGrafico"></button>
                 <!-- <a href="" class="btn btn-warning fas fa-print" id="imprimirReporte" target="_blank"> Imprimir</a> -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="modalNuevo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div id="modalNuevoContenedor" class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button id="guardarNuevo" type="submit" form="formNuevo"  class="btn btn-primary">Guardar</button>
             </div>
         </div>
     </div>

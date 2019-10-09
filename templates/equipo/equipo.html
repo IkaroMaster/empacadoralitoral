@@ -60,74 +60,58 @@ active
             <form action=" {% url 'equipo:guardar_equipo-url' %}" class="row" method="POST">
                 {% csrf_token %}
                 <input type="hidden" name="id_o" value="{{ id_o }}">
-                <div class="col-6">
-                    <label for="id_nombre">
-                        <font style="vertical-align: inherit;">
-                            <font style="vertical-align: inherit;">Nombre:</font>
-                        </font>
-                    </label>
-                    <p>{{form.nombre}}</p>
-                    <label for="id_numero">
-                        <font style="vertical-align: inherit;">
-                            <font style="vertical-align: inherit;">Numero:</font>
-                        </font>
-                    </label>
-                    <p>{{form.numero}}</p>
-                    <label for="id_tamano">
-                        <font style="vertical-align: inherit;">
-                            <font style="vertical-align: inherit;">Tamaño:</font>
-                        </font>
-                    </label>
-                    <p>{{form.tamano}}</p>
-                    <label for="id_color">
-                        <font style="vertical-align: inherit;">
-                            <font style="vertical-align: inherit;">Color:</font>
-                        </font>
-                    </label>
-                    <p>{{form.color}}</p>
-                    <label for="id_estado">
-                        <font style="vertical-align: inherit;">
-                            <font style="vertical-align: inherit;">Estado:</font>
-                        </font>
-                    </label>
-                    <p>{{form.estado}} </p>
 
-
+                <div class="col-md-4">
+                    <label for="id_nombre">Nombre:</label>
+                    {{form.nombre}}
                 </div>
-                <div class="col-6 ">
-                    <label for="id_codigo_barras">
-                        <font style="vertical-align: inherit;">
-                            <font style="vertical-align: inherit;">Codigo Unico de Bin:</font>
-                        </font>
-                    </label>
-
-                    {% if crear %}
-                    <div class="row container">
-
-                        <div class="col-10 " style="margin: 0 auto;">
-                            <p>{{form.codigo_barras}} </p>
-                        </div>
-                        <div class="col-2 " style="float: right">
-                            <button type="button" id="scanner"
-                                class=" btn-lg btn-outline-dark fas fa-qrcode "></button>
-                        </div>
+                <div class="col-md-4">
+                    <label for="id_numero">Numero:</label>
+                    {{form.numero}}
+                </div>
+                <div class="col-md-4">
+                    <label for="">Código Único de Bin:</label>
+                    <div class=" input-group">
+                        {{form.codigo_barras}}
+                        {% if crear %}
+                        <button type="button" id="scanner" class=" btn-lg   fas fa-qrcode "></button>
+                        {% endif %}
                     </div>
-                    {% else %}
-                    <p>{{form.codigo_barras}} </p>
-
-                    {% endif %}
-
-
-                    <label for="id_informacion">
-                        <font style="vertical-align: inherit;">
-                            <font style="vertical-align: inherit;">Información:</font>
-                        </font>
-                    </label>
-                    <p>{{form.informacion}}</p>
-                    <a href="{% url 'equipo:equipo-url' 2 %}" class="btn btn-secondary">Cancelar</a>
-                    <input class="btn btn-success" type="submit"
-                        value="{% if crear%}Guardar{%elif editar%}Modificar{%endif%}"><br>
                 </div>
+                <div class="col-md-4">
+                    <br>
+                    <label for="id_numero">Tamaño:</label>
+                    {{form.tamano}}
+                </div>
+
+
+                <div class="col-md-4">
+                    <br>
+                    <label for="id_color">Color:</label>
+                    {{form.color}}
+                </div>
+
+
+                <div class="col-md-4">
+                    <br>
+                    <label for="">Estado:</label>
+                    {{form.estado}}
+                </div>
+                <div class=" col-md-12">
+                    <br>
+                    <label for="">Información:</label>
+                    {{form.informacion}}
+                </div>
+                <div class=" col-md-5">
+
+                </div>
+                <div class=" col-md-3">
+                    <br>
+                    <a href="{% url 'equipo:equipo-url' 2 %}" class="btn btn-secondary ">Cancelar</a>
+                    <input class="btn btn-success" type="submit"
+                        value="{% if crear%}Guardar{%elif editar%}Modificar{%endif%}">
+                </div>
+
 
 
 
@@ -172,9 +156,9 @@ active
                             <td>{{ e.color }}</td>
                             <td>{{ e.estado }}</td>
                             <td>
-                                
+
                                 {{ e.informacion}}
-                                
+
                             </td>
                             <td>
 
@@ -183,7 +167,8 @@ active
                                     href="{% url 'equipo:editar_equipo-url' e.id %}" class="editar"></a>
                                 <button class="editarEquipo btn btn-info fas fa-pen" data-id='{{e.pk}}'></button>
                                 {% endif %}
-                                <a href="{% url 'equipo:obtener_qr-url' e.pk %}" class="btn btn-primary fas fa-qrcode "  target="_blank"></a>
+                                <a href="{% url 'equipo:obtener_qr-url' e.pk %}" class="btn btn-primary fas fa-qrcode "
+                                    target="_blank"></a>
                             </td>
                             <!-- <td><button class="btn btn-success">Añadir</button></td> -->
 
@@ -263,34 +248,28 @@ active
             <form action=" {% url 'equipo:reporte_codigoQR-url' %}" method="POST" target="_blank">
                 {% csrf_token %}
                 <div class="row">
-                    <div class="col-6">
-                        <label for="id_nombre">
-                            <font style="vertical-align: inherit;">
-                                <font style="vertical-align: inherit;">Nombre:</font>
-                            </font>
-                        </label>
-                        <p>{{formQR.nombre}}</p>
-                        <label for="id_numero">
-                            <font style="vertical-align: inherit;">
-                                <font style="vertical-align: inherit;">Numero:</font>
-                            </font>
-                        </label>
-                        <p>{{formQR.numero}}</p>
-                        <label for="id_tamano">
-                            <font style="vertical-align: inherit;">
-                                <font style="vertical-align: inherit;">Tamaño:</font>
-                            </font>
-                        </label>
-                        <p>{{formQR.tamano}}</p>
-                        <label for="id_color">
-                            <font style="vertical-align: inherit;">
-                                <font style="vertical-align: inherit;">Color:</font>
-                            </font>
-                        </label>
-                        <p>{{formQR.color}}</p>
+                    <div class="col-md-6">
+                        <div>
+                            <label for="">Nombre:</label>
+                            {{formQR.nombre}}
+                        </div>
+                        <div>
+                            <br>
+                            <label for="">Numero:</label>
+                            {{formQR.numero}}
+                            
+                        </div>
+                        <div><br>
+                            <label for="">Tamaño:</label>
+                            {{formQR.tamano}}
+                        </div>
+                        <div><br>
+                            <label for="">Color:</label>
+                            {{formQR.color}}
+                        </div>                        
 
                     </div>
-                    <div class="col-6">
+                    <div class="col-md-5">
                         <div class="panel-heading bg-primary">
                             <h4 class="panel-title text-light">Vista Previa</h4>
                         </div>
@@ -301,7 +280,7 @@ active
                     </div>
                 </div>
 
-                <input type="submit" value="Imprimir Codigo QR" class="btn-lg btn-warning fas fa-qrcode" readonly>
+                <input type="submit" value="Imprimir QR" class="btn-lg btn-warning fas fa-qrcode" readonly>
 
             </form>
         </div>

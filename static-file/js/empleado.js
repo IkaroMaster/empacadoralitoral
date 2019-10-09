@@ -1,5 +1,20 @@
 $(function () {
 
+    const notificacion = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 5000
+    });
+
+    var requeridos = $(document).find(':required');
+    requeridos.each(function (r, requerido) {
+        if ($(requerido).prop('tagName') == 'SELECT') {
+            $(requerido).selectpicker('setStyle', 'border border-warning');
+        } else {
+            $(requerido).addClass('border border-warning');
+        }
+    });
 
     $('[data-toggle="popover"]').popover();
     $('#enviarEmpleado').on('click', function () {
@@ -225,12 +240,7 @@ $(function () {
 
 
 
-    const Notificacion = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 4000
-    });
+    
 
     $('.editarGrupo').click(function (e) {
         var id = $(this).attr('data-id');
@@ -251,7 +261,7 @@ $(function () {
             } else {
 
 
-                Notificacion.fire({
+                notificacion.fire({
                     title: 'Operación cancelada por el usuario.',
                     type: 'error',
                 })
@@ -338,5 +348,150 @@ $(function () {
         //     });
         // }
     }
+
+    //------- --------- ---------- -----------------
+    $('.editarEmpleado').click(function (e) {
+        e.preventDefault();
+        $.get($(this).attr('href'),{pk:$(this).attr('data-editar')}, function (data) {
+            
+            $('#modalNuevoContenedor').empty().html(data.html);
+
+            var requeridos = $('#modalNuevoContenedor').find(':required');
+            requeridos.each(function (r, requerido) {
+                if ($(requerido).prop('tagName') == 'SELECT') {
+                    $(requerido).selectpicker('setStyle', 'border border-warning');
+                } else {
+                    $(requerido).addClass('border border-warning');
+                }
+            });
+
+            var inputs = $('#modalNuevoContenedor').find('input[value=None]');
+            inputs.each(function(i,input){
+                $(input).val('');
+            })
+
+            new Cleave('#id_codEmpleado', {
+                blocks: [4],
+                numericOnly: true
+            });
+            new Cleave('#id_identidad', {
+                blocks: [4,4,5],
+                delimiter:'-',
+                numericOnly: true
+            });
+            new Cleave('#id_telefono', {
+                blocks: [4,4],
+                delimiter:'-',
+                numericOnly: true
+            });
+            $('#id_nombre').upperFirst();
+            $('#id_segundoNombre').upperFirst();
+            $('#id_apellido').upperFirst();
+            $('#id_segundoApellido').upperFirst();
+
+            $('#guardarNuevo').attr('class','btn btn-primary editarEmpleado');
+            $('#modalNuevo').modal('show');
+        });
+
+
+    });
+
+    $('#modalNuevo').on('click','.editarEmpleado',function () {
+
+        $(document).find('#formNuevo').submit(function (e) {
+            e.preventDefault();
+            $.ajax({
+                type: $(this).attr('method'),
+                url: $(this).attr('action'),
+                data: $(this).serialize(),
+                success: function (response) {
+                    $('#fila-'+response.codigo).find('.nombre').html(response.nombre);
+                    $('#fila-'+response.codigo).find('.telefono').html(response.telefono);
+                    $('#fila-'+response.codigo).find('.identidad').html(response.identidad);
+                    $('#fila-'+response.codigo).find('.cargo').html(response.cargo);
+                    // $(fila).html(response.nombre);
+                    
+                    // $('#id_empleado').empty().html(response.html);
+                    // $('#id_empleado').selectpicker('refresh');
+                    $('#modalNuevo').modal('hide');
+                    notificacion.fire({
+                        type: 'success',
+                        title: 'Empleado Modificado'
+                    });
+                },
+                error: function (response) {
+                    $('#modalNuevo').modal('hide');
+                    notificacion.fire({
+                        type: 'error',
+                        title: 'Error al modificar el empleado'
+                    })
+                }
+            });
+        });
+    });
+
+     //------- --------- ---------- -----------------
+     $('.crearUsuario').click(function () {
+        
+        $.get($(this).attr('data-url'),{pk:$(this).attr('data-empleado')}, function (data) {
+            
+            $('#modalNuevoContenedor').empty().html(data.html);
+
+            var requeridos = $('#modalNuevoContenedor').find(':required');
+            requeridos.each(function (r, requerido) {
+                if ($(requerido).prop('tagName') == 'SELECT') {
+                    $(requerido).selectpicker('setStyle', 'border border-warning');
+                } else {
+                    $(requerido).addClass('border border-warning');
+                }
+            });
+
+            var inputs = $('#modalNuevoContenedor').find('input[value=None]');
+            inputs.each(function(i,input){
+                $(input).val('');
+            })
+
+            
+            
+            $('#guardarNuevo').attr('class','btn btn-primary agregarUsuario');
+            $('#modalNuevo').modal('show');
+        });
+
+
+    });
+
+    $('#modalNuevo').on('click','.agregarUsuario',function () {
+
+        $(document).find('#formNuevo').submit(function (e) {
+            e.preventDefault();
+            $.ajax({
+                type: $(this).attr('method'),
+                url: $(this).attr('action'),
+                data: $(this).serialize(),
+                success: function (response) {
+                    $('#fila-'+response.codigo).find('.nombre').html(response.nombre);
+                    $('#fila-'+response.codigo).find('.telefono').html(response.telefono);
+                    $('#fila-'+response.codigo).find('.identidad').html(response.identidad);
+                    $('#fila-'+response.codigo).find('.cargo').html(response.cargo);
+                    // $(fila).html(response.nombre);
+                    
+                    // $('#id_empleado').empty().html(response.html);
+                    // $('#id_empleado').selectpicker('refresh');
+                    $('#modalNuevo').modal('hide');
+                    notificacion.fire({
+                        type: 'success',
+                        title: 'Empleado Modificado'
+                    });
+                },
+                error: function (response) {
+                    $('#modalNuevo').modal('hide');
+                    notificacion.fire({
+                        type: 'error',
+                        title: 'Error al modificar el empleado'
+                    })
+                }
+            });
+        });
+    });
     
 });

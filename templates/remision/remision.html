@@ -44,89 +44,92 @@ active
             {% endfor %}
             {% endif %}
 
-            <form method="post" id="formRemision">
+            <form class="row" method="post" id="formRemision">
                 <input type="hidden" name="crear" id="crear" value="{{ crear }}" data-remision="{{remision}}">
                 {% csrf_token %}
-                <div class="row container ">
-                    <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ">
-                        <label for="">Numero:</label>
-                        {{remision_form.numRemision}}
-                        <br>
+                <div class="col-md-2">
+                    <label for="">Numero:</label>
+                    {{remision_form.numRemision}}
+                </div>
+                
+                <div class="col-md-2">
+                    <label for="">Tipo:</label>
+                    {{remision_form.tipoRemision}}
+                </div>
+                <div class="col-md-2">
+                    <label for="">Guiá:</label>
+                    {{remision_form.guia}}
+                </div>
+                <div class="col-md-3">
+                    <label for="">Fecha:</label>
+                    {{remision_form.fecha}}
+                </div>
 
+                <div class="col-md-3">
+                    <label for="">Préstamo de equipo:</label>
+                    {{remision_form.prestamoEquipo}}
+                    <br><br>
+                </div>
 
-
-                        <div id="esCrear">
-                            <label for=""><strong>¿Se presto equipo para esta remision? </strong></label>
-                            <input type="checkbox" class="" id="siPrestamo">
-                            <label class="text-success" for="siPrestamo">Si </label>
-                        </div>
-                        <!-- <div class="invalid-feedback">Example invalid feedback text</div> -->
-
-                        <div id="prestamo">
-                            <label for="">Préstamo de equipo:</label>
-                            {{remision_form.prestamoEquipo}}
-                            <br><br>
-                        </div>
-                        <!-- <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" id="customRadioInline2" name="customRadioInline1" class="custom-control-input">
-                            <label class="custom-control-label" for="customRadioInline2">No</label>
-                          </div> -->
-                        <label for="">Asignado a:</label>
+                <div class="col-md-3">
+                    <label>Asignado a:</label>
+                    <div class="input-group">
                         {{remision_form.compania}}
-                        <br>
+                        <a id="agregarEmpresa" data-url="{% url 'compania:agregar-empresa-url' %}" class="btn-lg text-success fas fa-plus ml-1 p-0 pl-1 pt-2"></a>
+                    </div>
+                </div>
+                
 
+                <div class="col-md-3">
+                    <label>Recibió:</label>
+                    <div class="input-group">
+                        {{remision_form.conductor}}
+                        <a id="agregarConductor" data-url="{% url 'conductor:agregar-conductor-url' %}" class="btn-lg text-success fas fa-plus ml-1 p-0 pl-1 pt-2"></a>
+                    </div>
+                </div>
 
-                        <label for="">Fecha:</label>
-                        {{remision_form.fecha}}
-                        <br>
-                        <div class="container {% if remision_form.estado.value == 1 %}
+                <div class="col-md-3">
+                    <label>Placa:</label>
+                    <div class="input-group">
+                        {{remision_form.placa}}
+                        <a id="agregarVehiculo" data-url="{% url 'vehiculo:agregar-vehiculo-url' %}" class="btn-lg text-success fas fa-plus ml-1 p-0 pl-1 pt-2"></a>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <label>Entrego:</label>
+                    <div class="input-group">
+                        {{remision_form.entrego}}
+                        <a id="agregarEmpleado" data-url="{% url 'empleado:agregar-empleado-url' %}" class="btn-lg text-success fas fa-plus ml-1 p-0 pl-1 pt-2"></a>
+                    </div>
+                </div>
+
+                
+                
+                <div hidden id="esCrear">
+                        <label for=""><strong>¿Se presto equipo para esta remision? </strong></label>
+                        <input type="checkbox" class="" id="siPrestamo">
+                        <label class="text-success" for="siPrestamo">Si </label>
+                    </div>
+                    <div hidden class="container {% if remision_form.estado.value == 1 %}
                         alert-info
                         {%elif remision_form.estado.value == 2%}
                         alert-success
                         {%elif remision_form.estado.value == 3%}
                         alert-danger
                         {% endif %}">
-                            <label for="">Estado Actual:</label>
-                            {{remision_form.estado}}
-                            <br><br>
-                        </div>
-
-                        <!-- {{remision_form.estado}} -->
-
-
+                        <label for="">Estado Actual:</label>
+                        {{remision_form.estado}}
+                        <br><br>
                     </div>
 
-                    <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                
 
-
-                        <!-- <p>{{remision_form.prestamoEquipo.pk}}</p> -->
-
-                        <div class="" id="conductor">
-                            <label for="">Tipo:</label>
-                            {{remision_form.tipoRemision}}
-                            <br>
-                            <label for="">Guiá:</label>
-                            {{remision_form.guia}}
-                            <br>
-                            <label for="">Recibió:</label>
-                            {{remision_form.conductor}}
-                            <br>
-                            <label for="">Placa:</label>
-                            {{remision_form.placa}}
-                            <br>
-                            <label for="">Entrego:</label>
-                            {{remision_form.entrego}}
-                            <br>
-                        </div>
-
-                    </div>
-
-
-                </div>
 
                 {{ detalleRemision_formset.management_form }}
-                <hr>
-                <div class="table-responsive">
+                
+                <p class="mb-0" ><strong>A continuación ingrese la descripción de la remision de hielo:</strong> </p>
+                <div class="table-responsive ">
                     <table class="table table-striped table-hover table-bordered">
                         <thead class="thead-inverse">
                             <tr>
@@ -205,32 +208,33 @@ active
         </div>
         <div style="{{estilos.o2}}">
 
-            
-            <div class="row col-md-6 mb-1"> 
+
+            <div class="row col-md-6 mb-1">
                 {% if perms.remision.add_remision %}
                 <div class="col">
-                    <a class=" btn btn-success {{ clases.o1 }}" href="{% url 'remision:crear_remision-url' %}">Nueva Remision</a>
+                    <a class=" btn btn-success {{ clases.o1 }}" href="{% url 'remision:crear_remision-url' %}">Nueva
+                        Remision</a>
                 </div>
                 {% endif %}
 
                 {% if perms.remision.generar_reportes %}
                 <!-- <div class=""> -->
-                    <div class="col btn-group" role="group">
-                        <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Reportes
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                            <button id="reporteMensual" data-toggle="modal" data-target="#modalReporte"
-                                class=" dropdown-item ">Reporte Mensual</button>
+                <div class="col btn-group" role="group">
+                    <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Reportes
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                        <button id="reporteMensual" data-toggle="modal" data-target="#modalReporte"
+                            class=" dropdown-item ">Reporte Mensual</button>
 
 
-                        </div>
                     </div>
+                </div>
                 <!-- </div> -->
                 {% endif %}
             </div>
-            
+
             <div class="table-responsive">
                 <table id="tablajs" class="table table-striped  table-hover table-bordered" style="width:100%"
                     class="display">
@@ -402,6 +406,23 @@ active
         </div>
     </div>
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="modalNuevo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div id="modalNuevoContenedor" class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button id="guardarNuevo" type="submit" form="formNuevo"  class="btn btn-primary">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock cuerpo %}
 {% load static %}
 {% block script %}

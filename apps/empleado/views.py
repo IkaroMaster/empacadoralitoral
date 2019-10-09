@@ -115,7 +115,6 @@ def CrearEmpleado(request):
 	form_usuario.fields['password2'].widget = forms.TextInput()
 	FormControl(form_usuario)
 	FormControl(form_empleado)
-	form_empleado.fields['identidad'].widget.attrs['data-mask'] = '9999-9999-99999' #no funciona
 	contra = generate_key(8).lower()
 	form_usuario.fields['password1'].widget.attrs['value']=contra
 	form_usuario.fields['password1'].widget.attrs['readonly']='True'
@@ -442,3 +441,215 @@ def ModificarGrupo(request,pk):
 	return render(request,'empleado/empleado.html',ctx)
 
 
+
+@login_required()
+@permission_required('empleado.add_empleado',raise_exception=True)
+def agregarEmpleado_asJson(request):
+	if request.method == 'GET':
+		html = ''
+		html += '''
+		<h1>Registrar Empleado</h1>
+		<form class="row" id="formNuevo" method="POST" action="/empleado/agregarEmpleado/">
+				<input type="hidden" name="csrfmiddlewaretoken" value="{}">
+			
+				
+				<div class="col-md-4">
+					<label for="" >Cod. Empleado:</label>
+					<input type="number" name="codEmpleado" class="form-control" required="" id="id_codEmpleado">
+				</div>
+					
+				
+					<div class="col-md-8">
+						<label for="">Cargo:</label>
+						<select name="cargo" class="selectpicker form-control show-tick" data-live-search="True" data-size="4" required="" id="id_cargo" >
+						'''.format(csrf.get_token(request))	
+
+		cargos = Cargo.objects.all()
+		for c in cargos:
+			html += '<option value="{}" >{}</option>'.format(c.pk,c)
+
+		html +=	'''
+						</select>
+					</div>
+					<div class="col-md-6">
+						<label for="">Teléfono:</label>
+						<input type="text" name="telefono" maxlength="9" class="form-control" id="id_telefono">
+					</div>
+					<div class="col-md-6">
+						<label for="">Numero Identidad:</label>
+						<input type="text" name="identidad" maxlength="15" class="form-control" data-mask="9999-9999-99999" id="id_identidad">
+					</div>
+
+					
+					<div class="col-md-6">
+						<label for="">Primer Nombre:</label>
+						<input type="text" name="nombre" maxlength="15" class="form-control" required="" id="id_nombre">
+					</div>
+					<div class="col-md-6">
+						<label for="">Segundo Nombre:</label>
+						<input type="text" name="segundoNombre" maxlength="15" class="form-control" id="id_segundoNombre">
+					</div>
+					<div class="col-md-6">
+						<label for="">Primer Apellido:</label>
+						<input type="text" name="apellido" maxlength="15" class="form-control" required="" id="id_apellido">
+					</div>
+					<div class="col-md-6">
+						<label for="">Segundo Apellido:</label>
+						<input type="text" name="segundoApellido" maxlength="15" class="form-control" id="id_segundoApellido">
+					</div>
+					
+			</form>
+		'''
+		return JsonResponse({'html':html})
+
+	elif request.method == 'POST':
+		form_empleado = EmpleadoForm(request.POST)
+		print('valido empleado: ',form_empleado.is_valid())
+		if form_empleado.is_valid():
+			empleado = form_empleado.save()
+			empleados = Empleado.objects.all()
+			html = ''
+			for e in empleados:
+				activo = ''
+				if e.pk == empleado.pk:
+					activo = 'selected'
+				html += '<option value="{}" {}>{}</option>'.format(e.pk,activo,e)
+			return JsonResponse({'html':html})
+		else:
+			response = JsonResponse({'error':"información brindada incompleta."})
+			response.status_code = 403
+			return response
+
+
+@login_required()
+@permission_required('empleado.change_empleado',raise_exception=True)
+def editarEmpleado_asJson(request):
+	if request.method == 'GET':
+		empleado = Empleado.objects.get(pk=request.GET['pk'])
+		html = ''
+		html += '''
+
+		<h3>Modificar Empleado Sin Usuario</h3>
+		<form class="row" id="formNuevo" method="POST" action="/empleado/editarEmpleado/">
+				<input type="hidden" name="csrfmiddlewaretoken" value="{}">
+			
+				
+				<div class="col-md-4">
+					<label for="" >Cod. Empleado:</label>
+					<input type="number" name="codEmpleado" class="form-control" required="" id="id_codEmpleado" value={} readonly>
+				</div>
+					
+				
+					<div class="col-md-8">
+						<label for="">Cargo:</label>
+						<select name="cargo" class="selectpicker form-control show-tick" data-live-search="True" data-size="4" required="" id="id_cargo" >
+						'''.format(csrf.get_token(request),empleado.pk)	
+
+		cargos = Cargo.objects.all()
+		
+		for c in cargos:
+			activo = ''
+			if c.pk == empleado.cargo.pk:
+				activo = ':selected'
+			html += '<option value="{}" {} >{}</option>'.format(c.pk,activo,c)
+
+		html +=	'''
+						</select>
+					</div>
+					<div class="col-md-6">
+						<label for="">Teléfono:</label>
+						<input type="text" name="telefono" maxlength="9" class="form-control" id="id_telefono" value="{}">
+					</div>
+					<div class="col-md-6">
+						<label for="">Numero Identidad:</label>
+						<input type="text" name="identidad" maxlength="15" class="form-control" data-mask="9999-9999-99999" id="id_identidad" value="{}">
+					</div>
+
+					
+					<div class="col-md-6">
+						<label for="">Primer Nombre:</label>
+						<input type="text" name="nombre" maxlength="15" class="form-control" required="" id="id_nombre" value="{}">
+					</div>
+					<div class="col-md-6">
+						<label for="">Segundo Nombre:</label>
+						<input type="text" name="segundoNombre" maxlength="15" class="form-control" id="id_segundoNombre" value="{}">
+					</div>
+					<div class="col-md-6">
+						<label for="">Primer Apellido:</label>
+						<input type="text" name="apellido" maxlength="15" class="form-control" required="" id="id_apellido" value="{}">
+					</div>
+					<div class="col-md-6">
+						<label for="">Segundo Apellido:</label>
+						<input type="text" name="segundoApellido" maxlength="15" class="form-control" id="id_segundoApellido" value="{}">
+					</div>
+					
+			</form>
+		'''.format(empleado.telefono,empleado.identidad,empleado.nombre,empleado.segundoNombre,empleado.apellido,empleado.segundoApellido)
+		return JsonResponse({'html':html})
+
+	elif request.method == 'POST':
+		empleado = Empleado.objects.get(pk=request.POST['codEmpleado'])
+		form_empleado = EmpleadoForm(request.POST,instance=empleado)
+		print('valido empleado: ',form_empleado.is_valid())
+		if form_empleado.is_valid():
+			empleado = form_empleado.save()
+			ctx = {
+				'codigo':empleado.pk,
+				'identidad':empleado.identidad,
+				'nombre':str(empleado.nombre+' '+empleado.apellido),
+				'telefono':empleado.telefono,
+				'cargo':empleado.cargo.cargo,
+			}
+			return JsonResponse(ctx)
+		else:
+			response = JsonResponse({'error':"información brindada incompleta."})
+			response.status_code = 403
+			return response
+
+
+@login_required()
+@permission_required('empleado.add_empleado',raise_exception=True)
+def agregarUsuario_asJson(request):
+	if request.method == 'GET':
+		html = ''
+		html += '''
+		<h1>Registrar Usuario</h1>
+		<form class="row" id="formNuevo" method="POST" action="/empleado/agregarUsuario/">
+				<input type="hidden" name="csrfmiddlewaretoken" value="{}">
+                    <div class="col-md-12">
+                        <label for="" class="mb-3">Codigo del Empleado:</label>
+                        <br>
+                        <input type="number" name="codEmpleado" class="form-control border border-warning" required="" value="{}" id="id_codEmpleado">
+                    </div>
+                    <div class="col-md-12">
+                        <label for=""><label for="id_username">Nombre de usuario:</label></label>
+                        <input type="text" name="username" maxlength="150" autofocus="" class="form-control border border-warning" required="" id="id_username">
+                    </div>
+                    <div class="col-md-12">
+                        <label for="id_password1">Contraseña:</label>
+                        <input type="text" name="password1" class="form-control border border-warning" value="2bxwnbv4" readonly="True" required="" id="id_password1">
+                        <div style="display: none;"><input type="text" name="password2" class="form-control border border-warning" readonly="True" value="2bxwnbv4" required="" id="id_password2"><input type="checkbox" name="actualizoContrasena" class="form-control" id="id_actualizoContrasena">
+                        </div>
+		</form>
+		'''.format(csrf.get_token(request),request.GET['pk'])	
+
+		
+		return JsonResponse({'html':html})
+
+	elif request.method == 'POST':
+		form_empleado = EmpleadoForm(request.POST)
+		print('valido empleado: ',form_empleado.is_valid())
+		if form_empleado.is_valid():
+			empleado = form_empleado.save()
+			empleados = Empleado.objects.all()
+			html = ''
+			for e in empleados:
+				activo = ''
+				if e.pk == empleado.pk:
+					activo = 'selected'
+				html += '<option value="{}" {}>{}</option>'.format(e.pk,activo,e)
+			return JsonResponse({'html':html})
+		else:
+			response = JsonResponse({'error':"información brindada incompleta."})
+			response.status_code = 403
+			return response

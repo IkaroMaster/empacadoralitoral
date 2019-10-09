@@ -20,9 +20,9 @@ class PrestamoForm(forms.ModelForm):
 				'observaciones'		: forms.Textarea(attrs = {
 				'class' 	: 'form-control',
 				# 'autofocus' : 'autofocus',
-				'rows': 2,
+				'rows': 1,
 				'placeholder' : 'Aa',
-				})
+				}),
 				}
 
 	# def __init__(self, *args, **kwargs):
@@ -61,6 +61,7 @@ class DetallePrestamoForm(forms.ModelForm):
 				self.fields[field].choices = [("","Seleccione...")] + cl
 				self.fields[field].widget.attrs['class'] = 'selectpicker form-control dx'
 				self.fields[field].widget.attrs['data-live-search'] = 'true'
+				# self.fields[field].widget.attrs['required'] = 'true'
 				# self.fields[field].widget.attrs['data-size'] = 5
 		
 #         equipos = Equipo.objects.filter(Q(estado = 2)  )

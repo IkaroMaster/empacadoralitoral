@@ -1,8 +1,23 @@
 $(function () {
+    const notificacion = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 5000
+    });
+
+    var requeridos = $(document).find(':required');
+    requeridos.each(function (r, requerido) {
+        if ($(requerido).prop('tagName') == 'SELECT') {
+            $(requerido).selectpicker('setStyle', 'border border-warning');
+        } else {
+            $(requerido).addClass('border border-warning');
+        }
+    });
 
 
     var tablex = $('#tablajs').DataTable({
-        "scrollY": '40vh',
+        "scrollY": '35vh',
         "scrollCollapse": true,
         // "scrollX": true,
         "deferRender": true,
@@ -326,5 +341,150 @@ $(function () {
         $('#id_ubicacion').upperFirstAll();
         
     }
+
+    // Creacion de Nuevos registros mediante ajax
+    $('#agregarEmpresa').click(function (e) {
+        e.preventDefault();
+        $.get($(this).attr('data-url'), {
+            uso: 1
+        }, function (data) {
+            $('#modalNuevoContenedor').empty().html(data.html);
+            $('#modalNuevo').find('#id_tipoCompania option').each(function () {
+                if ($(this).val() != 1) {
+                    $(this).prop('disabled', 'true');
+                } else {
+                    $(this).prop('selected', 'True');
+                }
+            });
+            var d = $(document).find('#id_tipoCompania').selectpicker({
+                size: 3,
+            });
+            d.selectpicker('refresh');
+            $('#guardarNuevo').attr('class','btn btn-primary nuevaEmpresa');
+
+            var requeridos = $('#modalNuevoContenedor').find(':required');
+            requeridos.each(function (r, requerido) {
+                if ($(requerido).prop('tagName') == 'SELECT') {
+                    $(requerido).selectpicker('setStyle', 'border border-warning');
+                } else {
+                    $(requerido).addClass('border border-warning');
+                }
+            });
+
+            if ($('#modalNuevoContenedor').find('#id_nombre').length) {
+                $('#modalNuevoContenedor').find('#id_nombre').upperFirstAll();
+                $('#modalNuevoContenedor').find('#id_direccion').upperFirstAll();
+                new Cleave('#id_abreviatura', {
+                    blocks: [10],
+                    uppercase: true
+                });
+            }
+            
+
+            $('#modalNuevo').modal('show');
+        });
+    });
+
+    $('#modalNuevo').on('click','.nuevaEmpresa',function () {
+        var form = $(document).find('#formNuevo');
+        // $(form).submit();
+        console.log(form);
+        $(document).find('#formNuevo').submit(function (e) {
+            e.preventDefault();
+            $.ajax({
+                type: $(this).attr('method'),
+                url: $(this).attr('action'),
+                data: $(this).serialize(),
+                success: function (response) {
+                    $('#id_compania').empty().html(response.html).selectpicker('refresh');
+                    $('#modalNuevo').modal('hide');
+                    notificacion.fire({
+                        type: 'success',
+                        title: 'Empresa Registrada'
+                    })
+                },
+                error: function (response) {
+                    $('#modalNuevo').modal('hide');
+                    notificacion.fire({
+                        type: 'error',
+                        title: 'Error al registrar la empresa'
+                    })
+                }
+            });
+        });
+    });
+
+     // ---------------------- ---------------------------- -----------------------
+
+     $('#agregarFinca').click(function (e) {
+        e.preventDefault();
+        $.get($(this).attr('data-url'),function (data) {
+
+            $('#modalNuevoContenedor').empty().html(data.html);
+            $('#guardarNuevo').attr('class', 'btn btn-primary nuevaFinca');
+
+            
+            //######## FORMATEO DE CAMPOS
+            if ($('#modalNuevoContenedor').find('#id_nombre').length) {
+                $('#modalNuevoContenedor').find('#id_nombre').upperFirstAll();
+                $('#modalNuevoContenedor').find('#id_direccion').upperFirstAll();
+                new Cleave('#id_abreviatura', {
+                    blocks: [10],
+                    uppercase: true
+                });
+            }
+
+            if ($('#modalNuevoContenedor').find('#id_codFinca').length) {
+                new Cleave('#id_codFinca', {
+                    blocks: [10],
+                    uppercase: true
+                });
+            }
+
+            
+            var requeridos = $('#modalNuevoContenedor').find(':required');
+            requeridos.each(function (r, requerido) {
+                if ($(requerido).prop('tagName') == 'SELECT') {
+                    $(requerido).selectpicker('setStyle', 'border border-warning');
+                } else {
+                    $(requerido).addClass('border border-warning');
+                }
+            });
+            $('#modalNuevo').modal('show');
+        });
+
+
+    });
+    $('#modalNuevo').on('click', '.nuevaFinca', function () {
+        var form = $(document).find('#formNuevo');
+        // $(form).submit();
+        // console.log(form);
+        $(document).find('#formNuevo').submit(function (e) {
+            e.preventDefault();
+            var datos = $(this).serializeArray();
+            datos.push({name:'todo',value:'si'});
+            $.ajax({
+                type: $(this).attr('method'),
+                url: $(this).attr('action'),
+                data: $.param(datos),
+                success: function (response) {
+                    $('#id_finca').empty().html(response.html);
+                    $('#id_finca').selectpicker('refresh');
+                    $('#modalNuevo').modal('hide');
+                    notificacion.fire({
+                        type: 'success',
+                        title: 'Finca Registrada'
+                    });
+                },
+                error: function (response) {
+                    $('#modalNuevo').modal('hide');
+                    notificacion.fire({
+                        type: 'error',
+                        title: 'Error al registrar la finca'
+                    })
+                }
+            });
+        });
+    });
 
 });

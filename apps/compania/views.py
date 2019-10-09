@@ -6,6 +6,9 @@ from django.urls import reverse,reverse_lazy
 from django.contrib import messages
 
 
+#REQUSITOS
+from django.template.loader import render_to_string
+from django.middleware import csrf
 
 #RECURSOS
 from .models import *
@@ -75,17 +78,22 @@ def guardar_compania(request):
 	# if verificarTipoUsuario(request.user):
 	# 	return HttpResponseRedirect(reverse('app:home_cliente'))
 	if request.method == 'POST':
-		form = CompaniaForm(request.POST)
+		
 		user = request.user
+		form = ''
+		if not request.POST['id_o'].isnumeric() and user.has_perm('compania.add_compania'):
+			form = CompaniaForm(request.POST)
+		elif user.has_perm('compania.change_compania'):
+			form = CompaniaForm(data = request.POST, instance = Compania.objects.get(pk = int(request.POST['id_o'])))	
+			print('nota: formulario de empresa recibido para modificar')
+
 		if form.is_valid():
-			if not request.POST['id_o'].isnumeric() and user.has_perm('compania.add_compania') :
-				form.save()
-			elif user.has_perm('compania.change_compania'):
-				form = CompaniaForm(data = request.POST, instance = Compania.objects.get(pk = int(request.POST['id_o'])))	
-				compania = form.save(commit = False)
-				compania.save()
+			print('nota: formulario de empresa recibido valido')
+			compania = form.save(commit = False)
+			compania.save()
 			return HttpResponseRedirect(reverse('compania:compania-url', args= (2,)))
 		else:
+			print('nota: formulario de empresa recibido no valido')
 			return HttpResponseRedirect(reverse('compania:compania-url', args= (1,)))
 	else:
 		return render(request, '404.html')
@@ -121,6 +129,8 @@ def guardar_finca(request):
 	# pdb.run('hello')
 	# if verificarTipoUsuario(request.user):
 	# 	return HttpResponseRedirect(reverse('app:home_cliente'))
+
+	user = request.user
 	if request.method == 'POST':
 		if not request.POST['id_o'] and user.has_perm('compania.add_finca'):		
 			form = FincaForm(request.POST)
@@ -255,3 +265,216 @@ def EstadoCompania_asJson(request):
 		return JsonResponse(data)
 	else:
 		return render(request,'404.html')
+
+@login_required()
+def agregarEmpresa_asJson(request):
+	if request.method == 'GET':
+		html = ''
+		html += '''
+		<h1>Registrar Empresa</h1>
+		<form id="formNuevo" class="row" method="POST" action="/compania/agregarEmpresa/">
+				<input type="hidden" name="csrfmiddlewaretoken" value="{}">
+				<input type="hidden" name="uso" id='uso' value="{}">
+				<div class="col-md-12 ">
+					<label for="id_nombre">
+						<font style="vertical-align: inherit;">
+							<font style="vertical-align: inherit;"><strong>Nombre:</strong></font>
+						</font>
+					</label>
+					<input type="text" name="nombre" maxlength="50" class="form-control" required="" id="id_nombre">
+					<br>
+					<label for="id_direccion">
+						<font style="vertical-align: inherit;">
+							<font style="vertical-align: inherit;"><strong>Dirección:</strong></font>
+						</font>
+					</label>
+					<input type="text" name="direccion" maxlength="200" class="form-control" required="" id="id_direccion">
+					<br>
+					<label for="id_abreviatura">
+						<font style="vertical-align: inherit;">
+							<font style="vertical-align: inherit;"><strong>Abreviatura:</strong></font>
+						</font>
+					</label>
+					<input type="text" name="abreviatura" maxlength="10" class="form-control" id="id_abreviatura">
+					<br>
+					<label for="id_tipoCompania">
+						<font style="vertical-align: inherit;">
+							<font style="vertical-align: inherit;"><strong>Tipo de Compañía:</strong></font>
+						</font>
+					</label>
+					<select name="tipoCompania" class="form-control" required="" id="id_tipoCompania">
+					'''.format(csrf.get_token(request),request.GET['uso'])
+				
+		tipoEmpresa = TipoCompania.objects.all()
+		for te in tipoEmpresa:
+			html += '''
+  			<option value="{}">{}</option>
+			'''.format(te.pk,te)
+			
+		html += '''
+
+				</select>
+				<input hidden type="checkbox" name="estado" class="form-control" id="id_estado" checked>	
+			<br>
+				</div>
+			</form>
+		'''
+
+		
+		return JsonResponse({'html':html})
+
+	elif request.method == 'POST':
+		form = CompaniaForm(request.POST)
+		user = request.user
+		if form.is_valid():
+			if user.has_perm('compania.add_compania'):
+				compania = form.save()
+				html = ''
+				companias = ''
+				if int(request.POST['uso']) == 1:
+					companias = Compania.objects.filter(tipoCompania = TipoCompania.objects.get(pk = 1))
+				elif int(request.POST['uso']) == 2:
+					companias = Compania.objects.filter(tipoCompania = TipoCompania.objects.get(pk = 2))
+				for var in companias:
+					activo = ''
+					if var.pk == compania.pk:
+						activo = 'selected'
+					html += '''
+					<option value="{}" {}>{}</option>
+					'''.format(var.pk,activo,var)
+			# elif user.has_perm('compania.change_compania'):
+			# 	form = CompaniaForm(data = request.POST, instance = Compania.objects.get(pk = int(request.POST['id_o'])))	
+			# 	compania = form.save(commit = False)
+			# 	compania.save()
+			return JsonResponse({'html':html})
+		else:
+			response = JsonResponse({'error':"información brindada incompleta."})
+			response.status_code = 403
+			return response
+	else:
+		return render(request, '404.html')
+
+
+@login_required()
+@permission_required('compania.add_finca',raise_exception=True)
+def agregarFinca_asJson(request):
+	if request.method == 'GET':
+		html = ''
+		html += '''
+		<h1>Registrar Finca</h1>
+		<form id='formNuevo' action="/compania/agregarFinca/" class="row" method="POST">
+				<input type="hidden" name="csrfmiddlewaretoken" value="{}">
+				<div class="col-md-6">
+					 <label class="text-center">Código de Finca:</label>
+					<input type="text" name="codFinca" maxlength="10" class="form-control" required="" id="id_codFinca">
+				</div>
+				<div class="col-md-6">
+					 <label class="text-center">Nombre:</label>
+					<input type="text" name="nombre" maxlength="50" class="form-control" required="" id="id_nombre">
+				</div>
+				<div class="col-md-6">
+					<label class="text-center">Abreviatura:</label>
+					<input type="text" name="abreviatura" maxlength="10" class="form-control" id="id_abreviatura">
+				</div>
+				<div class="col-md-6">
+					<label class="text-center">Dirección:</label>
+					<input type="text" name="direccion" maxlength="200" class="form-control" required="" id="id_direccion">
+				</div>
+				<div class="col-md-6">
+					<label class="text-center">Empresa:</label>
+					<select name="compania" class="selectpicker form-control" data-live-search="true" required="" id="id_compania" >
+					'''.format(csrf.get_token(request))
+		companias = Compania.objects.filter(estado = True,tipoCompania = 1)
+		
+		for c in companias:
+			html += '''	<option value="{}">{}</option>'''.format(c.pk,c)
+
+		html += '''</select>
+				</div>
+			</form>
+		'''
+		return JsonResponse({'html':html})
+
+	elif request.method == 'POST':
+		finca_form = FincaForm(request.POST)
+		if finca_form.is_valid():
+			finca = finca_form.save()
+			fincas = ''
+			if request.POST['todo'] == 'si':
+				fincas = Finca.objects.all()
+			else:
+				fincas = Finca.objects.filter(compania=finca.compania)
+			html = ''
+			for c in fincas:
+				activo = ''
+				if c.pk == finca.pk:
+					activo = 'selected'
+				html += '<option value="{}" {}>{}</option>'.format(c.pk,activo,c)
+			return JsonResponse({'html':html})
+		else:
+			response = JsonResponse({'error':"información brindada incompleta."})
+			response.status_code = 403
+			return response
+	else:
+		return render(request, '404.html')
+
+
+
+@login_required()
+@permission_required('compania.add_laguna',raise_exception=True)
+def agregarLaguna_asJson(request):
+	if request.method == 'GET':
+		html = ''
+		html += '''
+		<h1>Registrar Laguna</h1>
+		<form id="formNuevo" action="/compania/agregarLaguna/" class="row" method="POST" >
+				<input type="hidden" name="csrfmiddlewaretoken" value="{}">
+				<div class="col-md-6">
+					 <label class="text-center">Código de Laguna:</label>
+					 <input type="text" name="codLaguna" maxlength="10" class="form-control" required="" id="id_codLaguna">
+				</div>
+				<div class="col-md-6">
+					<label class="text-center">Finca:</label>
+					<select name="finca" class="selectpicker form-control show-tick"   required="" id="id_finca" >
+					'''.format(csrf.get_token(request))
+		
+		finca = Finca.objects.get(pk=request.GET['finca'])
+		
+		html += '<option value="{}" selected>{}</option>'.format(finca.pk,finca)
+		html += '''
+					</select>
+				</div>
+				<div class="col-md-8">
+					<label class="text-center">Ubicación:</label>
+					<input type="text" name="ubicacion" maxlength="200" class="form-control" id="id_ubicacion">
+				</div>
+				<div class="col-md-4">
+					<label class="text-center">Tamaño:</label>
+					<input type="number" name="tamano" class="form-control" id="id_tamano">
+				</div>
+				<div class="col-md-12">
+						<label class="text-center">Descripción:</label>
+						<input type="text" name="descripcion" maxlength="100" class="form-control" id="id_descripcion">
+				</div>
+			</form>
+		'''
+		return JsonResponse({'html':html})
+
+	elif request.method == 'POST':
+		laguna_form = LagunaForm(request.POST)
+		if laguna_form.is_valid():
+			laguna = laguna_form.save()
+			lagunas = Laguna.objects.filter(finca=laguna.finca)
+			html = ''
+			for c in lagunas:
+				activo = ''
+				if c.pk == laguna.pk:
+					activo = 'selected'
+				html += '<option value="{}" {}>{}</option>'.format(c.pk,activo,c)
+			return JsonResponse({'html':html})
+		else:
+			response = JsonResponse({'error':"información brindada incompleta."})
+			response.status_code = 403
+			return response
+	else:
+		return render(request, '404.html')
