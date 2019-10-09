@@ -42,7 +42,7 @@ class DetallePrestamoEquipo(models.Model):
 	prestamoEquipo  	= models.ForeignKey(PrestamoEquipo, on_delete=models.CASCADE,blank=True, null=True)
 	descripcion			= models.CharField(max_length=100,blank=True, null=True)
 	equipo				= models.ForeignKey(Equipo,on_delete=models.PROTECT,related_name='equipos')
-	# tapa				= models.ForeignKey(Equipo,on_delete=models.PROTECT,related_name='tapaderas',blank=True, null=True)
+	tapa				= models.ForeignKey(Equipo,on_delete=models.PROTECT,related_name='tapaderas',blank=True, null=True)
 	tapadera			= models.IntegerField(blank=True, null=True)
 	devuelto			= models.BooleanField(default=False, blank=True, null=True)
 	def __str__(self):
