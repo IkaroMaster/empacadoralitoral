@@ -25,35 +25,45 @@ $(function () {
         timer: 5000
     });
 
-    $('.detalle-formset').formset({
+    
+    var x = $('.detalle-formset').formset({
         addText: 'Agregar ',
         deleteText: '',
         deleteCssClass: 'delete-row',
-        addCssClass: 'add-row btn btn-primary mt-2',
         animateForms: true,
         added: function () {
-
+            $('#totalEquipo').html('Total: ' + $('#id_form-TOTAL_FORMS').val());
             if ($('#id_form-TOTAL_FORMS').val() >= 2) {
                 $(".delete-row").show();
             }
+            $(".delete-row").addClass("btn btn-danger fas fa-times ");
+            $('.equipo').selectpicker({
+                liveSearch: true,
+                size: 3,
+                showTick:true,
+                // selectAll: true
+            });
+            $('.tapadera').selectpicker({
+                liveSearch: true,
+                size: 3,
+                showTick:true,
+                // selectAll: true
+            });
+
         },
         removed: function () {
-
+            $('#totalEquipo').html('Total: ' + $('#id_form-TOTAL_FORMS').val());
             if ($('#id_form-TOTAL_FORMS').val() < 2) {
                 $(".delete-row").hide();
             }
         },
     });
-    $(".delete-row").addClass("btn btn-danger fas fa-times ");
-    $(".add-row").on("click", function () {
-
-        $(".delete-row").addClass("btn btn-danger fas fa-times ");
-        $('.dx').selectpicker({
-            liveSearch: true,
-            size: 3,
-            // selectAll: true
-        });
+    $(".add-row").hide();
+    $('#boton').click(function (e) {
+        $('.add-row').click();
     });
+    $(".delete-row").addClass("btn btn-danger fas fa-times ");
+   
     if ($('#crear').val() == 'True') {
         $('#divEstado').hide();
         $(".delete-row").hide();
@@ -63,10 +73,17 @@ $(function () {
             $(".delete-row").hide();
         }
     }
-
-    $('.dx').selectpicker({
+    $('.equipo').selectpicker({
         liveSearch: true,
         size: 3,
+        showTick:true,
+        tittle:'Holaaa'
+        // selectAll: true
+    });
+    $('.tapadera').selectpicker({
+        liveSearch: true,
+        size: 3,
+        showTick:true,
         // selectAll: true
     });
 
@@ -101,12 +118,12 @@ $(function () {
                 // showLoaderOnConfirm: true,
             }).then((result) => {
                 if (result.value) {
-                    setTimeout(function(){
-                       $("#enviarFormularioPrestamo").click(); 
-                    },500)
-                    
+                    setTimeout(function () {
+                        $("#enviarFormularioPrestamo").click();
+                    }, 500)
+
                     // $("#formPrestamo").submit(function (e) {
-                    
+
                     // });
                 }
             });
@@ -121,10 +138,12 @@ $(function () {
         }
     });
 
-    moment.updateLocale(moment.locale(), { invalidDate: "" });
+    moment.updateLocale(moment.locale(), {
+        invalidDate: ""
+    });
     var tablex = $('#tablajs').DataTable({
         // "dom": "<'row'  <'col-md-6'f> >",
-        dom : "<'row'<'#contenedorArriba.col-sm-2'><'col-sm-10'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-5'i><'col-sm-7'<'#colvis'>p>>",
+        dom: "<'row'<'#contenedorArriba.col-sm-2'><'col-sm-10'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-5'i><'col-sm-7'<'#colvis'>p>>",
         "scrollY": '45vh',
         "scrollCollapse": true,
         "scrollX": true,
@@ -138,18 +157,21 @@ $(function () {
             "info": "Mostrando _START_ a _END_ de _TOTAL_ registros.",
             "search": "Buscar:"
         },
-        "columnDefs": [ {
-            targets: 4,
-            render: $.fn.dataTable.render.moment('YYYY/MM/DD', 'DD-MM-YYYY')
-          } ,
-          
+        "columnDefs": [{
+                targets: 4,
+                render: $.fn.dataTable.render.moment('YYYY/MM/DD', 'DD-MM-YYYY')
+            },
+
         ],
-        "order": [[ 4, "desc" ],[8,'asc']],
-       
+        "order": [
+            [4, "desc"],
+            [8, 'asc']
+        ],
+
         // "scrollCollapse": true
     });
     if ($('#add_prestamoequipo').length) {
-            $('#contenedorArriba').html('<a class="btn btn-success text-left" href="/prestamos/crear/">Nuevo Prestamo</a>');
+        $('#contenedorArriba').html('<a class="btn btn-success text-left" href="/prestamos/crear/">Nuevo Prestamo</a>');
     }
 
     $(document).on('click', '.anular', function () {
@@ -378,7 +400,7 @@ $(function () {
                 size: 3,
             });
             d.selectpicker('refresh');
-            $('#guardarNuevo').attr('class','btn btn-primary nuevaEmpresa');
+            $('#guardarNuevo').attr('class', 'btn btn-primary nuevaEmpresa');
 
             var requeridos = $('#modalNuevoContenedor').find(':required');
             requeridos.each(function (r, requerido) {
@@ -401,7 +423,7 @@ $(function () {
         });
     });
 
-    $('#modalNuevo').on('click','.nuevaEmpresa',function () {
+    $('#modalNuevo').on('click', '.nuevaEmpresa', function () {
         var form = $(document).find('#formNuevo');
         // $(form).submit();
         console.log(form);
@@ -436,8 +458,8 @@ $(function () {
         e.preventDefault();
         $.get($(this).attr('data-url'), function (data) {
             //######## FORMATEO DE CAMPOS
-             //if ($('#modalNuevoContenedor').find('#id_numIdentidad').length) {
-                
+            //if ($('#modalNuevoContenedor').find('#id_numIdentidad').length) {
+
             // }
             $('#modalNuevoContenedor').empty().html(data.html);
             new Cleave('#id_numIdentidad', {
@@ -451,8 +473,8 @@ $(function () {
             $('#modalNuevoContenedor').find('#id_apellido1').upperFirstAll();
             $('#modalNuevoContenedor').find('#id_apellido2').upperFirstAll();
 
-            
-            $('#guardarNuevo').attr('class','btn btn-primary nuevoConductor');
+
+            $('#guardarNuevo').attr('class', 'btn btn-primary nuevoConductor');
 
             var requeridos = $('#modalNuevoContenedor').find(':required');
             requeridos.each(function (r, requerido) {
@@ -468,7 +490,7 @@ $(function () {
 
     });
 
-    $('#modalNuevo').on('click','.nuevoConductor',function () {
+    $('#modalNuevo').on('click', '.nuevoConductor', function () {
         var form = $(document).find('#formNuevo');
         // $(form).submit();
         // console.log(form);
@@ -503,7 +525,7 @@ $(function () {
     $('#agregarEmpleado').click(function (e) {
         e.preventDefault();
         $.get($(this).attr('data-url'), function (data) {
-            
+
             $('#modalNuevoContenedor').empty().html(data.html);
 
             var requeridos = $('#modalNuevoContenedor').find(':required');
@@ -520,13 +542,13 @@ $(function () {
                 numericOnly: true
             });
             new Cleave('#id_identidad', {
-                blocks: [4,4,5],
-                delimiter:'-',
+                blocks: [4, 4, 5],
+                delimiter: '-',
                 numericOnly: true
             });
             new Cleave('#id_telefono', {
-                blocks: [4,4],
-                delimiter:'-',
+                blocks: [4, 4],
+                delimiter: '-',
                 numericOnly: true
             });
             $('#id_nombre').upperFirst();
@@ -534,14 +556,14 @@ $(function () {
             $('#id_apellido').upperFirst();
             $('#id_segundoApellido').upperFirst();
 
-            $('#guardarNuevo').attr('class','btn btn-primary nuevoEmpleado');
+            $('#guardarNuevo').attr('class', 'btn btn-primary nuevoEmpleado');
             $('#modalNuevo').modal('show');
         });
 
 
     });
 
-    $('#modalNuevo').on('click','.nuevoEmpleado',function () {
+    $('#modalNuevo').on('click', '.nuevoEmpleado', function () {
 
         $(document).find('#formNuevo').submit(function (e) {
             e.preventDefault();
@@ -573,7 +595,7 @@ $(function () {
     $('#agregarVehiculo').click(function (e) {
         e.preventDefault();
         $.get($(this).attr('data-url'), function (data) {
-            
+
             $('#modalNuevoContenedor').empty().html(data.html);
 
             var requeridos = $('#modalNuevoContenedor').find(':required');
@@ -585,14 +607,14 @@ $(function () {
                 }
             });
 
-            $('#guardarNuevo').attr('class','btn btn-primary nuevoVehiculo');
+            $('#guardarNuevo').attr('class', 'btn btn-primary nuevoVehiculo');
             $('#modalNuevo').modal('show');
         });
 
 
     });
 
-    $('#modalNuevo').on('click','.nuevoVehiculo',function () {
+    $('#modalNuevo').on('click', '.nuevoVehiculo', function () {
 
         $(document).find('#formNuevo').submit(function (e) {
             e.preventDefault();

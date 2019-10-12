@@ -28,10 +28,10 @@ def comboboxBasico(objeto,campo,mensaje,buscador,queryset):
 		objeto.fields[campo].choices = [("",mensaje)] + cl
 	else:
 		objeto.fields[campo].choices = [("",mensaje)] + list(objeto.fields[campo].choices)[1:]
-	
-	objeto.fields[campo].widget.attrs['class'] = 'selectpicker form-control show-tick'
 	objeto.fields[campo].widget.attrs['data-live-search'] = buscador
 	objeto.fields[campo].widget.attrs['data-size'] = 4
+	objeto.fields[campo].widget.attrs['class'] = 'selectpicker form-control show-tick'
+
 	# objeto.fields[campo].widget.attrs['data-show-subtext'] = buscador
 
 def inputReadonly(objeto,campo):

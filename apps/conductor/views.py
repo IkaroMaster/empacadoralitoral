@@ -216,47 +216,51 @@ def agregarConductor_asJson(request):
 		<h1>Registrar Conductor</h1>
 		<form id="formNuevo" class="row" method="POST" action="/conductor/agregarConductor/">
 			<input type="hidden" name="csrfmiddlewaretoken" value="{}">
-			<div class="col-md-4">
-				<label for="">Num. Identidad:</label>
+
+			<div class="col-md-12 input-group mb-3 mt-2">
+				<div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">Numero de Identidad:</span>
+                </div>
 				<input type="text" name="numIdentidad" maxlength="15" class="form-control" required="" id="id_numIdentidad">
-				<br>
-			</div>	
-			<div class="col-md-5">
-				<label for="">F. Nacimiento:</label>
+			</div>
+			<div class="col-md-12 input-group mb-3 mt-2">
+				<div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">Fecha de Nacimiento:</span>
+                </div>
 				<input type="date" name="fechaNacimiento" class="form-control" id="id_fechaNacimiento">
-				<br>
 			</div>
-			<div class="col-md-3">
-				<label for="">Celular:</label>
+			<div class="col-md-12 input-group mb-3 mt-2">
+				<div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">Celular:</span>
+                </div>
 				<input type="number" name="celular" class="form-control" id="id_celular">
-				<br>
 			</div>
-			<div class="col-md-6 ">
-
-
-				<label for="">Primer Nombre:</label>
+			<div class="col-md-12 input-group mb-3 mt-2">
+				<div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">Primer Nombre:</span>
+                </div>
 				<input type="text" name="nombre1" maxlength="30" class="form-control" title="Debe de contener solo letras." required="" id="id_nombre1">
-				<br>
-
-				<label for="">Primer Apellido:</label>
-				<input type="text" name="apellido1" maxlength="30" class="form-control" required="" id="id_apellido1">
-				<div style="display:none">
-					<input type="checkbox" name="activo" class="form-control" id="id_activo" checked="">
-				</div>
-				<br>
-
-
 			</div>
-			<div class="col-md-6">
-
-				<label for="">Segundo Nombre:</label>
+			<div class="col-md-12 input-group mb-3 mt-2">
+				<div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">Segundo Nombre:</span>
+                </div>
 				<input type="text" name="nombre2" maxlength="30" class="form-control" id="id_nombre2">
-				<br>
-
-				<label for="">Segundo Apellido:</label>
-				<input type="text" name="apellido2" maxlength="30" class="form-control" id="id_apellido2">
-				<br>
 			</div>
+			<div class="col-md-12 input-group mb-3 mt-2">
+				<div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">Primer Apellido:</span>
+                </div>
+				<input type="text" name="apellido1" maxlength="30" class="form-control" required="" id="id_apellido1">
+			</div>
+			<div class="col-md-12 input-group mb-3 mt-2">
+				<div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">Segundo Apellido:</span>
+                </div>
+				<input type="text" name="apellido2" maxlength="30" class="form-control" id="id_apellido2">
+			</div>					
+			<input  hidden type="checkbox" name="activo" class="form-control" id="id_activo" checked="">
+			<input hidden type="checkbox" name="disponible" class="form-control" id="id_disponible" checked="">
 			
 		</form>
 		'''.format(csrf.get_token(request))

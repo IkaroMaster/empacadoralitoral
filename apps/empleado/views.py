@@ -533,6 +533,18 @@ def editarEmpleado_asJson(request):
 		<form class="row" id="formNuevo" method="POST" action="/empleado/editarEmpleado/">
 				<input type="hidden" name="csrfmiddlewaretoken" value="{}">
 			
+				<div class="col-md-12 input-group mb-3 mt-2">
+					<div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon1">Placa:</span>
+                    </div>
+					<input type="text" name="placa" maxlength="7" class="form-control" pattern="{}" title="La placa debe contener 3 letras y 4 números ej. AAA000" required="" id="id_placa">
+				</div>
+				<div class="col-md-12 input-group mb-3 mt-2">
+					<div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon1">Placa:</span>
+                    </div>
+					<input type="text" name="placa" maxlength="7" class="form-control" pattern="{}" title="La placa debe contener 3 letras y 4 números ej. AAA000" required="" id="id_placa">
+				</div>
 				
 				<div class="col-md-4">
 					<label for="" >Cod. Empleado:</label>

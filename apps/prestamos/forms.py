@@ -54,12 +54,20 @@ class DetallePrestamoForm(forms.ModelForm):
 				'class': 'form-control'
 			})
 			if field == 'equipo':
-				equipo = Equipo.objects.filter(estado__pk=2)
+				equipo = Equipo.objects.filter(estado__pk=2,nombre__pk=1)
 				cl = []
 				for c in equipo:
 					cl.append([(str(c.pk)), str(c)])
 				self.fields[field].choices = [("","Seleccione...")] + cl
-				self.fields[field].widget.attrs['class'] = 'selectpicker form-control dx'
+				self.fields[field].widget.attrs['class'] = 'selectpicker form-control equipo'
+				self.fields[field].widget.attrs['data-live-search'] = 'true'
+			elif field == 'tapadera':
+				equipo = Equipo.objects.filter(estado__pk=2,nombre__pk=4)
+				cl = []
+				for c in equipo:
+					cl.append([(str(c.pk)), str(c)])
+				self.fields[field].choices = [("","Seleccione...")] + cl
+				self.fields[field].widget.attrs['class'] = 'selectpicker form-control tapadera'
 				self.fields[field].widget.attrs['data-live-search'] = 'true'
 				# self.fields[field].widget.attrs['required'] = 'true'
 				# self.fields[field].widget.attrs['data-size'] = 5

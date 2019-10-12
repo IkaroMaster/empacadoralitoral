@@ -131,9 +131,10 @@ def CrearPrestamo(request):
 	horaBasico(prestamo_form,'horaSalida','...')
 	em = Compania.objects.filter(tipoCompania = TipoCompania.objects.get(pk = 1))
 	comboboxBasico(prestamo_form,'compania','Seleccione...','true',em)
-	comboboxBasico(prestamo_form,'placa','Seleccione...','true',[])
-	con = Conductor.objects.filter(activo=True)
-	comboboxBasico(prestamo_form,'conductor','Seleccione...','true',[])
+	ve = Vehiculo.objects.filter(disponible=True)
+	comboboxBasico(prestamo_form,'placa','Seleccione...','true',ve)
+	con = Conductor.objects.filter(activo=True,disponible=True)
+	comboboxBasico(prestamo_form,'conductor','Seleccione...','true',con)
 	comboboxBasico(prestamo_form,'empleado','Seleccione...','true',[])
 	# capitalize(prestamo_form,'observaciones')
 	

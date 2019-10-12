@@ -275,34 +275,31 @@ def agregarEmpresa_asJson(request):
 		<form id="formNuevo" class="row" method="POST" action="/compania/agregarEmpresa/">
 				<input type="hidden" name="csrfmiddlewaretoken" value="{}">
 				<input type="hidden" name="uso" id='uso' value="{}">
-				<div class="col-md-12 ">
-					<label for="id_nombre">
-						<font style="vertical-align: inherit;">
-							<font style="vertical-align: inherit;"><strong>Nombre:</strong></font>
-						</font>
-					</label>
-					<input type="text" name="nombre" maxlength="50" class="form-control" required="" id="id_nombre">
-					<br>
-					<label for="id_direccion">
-						<font style="vertical-align: inherit;">
-							<font style="vertical-align: inherit;"><strong>Dirección:</strong></font>
-						</font>
-					</label>
-					<input type="text" name="direccion" maxlength="200" class="form-control" required="" id="id_direccion">
-					<br>
-					<label for="id_abreviatura">
-						<font style="vertical-align: inherit;">
-							<font style="vertical-align: inherit;"><strong>Abreviatura:</strong></font>
-						</font>
-					</label>
-					<input type="text" name="abreviatura" maxlength="10" class="form-control" id="id_abreviatura">
-					<br>
-					<label for="id_tipoCompania">
-						<font style="vertical-align: inherit;">
-							<font style="vertical-align: inherit;"><strong>Tipo de Compañía:</strong></font>
-						</font>
-					</label>
-					<select name="tipoCompania" class="form-control" required="" id="id_tipoCompania">
+				<div class="col-md-12 input-group mb-3 mt-2">
+					<div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon1">Nombre:</span>
+                    </div>
+					 <input type="text" name="nombre" maxlength="50" class="form-control" required="" id="id_nombre">
+				</div>
+				<div class="col-md-12 input-group mb-3 mt-2">
+					<div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon1">Dirección:</span>
+                    </div>
+					 <input type="text" name="direccion" maxlength="200" class="form-control" required="" id="id_direccion">
+				</div>
+				<div class="col-md-12 input-group mb-3 mt-2">
+					<div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon1">Abreviatura:</span>
+                    </div>
+					 <input type="text" name="abreviatura" maxlength="10" class="form-control" id="id_abreviatura">
+					</div>
+				<div class="col-md-12 input-group mb-3 mt-2">
+					<div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon1">Tipo:</span>
+                    </div>
+					 <label class="text-center"></label>
+					 <select name="tipoCompania" class="form-control" required="" id="id_tipoCompania">
+	
 					'''.format(csrf.get_token(request),request.GET['uso'])
 				
 		tipoEmpresa = TipoCompania.objects.all()
@@ -314,9 +311,9 @@ def agregarEmpresa_asJson(request):
 		html += '''
 
 				</select>
+			</div>
 				<input hidden type="checkbox" name="estado" class="form-control" id="id_estado" checked>	
-			<br>
-				</div>
+				
 			</form>
 		'''
 
@@ -429,8 +426,11 @@ def agregarLaguna_asJson(request):
 		<h1>Registrar Laguna</h1>
 		<form id="formNuevo" action="/compania/agregarLaguna/" class="row" method="POST" >
 				<input type="hidden" name="csrfmiddlewaretoken" value="{}">
-				<div class="col-md-6">
-					 <label class="text-center">Código de Laguna:</label>
+				<div class="col-md-6 input-group mb-3 mt-2">
+					<div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon1">Código de Laguna:</span>
+                        </div>
+					 <label class="text-center"></label>
 					 <input type="text" name="codLaguna" maxlength="10" class="form-control" required="" id="id_codLaguna">
 				</div>
 				<div class="col-md-6">

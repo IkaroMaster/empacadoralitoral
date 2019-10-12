@@ -9,6 +9,7 @@ class Conductor(models.Model):
 	apellido2 		= models.CharField(max_length=30,blank=True,null=True)
 	fechaNacimiento = models.DateField(auto_now_add=False,blank=True, null=True)
 	celular 		= models.IntegerField(blank=True,null=True)
+	disponible		= models.BooleanField(default=True)
 	activo			= models.BooleanField(default=True)
 
 	def __str__(self):

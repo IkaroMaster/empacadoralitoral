@@ -10,6 +10,7 @@ class Vehiculo(models.Model):
 	anio		= models.PositiveIntegerField(validators=[MaxValueValidator(2050)])
 	color		= models.ForeignKey(Color, on_delete=models.CASCADE)
 	empresaFlete = models.ForeignKey(Compania, on_delete=models.CASCADE,blank=True, null=True)
+	disponible	= models.BooleanField(default=True)
 	# tipoVehiculo = models.ForeignKey(TipoVehiculo,blank=True, null=True)
 
 	def __str__(self):

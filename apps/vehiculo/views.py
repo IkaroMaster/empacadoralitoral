@@ -141,50 +141,58 @@ def agregarVehiculo_asJson(request):
 	if request.method == 'GET':
 		html = ''
 		html += '''
-		<h1>Registrar Vehiculo</h1>
+		<h2>Registrar Vehiculo</h2>
 		<form class="row"  method="POST" id="formNuevo" action="/vehiculo/agregarVehiculo/">
 				<input type="hidden" name="csrfmiddlewaretoken" value="{}">
-				
-					<div class="col-md-6">
-						<label for="">Placa:</label>
-						<input type="text" name="placa" maxlength="7" class="form-control" pattern="{}" title="La placa debe contener 3 letras y 4 números ej. AAA000" required="" id="id_placa">
-						<br>
-
-						<label for="">Marca:</label>
-						<input type="text" name="marca" maxlength="30" class="form-control" required="" id="id_marca">
-						<br>
-
-						<label for="">Modelo:</label>
-						<input type="text" name="modelo" maxlength="30" class="form-control" id="id_modelo">
-						<br>
-
-					</div>
-
-					<div class="col-md-6">
-
-						<label for="">Año:</label>
-						<input type="number" name="anio" min="0" class="form-control" required="" id="id_anio">
-						<br>
-
-						<label for="">Color:</label>
-						<select name="color" class="selectpicker form-control show-tick" data-live-search="true" data-size="4" required="" id="id_color" >
+				<div class="col-md-12 input-group mb-3 mt-2">
+					<div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon1">Placa:</span>
+                    </div>
+					<input type="text" name="placa" maxlength="7" class="form-control" pattern="{}" title="La placa debe contener 3 letras y 4 números ej. AAA000" required="" id="id_placa">
+				</div>
+				<div class="col-md-12 input-group mb-3 mt-2">
+					<div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon1">Marca:</span>
+                    </div>
+					<input type="text" name="marca" maxlength="30" class="form-control" required="" id="id_marca">
+				</div>
+				<div class="col-md-12 input-group mb-3 mt-2">
+					<div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon1">Modelo:</span>
+                    </div>
+					<input type="text" name="modelo" maxlength="30" class="form-control" id="id_modelo">
+				</div>
+				<div class="col-md-12 input-group mb-3 mt-2">
+					<div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon1">Año:</span>
+                    </div>
+					<input type="number" name="anio" min="0" class="form-control" required="" id="id_anio">
+				</div>
+				<div class="col-md-12 input-group mb-3 mt-2">
+					<div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon1">Color:</span>
+                    </div>
+					<select name="color" class="selectpicker form-control show-tick" data-live-search="true" data-size="4" required="" id="id_color" >
 						'''.format(csrf.get_token(request),'[A-Z]{3}[0-9]{4}')
 		colores = Color.objects.all()
 		for c in colores:
 			html += '<option value="{}" >{}</option>'.format(c.pk,c)
 		html += '''
-						</select>
-						<br><br>
-						<label for="">Empresa:</label>
-						<select name="empresaFlete" class="selectpicker form-control show-tick" data-live-search="true" data-size="4" required="" id="id_empresaFlete">'''
+					</select>
+				</div>
+				<div class="col-md-12 input-group mb-3 mt-2">
+					<div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon1">Empresa:</span>
+                    </div>	
+					<select name="empresaFlete" class="selectpicker form-control show-tick" data-live-search="true" data-size="4" required="" id="id_empresaFlete">'''
 
 		empresas = Compania.objects.all()
 		for e in empresas:
 			html += '<option value="{}" >{}</option>'.format(e.pk,e)				
 		html += '''</select>
 
-					</div>
-				<br>
+				</div>
+				<input hidden type="checkbox" name="disponible" class="form-control" id="id_disponible" checked="">
 			</form>
 		'''
 		return JsonResponse({'html':html})

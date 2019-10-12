@@ -84,6 +84,9 @@ bg-success
                         <div style="display:none">
                             {{conductor_form.activo}}
                         </div>
+                        <div hidden>
+                            {{conductor_form.disponible}}
+                        </div>
                         <br>
 
 
@@ -99,6 +102,7 @@ bg-success
                         {{conductor_form.apellido2}}
                         <br>
                     </div>
+
                 </div>
                 <br>
                 <a href="{% url 'conductor:conductores-url'%} " class="btn btn-secondary">Cancelar</a>
