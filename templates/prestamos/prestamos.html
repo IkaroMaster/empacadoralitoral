@@ -6,9 +6,17 @@ Prestamo de Equipo
 {% block l3 %}
 bg-success
 {% endblock l3 %}
+    
 {% block cuerpo %}
-<style></style>
+
 <div class="card text-center">
+
+    <div id="pantalla"></div>
+    <div  id="circulo" >
+        <div id="loader">
+        </div>
+    </div>
+
 
     <div class="card-header">
         <ul class="nav nav-tabs card-header-tabs">
@@ -31,28 +39,36 @@ bg-success
     </div>
     <div class="card-body ">
 
-        <h4 class=""><strong>{% if crear%}Crear Préstamo de Equipo{% elif editar %}Editar Préstamo Nō
+        <h4 class="mb-1"><strong>{% if crear%}Crear Préstamo de Equipo{% elif editar %}Editar Préstamo Nō
                 {{prestamo}}{% elif listado %}Prestamos de Equipo{% endif %}</strong>
         </h4>
 
-        
+
         {% if crear or editar %}
+        {% block css %}
+            {% load static %}
+            <link rel="stylesheet" href="{% static 'css/prestamos.css' %}">
+        {% endblock css %}
         <div class="container " style="{{estilos.o1}}">
             {% if messages %}
             {% for message in messages %}
-            <span class="alert alert-danger alert-dismissible ">Error: {{ message|escape }}</span>
-            <!--data-dismiss="alert"-->
-            <br><br>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Error: </strong>{{ message|escape }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
             {% endfor %}
             {% endif %}
 
 
+            <p class="small text-left mt-0"><i class="fas fa-info"></i> <strong class="text-warning">Campo con borde
+                    color amarillo es requerido.</strong></p>
 
             <form method="post" id="formPrestamo" class="was-validatedx">
                 <input type="hidden" name="crear" id="crear" data-prestamo="{{prestamo}}" value="{{ crear }}">
                 {% csrf_token %}
                 <div class="form-row">
-                    <p class="col-12 text-warning text-left small" ><i class="fas fa-info"></i> Los campos con borde color <strong>Amarillo</strong> son requeridos.</p>
 
 
                     <!-- <div class="col-md-6 form-row"> -->
@@ -66,10 +82,10 @@ bg-success
                     </div>
                     <div class="col-md-4 mb-3 mt-2">
                         <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" id="basic-addon1">Fecha de Salida</span>
-                        </div>
-                        {{prestamo_form.fechaSalida}}
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon1">Fecha de Salida</span>
+                            </div>
+                            {{prestamo_form.fechaSalida}}
                         </div>
                     </div>
                     <div hidden class="col-md-3 input-group mb-3 mt-2">
@@ -106,13 +122,23 @@ bg-success
 
                     <div class="col-md-4 input-group mb-3 mt-2">
                         <div class="input-group-prepend">
-                            <span class="input-group-text" id="basic-addon1">Numero de placa</span>
+                            <span class="input-group-text" id="basic-addon1">Numero de Placa</span>
                         </div>
                         {{prestamo_form.placa}}
                         <a id="agregarVehiculo" data-url="{% url 'vehiculo:agregar-vehiculo-url' %}"
                             class="btn-lg text-success fas fa-plus ml-1 p-0 pl-1 pt-2"></a>
                     </div>
+                    
                     <div class="col-md-4 input-group mb-3 mt-2">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon1">Entrego</span>
+                        </div>
+                        <input readonly class="form-control" type="text" value=" {% if entrego %}{{entrego}}{% else %}{{user.get_full_name}}{% endif %}">
+                        
+                       
+                            
+                    </div>
+                    <div hidden class="col-md-4 input-group mb-3 mt-2">
                         <div class="input-group-prepend">
                             <span class="input-group-text" id="basic-addon1">Entrego</span>
                         </div>
@@ -120,6 +146,7 @@ bg-success
                         <a id="agregarEmpleado" data-url="{% url 'empleado:agregar-empleado-url' %}"
                             class="btn-lg text-success fas fa-plus ml-1 p-0 pl-1 pt-2"></a>
                     </div>
+
                     <div class="input-group mb-3 mt-2">
                         <div class="input-group-prepend">
                             <span class="input-group-text" id="basic-addon1">Observaciones</span>
@@ -143,7 +170,7 @@ bg-success
                     <table class="table table-striped table-hover table-bordered ">
                         <thead class="thead-inverse">
                             <tr>
-                                <th>Equipo </th>
+                                <th>Bin </th>
                                 <th>Tapadera</th>
                                 <th>Descripción</th>
                                 <th>Acción</th>
@@ -177,18 +204,28 @@ bg-success
 
 
 
-                <div class="col-md-3" id="divEstado">
+                <div hidden class="col-md-3" id="divEstado">
                     <label>Estado</label>
                     {{prestamo_form.estadoPrestamo}}
                 </div>
 
                 <br>
+
+                {% if detallePrestamo_formset.non_form_errors %}
+                {% for error in detallePrestamo_formset.non_form_errors %}
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <strong>Alerta: </strong>{{ error|escape }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {% endfor %}
+                {% endif %}
                 <input type="submit" id="enviarFormularioPrestamo" hidden>
             </form>
             <center>
-                <button id="guardarPrestamo" class="btn btn-success"> <i class="fas fa-save"></i>{% if crear%}
-                    Guardar{% elif editar %}Modificar{% endif %}</button>
-                <a href="{% url 'prestamos:prestamos-url'%} " class="btn btn-secondary">Cancelar</a>
+                <button id="guardarPrestamo" class="btn btn-success"> {% if crear%}<i class="fas fa-save"></i> Guardar{% elif editar %}<i class="fas fa-edit"></i> Modificar{% endif %}</button>
+                <a href="{% url 'prestamos:prestamos-url'%} " class="btn btn-secondary"><i class="fas fa-window-close"></i> Cancelar</a>
 
             </center>
 

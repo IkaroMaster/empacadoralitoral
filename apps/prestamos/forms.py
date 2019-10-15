@@ -99,7 +99,53 @@ class DetallePrestamoForm(forms.ModelForm):
 class BaseDetallePrestamoFormSet(BaseFormSet):
 	def clean(self):
 		if any(self.errors):
-			return 
+			return
+
+		bines = []
+		tapaderas = []
+		duplicadosB = False
+		duplicadosT = False
+		binDuplicado = ''
+		tapaderaDuplicada = ''
+		for form in self.forms:
+			if form.cleaned_data:
+				# salida = form.cleaned_data['salida']
+				# unidad = form.cleaned_data['unidad']
+				# hielo = form.cleaned_data['hielo']
+				
+				equipo = form.cleaned_data.get('equipo')
+				tapadera = form.cleaned_data.get('tapadera')
+
+				if equipo:
+					if equipo in bines:
+						duplicadosB = True
+						binDuplicado = equipo
+					bines.append(equipo)
+				if tapadera:
+					if tapadera in tapaderas:
+						duplicadosT = True
+						tapaderaDuplicada = tapadera
+					tapaderas.append(tapadera)
+
+				if not equipo and tapadera:
+					raise forms.ValidationError('Seleccione un Bin para la tapadera numero '+str(tapadera)+'.',code='falta_equipo')
+				if not tapadera and equipo:
+					raise forms.ValidationError('Seleccione una Tapadera para el Bin numero '+str(equipo)+'.',code='falta_tapadera')
+				if not equipo and  not tapadera:
+					raise forms.ValidationError('Revisar detalle del prestamo, fila sin completar.',code='falta_detalle')
+				
+				if duplicadosB:
+					raise forms.ValidationError('Se encontró el Bin numero '+str(binDuplicado)+' duplicado.',code='bin_duplicado_'+str(equipo))
+				if duplicadosT:
+					raise forms.ValidationError('Se encontró la Tapadera numero '+str(tapaderaDuplicada)+' duplicada.',code='tapadera_duplicada_'+str(tapadera))
+
+				# Check that all links have both an anchor and URL
+				# if salida and not hielo:
+				# 	raise forms.ValidationError(
+				# 		'todas las salidas deben de tener un tipo de hielo.',
+				# 		code='missing_hielo'
+				# 	)
+				
 
 class EditarDetallePrestamoForm(forms.ModelForm):
 	class Meta:
@@ -119,12 +165,22 @@ class EditarDetallePrestamoForm(forms.ModelForm):
 			})
 			if field == 'equipo':
 				# equipo = Equipo.objects.filter(estado=Estado.objects.get(pk=2))
-				equipo = Equipo.objects.filter(Q(equipos__prestamoEquipo__pk=self.prestamo) | Q(estado_id=2))
+				equipo = Equipo.objects.filter(Q(equipos__prestamoEquipo__pk=self.prestamo) | Q(estado_id=2,nombre__pk=1))
 				# print(equipo2)
 				cl = []
 				for c in equipo:
 					cl.append([(str(c.pk)), str(c)])
 				self.fields[field].choices = [("","Seleccione...")] + cl
-				self.fields[field].widget.attrs['class'] = 'selectpicker form-control dx'
+				self.fields[field].widget.attrs['class'] = 'selectpicker form-control equipo'
+				self.fields[field].widget.attrs['data-live-search'] = 'true'
+			if field == 'tapadera':
+    				# equipo = Equipo.objects.filter(estado=Estado.objects.get(pk=2))
+				tapadera = Equipo.objects.filter(Q(tapaderas__prestamoEquipo__pk=self.prestamo) | Q(estado_id=2,nombre__pk=4))
+				# print(equipo2)
+				cl = []
+				for c in tapadera:
+					cl.append([(str(c.pk)), str(c)])
+				self.fields[field].choices = [("","Seleccione...")] + cl
+				self.fields[field].widget.attrs['class'] = 'selectpicker form-control tapadera'
 				self.fields[field].widget.attrs['data-live-search'] = 'true'
 				# self.fields[field].widget.attrs['data-size'] = 5

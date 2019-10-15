@@ -20,6 +20,8 @@ from .models import *
 from ..equipo.models import *
 from ..compania.models import  *
 from ..remision.models import  *
+from ..vehiculo.models import  *
+from ..conductor.models import  *
 from .forms import *
 from  ..conductor.models import *
 #FUNCIONES
@@ -65,49 +67,46 @@ def CrearPrestamo(request):
 		prestamo_form = PrestamoForm(request.POST) #, user=user
 
 		detallePrestamo_formset = DetallePrestamoFormSet(request.POST)
-		# print(request.POST)
-		#  print('prestamo: ',prestamo_form.is_valid())
-		# print(prestamo_form)
-		# print('detallePrestamo: ',detallePrestamo_formset.is_valid())
-		# print(detallePrestamo_formset)
-		# print('esta entrando al metodo post')
-		# print(request.POST['numRemision'])
+		
 		if prestamo_form.is_valid() and detallePrestamo_formset.is_valid():
 			
-			prestamo_form.save()
-			prestamo = PrestamoEquipo.objects.get(pk=prestamo_form.cleaned_data.get('numPrestamo'))
-
-			# if request.POST['prestamoEquipo']:		
-			# 	asignarPrestamo = PrestamoEquipo.objects.get(pk= request.POST['prestamoEquipo'])
-			# 	asignarPrestamo.estadoPrestamo = EstadoPrestamo.objects.get(pk=3)
-			# 	print(asignarPrestamo)
-			# 	asignarPrestamo.save()
-
+			prestamo = prestamo_form.save(commit=False)
 			new_detallesPrestamo = []
 			for x in detallePrestamo_formset:
 				descripcion = x.cleaned_data.get('descripcion')
 				equipo = x.cleaned_data.get('equipo')
 				tapadera = x.cleaned_data.get('tapadera')
-				# devolucion = x.cleaned_data.get('devolucion')
-
-
+				
 				if equipo:
 					new_detallesPrestamo.append(DetallePrestamoEquipo(prestamoEquipo=prestamo,descripcion=descripcion, equipo=equipo, tapadera=tapadera))
 
 			try:
 				with transaction.atomic():
+					prestamo.save()
+					print("*************************************")
+					print('Conductor asignado: '+str(prestamo.conductor))
+					conductor = Conductor.objects.get(pk = prestamo.conductor.pk)
+					conductor.disponible = False
+					conductor.save()
+					print('Vehiculo asignado: '+str(prestamo.placa))
+					placa = Vehiculo.objects.get(pk = prestamo.placa.pk)
+					placa.disponible = False
+					placa.save()
+					print('---------------------------------')
 					DetallePrestamoEquipo.objects.bulk_create(new_detallesPrestamo)
-					
-
 					var = DetallePrestamoEquipo.objects.filter(prestamoEquipo = prestamo)
-					
 					if var.count() > 0:
-						print("*************************************")
+						
 						for e in var:
-							print('registrado: '+str(e.equipo.id))
-							x = Equipo.objects.get(pk = e.equipo.id)
-							x.estado = Estado.objects.get(pk= 1)
-							x.save()
+							print('Bin prestado: '+str(e.equipo.id))
+							equipo = Equipo.objects.get(pk = e.equipo.id)
+							equipo.estado = Estado.objects.get(pk= 1)
+							equipo.save()
+							print('Tapadera prestada: '+str(e.tapadera.pk))
+							tapadera = Equipo.objects.get(pk = e.tapadera.pk)
+							tapadera.estado = Estado.objects.get(pk= 1)
+							tapadera.save()
+							print('---------------------------------')
 						print("*************************************")
 					#Redireccionamos a la ventana del listado de compras
 					messages.success(request, 'Usted ha creado el prestamo de equipo.')
@@ -140,6 +139,9 @@ def CrearPrestamo(request):
 	
 	prestamo_form.fields['fechaSalida'].widget.attrs['value'] = datetime.now().date()
 
+	print(detallePrestamo_formset.errors)
+	print(detallePrestamo_formset.non_form_errors())
+
 	context = {
 		'prestamo_form': prestamo_form,
 		'estilos':estilos,
@@ -164,9 +166,9 @@ def ModificarPrestamo(request,pk):
 		prestamo_form = PrestamoForm(request.POST,instance = prestamo)
 		detallePrestamo_formset = DetallePrestamoFormSet(request.POST,form_kwargs={'prestamo':pk})
 		if prestamo_form.is_valid() and detallePrestamo_formset.is_valid():
-			prestamo_form.save()
+			prestamoModificado = prestamo_form.save(commit=False)
 			prestamo = PrestamoEquipo.objects.get(pk=prestamo_form.cleaned_data.get('numPrestamo'))
-			
+	
 			new_detallesPrestamo = []
 			for n in detallePrestamo_formset:
 				descripcion =	n.cleaned_data.get('descripcion')
@@ -176,24 +178,57 @@ def ModificarPrestamo(request,pk):
 					new_detallesPrestamo.append(DetallePrestamoEquipo(prestamoEquipo=prestamo,descripcion=descripcion,equipo=equipo,tapadera=tapadera))
 			try:
 				with transaction.atomic():
-					dpe = DetallePrestamoEquipo.objects.filter(prestamoEquipo=prestamo)
+					print("*************************************")
+					if prestamoModificado.conductor.pk != prestamo.conductor.pk:
+						conductor = Conductor.objects.get(pk = prestamo.conductor.pk)
+						conductor.disponible = True
+						conductor.save() 
+						print('Conductor disponible: '+str(prestamo.conductor))
+						conductorNuevo = Conductor.objects.get(pk = prestamoModificado.conductor.pk)
+						conductorNuevo.disponible = False
+						conductorNuevo.save() 
+						print('Conductor asignado: '+str(prestamoModificado.conductor))
+					if prestamoModificado.placa.pk != prestamo.placa.pk:
+						placa = Vehiculo.objects.get(pk = prestamo.placa.pk)
+						placa.disponible = True
+						placa.save()
+						print('Vehiculo disponible: '+str(prestamo.placa))
+						placaNueva = Vehiculo.objects.get(pk = prestamoModificado.placa.pk)
+						placaNueva.disponible = False
+						placaNueva.save()
+						print('Vehiculo asignado: '+str(prestamoModificado.placa))
+
+					prestamoModificado.save()
+					
+					print('---------------------------------')
+
+					dpe = DetallePrestamoEquipo.objects.filter(prestamoEquipo=prestamoModificado)
 					for f in dpe:
-						temp1 = Equipo.objects.get(pk = f.equipo.pk)
-						temp1.estado = Estado.objects.get(pk = 2)
-						temp1.save()
-						print('adios ', temp1)
+						equi = Equipo.objects.get(pk = f.equipo.pk)
+						equi.estado = Estado.objects.get(pk = 2)
+						equi.save()
+						tapa = Equipo.objects.get(pk = f.tapadera.pk)
+						tapa.estado = Estado.objects.get(pk = 2)
+						tapa.save()
+						print('Disponible equipo: ', equi)
+						print('Disponible tapadera: ', tapa)
 					dpe.delete()
 					DetallePrestamoEquipo.objects.bulk_create(new_detallesPrestamo)
 					
-					var = DetallePrestamoEquipo.objects.filter(prestamoEquipo = prestamo)
+					var = DetallePrestamoEquipo.objects.filter(prestamoEquipo = prestamoModificado)
 					if var.count() > 0:
-						print("*************************************")
 						for e in var:
-							print('registrado: '+str(e.equipo.id))
-							x = Equipo.objects.get(pk = e.equipo.id)
-							x.estado = Estado.objects.get(pk= 1)
-							x.save()
+							print('Bin prestado: '+str(e.equipo.id))
+							equipo = Equipo.objects.get(pk = e.equipo.id)
+							equipo.estado = Estado.objects.get(pk= 1)
+							equipo.save()
+							print('Tapadera prestada: '+str(e.tapadera.pk))
+							tapadera = Equipo.objects.get(pk = e.tapadera.pk)
+							tapadera.estado = Estado.objects.get(pk= 1)
+							tapadera.save()
+							print('---------------------------------')
 						print("*************************************")
+					
 					messages.success(request,'Usted ha actualizado la remision')
 					return redirect(reverse('prestamos:prestamos-url'))
 
@@ -222,7 +257,9 @@ def ModificarPrestamo(request,pk):
 	horaBasico(prestamo_form,'horaSalida','...')
 	em = Compania.objects.filter(tipoCompania = TipoCompania.objects.get(pk = 1))
 	comboboxBasico(prestamo_form,'compania','Seleccione...','true',em)
-	comboboxBasico(prestamo_form,'placa','Seleccione...','true',[])
+	vehiculo = Vehiculo.objects.filter(Q(disponible =True) | Q(pk = prestamo.placa.pk))
+	comboboxBasico(prestamo_form,'placa','Seleccione...','true',vehiculo)
+	conductor = Conductor.objects.filter(Q(disponible = True)|Q(pk = prestamo.conductor.pk))
 	comboboxBasico(prestamo_form,'conductor','Seleccione...','true',[])
 	comboboxBasico(prestamo_form,'empleado','Seleccione...','true',[])
 
@@ -236,6 +273,7 @@ def ModificarPrestamo(request,pk):
 		'detallePrestamo_formset': detallePrestamo_formset,
 		'editar':True,
 		'prestamo':pk,
+		'entrego': prestamo.empleado,
 	}
 	return render(request,'prestamos/prestamos.html',context)
 
@@ -248,16 +286,31 @@ def anularPrestamo_asJson(request):
 		id = request.GET['id']
 		prestamo = PrestamoEquipo.objects.get(pk = id)
 		prestamo.estadoPrestamo = EstadoPrestamo.objects.get(pk=2)
+
+		print("*************************************")
+		conductor = Conductor.objects.get(pk = prestamo.conductor.pk)
+		conductor.disponible = True
+		conductor.save() 
+		print('Conductor disponible: '+str(prestamo.conductor))
 		
-			
+		placa = Vehiculo.objects.get(pk = prestamo.placa.pk)
+		placa.disponible = True
+		placa.save()
+		print('Vehiculo disponible: '+str(prestamo.placa))
+					
+		print('---------------------------------')
+
 		var = DetallePrestamoEquipo.objects.filter(prestamoEquipo = prestamo)
 		if var.count() > 0:
-			print("*************************************")
 			for e in var:
-				print('disponible: '+str(e.equipo.id))
+				print('Bin disponible: '+str(e.equipo.id))
 				x = Equipo.objects.get(pk = e.equipo.id)
 				x.estado = Estado.objects.get(pk= 2)
 				x.save()
+				print('Tapadera disponible: '+str(e.tapadera.id))
+				y = Equipo.objects.get(pk = e.tapadera.id)
+				y.estado = Estado.objects.get(pk= 2)
+				y.save()
 			print("*************************************")
 			# print(remision)
 			prestamo.save()
@@ -281,6 +334,160 @@ def anularPrestamo_asJson(request):
 @login_required()
 @permission_required('prestamos.terminar_prestamoequipo',raise_exception=True)
 def terminarPrestamo_asJson(request):
+	if not request.user.empleado.actualizoContrasena:
+		return HttpResponseRedirect(reverse('seguridad:log_out-url'))	
+	if request.is_ajax():
+		if request.method == 'POST':
+			prestamo = PrestamoEquipo.objects.get(pk=request.POST['id'])
+			prestamo.estadoPrestamo = EstadoPrestamo.objects.get(pk = 4)
+			prestamo.fechaEntrada = request.POST['fecha']
+			# prestamo.save()
+			detallePrestamo = DetallePrestamoEquipo.objects.filter(prestamoEquipo= prestamo).count()
+			array_datos = request.POST['datos']
+			datos = json.loads(array_datos)
+			print(datos)
+			if detallePrestamo == len(datos):
+				for d in datos:
+					if d['devuelto']:
+						e = Equipo.objects.get(pk=d['id'])
+						e.estado = Estado.objects.get(pk=2)
+						# e.save()
+						dp = DetallePrestamoEquipo.objects.get(prestamoEquipo= prestamo,equipo=e)
+						dp.devuelto = True
+						# dp.save()
+						
+			# for r in detallePrestamo:
+			# 	e = Equipo.objects.get(pk=r.equipo.pk)
+			# 	e.estado = Estado.objects.get(pk=2)
+			# 	# e.save()
+				return JsonResponse({'id':prestamo.pk,'fecha':prestamo.fechaEntrada})
+		else:
+			numPrestamo = request.GET['id']
+			prestamo = PrestamoEquipo.objects.get(pk=numPrestamo)
+			detallePrestamo = DetallePrestamoEquipo.objects.filter(prestamoEquipo= prestamo)
+			htmlPrestamo ='' 
+			htmlPrestamo +='''
+				<div class="row container">
+					<div class="col-6"><p><strong>Numero de prestamo: </strong> {}</p></div>
+					<div class="col-6"><p><strong>Empresa: </strong> {}</p></div>
+				</div>
+			'''.format(prestamo.numPrestamo,prestamo.compania)
+			
+			htmlDetallePrestamo = ''
+			htmlDetallePrestamo += '''
+				<p>A continuacion detallamos los articulos que enviamos.</p>
+				<div class="table-responsive">
+				<div class="alert alert-warning alert-dismissible "><strong>Alerta:</strong> Marque la casilla de verificación del equipo recibido.</div>
+				<table class="table table-bordered">
+						<thead>
+						<tr>
+							<th scope="col">#</th>
+							<th scope="col">Bin</th>
+							<th>Estado</th>
+							<th scope="col">Tapadera</th>
+							<th>Estado</th>
+							<th scope="col">Descripción</th>
+						</tr>
+						</thead>
+						<tbody>	
+											
+			'''
+			numero = 0
+			for dP in detallePrestamo:
+				numero += 1
+				descripcion = ''
+				if dP.descripcion:
+					descripcion = dP.descripcion
+				htmlDetallePrestamo +='''
+				<tr><td>{}</td>
+					<td>{}</td>
+					<td class=" alert-warning">
+						<div class="pretty p-svg p-round p-plain p-jelly">
+							<input data-id="{}" class="devueltos chkBines" type="checkbox" />
+							<div class="state p-success">
+								<span class="svg" uk-icon="icon: check"></span>
+								<label> Recibido</label>
+							</div>
+						</div>
+						
+					</td>
+					<td>{}</td>
+					<td class="alert-warning">
+						
+						<div class="pretty p-svg p-round p-plain p-jelly">
+							<input data-id="{}" class="devueltos chkTapaderas" type="checkbox"  />
+							<div class="state p-success">
+								<span class="svg" uk-icon="icon: check"></span>
+								<label>Recibido</label>
+							</div>
+						</div>	
+					</td>
+					<td>{}</td>
+				</tr>
+				'''.format(numero,dP.equipo.pk,dP.equipo,dP.tapadera.pk,dP.tapadera,descripcion)
+
+			fecha = ''
+			if prestamo.fechaEntrada:
+				fecha = prestamo.fechaEntrada
+			else:
+				r = datetime.now()
+				fecha = formats.date_format(r,"SHORT_DATETIME_FORMAT")
+
+			htmlDetallePrestamo += '''
+					
+						
+					<tr class="alert-secondary">
+						<td></td>
+						<td></td>
+						<td class="m-0 p-0 ">
+								<div class=" uk-button-group">					
+										<button id="selBin" class="uk-button uk-button-primary "><i class="far fa-check-circle "></i></button>
+										<button id="desBin" class="uk-button uk-button-danger  "><i class="far fa-times-circle"></i></button>
+			
+									</div>
+						</td>
+						<td></td>
+						<td class="m-0 p-0 ">
+								<div class=" uk-button-group">					
+									<button id="selTap" class="uk-button uk-button-primary "><i class="far fa-check-circle "></i></button>
+									<button id="desTap" class="uk-button uk-button-danger  "><i class="far fa-times-circle"></i></button>
+								</div>
+						</td>
+						<td></td>
+
+					</tr>
+					
+
+					</tbody>
+					
+				</table>
+			</div>
+				<div class="row container">
+					<div class="col-6"><p><strong>Numero de placa: </strong> {}</p></div>
+					<div class="col-6"><p><strong>Hora de salida: </strong> {}</p></div>
+					<div class="col-6"><p><strong>Fecha de salida: </strong> {}</p></div>
+					<div class="col-6">
+						<label><strong>Fecha de entrada</strong></label>
+						<input type="date" class="fechaEntrada form-control datetimepicker" value="{}" id="fechaEntrada" data-id="{}" required >
+					</div>
+					<div class="col-12"><p><strong>Observaciones: </strong> {}</p></div>
+				</div>
+			'''.format(prestamo.placa,prestamo.horaSalida,prestamo.fechaSalida,fecha,prestamo.numPrestamo,prestamo.observaciones)
+
+			# print(htmlDetallePrestamo)
+
+			data = {
+					'htmlPrestamo':htmlPrestamo,
+					'htmlDetallePrestamo':htmlDetallePrestamo
+				}
+			return JsonResponse(data)
+	else:
+		return render(request,'404.html')
+
+
+@login_required()
+@permission_required('prestamos.terminar_prestamoequipo',raise_exception=True)
+def terminarPrestamoXXXXXXXX_asJson(request):
 	if not request.user.empleado.actualizoContrasena:
 		return HttpResponseRedirect(reverse('seguridad:log_out-url'))	
 	if request.is_ajax():

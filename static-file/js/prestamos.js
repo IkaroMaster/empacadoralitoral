@@ -24,7 +24,6 @@ $(function () {
         showConfirmButton: false,
         timer: 5000
     });
-
     
     var x = $('.detalle-formset').formset({
         addText: 'Agregar ',
@@ -36,19 +35,21 @@ $(function () {
             if ($('#id_form-TOTAL_FORMS').val() >= 2) {
                 $(".delete-row").show();
             }
+            
             $(".delete-row").addClass("btn btn-danger fas fa-times ");
             $('.equipo').selectpicker({
                 liveSearch: true,
                 size: 3,
                 showTick:true,
                 // selectAll: true
-            });
+            }).selectpicker('refresh');
+            
             $('.tapadera').selectpicker({
                 liveSearch: true,
                 size: 3,
                 showTick:true,
                 // selectAll: true
-            });
+            }).selectpicker('refresh');
 
         },
         removed: function () {
@@ -65,7 +66,7 @@ $(function () {
     $(".delete-row").addClass("btn btn-danger fas fa-times ");
    
     if ($('#crear').val() == 'True') {
-        $('#divEstado').hide();
+        // $('#divEstado').hide();
         $(".delete-row").hide();
 
     } else {
@@ -73,6 +74,9 @@ $(function () {
             $(".delete-row").hide();
         }
     }
+
+    // $('#id_empleado').prop('disabled',true).selectpicker('refresh');
+
     $('.equipo').selectpicker({
         liveSearch: true,
         size: 3,
@@ -118,6 +122,7 @@ $(function () {
                 // showLoaderOnConfirm: true,
             }).then((result) => {
                 if (result.value) {
+                    
                     setTimeout(function () {
                         $("#enviarFormularioPrestamo").click();
                     }, 500)
@@ -136,6 +141,9 @@ $(function () {
             $(".add-row").click();
             return false;
         }
+        $('#pantalla').addClass('pantalla');
+        $('#circulo').addClass('circulo');
+        $('#loader').addClass('loader');
     });
 
     moment.updateLocale(moment.locale(), {
@@ -268,6 +276,31 @@ $(function () {
         $('#modalDetallePrestamo').modal('show');
     });
 
+    
+    $('.modalCuerpoPrestamo').on('click','#selBin',function(){
+        var bines = $('.modalCuerpoPrestamo').find('.chkBines');
+        bines.each(function (indexInArray, bin) { 
+             $(bin).prop('checked',true);
+        });
+    });
+    $('.modalCuerpoPrestamo').on('click','#desBin',function(){
+        var bines = $('.modalCuerpoPrestamo').find('.chkBines');
+        bines.each(function (indexInArray, bin) { 
+             $(bin).prop('checked',false);
+        });
+    });
+    $('.modalCuerpoPrestamo').on('click','#selTap',function(){
+        var taps = $('.modalCuerpoPrestamo').find('.chkTapaderas');
+        taps.each(function (indexInArray, tap) { 
+             $(tap).prop('checked',true);
+        });
+    });
+    $('.modalCuerpoPrestamo').on('click','#desTap',function(){
+        var taps = $('.modalCuerpoPrestamo').find('.chkTapaderas');
+        taps.each(function (indexInArray, tap) { 
+             $(tap).prop('checked',false);
+        });
+    });
 
 
     $('#terminarPrestamo').on('click', function () {
@@ -285,10 +318,10 @@ $(function () {
                 }
                 datos.push(obj);
             });
-
+            console.log(JSON.stringify(datos));
             $.ajax({
                 type: "POST",
-                url: "/prestamos/ajax_terminar_prestamo/",
+                url: "/prestamos/ajax_terminar_prestamoxx/",
                 // headers: {
                 //     'Authorization': "Token " + localStorage.access_token
                 // },

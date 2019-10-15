@@ -448,57 +448,68 @@ def agregarEmpleado_asJson(request):
 	if request.method == 'GET':
 		html = ''
 		html += '''
-		<h1>Registrar Empleado</h1>
+		<h2>Registrar Empleado</h2>
 		<form class="row" id="formNuevo" method="POST" action="/empleado/agregarEmpleado/">
-				<input type="hidden" name="csrfmiddlewaretoken" value="{}">
+			<input type="hidden" name="csrfmiddlewaretoken" value="{}">
 			
-				
-				<div class="col-md-4">
-					<label for="" >Cod. Empleado:</label>
-					<input type="number" name="codEmpleado" class="form-control" required="" id="id_codEmpleado">
+			<div class="col-md-12 input-group mb-3 mt-2">
+				<div class="input-group-prepend">
+					<span class="input-group-text" id="basic-addon1">Código del Empleado:</span>
 				</div>
-					
+				<input type="number" name="codEmpleado" class="form-control" required="" id="id_codEmpleado">
+			</div>
+			<div class="col-md-12 input-group mb-3 mt-2">
+				<div class="input-group-prepend">
+					<span class="input-group-text" id="basic-addon1">Cargo:</span>
+				</div>
 				
-					<div class="col-md-8">
-						<label for="">Cargo:</label>
-						<select name="cargo" class="selectpicker form-control show-tick" data-live-search="True" data-size="4" required="" id="id_cargo" >
-						'''.format(csrf.get_token(request))	
+				<select name="cargo" class="selectpicker form-control show-tick" data-live-search="True" data-size="4" required="" id="id_cargo" >
+				'''.format(csrf.get_token(request))	
 
 		cargos = Cargo.objects.all()
 		for c in cargos:
 			html += '<option value="{}" >{}</option>'.format(c.pk,c)
 
 		html +=	'''
-						</select>
-					</div>
-					<div class="col-md-6">
-						<label for="">Teléfono:</label>
-						<input type="text" name="telefono" maxlength="9" class="form-control" id="id_telefono">
-					</div>
-					<div class="col-md-6">
-						<label for="">Numero Identidad:</label>
-						<input type="text" name="identidad" maxlength="15" class="form-control" data-mask="9999-9999-99999" id="id_identidad">
-					</div>
-
-					
-					<div class="col-md-6">
-						<label for="">Primer Nombre:</label>
-						<input type="text" name="nombre" maxlength="15" class="form-control" required="" id="id_nombre">
-					</div>
-					<div class="col-md-6">
-						<label for="">Segundo Nombre:</label>
-						<input type="text" name="segundoNombre" maxlength="15" class="form-control" id="id_segundoNombre">
-					</div>
-					<div class="col-md-6">
-						<label for="">Primer Apellido:</label>
-						<input type="text" name="apellido" maxlength="15" class="form-control" required="" id="id_apellido">
-					</div>
-					<div class="col-md-6">
-						<label for="">Segundo Apellido:</label>
-						<input type="text" name="segundoApellido" maxlength="15" class="form-control" id="id_segundoApellido">
-					</div>
-					
-			</form>
+				</select>
+			</div>
+			<div class="col-md-12 input-group mb-3 mt-2">
+				<div class="input-group-prepend">
+					<span class="input-group-text" id="basic-addon1">Teléfono:</span>
+				</div>
+				<input type="text" name="telefono" maxlength="9" class="form-control" id="id_telefono">
+			</div>
+			<div class="col-md-12 input-group mb-3 mt-2">
+				<div class="input-group-prepend">
+					<span class="input-group-text" id="basic-addon1">Numero Identidad:</span>
+				</div>
+				<input type="text" name="identidad" maxlength="15" class="form-control" data-mask="9999-9999-99999" id="id_identidad">
+			</div>
+			<div class="col-md-12 input-group mb-3 mt-2">
+				<div class="input-group-prepend">
+					<span class="input-group-text" id="basic-addon1">Primer Nombre:</span>
+				</div>
+				<input type="text" name="nombre" maxlength="15" class="form-control" required="" id="id_nombre">
+			</div>
+			<div class="col-md-12 input-group mb-3 mt-2">
+				<div class="input-group-prepend">
+					<span class="input-group-text" id="basic-addon1">Segundo Nombre:</span>
+				</div>
+				<input type="text" name="segundoNombre" maxlength="15" class="form-control" id="id_segundoNombre">
+			</div>
+			<div class="col-md-12 input-group mb-3 mt-2">
+				<div class="input-group-prepend">
+					<span class="input-group-text" id="basic-addon1">Primer Apellido:</span>
+				</div>
+				<input type="text" name="apellido" maxlength="15" class="form-control" required="" id="id_apellido">
+			</div>
+			<div class="col-md-12 input-group mb-3 mt-2">
+				<div class="input-group-prepend">
+					<span class="input-group-text" id="basic-addon1">Segundo Apellido:</span>
+				</div>
+				<input type="text" name="segundoApellido" maxlength="15" class="form-control" id="id_segundoApellido">
+			</div>
+		</form>
 		'''
 		return JsonResponse({'html':html})
 
@@ -533,19 +544,6 @@ def editarEmpleado_asJson(request):
 		<form class="row" id="formNuevo" method="POST" action="/empleado/editarEmpleado/">
 				<input type="hidden" name="csrfmiddlewaretoken" value="{}">
 			
-				<div class="col-md-12 input-group mb-3 mt-2">
-					<div class="input-group-prepend">
-                        <span class="input-group-text" id="basic-addon1">Placa:</span>
-                    </div>
-					<input type="text" name="placa" maxlength="7" class="form-control" pattern="{}" title="La placa debe contener 3 letras y 4 números ej. AAA000" required="" id="id_placa">
-				</div>
-				<div class="col-md-12 input-group mb-3 mt-2">
-					<div class="input-group-prepend">
-                        <span class="input-group-text" id="basic-addon1">Placa:</span>
-                    </div>
-					<input type="text" name="placa" maxlength="7" class="form-control" pattern="{}" title="La placa debe contener 3 letras y 4 números ej. AAA000" required="" id="id_placa">
-				</div>
-				
 				<div class="col-md-4">
 					<label for="" >Cod. Empleado:</label>
 					<input type="number" name="codEmpleado" class="form-control" required="" id="id_codEmpleado" value={} readonly>
