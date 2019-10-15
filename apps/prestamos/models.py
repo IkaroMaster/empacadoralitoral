@@ -45,6 +45,7 @@ class DetallePrestamoEquipo(models.Model):
 	tapadera			= models.ForeignKey(Equipo,on_delete=models.PROTECT,related_name='tapaderas',blank=True, null=True)
 	# tapadera			= models.IntegerField(blank=True, null=True)
 	devuelto			= models.BooleanField(default=False, blank=True, null=True)
+	devueltoT			= models.BooleanField(default=False, blank=True, null=True)
 	def __str__(self):
 		return "{}".format(self.equipo)
 	class Meta:

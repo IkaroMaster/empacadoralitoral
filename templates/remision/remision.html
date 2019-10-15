@@ -3,21 +3,11 @@
 Remisiones
 {% endblock titulo %}
 {% block l1 %}
-active
+bg-success
 {% endblock l1 %}
 {% block cuerpo %}
 <div class="card text-center">
-    <div class="panel-heading bg-primary">
-        <h4 class="panel-title text-light">
-            {% if crear%}
-            Crear Remisión de Hielo
-            {% elif editar %}
-            Editar Remisión Nō {{remision}}
-            {% elif listado %}
-            Remisiones de Hielo
-            {% endif %}
-        </h4>
-    </div>
+    
     <div class="card-header">
         <ul class="nav nav-tabs card-header-tabs">
 
@@ -33,7 +23,13 @@ active
             </li>
         </ul>
     </div>
-    <div class="card-body">
+    <div class="card-body pb-0">
+        <h4 class="mb-1"><strong>{% if crear%}Crear Remisión de Hielo{% elif editar %}Editar Remisión Nō {{remision}}{% elif listado %}Remisiones de Hielo{% endif %}</strong>
+        </h4>
+        
+        
+        {% if crear or editar %}
+                        
         <div style="{{estilos.o1}}">
 
             {% if messages %}
@@ -206,11 +202,15 @@ active
 
 
         </div>
+        {% endif %}
+        {% if listado %}
         <div style="{{estilos.o2}}">
 
 
             <div class="row col-md-6 mb-1">
+                
                 {% if perms.remision.add_remision %}
+                <i id="add_remision"></i>
                 <div class="col">
                     <a class=" btn btn-success {{ clases.o1 }}" href="{% url 'remision:crear_remision-url' %}">Nueva
                         Remision</a>
@@ -218,6 +218,7 @@ active
                 {% endif %}
 
                 {% if perms.remision.generar_reportes %}
+                <i id="generar_reportes"></i>
                 <!-- <div class=""> -->
                 <div class="col btn-group" role="group">
                     <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle"
@@ -241,14 +242,13 @@ active
                     <thead class="thead-inverse">
                         <tr>
                             <th data-priority="1">Cod.</th>
-                            <th>Tipo de remision</th>
-                            <th>Guia</th>
-                            <th>Compania</th>
+                            <th>Tipo</th>
+                            <th>Compañía</th>
                             <th>Fecha</th>
                             <th>Estado</th>
-                            <th>Prestamo de equipo</th>
+                            <th>Préstamo</th>
                             <th>Conductor</th>
-                            <th>Entregado por</th>
+                            <th>Entregó</th>
                             <th>Placa</th>
                             <th data-priority="2">Acciones</th>
                             <!-- <th>Añadir</th> -->
@@ -261,20 +261,13 @@ active
                             <td>{{ r.numRemision }}</td>
                             <td>{{ r.tipoRemision }}</td>
                             <td>
-                                {% if r.guia %}
-                                <a href="">{{ r.guia }}</a>
-                                {% else %}
-                                -
-                                {% endif %}
-                            </td>
-                            <td>
                                 {% if r.compania.abreviatura %}
                                 {{r.compania.abreviatura}}
                                 {% else %}
                                 {{ r.compania }}
                                 {% endif %}
                             </td>
-                            <td>{{ r.fecha }}</td>
+                            <td>{{ r.fecha|date:'Y/m/d' }}</td>
                             <td id="col_estado-{{ r.numRemision }}">
                                 {{r.estado}}
                                 <!-- {% if r.estado.id == 1 %}
@@ -290,9 +283,9 @@ active
                             </td>
                             <td id="col_prestamo-{{ r.numRemision }}">
                                 {% if r.prestamoEquipo  %}
-                                {{ r.prestamoEquipo }}
+                                <a data-prestamo='{{r.prestamoEquipo.pk}}'>{{ r.prestamoEquipo }}</a>
                                 {% else %}
-                                -
+                                
                                 {% endif %}
                             </td>
                             <td>{{ r.conductor }}</td>
@@ -347,6 +340,7 @@ active
                 </table>
             </div>
         </div>
+        {% endif %}
     </div>
 
 </div>

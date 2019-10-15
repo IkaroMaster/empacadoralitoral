@@ -151,17 +151,17 @@ $(function () {
     });
     var tablex = $('#tablajs').DataTable({
         // "dom": "<'row'  <'col-md-6'f> >",
-        dom: "<'row'<'#contenedorArriba.col-sm-2'><'col-sm-10'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-5'i><'col-sm-7'<'#colvis'>p>>",
-        "scrollY": '45vh',
+        dom: "<'row'<'#contenedorArriba.col-sm-2'><'col-sm-10'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-4'i><'col-sm-8'<'#colvis'>p>>",
+        "scrollY": '43vh',
         "scrollCollapse": true,
         "scrollX": true,
         "deferRender": true,
         // responsive: true,
         "scroller": true,
         "language": {
-            "zeroRecords": "No se ha encontrado nada, lo siento.",
+            "zeroRecords": "No se ha encontrado nada.",
             "infoEmpty": "No hay registros disponibles",
-            "infoFiltered": "(filtrado de _MAX_ registros totales)",
+            "infoFiltered": "(Filtrado de _MAX_ registros totales)",
             "info": "Mostrando _START_ a _END_ de _TOTAL_ registros.",
             "search": "Buscar:"
         },
@@ -179,8 +179,10 @@ $(function () {
         // "scrollCollapse": true
     });
     if ($('#add_prestamoequipo').length) {
-        $('#contenedorArriba').html('<a class="btn btn-success text-left" href="/prestamos/crear/">Nuevo Prestamo</a>');
+        $('#contenedorArriba').html('<a class="btn btn-primary text-left" href="/prestamos/crear/"><i class="fas fa-plus"></i> Nuevo Préstamo</a>');
     }
+    $('.dataTables_info').addClass(['p-0','text-left']);
+
 
     $(document).on('click', '.anular', function () {
         var id = $(this).attr('data-anular');
@@ -318,13 +320,10 @@ $(function () {
                 }
                 datos.push(obj);
             });
-            console.log(JSON.stringify(datos));
+            
             $.ajax({
                 type: "POST",
-                url: "/prestamos/ajax_terminar_prestamoxx/",
-                // headers: {
-                //     'Authorization': "Token " + localStorage.access_token
-                // },
+                url: "/prestamos/ajax_terminar_prestamo/",
                 data: {
                     id: id,
                     fecha: fecha,

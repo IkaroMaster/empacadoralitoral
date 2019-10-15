@@ -338,46 +338,64 @@ def terminarPrestamo_asJson(request):
 		return HttpResponseRedirect(reverse('seguridad:log_out-url'))	
 	if request.is_ajax():
 		if request.method == 'POST':
-			prestamo = PrestamoEquipo.objects.get(pk=request.POST['id'])
-			prestamo.estadoPrestamo = EstadoPrestamo.objects.get(pk = 4)
-			prestamo.fechaEntrada = request.POST['fecha']
-			# prestamo.save()
-			detallePrestamo = DetallePrestamoEquipo.objects.filter(prestamoEquipo= prestamo).count()
-			array_datos = request.POST['datos']
-			datos = json.loads(array_datos)
-			print(datos)
-			if detallePrestamo == len(datos):
-				for d in datos:
-					if d['devuelto']:
-						e = Equipo.objects.get(pk=d['id'])
-						e.estado = Estado.objects.get(pk=2)
-						# e.save()
-						dp = DetallePrestamoEquipo.objects.get(prestamoEquipo= prestamo,equipo=e)
-						dp.devuelto = True
-						# dp.save()
+			if request.POST['fecha'] and request.POST['id']:
+				prestamo = PrestamoEquipo.objects.get(pk=request.POST['id'])
+				prestamo.estadoPrestamo = EstadoPrestamo.objects.get(pk = 4)
+				prestamo.fechaEntrada = request.POST['fecha']
+			
+				detallePrestamo = Equipo.objects.filter(Q(equipos__prestamoEquipo=prestamo)| Q(tapaderas__prestamoEquipo=prestamo)).count()
+				
+				array_datos = request.POST['datos']
+				datos = json.loads(array_datos)
+				print(datos)
+				if detallePrestamo == len(datos):
+					for d in datos:
+						if d['devuelto']:
+							e = Equipo.objects.get(pk=d['id'])
+							e.estado = Estado.objects.get(pk=2)
+							e.save()
+							
+							dp = ''
+							if e.nombre == BaseEquipo.objects.get(pk=1):
+								dp = DetallePrestamoEquipo.objects.get(prestamoEquipo= prestamo,equipo=e)
+								print('Bin Devuelto:'+str(e.pk))
+								dp.devuelto = True
+
+							elif e.nombre == BaseEquipo.objects.get(pk=4):
+								dp = DetallePrestamoEquipo.objects.get(prestamoEquipo= prestamo,tapadera=e)
+								print('Tapadera Devuelta:'+str(e.pk))
+								dp.devueltoT = True
+							dp.save()
+					prestamo.save()
+					return JsonResponse({'id':prestamo.pk,'fecha':prestamo.fechaEntrada})
 						
 			# for r in detallePrestamo:
 			# 	e = Equipo.objects.get(pk=r.equipo.pk)
 			# 	e.estado = Estado.objects.get(pk=2)
 			# 	# e.save()
-				return JsonResponse({'id':prestamo.pk,'fecha':prestamo.fechaEntrada})
+				
 		else:
 			numPrestamo = request.GET['id']
 			prestamo = PrestamoEquipo.objects.get(pk=numPrestamo)
 			detallePrestamo = DetallePrestamoEquipo.objects.filter(prestamoEquipo= prestamo)
 			htmlPrestamo ='' 
 			htmlPrestamo +='''
-				<div class="row container">
+				<div class="row container ">
 					<div class="col-6"><p><strong>Numero de prestamo: </strong> {}</p></div>
 					<div class="col-6"><p><strong>Empresa: </strong> {}</p></div>
+					<div class="col-6"><p><strong>Conductor: </strong> {}</p></div>
+					<div class="col-6"><p><strong>Numero de placa: </strong> {}</p></div>
+					<div class="col-6"><p><strong>Hora de salida: </strong> {}</p></div>
+					<div class="col-6"><p><strong>Fecha de salida: </strong> {}</p></div>
+					<div class="col-12"><p><strong>Observaciones: </strong> {}</p></div>
 				</div>
-			'''.format(prestamo.numPrestamo,prestamo.compania)
+			'''.format(prestamo.numPrestamo,prestamo.compania,prestamo.conductor,prestamo.placa,prestamo.horaSalida,prestamo.fechaSalida,prestamo.observaciones)
 			
 			htmlDetallePrestamo = ''
 			htmlDetallePrestamo += '''
-				<p>A continuacion detallamos los articulos que enviamos.</p>
+				<div class="alert alert-warning alert-dismissible "><strong>Alerta: </strong>Marque la casilla de verificación del equipo recibido y confirme la fecha de entrada.</div>
+				<p class="mb-1">A continuación se detallan los artículos que se enviaron.</p>
 				<div class="table-responsive">
-				<div class="alert alert-warning alert-dismissible "><strong>Alerta:</strong> Marque la casilla de verificación del equipo recibido.</div>
 				<table class="table table-bordered">
 						<thead>
 						<tr>
@@ -424,14 +442,11 @@ def terminarPrestamo_asJson(request):
 					</td>
 					<td>{}</td>
 				</tr>
-				'''.format(numero,dP.equipo.pk,dP.equipo,dP.tapadera.pk,dP.tapadera,descripcion)
+				'''.format(numero,dP.equipo,dP.equipo.pk,dP.tapadera,dP.tapadera.pk,descripcion)
 
-			fecha = ''
-			if prestamo.fechaEntrada:
-				fecha = prestamo.fechaEntrada
-			else:
-				r = datetime.now()
-				fecha = formats.date_format(r,"SHORT_DATETIME_FORMAT")
+			
+			
+			fecha = datetime.now().date()
 
 			htmlDetallePrestamo += '''
 					
@@ -463,127 +478,15 @@ def terminarPrestamo_asJson(request):
 				</table>
 			</div>
 				<div class="row container">
-					<div class="col-6"><p><strong>Numero de placa: </strong> {}</p></div>
-					<div class="col-6"><p><strong>Hora de salida: </strong> {}</p></div>
-					<div class="col-6"><p><strong>Fecha de salida: </strong> {}</p></div>
-					<div class="col-6">
-						<label><strong>Fecha de entrada</strong></label>
-						<input type="date" class="fechaEntrada form-control datetimepicker" value="{}" id="fechaEntrada" data-id="{}" required >
-					</div>
-					<div class="col-12"><p><strong>Observaciones: </strong> {}</p></div>
-				</div>
-			'''.format(prestamo.placa,prestamo.horaSalida,prestamo.fechaSalida,fecha,prestamo.numPrestamo,prestamo.observaciones)
-
-			# print(htmlDetallePrestamo)
-
-			data = {
-					'htmlPrestamo':htmlPrestamo,
-					'htmlDetallePrestamo':htmlDetallePrestamo
-				}
-			return JsonResponse(data)
-	else:
-		return render(request,'404.html')
-
-
-@login_required()
-@permission_required('prestamos.terminar_prestamoequipo',raise_exception=True)
-def terminarPrestamoXXXXXXXX_asJson(request):
-	if not request.user.empleado.actualizoContrasena:
-		return HttpResponseRedirect(reverse('seguridad:log_out-url'))	
-	if request.is_ajax():
-		if request.method == 'POST':
-			prestamo = PrestamoEquipo.objects.get(pk=request.POST['id'])
-			prestamo.estadoPrestamo = EstadoPrestamo.objects.get(pk = 4)
-			prestamo.fechaEntrada = request.POST['fecha']
-			# prestamo.save()
-			detallePrestamo = DetallePrestamoEquipo.objects.filter(prestamoEquipo= prestamo).count()
-			array_datos = request.POST['datos']
-			datos = json.loads(array_datos)
-			print(datos)
-			if detallePrestamo == len(datos):
-				for d in datos:
-					if d['devuelto']:
-						e = Equipo.objects.get(pk=d['id'])
-						e.estado = Estado.objects.get(pk=2)
-						# e.save()
-						dp = DetallePrestamoEquipo.objects.get(prestamoEquipo= prestamo,equipo=e)
-						dp.devuelto = True
-						# dp.save()
-						
-			# for r in detallePrestamo:
-			# 	e = Equipo.objects.get(pk=r.equipo.pk)
-			# 	e.estado = Estado.objects.get(pk=2)
-			# 	# e.save()
-				return JsonResponse({'id':prestamo.pk,'fecha':prestamo.fechaEntrada})
-		else:
-			numPrestamo = request.GET['id']
-			prestamo = PrestamoEquipo.objects.get(pk=numPrestamo)
-			detallePrestamo = DetallePrestamoEquipo.objects.filter(prestamoEquipo= prestamo)
-			htmlPrestamo ='' 
-			htmlPrestamo +='''
-				<div class="alert alert-warning alert-dismissible ">Alerta: Desmarque el equipo que no ha sido devuelto.</div>
-				<div class="row container">
-					<div class="col-6"><p><strong>Numero de prestamo: </strong> {}</p></div>
-					<div class="col-6"><p><strong>Empresa: </strong> {}</p></div>
-				</div>
-			'''.format(prestamo.numPrestamo,prestamo.compania)
-			
-			htmlDetallePrestamo = ''
-			htmlDetallePrestamo += '''
-				<p>A continuacion detallamos los articulos que enviamos.</p>
-				<table class="table table-bordered">
-						<thead>
-						<tr>
-							<th scope="col">Estado</th>
-							<th scope="col">Equipo</th>
-							<th scope="col">Tapadera</th>
-							<th scope="col">Descripción</th>
-						</tr>
-						</thead>
-						<tbody>	
-											
-			'''
-			for dP in detallePrestamo:
-				htmlDetallePrestamo +='''
-				<tr>
-					<td>
-						<div class="pretty p-svg p-round p-plain p-jelly">
-							<input data-id="{}" class="devueltos" type="checkbox" checked />
-							<div class="state p-success">
-								<span class="svg" uk-icon="icon: check"></span>
-								<label>Devuelto</label>
-							</div>
+					
+					<div  class="col-md-6 input-group mb-3 mt-2">
+						<div class="input-group-prepend">
+							<span class="input-group-text" id="basic-addon1"><strong>Fecha de Entrada</strong></span>
 						</div>
-						
-					</td>
-					<td scope="row">{}</td>
-					<td>{}</td>
-					<td>{}</td>
-				</tr>
-				'''.format(dP.equipo.pk,dP.equipo,dP.tapadera,dP.descripcion)
-
-			fecha = ''
-			if prestamo.fechaEntrada:
-				fecha = prestamo.fechaEntrada
-			else:
-				r = datetime.now()
-				fecha = formats.date_format(r,"SHORT_DATETIME_FORMAT")
-
-			htmlDetallePrestamo += '''
-				
-					</tbody>
-				</table>
-				<div class="row container">
-					<div class="col-6"><p><strong>Numero de placa: </strong> {}</p></div>
-					<div class="col-6"><p><strong>Hora de salida: </strong> {}</p></div>
-					<div class="col-6"><p><strong>Fecha de salida: </strong> {}</p></div>
-					<div class="col-6">
-						<label><strong>Fecha de entrada</strong></label>
-						<input type="date" class="fechaEntrada form-control datetimepicker" value="{}" id="fechaEntrada" data-id="{}" required >
-					</div>
-					<div class="col-12"><p><strong>Observaciones: </strong> {}</p></div>
+						<input type="date" class="fechaEntrada form-control datetimepicker border border-warning" value="{}" id="fechaEntrada" data-id="{}" required >
+					</div>	
 				</div>
-			'''.format(prestamo.placa,prestamo.horaSalida,prestamo.fechaSalida,fecha,prestamo.numPrestamo,prestamo.observaciones)
+			'''.format(fecha,prestamo.numPrestamo)
 
 			# print(htmlDetallePrestamo)
 
@@ -594,6 +497,7 @@ def terminarPrestamoXXXXXXXX_asJson(request):
 			return JsonResponse(data)
 	else:
 		return render(request,'404.html')
+
 
 
 @login_required()
@@ -616,51 +520,109 @@ def detallePrestamo_asJson(request):
 		'''.format(prestamo.numPrestamo,prestamo.compania)
 		
 		htmlDetallePrestamo = ''
-		htmlDetallePrestamo += '''
-			<p>A continuacion detallamos los articulos que enviamos.</p>
-			<table class="table table-bordered">
-					<thead>
-					<tr>
-						<th scope="col">Equipo</th>
-						<th scope="col">Tapadera</th>
-						<th scope="col">Descripcion</th>
-						<th scope="col">Devuelto</th>
-					</tr>
-					</thead>
-					<tbody>	
-										
-		'''
-		for dP in detallePrestamo:
-			devuelto = 'No'
-			if dP.devuelto:
-				devuelto = 'Si'
-			htmlDetallePrestamo +='''
-			<tr>
-				<td scope="row">{}</td>
-				<td>{}</td>
-				<td>{}</td>
-				<td>{}</td>
-			</tr>
-			'''.format(dP.equipo,dP.tapadera,dP.descripcion,devuelto)
-
-		fecha = ''
-		if prestamo.fechaEntrada:
-			fecha = prestamo.fechaEntrada
-		
-		htmlDetallePrestamo += '''
-				</tbody>
-			</table>
-			<div class="row container">
-				<div class="col-6"><p><strong>Numero de placa: </strong> {}</p></div>
-				<div class="col-6"><p><strong>Hora de salida: </strong> {}</p></div>
-				<div class="col-6"><p><strong>Fecha de salida: </strong> {}</p></div>
-				<div class="col-6"><p><strong>Fecha de Entrada: </strong> {}</p></div>
-				<div class="col-12"><p><strong>Observaciones: </strong> {}</p></div>
-				
-				
-			</div>
+		if prestamo.estadoPrestamo.pk != 4: 
+			htmlDetallePrestamo += '''
+			<div class="table-responsive">
+				<p>A continuación detallamos los artículos que enviamos.</p>
+				<table class="table table-bordered">
+						<thead>
+						<tr>
+							<th>#</th>
+							<th scope="col">Equipo</th>
+							<th scope="col">Tapadera</th>
+							<th scope="col">Descripción</th>
+						</tr>
+						</thead>
+						<tbody>	
+											
+			'''
+			numero = 0
+			for dP in detallePrestamo:
+				numero += 1
+				descripcion = ''
+				if dP.descripcion:
+					descripcion = dP.descripcion
+				htmlDetallePrestamo +='''
+				<tr><td>{}</td>
+					<td scope="row">{}</td>
+					<td>{}</td>
+					<td>{}</td>
+				</tr>
+				'''.format(numero,dP.equipo,dP.tapadera,descripcion)
 			
-		'''.format(prestamo.placa,prestamo.horaSalida,prestamo.fechaSalida,fecha,prestamo.observaciones)
+			htmlDetallePrestamo += '''
+					</tbody>
+				</table>
+			</div>
+				<div class="row container">
+					<div class="col-6"><p><strong>Numero de placa: </strong> {}</p></div>
+					<div class="col-6"><p><strong>Hora de salida: </strong> {}</p></div>
+					<div class="col-6"><p><strong>Fecha de salida: </strong> {}</p></div>
+					<div class="col-12"><p><strong>Observaciones: </strong> {}</p></div>					
+				</div>
+				
+			'''.format(prestamo.placa,prestamo.horaSalida,prestamo.fechaSalida,prestamo.observaciones)
+		else:
+			htmlDetallePrestamo += '''
+				<p>A continuación detallamos los artículos que enviamos.</p>
+				<div class="table-responsive">
+				<table class="table table-bordered">
+						<thead>
+						<tr>
+							<th>#</th>
+							<th scope="col">Equipo</th>
+							<th scope="col">Recibido</th>
+							<th scope="col">Tapadera</th>
+							<th>Recibido</th>
+							<th scope="col">Descripción</th>
+						</tr>
+						</thead>
+						<tbody>	
+											
+			'''
+			numero = 0
+			for dP in detallePrestamo:
+				numero += 1 
+				devuelto = 'No'
+				descripcion = ''
+				if dP.devuelto:
+					devuelto = 'Si'
+				devueltoT = 'No'
+				if dP.devuelto:
+					devueltoT = 'Si'
+				if dP.descripcion: 
+					descripcion = dP.descripcion
+
+				htmlDetallePrestamo +='''
+				<tr>
+					<td>{}</td>
+					<td scope="row">{}</td>
+					<td>{}</td>
+					<td>{}</td>
+					<td>{}</td>
+					<td>{}</td>
+				</tr>
+				'''.format(numero,dP.equipo,devuelto,dP.tapadera,devueltoT,descripcion)
+
+			fecha = ''
+			if prestamo.fechaEntrada:
+				fecha = prestamo.fechaEntrada
+			
+			htmlDetallePrestamo += '''
+					</tbody>
+				</table>
+				</div>
+				<div class="row container">
+					<div class="col-6"><p><strong>Numero de placa: </strong> {}</p></div>
+					<div class="col-6"><p><strong>Hora de salida: </strong> {}</p></div>
+					<div class="col-6"><p><strong>Fecha de salida: </strong> {}</p></div>
+					<div class="col-6"><p><strong>Fecha de Entrada: </strong> {}</p></div>
+					<div class="col-12"><p><strong>Observaciones: </strong> {}</p></div>
+					
+					
+				</div>
+				
+			'''.format(prestamo.placa,prestamo.horaSalida,prestamo.fechaSalida,fecha,prestamo.observaciones)
 		
 		
 		htmlRemision =''
@@ -684,15 +646,15 @@ def detallePrestamo_asJson(request):
 			'''.format(remision.numRemision,remision.numRemision,remision.tipoRemision,remision.compania,remision.fecha)
 			
 			htmlDetalleRemision += '''
-				<p>A continuacion detallamos los articulos que enviamos.</p>
+				<p>A continuación detallamos los artículos que enviamos.</p>
 				<div class="table-responsive">
 				<table class="table table-bordered ">
 						<thead>
 						<tr>
 							<th scope="col">Cantidad</th>
 							<th scope="col">Unidad</th>
-							<th scope="col">Descripcion</th>
-							<th scope="col">Devolucion</th>
+							<th scope="col">Descripción</th>
+							<th scope="col">Devolución</th>
 							<th scope="col">Valor total</th>
 						</tr>
 						</thead>
@@ -716,7 +678,7 @@ def detallePrestamo_asJson(request):
 				</div>
 				<div class="row container">
 					<div class="col-6 border"><p><strong>Entrego: </strong>{}</p></div>
-					<div class="col-6 border"><p><strong>Recibio: </strong>{}</p>
+					<div class="col-6 border"><p><strong>Recibió: </strong>{}</p>
 										<p><strong>Placa No </strong>{}</p>
 					</div>
 				</div>

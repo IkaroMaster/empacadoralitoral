@@ -6,13 +6,13 @@ Prestamo de Equipo
 {% block l3 %}
 bg-success
 {% endblock l3 %}
-    
+
 {% block cuerpo %}
 
 <div class="card text-center">
 
     <div id="pantalla"></div>
-    <div  id="circulo" >
+    <div id="circulo">
         <div id="loader">
         </div>
     </div>
@@ -30,24 +30,24 @@ bg-success
 
             {% if perms.prestamos.view_prestamoequipo %}
             <li class="nav-item">
-                <a class="nav-link {{ clases.o2 }}" href="{% url 'prestamos:prestamos-url' %}">Prestamos</a>
+                <a class="nav-link {{ clases.o2 }}" href="{% url 'prestamos:prestamos-url' %}">Préstamos</a>
             </li>
             {% endif %}
 
 
         </ul>
     </div>
-    <div class="card-body ">
+    <div class="card-body pb-0 ">
 
         <h4 class="mb-1"><strong>{% if crear%}Crear Préstamo de Equipo{% elif editar %}Editar Préstamo Nō
-                {{prestamo}}{% elif listado %}Prestamos de Equipo{% endif %}</strong>
+                {{prestamo}}{% elif listado %}Préstamos de Equipo{% endif %}</strong>
         </h4>
 
 
         {% if crear or editar %}
         {% block css %}
-            {% load static %}
-            <link rel="stylesheet" href="{% static 'css/prestamos.css' %}">
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'css/prestamos.css' %}">
         {% endblock css %}
         <div class="container " style="{{estilos.o1}}">
             {% if messages %}
@@ -75,7 +75,7 @@ bg-success
                     <div class="col-md-2 mb-3 mt-2">
                         <div class="input-group">
                             <div class="input-group-prepend">
-                                <span class="input-group-text" id="basic-addon1">Numero</span>
+                                <span class="input-group-text" id="basic-addon1">Número</span>
                             </div>
                             {{prestamo_form.numPrestamo}}
                         </div>
@@ -128,19 +128,20 @@ bg-success
                         <a id="agregarVehiculo" data-url="{% url 'vehiculo:agregar-vehiculo-url' %}"
                             class="btn-lg text-success fas fa-plus ml-1 p-0 pl-1 pt-2"></a>
                     </div>
-                    
+
                     <div class="col-md-4 input-group mb-3 mt-2">
                         <div class="input-group-prepend">
-                            <span class="input-group-text" id="basic-addon1">Entrego</span>
+                            <span class="input-group-text" id="basic-addon1">Entregó</span>
                         </div>
-                        <input readonly class="form-control" type="text" value=" {% if entrego %}{{entrego}}{% else %}{{user.get_full_name}}{% endif %}">
-                        
-                       
-                            
+                        <input readonly class="form-control" type="text"
+                            value=" {% if entrego %}{{entrego}}{% else %}{{user.get_full_name}}{% endif %}">
+
+
+
                     </div>
                     <div hidden class="col-md-4 input-group mb-3 mt-2">
                         <div class="input-group-prepend">
-                            <span class="input-group-text" id="basic-addon1">Entrego</span>
+                            <span class="input-group-text" id="basic-addon1">Entregó</span>
                         </div>
                         {{prestamo_form.empleado}}
                         <a id="agregarEmpleado" data-url="{% url 'empleado:agregar-empleado-url' %}"
@@ -166,7 +167,7 @@ bg-success
                 {{ detallePrestamo_formset.management_form }}
 
                 <div class=" table-responsive">
-                    <p class="m-0"><strong>A continuación ingrese la descripción del prestamo:</strong></p>
+                    <p class="m-0"><strong>A continuación ingresé la descripción del préstamo:</strong></p>
                     <table class="table table-striped table-hover table-bordered ">
                         <thead class="thead-inverse">
                             <tr>
@@ -224,10 +225,13 @@ bg-success
                 <input type="submit" id="enviarFormularioPrestamo" hidden>
             </form>
             <center>
-                <button id="guardarPrestamo" class="btn btn-success"> {% if crear%}<i class="fas fa-save"></i> Guardar{% elif editar %}<i class="fas fa-edit"></i> Modificar{% endif %}</button>
-                <a href="{% url 'prestamos:prestamos-url'%} " class="btn btn-secondary"><i class="fas fa-window-close"></i> Cancelar</a>
+                <button id="guardarPrestamo" class="btn btn-success"> {% if crear%}<i class="fas fa-save"></i>
+                    Guardar{% elif editar %}<i class="fas fa-edit"></i> Modificar{% endif %}</button>
+                <a href="{% url 'prestamos:prestamos-url'%} " class="btn btn-secondary"><i
+                        class="fas fa-window-close"></i> Cancelar</a>
 
             </center>
+            <a href="#" uk-totop uk-scroll></a>
 
         </div>
         {% else %}
@@ -290,25 +294,26 @@ bg-success
 
                             </td>
                             <td>
+                                
                                 {% if p.estadoPrestamo.id == 1 %}
                                 {% if perms.prestamos.terminar_prestamoequipo %}
                                 <button data-terminar='{{p.numPrestamo}}'
-                                    class="terminar btn btn-success fas fa-check"></button>
+                                    class="terminar btn btn-success fas fa-check"  uk-tooltip="Terminar prestamo"></button>
                                 {% endif %}
                                 {% if perms.prestamos.change_prestamoequipo %}
                                 <a id="editar-{{p.numPrestamo}}" data-editar='{{p.numPrestamo}}'
-                                    href="{% url 'prestamos:modificar_prestamo-url' p.numPrestamo %}">
+                                    href="{% url 'prestamos:modificar_prestamo-url' p.numPrestamo %}" uk-tooltip="Editar prestamo">
                                 </a>
                                 <button data-editar='{{p.numPrestamo}}'
-                                    class="editarPrestamo btn btn-info fas fa-pen"></button>
+                                    class="editarPrestamo btn btn-info fas fa-pen" uk-tooltip="Editar prestamo"></button>
                                 {% endif %}
                                 {% if perms.prestamos.anular_prestamoequipo %}
                                 <button class="anular btn btn-danger fas fa-times"
-                                    data-anular='{{p.numPrestamo}}'></button>
+                                    data-anular='{{p.numPrestamo}}' uk-tooltip="Anular prestamo"></button>
                                 {% endif %}
                                 {% endif %}
                                 {% if perms.prestamos.view_prestamoequipo %}
-                                <button class="ver btn btn-warning fas fa-eye " data-ver='{{p.numPrestamo}}'></button>
+                                <button class="ver btn btn-warning fas fa-eye " data-ver='{{p.numPrestamo}}' uk-tooltip="Visualizar prestamo"></button>
                                 {% endif %}
 
 
@@ -318,8 +323,15 @@ bg-success
                     </tbody>
                 </table>
             </div>
+
         </div>
+        <div>
+        <p class="text-left mt-2"><strong><i class="fas fa-info"></i></strong> <i class="alert-danger">Anulado</i> <i
+                class="alert-light">Activo</i> <i class="alert-primary">Asignado</i> <i
+                class="alert-success">Terminado</i> </p>
     </div>
+    </div>
+    
 
 </div>
 <!-- Modal -->
@@ -328,7 +340,7 @@ bg-success
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Visualización de prestamo de equipo
+                <h5 class="modal-title" id="exampleModalLongTitle">Visualización de préstamo de equipos
                 </h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>

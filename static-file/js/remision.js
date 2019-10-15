@@ -183,23 +183,6 @@ $(document).ready(function () {
         }
     });
 
-
-
-
-
-
-
-
-    // $("#probando").on("click",".delete-row", function (event) {
-    //     event.preventDefault();
-    //     alert('hola');
-    //     var total = $('#id_form-TOTAL_FORMS').val();
-    //     if (total <= 2) {
-    //         $(".add-row").show();
-    //     }
-    // });
-
-
     /* Setup plugin defaults */
     // $.fn.formset.defaults = {
     //     prefix: 'form',                  // The form prefix for your django formset
@@ -214,60 +197,47 @@ $(document).ready(function () {
     //     added: null,                     // Function called each time a new form is added
     //     removed: null                    // Function called each time a form is deleted
     // };
-
-
+    moment.updateLocale(moment.locale(), {
+        invalidDate: ""
+    });
     var tablex = $('#tablajs').DataTable({
-        "scrollY": '35vh',
+        // "dom": "<'row'  <'col-md-6'f> >",
+        dom: "<'row'<'#contenedorArriba.col-sm-2'><'col-sm-10'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-4'i><'col-sm-8'<'#colvis'>p>>",
+        "scrollY": '43vh',
         "scrollCollapse": true,
         "scrollX": true,
         "deferRender": true,
         // responsive: true,
         "scroller": true,
         "language": {
-            "zeroRecords": "No se ha encontrado nada, lo siento.",
+            "zeroRecords": "No se ha encontrado nada.",
             "infoEmpty": "No hay registros disponibles",
-            "infoFiltered": "(filtrado de _MAX_ registros totales)",
+            "infoFiltered": "(Filtrado de _MAX_ registros totales)",
             "info": "Mostrando _START_ a _END_ de _TOTAL_ registros.",
             "search": "Buscar:"
-        }
+        },
+        "columnDefs": [{
+                targets: 3,
+                render: $.fn.dataTable.render.moment('YYYY/MM/DD', 'DD-MM-YYYY')
+            },
+
+        ],
+        "order": [
+            [3, "desc"],
+            [4, 'asc']
+        ],
+
         // "scrollCollapse": true
     });
-    // var tablex = $('#tablajs').DataTable({
-    //     			dom: 'Bfrtip',
-    //                 lengthChange: false,
-    //                 // bAutoWidth: true,
-    //                 // scrollCollapse: true,
-    //                 // scroller:       true,
-    //                 // deferRender:    true,
-    //                 // scroller:       true,
-    //                 scrollY: 300,
-    //                 buttons: [ 'copy', 'excel', 'pdf','colvis',{
-    //                     extend: 'pdfHtml5',
-    //                     download: 'open',
-    //                     orientation: 'landscape',
-    //                     pageSize: 'LEGAL',
-    //                     text: 'Ver',
-    //                     title: 'Reporte de equipos'}],
-    //                     scrollX: true,
-    //                     // scrollY: 400,
-    //                 "language": {
-    //                     "lengthMenu": "Mostrar _MENU_ por páginas",
-    //                     "zeroRecords": "No se encontró ningún registro",
-    //                     "info": "Mostrando página _PAGE_ de _PAGES_",
-    //                     "infoEmpty": "Registro no valido",
-    //                     "infoFiltered": "(filtrado de _MAX_ registros totales)",
-    //                     'search': 'Buscar:'
-    //                     /*'search': 'Buscar: _INPUT_ aqui'*/,
-    //                      "paginate": {
-    //                           "next": "Siguiente",
-    //                           'previous': 'Anterior'
-    //                      },
-    //                      buttons: {
-    //                         colvis: 'Columnas visibles',
-    //                         copy: 'Copiar'
-    //                     }
-    //                 }
-    //              });
+    if ($('#add_remision').length) {
+        $('#contenedorArriba').html('<a class="btn btn-primary text-left" href="/remision/crear/"><i class="fas fa-plus"></i> Nueva Remisión</a>');
+    }
+    $('.dataTables_info').addClass(['p-0','text-left']);
+
+
+
+    
+    
 
     $("#prestamoEquipo_selected").change(function () {
         var num = $(this).find(":selected").val();
