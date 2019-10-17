@@ -12,6 +12,8 @@ urlpatterns = [
 	# path("crear/",views.CrearRemision.as_view(), name="crear_remision-url"),
 
 	#JSON
+	path("ajax_validar_numero_remision/", views.validarNumeroRemision_asJson, name ="validarNumeroRemision_asJson-url"),
+	path("ajax_validar_guia/", views.validarGuia_asJson, name ="validarGuia_asJson-url"),
 	path("ajax_prestamo_equipo/",views.prestamoEquipo_asJson,name="prestamoEquipo_asJson-url"),
 	path("ajax_anular_remision/", views.anularRemision_asJson, name ="anularRemision_asJson-url"),
 	path("ajax_detalle_remision/", views.detalleRemision_asJson, name ="detalleRemision_asJson-url"),

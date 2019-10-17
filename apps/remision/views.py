@@ -66,33 +66,38 @@ def CrearRemision(request): #,pk
 		# print(request.POST['numRemision'])
 		if remision_form.is_valid() and detalleRemision_formset.is_valid():
 			
-			remision_form.save()
-			remision = Remision.objects.get(pk=remision_form.cleaned_data.get('numRemision'))
-
-			if request.POST['prestamoEquipo']:		
-				asignarPrestamo = PrestamoEquipo.objects.get(pk= request.POST['prestamoEquipo'])
-				asignarPrestamo.estadoPrestamo = EstadoPrestamo.objects.get(pk=3)
-				print(asignarPrestamo)
-				asignarPrestamo.save()
-
+			remision = remision_form.save(commit=False)
 			new_detallesRemision = []
 			for x in detalleRemision_formset:
 				salida = x.cleaned_data.get('salida')
 				unidad = x.cleaned_data.get('unidad')
 				hielo = x.cleaned_data.get('hielo')
-				devolucion = x.cleaned_data.get('devolucion')
-
-
 				if salida and hielo :
-					new_detallesRemision.append(DetalleRemision(remision=remision,salida=salida, unidad=unidad, hielo=hielo,devolucion=devolucion))
+					new_detallesRemision.append(DetalleRemision(remision=remision,salida=salida, unidad=unidad, hielo=hielo))
 
 			try:
 				with transaction.atomic():
+					remision.save()
+					if request.POST['prestamoEquipo']:		
+						asignarPrestamo = PrestamoEquipo.objects.get(pk= request.POST['prestamoEquipo'])
+						asignarPrestamo.estadoPrestamo = EstadoPrestamo.objects.get(pk=3)
+						print(asignarPrestamo)
+						asignarPrestamo.save()
+					else:
+						print("*************************************")
+						if request.POST['conductor']:
+							print('Conductor asignado: '+str(remision.conductor))
+							conductor = Conductor.objects.get(pk = remision.conductor.pk)
+							conductor.disponible = False
+							conductor.save()
+						if request.POST['placa']: 
+							print('Vehiculo asignado: '+str(remision.placa))
+							placa = Vehiculo.objects.get(pk = remision.placa.pk)
+							placa.disponible = False
+							placa.save()
+							print('---------------------------------')
 					DetalleRemision.objects.bulk_create(new_detallesRemision)
-					messages.success(request, 'Usted ha creado la remision.')
 					return redirect(reverse('remision:remision-url'))
-
-
 			except IntegrityError: #If the transaction failed
 				messages.error(request, 'Ha ocurrido un error al intentar guardar la remision.')
 		else:
@@ -120,9 +125,11 @@ def CrearRemision(request): #,pk
 	
 	remision_form.fields['prestamoEquipo'].widget.attrs['id'] = 'prestamoEquipo_selected'
 	remision_form.fields['fecha'].widget.attrs['value'] = datetime.now().date()
-	comboboxBasico(remision_form,'conductor','Seleccione...','true',[])
+	con = Conductor.objects.filter(activo=True,disponible=True)
+	comboboxBasico(remision_form,'conductor','Seleccione...','true',con)
 	comboboxBasico(remision_form,'entrego','Seleccione...','true',[])
-	comboboxBasico(remision_form,'placa','Seleccione...','true',[])
+	ve = Vehiculo.objects.filter(disponible=True)
+	comboboxBasico(remision_form,'placa','Seleccione...','true',ve)
 	remision_form.fields['estado'].widget.attrs['class'] = 'selectpicker form-control'
 
 	print(detalleRemision_formset.errors)
@@ -154,10 +161,27 @@ def prestamoEquipo_asJson(request):
 	if request.is_ajax():		
 		num = request.GET['num']
 		prestamoEquipo = PrestamoEquipo.objects.get(numPrestamo = num)
+		detalles = DetallePrestamoEquipo.objects.filter(prestamoEquipo = prestamoEquipo)
+		capacidad = 0
+		print('#################')
+		print('Prestamo: ',prestamoEquipo)
+		print('total bines: ',detalles.count())
+		for d in detalles:
+			if  d.equipo.tamano.pk == 1:
+				capacidad += binGrande()
+			elif d.equipo.tamano.pk == 2:
+				capacidad += binPequeno()	
+		print('capacidad total(Q): ',capacidad)
+		print('#################')
+		htmlPlaca = '<option class="temporal" value="{}" >{}</option>'.format(prestamoEquipo.placa.placa,prestamoEquipo.placa)
+		htmlConductor = '<option class="temporal" value="{}" >{}</option>'.format(prestamoEquipo.conductor.numIdentidad,prestamoEquipo.conductor)
 		data = {
 				'compania': prestamoEquipo.compania.id,
 				'conductor': prestamoEquipo.conductor.numIdentidad,
 				'placa': prestamoEquipo.placa.placa,
+				'capacidad': capacidad,
+				'htmlP':htmlPlaca,
+				'htmlC':htmlConductor,
 			}
 		return JsonResponse(data)
 	else:
@@ -307,21 +331,19 @@ def ModificarRemision(request,pk):
 	"""
 	# user = request.user
 	remision = Remision.objects.get(numRemision=pk)
-
-	if remision.prestamoEquipo:
-		prestamoActual = remision.prestamoEquipo.pk
-		print(prestamoActual)	
-	else:
-		prestamoActual = ''
-		print('Prestamo vacio:',prestamoActual)	
-	# print(remision)
+	# if remision.prestamoEquipo:
+	# 	prestamoActual = remision.prestamoEquipo.pk
+	# 	print(prestamoActual)	
+	# else:
+	# 	prestamoActual = ''
+	# 	print('Prestamo vacio:',prestamoActual)	
 
 	# Create the formset, specifying the form and formset we want to use.
 	DetalleRemisionFormSet = formset_factory(DetalleRemisionForm, formset=BaseDetalleRemisionFormSet,extra=0)
 
 	# Get our existing link data for this user.  This is used as initial data.
 	remisionDetalles = DetalleRemision.objects.filter(remision=remision) #.order_by('pk')
-	remisionDetalles_data = [{'remision':rd.remision,'salida': rd.salida, 'unidad': rd.unidad,'hielo':rd.hielo,'devolucion':rd.devolucion} for rd in remisionDetalles]
+	remisionDetalles_data = [{'remision':rd.remision,'salida': rd.salida, 'unidad': rd.unidad,'hielo':rd.hielo} for rd in remisionDetalles]
 
 
 	if request.method == 'POST':
@@ -329,75 +351,70 @@ def ModificarRemision(request,pk):
 		remision_form = RemisionForm(request.POST,instance = remision) #, user=user
 		detalleRemision_formset = DetalleRemisionFormSet(request.POST)
 		if remision_form.is_valid() and detalleRemision_formset.is_valid():
-			# Save user info
-			# user.first_name = remision_form.cleaned_data.get('first_name')
-			# user.last_name = remision_form.cleaned_data.get('last_name')
-			remision_form.save()
+			remision_actualizada = remision_form.save(commit=False)
 			
-			if request.POST['prestamoEquipo']:
-				if request.POST['prestamoEquipo'] != prestamoActual:
-					if prestamoActual:	
-						asignarPrestamo = PrestamoEquipo.objects.get(pk= prestamoActual)
-						asignarPrestamo.estadoPrestamo = EstadoPrestamo.objects.get(pk=1)
-						print(asignarPrestamo)
-						asignarPrestamo.save()
-					if request.POST['prestamoEquipo']:	
-						reAsignarPrestamo = PrestamoEquipo.objects.get(pk= request.POST['prestamoEquipo'])
-						reAsignarPrestamo.estadoPrestamo = EstadoPrestamo.objects.get(pk=3)
-						print(reAsignarPrestamo)
-						reAsignarPrestamo.save()
-			else:
-				if prestamoActual:
-					asignarPrestamo = PrestamoEquipo.objects.get(pk= prestamoActual)
-					asignarPrestamo.estadoPrestamo = EstadoPrestamo.objects.get(pk=1)
-					print(asignarPrestamo)
-					asignarPrestamo.save()
-					
-
-			# if request.POST['prestamoEquipo'] != '':
-			# 	if request.POST['prestamoEquipo'] != prestamoActual:
-					
-					
-			# 		if prestamoActual:	
-			# 			asignarPrestamo = PrestamoEquipo.objects.get(pk= prestamoActual)
-			# 			asignarPrestamo.estadoPrestamo = EstadoPrestamo.objects.get(pk=1)
-			# 			print(asignarPrestamo)
-			# 			asignarPrestamo.save()
-
-			# 		reAsignarPrestamo = PrestamoEquipo.objects.get(pk= request.POST['prestamoEquipo'])
-			# 		reAsignarPrestamo.estadoPrestamo = EstadoPrestamo.objects.get(pk=3)
-			# 		print(reAsignarPrestamo)
-			# 		reAsignarPrestamo.save()
-			# else:
-			# 	asignarPrestamo = PrestamoEquipo.objects.get(pk= prestamoActual)
-			# 	asignarPrestamo.estadoPrestamo = EstadoPrestamo.objects.get(pk=1)
-			# 	print(asignarPrestamo)
-			# 	asignarPrestamo.save()
-				
-
-
-			
-			remision = Remision.objects.get(pk=remision_form.cleaned_data.get('numRemision'))
 			new_detallesRemision = []
 
 			for x in detalleRemision_formset:
 				salida = x.cleaned_data.get('salida')
 				unidad = x.cleaned_data.get('unidad')
 				hielo = x.cleaned_data.get('hielo')
-				devolucion = x.cleaned_data.get('devolucion')
-
 
 				if salida and hielo :
-					new_detallesRemision.append(DetalleRemision(remision=remision,salida=salida, unidad=unidad, hielo=hielo,devolucion=devolucion))
+					new_detallesRemision.append(DetalleRemision(remision=remision_actualizada,salida=salida, unidad=unidad, hielo=hielo))
 
 			try:
 				with transaction.atomic():
-					#Replace the old with the new
+					if remision_actualizada.prestamoEquipo:
+						if remision_actualizada.prestamoEquipo != remision.prestamoEquipo:
+							if remision.prestamoEquipo:	
+								asignarPrestamo = PrestamoEquipo.objects.get(pk= remision.prestamoEquipo.pk)
+								asignarPrestamo.estadoPrestamo = EstadoPrestamo.objects.get(pk=1)
+								print('Prestamo nuevamente activo: ',asignarPrestamo)
+								asignarPrestamo.save()
+							if remision_actualizada.prestamoEquipo:	
+								reAsignarPrestamo = PrestamoEquipo.objects.get(pk= remision_actualizada.prestamoEquipo.pk)
+								reAsignarPrestamo.estadoPrestamo = EstadoPrestamo.objects.get(pk=3)
+								print('Nuevo prestamo asignado:',reAsignarPrestamo)
+								reAsignarPrestamo.save()
+					else:
+						if remision.prestamoEquipo:	
+							asignarPrestamo = PrestamoEquipo.objects.get(pk= remision.prestamoEquipo.pk)
+							asignarPrestamo.estadoPrestamo = EstadoPrestamo.objects.get(pk=1)
+							print('Prestamo nuevamente activo: ',asignarPrestamo)
+							asignarPrestamo.save()
+						else:
+							print("*************************************")
+							if remision.conductor != remision_actualizada.conductor:
+								if remision.conductor:
+									print('Conductor desasignado: '+str(remision.conductor))
+									conductor = Conductor.objects.get(pk = remision.conductor.pk)
+									conductor.disponible = True
+									conductor.save()
+								if remision_actualizada.conductor:
+									print('Conductor asignado: '+str(remision_actualizada.conductor))
+									conductor = Conductor.objects.get(pk = remision_actualizada.conductor.pk)
+									conductor.disponible = False
+									conductor.save()
+
+							print('---------------------------------')
+							if remision.placa != remision_actualizada.placa:
+								if remision.placa: 
+									print('Vehiculo desasignado: '+str(remision.placa))
+									placa = Vehiculo.objects.get(pk = remision.placa.pk)
+									placa.disponible = True
+									placa.save()
+								if remision_actualizada.placa: 
+									print('Vehiculo asignado: '+str(remision_actualizada.placa))
+									placa = Vehiculo.objects.get(pk = remision_actualizada.placa.pk)
+									placa.disponible = False
+									placa.save()
+							print('------------------ FIN ---------------')
+
 					DetalleRemision.objects.filter(remision=remision).delete()
+					remision_actualizada.save()
 					DetalleRemision.objects.bulk_create(new_detallesRemision)
 
-					# And notify our users that it worked
-					messages.success(request, 'Usted ha actualizado la remision.')
 					return redirect(reverse('remision:remision-url'))
 
 			except IntegrityError: #If the transaction failed
@@ -408,7 +425,7 @@ def ModificarRemision(request,pk):
 		print(remision.fecha)
 		detalleRemision_formset = DetalleRemisionFormSet(initial= remisionDetalles_data) #initial=remisionDetalles_data
 	
-	pe = PrestamoEquipo.objects.filter(Q(estadoPrestamo = EstadoPrestamo.objects.get(pk = 1)) | Q(pk = prestamoActual) )
+	pe = PrestamoEquipo.objects.filter(Q(estadoPrestamo = EstadoPrestamo.objects.get(pk = 1)) | Q(pk = remision.prestamoEquipo) )
 	em = Compania.objects.filter(tipoCompania = TipoCompania.objects.get(pk = 1))
 
 	fechaBasico(remision_form,'fecha','Seleccione...')
@@ -425,9 +442,19 @@ def ModificarRemision(request,pk):
 		remision_form.fields['prestamoEquipo'].widget.attrs['data-live-search'] = False		
 	
 	remision_form.fields['prestamoEquipo'].widget.attrs['id'] = 'prestamoEquipo_selected'
-	comboboxBasico(remision_form,'conductor','Seleccione...','true',[])
+	con = Conductor.objects.filter(Q(activo=True,disponible=True)|Q(pk=remision.conductor.pk))
+	comboboxBasico(remision_form,'conductor','Seleccione...','true',con)
 	comboboxBasico(remision_form,'entrego','Seleccione...','true',[])
-	comboboxBasico(remision_form,'placa','Seleccione...','true',[])
+	ve = Vehiculo.objects.filter(Q(disponible=True)|Q(pk=remision.placa.pk))
+	comboboxBasico(remision_form,'placa','Seleccione...','true',ve)
+
+	detalles = DetallePrestamoEquipo.objects.filter(prestamoEquipo = remision.prestamoEquipo)
+	capacidad = 0	
+	for d in detalles:
+		if  d.equipo.tamano.pk == 1:
+			capacidad += binGrande()
+		elif d.equipo.tamano.pk == 2:
+			capacidad += binPequeno()
 
 	estilos, clases = renderizado(1, 4)
 	context = {
@@ -437,6 +464,8 @@ def ModificarRemision(request,pk):
 		'detalleRemision_formset': detalleRemision_formset,
 		'editar': True,
 		'remision': pk,
+		'capacidad':capacidad,
+		'guia':remision.guia,
 	}
 
 	return render(request, 'remision/remision.html', context)
@@ -837,3 +866,40 @@ def ReporteMensual(request):
 		
 	else:
 		return render(request,'404.html')
+
+
+@login_required
+def validarGuia_asJson(request):
+	if request.is_ajax and request.method == 'GET':
+		guia = request.GET['guia']
+		print(guia)
+		existe = Remision.objects.filter(guia = guia).exists()
+		data = {}
+		if existe:
+			data = {
+				'existe':1,
+			}
+			
+		else:
+			data = {
+				'existe':0,
+			}
+		return JsonResponse(data)
+
+@login_required
+def validarNumeroRemision_asJson(request):
+	if request.is_ajax and request.method == 'GET':
+		numero = request.GET['numero']
+		print(numero)
+		existe = Remision.objects.filter(pk = numero).exists()
+		data = {}
+		if existe:
+			data = {
+				'existe':1,
+			}
+			
+		else:
+			data = {
+				'existe':0,
+			}
+		return JsonResponse(data)

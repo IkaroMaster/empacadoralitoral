@@ -17,32 +17,35 @@ $(document).ready(function () {
     });
 
 
-    $('#id_guia').prop('readonly','true');
-    $('#id_tipoRemision').change(function(){
+    $('#id_guia').prop('readonly', true);
+    $('#id_tipoRemision').change(function () {
         var seleccionado = $(this).find(':selected');
-        if (seleccionado.val()=='1') {
-            $('#id_guia').removeAttr('readonly');
-            $('#id_guia').prop('required','true');
+        if (seleccionado.val() == '1') {
+            $('#id_guia').prop('readonly', false);
+            $('#id_guia').prop('required', true);
             $('#id_guia').addClass('border border-warning');
+            $('#prestamoEquipo_selected').prop('required', true).selectpicker('setStyle', 'border border-warning', 'add').selectpicker('refresh');
 
-        }else{
-            $('#id_guia').prop('readonly','true');
-            $('#id_guia').removeAttr('required');
+        } else {
+            $('#id_guia').prop('readonly', true);
+            $('#id_guia').prop('required', false);
             $('#id_guia').removeClass('border border-warning');
+            $('#prestamoEquipo_selected').prop('required', false).selectpicker('setStyle', 'border border-warning', 'remove').selectpicker('refresh');
+
 
         }
     })
 
 
     $('.detalle-formset').formset({
-        addText: 'Nuevo Detalle',
-        deleteText: 'x',
-        addCssClass: 'add-row btn btn-outline-primary mt-2',
+        addText: 'Agregar',
+        deleteText: '',
+        addCssClass: 'add-row btn btn-primary mt-2 mt-2',
         deleteCssClass: 'delete-row',
         animateForms: true,
         formTemplate: null,
         added: function () {
-            $(".delete-row").addClass("btn btn-outline-danger");
+            $(".delete-row").addClass("btn btn-danger fas fa-times ");
             $('.dx').selectpicker({
                 liveSearch: false,
                 selectAll: true
@@ -51,6 +54,9 @@ $(document).ready(function () {
             if (total > 1) {
                 $(".add-row").hide();
             }
+
+            $(document).find('.salida').addClass(['border', 'border-warning']);
+
         },
         removed: function () {
             var total = $('#id_form-TOTAL_FORMS').val();
@@ -59,44 +65,73 @@ $(document).ready(function () {
                 $(".delete-row").hide();
             }
         },
-
-
     });
+    $('.salida').addClass(['border', 'border-warning']);
+    $(".delete-row").addClass("btn btn-danger fas fa-times ");
 
     $('#guardarRemision').click(function () {
-        if ($('#crear').val() != 'True') {
-            Swal.fire({
-                title: '¿Desea modificar la remisión ' + $('#crear').attr('data-remision') + ' ?',
-                text: "¡No podrás revertir esto!",
-                type: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Si, Modificar!',
-                cancelButtonText: 'Volver',
-                // showLoaderOnConfirm: true,
-            }).then((result) => {
-                if (result.value) {
-                    $("#enviarFormularioRemision").click();
-                }
-            })
-        } else {
-            Swal.fire({
-                title: '¿Guardar remisión?',
-                text: "¡Se registrara una nueva remisión con los datos proporcionados!",
-                type: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Si, Guardar!',
-                cancelButtonText: 'Volver',
-                // showLoaderOnConfirm: true,
-            }).then((result) => {
-                if (result.value) {
-                    $("#enviarFormularioRemision").click();
-                }
+        total = $(document).find('.salida');
+        var capacidad = parseFloat($('#capacidad').val());
+        var salida = 0;
+        $.each(total, function (indexInArray, t) {
+            salida += parseFloat($(t).val());
+        });
+        if (capacidad < salida) {
+
+            $('#errorDetalle').empty().html('<div class="alert alert-danger alert-dismissible "><strong>Error:</strong> la capacidad total de transporté de hielo del préstamo de equipos <strong>Nō ' + $('#prestamoEquipo_selected').val() + '</strong> es de <strong>' + capacidad + 'qq</strong>.<hr>Imposible realizar la salida de <strong>' + salida + 'qq</strong> de hielo.</div>');
+            notificacion.fire({
+                type: 'error',
+                title: 'Error: Salida de hielo invalida.'
             });
+
+            $(document).find('.salida').removeClass('border-warning').addClass('border-danger');
+        } else {
+            $('#errorDetalle').empty();
+            $(document).find('.salida').removeClass('border-danger').addClass('border-warning');
+
+
+            if ($('#crear').val() != 'True') {
+                Swal.fire({
+                    title: '¿Desea modificar la remisión ' + $('#crear').attr('data-remision') + ' ?',
+                    text: "¡No podrás revertir esto!",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Si, Modificar!',
+                    cancelButtonText: 'Volver',
+                    // showLoaderOnConfirm: true,
+                }).then((result) => {
+                    if (result.value) {
+                        setTimeout(function () {
+                            $("#enviarFormularioRemision").click();
+                        }, 500);
+                    }
+                })
+            } else {
+
+                Swal.fire({
+                    title: '¿Guardar remisión?',
+                    text: "¡Se registrara una nueva remisión con los datos proporcionados!",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Si, Guardar!',
+                    cancelButtonText: 'Volver',
+                    // showLoaderOnConfirm: true,
+                }).then((result) => {
+                    if (result.value) {
+                        setTimeout(function () {
+                            $("#enviarFormularioRemision").click();
+                        }, 500);
+                    }
+                });
+
+            }
+
         }
+
     });
 
     if ($('#crear').val() == 'True') {
@@ -107,7 +142,22 @@ $(document).ready(function () {
     } else {
         $('#esCrear').hide();
         $('#id_numRemision').prop('readonly', true);
-        $('.delete-row').addClass("btn btn-outline-danger");
+
+        if ($('#id_numPrestamo').val() != '') {
+            $('#id_conductor').prop('disabled', true);
+            $('#id_conductor').selectpicker('refresh');
+            
+            $('#id_prestamoEquipo').prop('disabled', true);
+            $('#id_prestamoEquipo').selectpicker('refresh');
+
+            $('#id_placa').prop('disabled', true);
+            $('#id_placa').selectpicker('refresh');
+
+            $('#agregarEmpresa').hide();
+            $('#agregarConductor').hide();
+            $('#agregarVehiculo').hide();
+        }
+        // $('.delete-row').addClass("btn btn-outline-danger");
 
         var total = $('#id_form-TOTAL_FORMS').val();
         if (total > 1) {
@@ -124,6 +174,9 @@ $(document).ready(function () {
             $(".add-row").click();
             return false;
         }
+
+
+
         // $('#mostrarModal').modal('show');
         // $('#modalGuardar').click(function(){
         $('#id_compania').prop('disabled', false);
@@ -146,42 +199,7 @@ $(document).ready(function () {
     //     }
 
     // });
-    $('#siPrestamo').change(function () {
-        if ($("#siPrestamo").prop('checked')) {
-            $('#prestamo').show(500);
-            $('#prestamoEquipo_selected').prop('disabled', false);
-            $('#prestamoEquipo_selected').val('');
-            $('#prestamoEquipo_selected').selectpicker('refresh');
-            // if ($('#prestamoEquipo_selected').find(":selected").val() == '') {
-            //     readonly('#id_compania',false);
-            //     readonly('#id_conductor',false);
-            //     readonly('#id_placa',false); 
-            // }
-        } else {
-            $('#prestamo').hide(500);
-            $('#prestamoEquipo_selected').prop('disabled', true);
-            if ($('#id_compania').is(':disabled')) {
-                $('#id_compania').prop('disabled', false);
-                $('#id_compania').val('');
-                $('#id_compania').selectpicker('refresh');
-            }
-            if ($('#id_conductor').is(':disabled')) {
-                $('#id_conductor').prop('disabled', false);
-                $('#id_conductor').val('');
-                $('#id_conductor').selectpicker('refresh');
 
-            }
-            if ($('#id_placa').is(':disabled')) {
-                $('#id_placa').prop('disabled', false);
-                $('#id_placa').val('');
-                $('#id_placa').selectpicker('refresh');
-
-            }
-            // readonly('#id_compania',true);
-            // readonly('#id_conductor',true);
-            // readonly('#id_placa',true); 
-        }
-    });
 
     /* Setup plugin defaults */
     // $.fn.formset.defaults = {
@@ -202,8 +220,8 @@ $(document).ready(function () {
     });
     var tablex = $('#tablajs').DataTable({
         // "dom": "<'row'  <'col-md-6'f> >",
-        dom: "<'row'<'#contenedorArriba.col-sm-2'><'col-sm-10'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-4'i><'col-sm-8'<'#colvis'>p>>",
-        "scrollY": '43vh',
+        dom: "<'row'<'#contenedorArriba.col-md-4'><'col-md-8'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-4'i><'col-sm-8'<'#colvis'>p>>",
+        "scrollY": '47vh',
         "scrollCollapse": true,
         "scrollX": true,
         "deferRender": true,
@@ -229,42 +247,84 @@ $(document).ready(function () {
 
         // "scrollCollapse": true
     });
+
+    remision = ''
+    reportes = ''
     if ($('#add_remision').length) {
-        $('#contenedorArriba').html('<a class="btn btn-primary text-left" href="/remision/crear/"><i class="fas fa-plus"></i> Nueva Remisión</a>');
+        remision = '<a class="btn btn-primary text-left" href="/remision/crear/"><i class="fas fa-plus"></i> Nueva Remisión</a>';
+
     }
-    $('.dataTables_info').addClass(['p-0','text-left']);
+    if ($('#add_remision').length) {
+        reportes = '<button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle"' +
+            'data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-file-alt"></i> Reportes</button>' +
+            '<div class="dropdown-menu" aria-labelledby="btnGroupDrop1">' +
+            '<button id="reporteMensual" data-toggle="modal" data-target="#modalReporte" class="dropdown-item"><i class="far fa-file-alt"></i> Reporte Mensual</button>' +
+            '</div>';
+
+    }
+    $('#contenedorArriba').html('<div class="btn-group" role="toolbar">' + remision + reportes + '</div>');
+
+    $('.dataTables_info').addClass(['p-0', 'text-left']);
 
 
 
-    
-    
 
     $("#prestamoEquipo_selected").change(function () {
         var num = $(this).find(":selected").val();
 
         // $.get('{% url "remision:prestamoEquipo_asJson-url" %}', {num:num},function(data) {
-        $.get('/remision/ajax_prestamo_equipo/', {
-            num: num
-        }, function (data) {
+        if (num != '') {
+            $.get('/remision/ajax_prestamo_equipo/', {
+                num: num
+            }, function (data) {
+                $(document).find('.temporal').remove();
 
-            
-            $('#id_compania').val(data.compania);
-            $('#id_compania').prop('disabled', true);
+                $('#capacidad').val(data.capacidad);
+
+                $('#id_compania').val(data.compania);
+                $('#id_compania').prop('disabled', true);
+                $('#id_compania').selectpicker('refresh');
+
+                if ($('#crear').val() == 'True') {
+                    $('#id_conductor').prepend(data.htmlC);
+                }
+                $('#id_conductor').val(data.conductor);
+                $('#id_conductor').prop('disabled', true);
+                $('#id_conductor').selectpicker('refresh');
+
+
+                if ($('#crear').val() == 'True') {
+                    $('#id_placa').prepend(data.htmlP);
+                }
+                $('#id_placa').val(data.placa);
+                $('#id_placa').prop('disabled', true);
+                $('#id_placa').selectpicker('refresh');
+
+                $('#agregarEmpresa').hide();
+                $('#agregarConductor').hide();
+                $('#agregarVehiculo').hide();
+
+            }, 'json');
+        } else {
+            $(document).find('.temporal').remove();
+
+            $('#id_compania').val('');
+            $('#id_compania').prop('disabled', false);
             $('#id_compania').selectpicker('refresh');
-            
-            $('#id_conductor').val(data.conductor);
-            $('#id_conductor').prop('disabled', true);
+
+            $('#id_conductor').val('');
+            $('#id_conductor').prop('disabled', false);
             $('#id_conductor').selectpicker('refresh');
-            
-            $('#id_placa').val(data.placa);
-            $('#id_placa').prop('disabled', true);
+
+            $('#id_placa').val('');
+            $('#id_placa').prop('disabled', false);
             $('#id_placa').selectpicker('refresh');
 
-            $('#agregarEmpresa').hide();
-            $('#agregarConductor').hide();
-            $('#agregarVehiculo').hide();
-            
-        }, 'json');
+            $('#agregarEmpresa').show();
+            $('#agregarConductor').show();
+            $('#agregarVehiculo').show();
+        }
+
     });
 
 
@@ -404,8 +464,8 @@ $(document).ready(function () {
             } else {
                 Swal.fire({
                     title: 'Operacion cancelada por el usuario.',
-                    type:'error',
-                    timer:'3000'
+                    type: 'error',
+                    timer: '3000'
                 })
             }
         });
@@ -426,7 +486,7 @@ $(document).ready(function () {
     });
 
     $('#terminarRemision').on('click', function () {
-        
+
         var items = $('.modalCuerpoRemision').find('.devolucion');
         var devolucionRemisiones = [];
         items.each(function (i, item) {
@@ -523,7 +583,7 @@ $(document).ready(function () {
 
     });
 
-    
+
     // $("#tablajs").on("click","tr",function(){
     //     var c = $(this).attr('id');
     //     Swal.fire('hello '+c,'success');
@@ -535,6 +595,10 @@ $(document).ready(function () {
             blocks: [6],
             numericOnly: true
         });
+        new Cleave('#id_guia', {
+            blocks: [6],
+            numericOnly: true
+        });
 
         if ($('#crear').val() != 'True') {
             new Cleave('#id_fecha', {
@@ -543,6 +607,70 @@ $(document).ready(function () {
             });
         }
     }
+
+    $('#id_guia').blur(function () {
+        var guia = $(this).val();
+        if (guia != '' & guia != $('#guia').val()) {
+            $.ajax({
+                type: "get",
+                url: "/remision/ajax_validar_guia/",
+                data: {
+                    guia: guia
+                },
+                success: function (response) {
+                    if (response.existe == 1) {
+                        notificacion.fire({
+                            type: 'error',
+                            title: 'Ya existe una remisión con el numero de guía ' + guia + '.'
+                        });
+                        $('#id_guia').removeClass('boder-warning');
+                        $('#id_guia').addClass(['alert-danger', 'border-danger']);
+                        $('#id_guia').val('').prop('placeholder', guia);
+
+
+                    } else {
+                        $('#id_guia').removeClass('alert-danger');
+                        $('#id_guia').removeClass('border-danger');
+                        $('#id_guia').addClass('boder-warning');
+
+                    }
+                }
+            });
+        }
+
+    });
+
+    $('#id_numRemision').blur(function () {
+        var numero = $(this).val();
+        if (numero != '' & $('#crear').val() == 'True') {
+            $.ajax({
+                type: "get",
+                url: "/remision/ajax_validar_numero_remision/",
+                data: {
+                    numero: numero
+                },
+                success: function (response) {
+                    if (response.existe == 1) {
+                        notificacion.fire({
+                            type: 'error',
+                            title: 'Ya existe una remisión con el número ' + numero + '.'
+                        });
+                        $('#id_numRemision').removeClass('boder-warning');
+                        $('#id_numRemision').addClass(['alert-danger', 'border-danger']);
+                        $('#id_numRemision').val('').prop('placeholder', numero);
+
+
+                    } else {
+                        $('#id_numRemision').removeClass('alert-danger');
+                        $('#id_numRemision').removeClass('border-danger');
+                        $('#id_numRemision').addClass('boder-warning');
+
+                    }
+                }
+            });
+        }
+
+    });
 
     // Creacion de Nuevos registros mediante ajax
     $('#agregarEmpresa').click(function (e) {
@@ -562,7 +690,7 @@ $(document).ready(function () {
                 size: 3,
             });
             d.selectpicker('refresh');
-            $('#guardarNuevo').attr('class','btn btn-primary nuevaEmpresa');
+            $('#guardarNuevo').attr('class', 'btn btn-primary nuevaEmpresa');
 
             var requeridos = $('#modalNuevoContenedor').find(':required');
             requeridos.each(function (r, requerido) {
@@ -576,7 +704,7 @@ $(document).ready(function () {
         });
     });
 
-    $('#modalNuevo').on('click','.nuevaEmpresa',function () {
+    $('#modalNuevo').on('click', '.nuevaEmpresa', function () {
         var form = $(document).find('#formNuevo');
         // $(form).submit();
         console.log(form);
@@ -610,8 +738,8 @@ $(document).ready(function () {
         e.preventDefault();
         $.get($(this).attr('data-url'), function (data) {
             //######## FORMATEO DE CAMPOS
-             //if ($('#modalNuevoContenedor').find('#id_numIdentidad').length) {
-                
+            //if ($('#modalNuevoContenedor').find('#id_numIdentidad').length) {
+
             // }
             $('#modalNuevoContenedor').empty().html(data.html);
             new Cleave('#id_numIdentidad', {
@@ -625,8 +753,8 @@ $(document).ready(function () {
             $('#modalNuevoContenedor').find('#id_apellido1').upperFirstAll();
             $('#modalNuevoContenedor').find('#id_apellido2').upperFirstAll();
 
-            
-            $('#guardarNuevo').attr('class','btn btn-primary nuevoConductor');
+
+            $('#guardarNuevo').attr('class', 'btn btn-primary nuevoConductor');
 
             var requeridos = $('#modalNuevoContenedor').find(':required');
             requeridos.each(function (r, requerido) {
@@ -642,7 +770,7 @@ $(document).ready(function () {
 
     });
 
-    $('#modalNuevo').on('click','.nuevoConductor',function () {
+    $('#modalNuevo').on('click', '.nuevoConductor', function () {
         var form = $(document).find('#formNuevo');
         // $(form).submit();
         // console.log(form);
@@ -676,7 +804,7 @@ $(document).ready(function () {
     $('#agregarVehiculo').click(function (e) {
         e.preventDefault();
         $.get($(this).attr('data-url'), function (data) {
-            
+
             $('#modalNuevoContenedor').empty().html(data.html);
 
             var requeridos = $('#modalNuevoContenedor').find(':required');
@@ -688,14 +816,14 @@ $(document).ready(function () {
                 }
             });
 
-            $('#guardarNuevo').attr('class','btn btn-primary nuevoVehiculo');
+            $('#guardarNuevo').attr('class', 'btn btn-primary nuevoVehiculo');
             $('#modalNuevo').modal('show');
         });
 
 
     });
 
-    $('#modalNuevo').on('click','.nuevoVehiculo',function () {
+    $('#modalNuevo').on('click', '.nuevoVehiculo', function () {
 
         $(document).find('#formNuevo').submit(function (e) {
             e.preventDefault();
@@ -727,7 +855,7 @@ $(document).ready(function () {
     $('#agregarEmpleado').click(function (e) {
         e.preventDefault();
         $.get($(this).attr('data-url'), function (data) {
-            
+
             $('#modalNuevoContenedor').empty().html(data.html);
 
             var requeridos = $('#modalNuevoContenedor').find(':required');
@@ -743,14 +871,15 @@ $(document).ready(function () {
                 blocks: [4],
                 numericOnly: true
             });
+
             new Cleave('#id_identidad', {
-                blocks: [4,4,5],
-                delimiter:'-',
+                blocks: [4, 4, 5],
+                delimiter: '-',
                 numericOnly: true
             });
             new Cleave('#id_telefono', {
-                blocks: [4,4],
-                delimiter:'-',
+                blocks: [4, 4],
+                delimiter: '-',
                 numericOnly: true
             });
             $('#id_nombre').upperFirst();
@@ -758,14 +887,14 @@ $(document).ready(function () {
             $('#id_apellido').upperFirst();
             $('#id_segundoApellido').upperFirst();
 
-            $('#guardarNuevo').attr('class','btn btn-primary nuevoEmpleado');
+            $('#guardarNuevo').attr('class', 'btn btn-primary nuevoEmpleado');
             $('#modalNuevo').modal('show');
         });
 
 
     });
 
-    $('#modalNuevo').on('click','.nuevoEmpleado',function () {
+    $('#modalNuevo').on('click', '.nuevoEmpleado', function () {
 
         $(document).find('#formNuevo').submit(function (e) {
             e.preventDefault();

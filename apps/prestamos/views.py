@@ -109,7 +109,7 @@ def CrearPrestamo(request):
 							print('---------------------------------')
 						print("*************************************")
 					#Redireccionamos a la ventana del listado de compras
-					messages.success(request, 'Usted ha creado el prestamo de equipo.')
+					# messages.success(request, 'Usted ha creado el prestamo de equipo.')
 					return redirect(reverse('prestamos:prestamos-url'))
 
 			except IntegrityError: #If the transaction failed
@@ -229,7 +229,7 @@ def ModificarPrestamo(request,pk):
 							print('---------------------------------')
 						print("*************************************")
 					
-					messages.success(request,'Usted ha actualizado la remision')
+					#  messages.success(request,'Usted ha actualizado la remision')
 					return redirect(reverse('prestamos:prestamos-url'))
 
 			except IntegrityError:

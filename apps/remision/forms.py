@@ -22,7 +22,8 @@ class RemisionForm(forms.ModelForm):
 class DetalleRemisionForm(forms.ModelForm):
     class Meta:
         model = DetalleRemision
-        fields = '__all__'
+        fields = {'remision','salida','unidad','hielo'}
+
         
 
     def __init__(self, *args, **kwargs):
@@ -32,10 +33,18 @@ class DetalleRemisionForm(forms.ModelForm):
                 'class': 'form-control'
             })
             # print(field)
-            if field == 'unidad' or field == 'hielo':
+            if field == 'salida':
+                self.fields[field].widget.attrs['class'] = 'form-control salida'
+            if field == 'hielo':
                 self.fields[field].choices = [("","Seleccione...")] + list(self.fields[field].choices)[1:]
                 self.fields[field].widget.attrs['class'] = 'selectpicker form-control dx'
                 self.fields[field].widget.attrs['data-live-search'] = False
+            
+            if field == 'unidad':
+                unidad = Medida.objects.get(pk=1)
+                cl = []
+                cl.append([(str(unidad.pk)), str(unidad)])
+                self.fields[field].choices = cl
 
             # if field == 'remision' and self.fields['salida']:
             #     # x = Remision.objects.exclude(prestamoEquipo__isnull=True).last()

@@ -151,7 +151,7 @@ $(function () {
     });
     var tablex = $('#tablajs').DataTable({
         // "dom": "<'row'  <'col-md-6'f> >",
-        dom: "<'row'<'#contenedorArriba.col-sm-2'><'col-sm-10'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-4'i><'col-sm-8'<'#colvis'>p>>",
+        dom: "<'row'<'#contenedorArriba.col-md-3'><'col-md-9'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-4'i><'col-sm-8'<'#colvis'>p>>",
         "scrollY": '43vh',
         "scrollCollapse": true,
         "scrollX": true,
