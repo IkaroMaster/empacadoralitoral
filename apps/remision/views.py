@@ -348,11 +348,12 @@ def ModificarRemision(request,pk):
 
 	if request.method == 'POST':
 		remision = Remision.objects.get(pk=request.POST['numRemision'])
-		# print('hola putitooooo, estan entrando al metodo,en que estas fallando?')
 		remision_form = RemisionForm(request.POST,instance = remision) #, user=user
 		detalleRemision_formset = DetalleRemisionFormSet(request.POST)
+		print(remision.conductor.pk)
+
 		if remision_form.is_valid() and detalleRemision_formset.is_valid():
-			
+			print(remision.conductor.pk)
 			new_detallesRemision = []
 
 			for x in detalleRemision_formset:
