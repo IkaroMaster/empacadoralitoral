@@ -351,82 +351,9 @@ def ModificarRemision(request,pk):
 		remision_form = RemisionForm(request.POST,instance = remision) #, user=user
 		detalleRemision_formset = DetalleRemisionFormSet(request.POST)
 		print(remision.conductor.pk)
-
-		if remision_form.is_valid() and detalleRemision_formset.is_valid():
-			print(remision.conductor.pk)
-			new_detallesRemision = []
-
-			for x in detalleRemision_formset:
-				salida = x.cleaned_data.get('salida')
-				unidad = x.cleaned_data.get('unidad')
-				hielo = x.cleaned_data.get('hielo')
-
-				if salida and hielo :
-					new_detallesRemision.append(DetalleRemision(remision=remision,salida=salida, unidad=unidad, hielo=hielo))
-
-			try:
-				with transaction.atomic():
-					if request.POST['prestamoEquipo']:
-						if request.POST['prestamoEquipo'] != remision.prestamoEquipo.pk:
-							if remision.prestamoEquipo:	
-								asignarPrestamo = PrestamoEquipo.objects.get(pk= remision.prestamoEquipo.pk)
-								asignarPrestamo.estadoPrestamo = EstadoPrestamo.objects.get(pk=1)
-								print('Prestamo nuevamente activo: ',asignarPrestamo)
-								asignarPrestamo.save()
-							if request.POST['prestamoEquipo']:	
-								reAsignarPrestamo = PrestamoEquipo.objects.get(pk= request.POST['prestamoEquipo'])
-								reAsignarPrestamo.estadoPrestamo = EstadoPrestamo.objects.get(pk=3)
-								print('Nuevo prestamo asignado:',reAsignarPrestamo)
-								reAsignarPrestamo.save()
-					else:
-						if remision.prestamoEquipo:	
-							asignarPrestamo = PrestamoEquipo.objects.get(pk= remision.prestamoEquipo.pk)
-							asignarPrestamo.estadoPrestamo = EstadoPrestamo.objects.get(pk=1)
-							print('Prestamo nuevamente activo: ',asignarPrestamo)
-							asignarPrestamo.save()
-						else:
-							print("*************************************")
-							print('No tiene prestamo...')
-							print('Nuevo: ',request.POST['conductor'])
-							print('viejo: ',remision.conductor.pk)
-							if remision.conductor.pk != request.POST['conductor']:
-								
-								if remision.conductor:
-									print('Conductor desasignado: '+str(remision.conductor.pk))
-									conductor = Conductor.objects.get(pk = remision.conductor.pk)
-									conductor.disponible = True
-									conductor.save()
-								if request.POST['conductor']:
-									print('Conductor asignado: '+str(request.POST['conductor']))
-									conductor = Conductor.objects.get(pk = request.POST['conductor'])
-									conductor.disponible = False
-									conductor.save()
-
-							print('---------------------------------')
-							print('Vehículo viejo: '+str(remision.placa.pk))
-							print('Vehículo nuevo: '+str(request.POST['placa']))
-
-							if remision.placa.pk != request.POST['placa']:
-								if remision.placa: 
-									print('Vehiculo desasignado: '+str(remision.placa.pk))
-									placa = Vehiculo.objects.get(pk = remision.placa.pk)
-									placa.disponible = True
-									placa.save()
-								if request.POST['placa']: 
-									print('Vehiculo asignado: '+str(request.POST['placa']))
-									placa = Vehiculo.objects.get(pk = request.POST['placa'])
-									placa.disponible = False
-									placa.save()
-							print('------------------ FIN ---------------')
-
-					DetalleRemision.objects.filter(remision=remision).delete()
-					remision_form.save(commit=False)
-					DetalleRemision.objects.bulk_create(new_detallesRemision)
-
-					return redirect(reverse('remision:remision-url'))
-
-			except IntegrityError: #If the transaction failed
-				messages.error(request, 'Ha ocurrido un error al intentar guardar la remision.')
+		print('post:',request.POST['conductor'])
+			# except IntegrityError: #If the transaction failed
+			# 	messages.error(request, 'Ha ocurrido un error al intentar guardar la remision.')
 
 	else:
 		remision_form = RemisionForm(instance=remision)
