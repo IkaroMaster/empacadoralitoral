@@ -113,7 +113,7 @@ bg-success
                         <div class="input-group-prepend">
                             <span class="input-group-text" id="basic-addon1">Entregó </span>
                         </div>
-                        <input type="text" class="form-control" value="{{user.get_full_name}}"  readonly>
+                        <input type="text" class="form-control" value="{%if entrego%}{{entrego}}{%else%}{{user.get_full_name}}{%endif%}"  readonly>
                         
                         <div hidden>
                            {{remision_form.entrego}}

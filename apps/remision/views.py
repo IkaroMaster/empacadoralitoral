@@ -347,11 +347,11 @@ def ModificarRemision(request,pk):
 
 
 	if request.method == 'POST':
+		remision = Remision.objects.get(pk=request.POST['numRemision'])
 		# print('hola putitooooo, estan entrando al metodo,en que estas fallando?')
 		remision_form = RemisionForm(request.POST,instance = remision) #, user=user
 		detalleRemision_formset = DetalleRemisionFormSet(request.POST)
 		if remision_form.is_valid() and detalleRemision_formset.is_valid():
-			remision_actualizada = remision_form.save(commit=False)
 			
 			new_detallesRemision = []
 
@@ -361,19 +361,19 @@ def ModificarRemision(request,pk):
 				hielo = x.cleaned_data.get('hielo')
 
 				if salida and hielo :
-					new_detallesRemision.append(DetalleRemision(remision=remision_actualizada,salida=salida, unidad=unidad, hielo=hielo))
+					new_detallesRemision.append(DetalleRemision(remision=remision,salida=salida, unidad=unidad, hielo=hielo))
 
 			try:
 				with transaction.atomic():
-					if remision_actualizada.prestamoEquipo:
-						if remision_actualizada.prestamoEquipo != remision.prestamoEquipo:
+					if request.POST['prestamoEquipo']:
+						if request.POST['prestamoEquipo'] != remision.prestamoEquipo.pk:
 							if remision.prestamoEquipo:	
 								asignarPrestamo = PrestamoEquipo.objects.get(pk= remision.prestamoEquipo.pk)
 								asignarPrestamo.estadoPrestamo = EstadoPrestamo.objects.get(pk=1)
 								print('Prestamo nuevamente activo: ',asignarPrestamo)
 								asignarPrestamo.save()
-							if remision_actualizada.prestamoEquipo:	
-								reAsignarPrestamo = PrestamoEquipo.objects.get(pk= remision_actualizada.prestamoEquipo.pk)
+							if request.POST['prestamoEquipo']:	
+								reAsignarPrestamo = PrestamoEquipo.objects.get(pk= request.POST['prestamoEquipo'])
 								reAsignarPrestamo.estadoPrestamo = EstadoPrestamo.objects.get(pk=3)
 								print('Nuevo prestamo asignado:',reAsignarPrestamo)
 								reAsignarPrestamo.save()
@@ -385,34 +385,41 @@ def ModificarRemision(request,pk):
 							asignarPrestamo.save()
 						else:
 							print("*************************************")
-							if remision.conductor != remision_actualizada.conductor:
+							print('No tiene prestamo...')
+							print('Nuevo: ',request.POST['conductor'])
+							print('viejo: ',remision.conductor.pk)
+							if remision.conductor.pk != request.POST['conductor']:
+								
 								if remision.conductor:
-									print('Conductor desasignado: '+str(remision.conductor))
+									print('Conductor desasignado: '+str(remision.conductor.pk))
 									conductor = Conductor.objects.get(pk = remision.conductor.pk)
 									conductor.disponible = True
 									conductor.save()
-								if remision_actualizada.conductor:
-									print('Conductor asignado: '+str(remision_actualizada.conductor))
-									conductor = Conductor.objects.get(pk = remision_actualizada.conductor.pk)
+								if request.POST['conductor']:
+									print('Conductor asignado: '+str(request.POST['conductor']))
+									conductor = Conductor.objects.get(pk = request.POST['conductor'])
 									conductor.disponible = False
 									conductor.save()
 
 							print('---------------------------------')
-							if remision.placa != remision_actualizada.placa:
+							print('Vehículo viejo: '+str(remision.placa.pk))
+							print('Vehículo nuevo: '+str(request.POST['placa']))
+
+							if remision.placa.pk != request.POST['placa']:
 								if remision.placa: 
-									print('Vehiculo desasignado: '+str(remision.placa))
+									print('Vehiculo desasignado: '+str(remision.placa.pk))
 									placa = Vehiculo.objects.get(pk = remision.placa.pk)
 									placa.disponible = True
 									placa.save()
-								if remision_actualizada.placa: 
-									print('Vehiculo asignado: '+str(remision_actualizada.placa))
-									placa = Vehiculo.objects.get(pk = remision_actualizada.placa.pk)
+								if request.POST['placa']: 
+									print('Vehiculo asignado: '+str(request.POST['placa']))
+									placa = Vehiculo.objects.get(pk = request.POST['placa'])
 									placa.disponible = False
 									placa.save()
 							print('------------------ FIN ---------------')
 
 					DetalleRemision.objects.filter(remision=remision).delete()
-					remision_actualizada.save()
+					remision_form.save(commit=False)
 					DetalleRemision.objects.bulk_create(new_detallesRemision)
 
 					return redirect(reverse('remision:remision-url'))
@@ -466,6 +473,7 @@ def ModificarRemision(request,pk):
 		'remision': pk,
 		'capacidad':capacidad,
 		'guia':remision.guia,
+		'entrego':remision.entrego
 	}
 
 	return render(request, 'remision/remision.html', context)

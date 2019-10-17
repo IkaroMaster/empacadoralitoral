@@ -76,7 +76,7 @@ $(document).ready(function () {
         $.each(total, function (indexInArray, t) {
             salida += parseFloat($(t).val());
         });
-        if (capacidad < salida) {
+        if (capacidad < salida & capacidad > 0) {
 
             $('#errorDetalle').empty().html('<div class="alert alert-danger alert-dismissible "><strong>Error:</strong> la capacidad total de transporté de hielo del préstamo de equipos <strong>Nō ' + $('#prestamoEquipo_selected').val() + '</strong> es de <strong>' + capacidad + 'qq</strong>.<hr>Imposible realizar la salida de <strong>' + salida + 'qq</strong> de hielo.</div>');
             notificacion.fire({
@@ -140,10 +140,12 @@ $(document).ready(function () {
         $('#id_form-0-hielo').val('1').selectpicker('refresh');
         $(".delete-row").hide();
     } else {
-        $('#esCrear').hide();
         $('#id_numRemision').prop('readonly', true);
 
-        if ($('#id_numPrestamo').val() != '') {
+        if ( parseFloat($('#capacidad').val()) > 0) {
+            $('#id_compania').prop('disabled', true);
+            $('#id_compania').selectpicker('refresh');
+
             $('#id_conductor').prop('disabled', true);
             $('#id_conductor').selectpicker('refresh');
             
