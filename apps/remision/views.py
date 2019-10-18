@@ -627,8 +627,9 @@ def terminarRemision_asJson(request):
 					<div class="col-md-6 "><p><strong>Entregó: </strong>{}</p></div>
 					<div class="col-md-6 "><p><strong>Recibió: </strong>{}</p></div>
 					<div class="col-md-6"><p><strong>Placa No </strong>{}</p></div>
-					<div class="col-md-12 alert alert-warning">Atención: Si existen devoluciones, ingrese la devolución antes de continuar.</div>
 				</div>
+				<div class="alert alert-warning"><strong>Alerta: </strong>Si existen devoluciones, ingrese la devolución antes de continuar.</div>
+
 				
 			'''.format(remision.numRemision,remision.tipoRemision,remision.compania,remision.fecha,remision.entrego,remision.conductor,remision.placa)
 
@@ -660,7 +661,7 @@ def terminarRemision_asJson(request):
 							<tr>
 								<th scope="row">{}</th>
 								<td>{}</td>
-								<td class="{}"><input type="text" class="devolucion text-success form-control" value="{}"   data-id="{}" {} data-total='{}'></td>
+								<td class="{}"><input type="number" class="devolucion text-success form-control" value="{}"   data-id="{}" {} data-total='{}'></td>
 								<td>{}</td>
 							</tr>
 						</tbody>
@@ -676,60 +677,115 @@ def terminarRemision_asJson(request):
 				prestamo = PrestamoEquipo.objects.get(pk=remision.prestamoEquipo.pk)
 				detallePrestamo = DetallePrestamoEquipo.objects.filter(prestamoEquipo= prestamo)
 				htmlPrestamo +='''
-					<div class="p-3 mb-2 bg-primary text-white text-center">Esta remision esta ligada al prestamo de equipo numero <strong>{}</strong>.</div>
-					<br>
-					<span class="alert alert-warning alert-dismissible ">Atencion: Solo debe finalizar el prestamo si todo el equipo prestado ha sido devuelto.</span>
-					<br><br>
-					<div class="row container">
-						<div class="col-6"><p><strong>Numero de prestamo: </strong> {}</p></div>
-						<div class="col-6"><p><strong>Empresa: </strong> {}</p></div>
-					</div>
-				'''.format(prestamo.numPrestamo,prestamo.numPrestamo,prestamo.compania)
+				<div class="container-fluid p-3 mb-2 bg-primary text-white text-center">Esta remision esta ligada al prestamo de equipo numero <strong>{}</strong>.</div>
+				<div class="row container ">
+					<div class="col-6"><p><strong>Numero de prestamo: </strong> {}</p></div>
+					<div class="col-6"><p><strong>Empresa: </strong> {}</p></div>
+					<div class="col-6"><p><strong>Conductor: </strong> {}</p></div>
+					<div class="col-6"><p><strong>Numero de placa: </strong> {}</p></div>
+					<div class="col-6"><p><strong>Hora de salida: </strong> {}</p></div>
+					<div class="col-6"><p><strong>Fecha de salida: </strong> {}</p></div>
+					<div class="col-12"><p><strong>Observaciones: </strong> {}</p></div>
+				</div>
+				'''.format(prestamo.numPrestamo,prestamo.numPrestamo,prestamo.compania,prestamo.conductor,prestamo.placa,prestamo.horaSalida,prestamo.fechaSalida,prestamo.observaciones)
+			
 				
-				
+				htmlDetallePrestamo = ''
 				htmlDetallePrestamo += '''
-					<p>A continuacion detallamos los articulos que enviamos.</p>
-					<table class="table table-bordered table-responsive">
+					<div class="alert alert-warning alert-dismissible "><strong>Alerta: </strong>Marque la casilla de verificación del equipo recibido y confirme la fecha de entrada.</div>
+					<p class="mb-1">A continuación se detallan los artículos que se enviaron.</p>
+					<div class="table-responsive">
+					<table class="table table-bordered">
 							<thead>
 							<tr>
-								<th scope="col">Equipo</th>
+								<th scope="col">#</th>
+								<th scope="col">Bin</th>
+								<th>Estado</th>
 								<th scope="col">Tapadera</th>
-								<th scope="col">Descripcion</th>
+								<th>Estado</th>
+								<th scope="col">Descripción</th>
 							</tr>
 							</thead>
 							<tbody>	
 												
 				'''
+				numero = 0
 				for dP in detallePrestamo:
+					numero += 1
+					descripcion = ''
+					if dP.descripcion:
+						descripcion = dP.descripcion
 					htmlDetallePrestamo +='''
-					<tr>
-						<td scope="row">{}</td>
+					<tr><td>{}</td>
 						<td>{}</td>
+						<td class=" alert-warning">
+							<div class="pretty p-svg p-round p-plain p-jelly">
+								<input data-id="{}" class="devueltos chkBines" type="checkbox" />
+								<div class="state p-success">
+									<span class="svg" uk-icon="icon: check"></span>
+									<label> Recibido</label>
+								</div>
+							</div>
+							
+						</td>
+						<td>{}</td>
+						<td class="alert-warning">
+							
+							<div class="pretty p-svg p-round p-plain p-jelly">
+								<input data-id="{}" class="devueltos chkTapaderas" type="checkbox"  />
+								<div class="state p-success">
+									<span class="svg" uk-icon="icon: check"></span>
+									<label>Recibido</label>
+								</div>
+							</div>	
+						</td>
 						<td>{}</td>
 					</tr>
-					'''.format(dP.equipo,dP.tapadera,dP.descripcion)
+					 '''.format(numero,dP.equipo,dP.equipo.pk,dP.tapadera,dP.tapadera.pk,descripcion)
 
-				fecha = ''
-				if prestamo.fechaEntrada:
-					fecha = prestamo.fechaEntrada
-				else:
-					r = datetime.now()
-					fecha = formats.date_format(r,"SHORT_DATETIME_FORMAT")
+				
+				
+				fecha = datetime.now().date()
 
 				htmlDetallePrestamo += '''
+						
+							
+						<tr class="alert-secondary">
+							<td></td>
+							<td></td>
+							<td class="m-0 p-0 ">
+									<div class=" uk-button-group">					
+											<button id="selBin" class="uk-button uk-button-primary "><i class="far fa-check-circle "></i></button>
+											<button id="desBin" class="uk-button uk-button-danger  "><i class="far fa-times-circle"></i></button>
+				
+										</div>
+							</td>
+							<td></td>
+							<td class="m-0 p-0 ">
+									<div class=" uk-button-group">					
+										<button id="selTap" class="uk-button uk-button-primary "><i class="far fa-check-circle "></i></button>
+										<button id="desTap" class="uk-button uk-button-danger  "><i class="far fa-times-circle"></i></button>
+									</div>
+							</td>
+							<td></td>
+
+						</tr>
+						
+
 						</tbody>
+						
 					</table>
+				</div>
 					<div class="row container">
-						<div class="col-6"><p><strong>Numero de placa: </strong> {}</p></div>
-						<div class="col-6"><p><strong>Hora de salida: </strong> {}</p></div>
-						<div class="col-6"><p><strong>Fecha de salida: </strong> {}</p></div>
-						<div class="col-6">
-							<label><strong>Fecha de entrada</strong></label>
-							<input type="date" class="fechaEntrada form-control datetimepicker" value="{}"  data-id="{}" >
-						</div>
-						<div class="col-12"><p><strong>Observaciones: </strong> {}</p></div>
+						
+						<div  class="col-md-6 input-group mb-3 mt-2">
+							<div class="input-group-prepend">
+								<span class="input-group-text" id="basic-addon1"><strong>Fecha de Entrada</strong></span>
+							</div>
+							<input type="date" class="fechaEntrada form-control datetimepicker border border-warning" value="{}" id="fechaEntrada" data-id="{}" required >
+						</div>	
 					</div>
-				'''.format(prestamo.placa,prestamo.horaSalida,prestamo.fechaSalida,fecha,prestamo.numPrestamo,prestamo.observaciones)
+				'''.format(fecha,prestamo.numPrestamo)
 
 			data = {
 					'htmlRemision':htmlRemision,

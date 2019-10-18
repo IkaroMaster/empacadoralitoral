@@ -658,20 +658,46 @@ $(document).ready(function () {
 
     $(document).on('blur', '.devolucion', function () {
         total = parseFloat($(this).attr('data-total'));
-        valor = parseFloat($(this).val());
-        alert(valor);
-        if (valor != '') {
-            if (valor > total) {
+        devolucion = parseFloat($(this).val());
+        if (devolucion > 0) {
+            if (devolucion > total) {
                 notificacion.fire({
                     type: 'error',
                     title: 'Error: La devolución de hielo limpio no puede ser mayor que la salida.'
                 });
+                $(this).val('0').focus();
             }
-        }else{
-            $(this).val(0);
         }
 
-    })
+        if($(this).val() == ''){
+            $(this).val('0').focus();
+;        }
+
+    });
+    $('.modalCuerpoRemision').on('click','#selBin',function(){
+        var bines = $('.modalCuerpoRemision').find('.chkBines');
+        bines.each(function (indexInArray, bin) { 
+             $(bin).prop('checked',true);
+        });
+    });
+    $('.modalCuerpoRemision').on('click','#desBin',function(){
+        var bines = $('.modalCuerpoRemision').find('.chkBines');
+        bines.each(function (indexInArray, bin) { 
+             $(bin).prop('checked',false);
+        });
+    });
+    $('.modalCuerpoRemision').on('click','#selTap',function(){
+        var taps = $('.modalCuerpoRemision').find('.chkTapaderas');
+        taps.each(function (indexInArray, tap) { 
+             $(tap).prop('checked',true);
+        });
+    });
+    $('.modalCuerpoRemision').on('click','#desTap',function(){
+        var taps = $('.modalCuerpoRemision').find('.chkTapaderas');
+        taps.each(function (indexInArray, tap) { 
+             $(tap).prop('checked',false);
+        });
+    });
 
     $('#id_numRemision').blur(function () {
         var numero = $(this).val();
