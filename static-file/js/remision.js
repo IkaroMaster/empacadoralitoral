@@ -31,11 +31,11 @@ $(document).ready(function () {
             $('#id_guia').prop('required', false);
             $('#id_guia').removeClass('border border-warning');
             $('#prestamoEquipo_selected').prop('required', false).selectpicker('setStyle', 'border border-warning', 'remove').selectpicker('refresh');
-            
+
 
         }
     })
-    if($('#id_tipoRemision').val() == '1' & $('#crear').val() != 'True'){
+    if ($('#id_tipoRemision').val() == '1' & $('#crear').val() != 'True') {
         $('#id_guia').prop('readonly', false);
         $('#id_guia').prop('required', true);
         $('#id_guia').addClass('border border-warning');
@@ -147,13 +147,13 @@ $(document).ready(function () {
     } else {
         $('#id_numRemision').prop('readonly', true);
 
-        if ( parseFloat($('#capacidad').val()) > 0) {
+        if (parseFloat($('#capacidad').val()) > 0) {
             $('#id_compania').prop('disabled', true);
             $('#id_compania').selectpicker('refresh');
 
             $('#id_conductor').prop('disabled', true);
             $('#id_conductor').selectpicker('refresh');
-            
+
             $('#id_prestamoEquipo').prop('disabled', true);
             $('#id_prestamoEquipo').selectpicker('refresh');
 
@@ -189,6 +189,11 @@ $(document).ready(function () {
         $('#id_compania').prop('disabled', false);
         $('#id_conductor').prop('disabled', false);
         $('#id_placa').prop('disabled', false);
+
+
+        $('#pantalla').addClass('pantalla');
+        $('#circulo').addClass('circulo');
+        $('#loader').addClass('loader');
 
         return true;
         // });
@@ -293,7 +298,7 @@ $(document).ready(function () {
                 $('#id_compania').selectpicker('refresh');
 
                 // if ($('#crear').val() == 'True') {
-                    $('#id_conductor').prepend(data.htmlC);
+                $('#id_conductor').prepend(data.htmlC);
                 // }
                 $('#id_conductor').val(data.conductor);
                 $('#id_conductor').prop('disabled', true);
@@ -301,7 +306,7 @@ $(document).ready(function () {
 
 
                 // if ($('#crear').val() == 'True') {
-                    $('#id_placa').prepend(data.htmlP);
+                $('#id_placa').prepend(data.htmlP);
                 // }
                 $('#id_placa').val(data.placa);
                 $('#id_placa').prop('disabled', true);
@@ -486,6 +491,10 @@ $(document).ready(function () {
             id: id
         }, function (data) {
             $('.modalCuerpoRemision').empty().html(data.htmlRemision + '' + data.htmlDetalleRemision + '' + data.htmlPrestamo + '' + data.htmlDetallePrestamo);
+            new Cleave('.devolucion', {
+                blocks: [3],
+                numericOnly: true
+            });
         });
 
         $('#modalDetalleRemision').modal('show');
@@ -646,6 +655,23 @@ $(document).ready(function () {
         }
 
     });
+
+    $(document).on('blur', '.devolucion', function () {
+        total = parseFloat($(this).attr('data-total'));
+        valor = parseFloat($(this).val());
+        alert(valor);
+        if (valor != '') {
+            if (valor > total) {
+                notificacion.fire({
+                    type: 'error',
+                    title: 'Error: La devolución de hielo limpio no puede ser mayor que la salida.'
+                });
+            }
+        }else{
+            $(this).val(0);
+        }
+
+    })
 
     $('#id_numRemision').blur(function () {
         var numero = $(this).val();

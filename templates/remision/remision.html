@@ -220,10 +220,8 @@ bg-success
 
             </form>
             <center>
-                <button id="guardarRemision" class="btn btn-success">{% if crear%}Guardar
-                    Remision{% elif editar %}Modificar{% endif %}</button>
-                <a href="{% url 'remision:remision-url'%} " class="btn btn-secondary">Cancelar</a>
-
+                <button id="guardarRemision" class="btn btn-success">{% if crear%}<i class="fas fa-save"></i> Guardar{% elif editar %}<i class="fas fa-edit"></i> Modificar{% endif %}</button>
+                <a href="{% url 'remision:remision-url'%} " class="btn btn-secondary loading"><i class="fas fa-window-close"></i> Cancelar</a>
             </center>
             <p></p>
         </div>
@@ -354,7 +352,7 @@ bg-success
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Visualizacion de remision</h5>
+                <h5 class="modal-title" id="exampleModalLongTitle">Visualización de remisión</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>

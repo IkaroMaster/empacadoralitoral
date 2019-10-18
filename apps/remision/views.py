@@ -618,27 +618,32 @@ def terminarRemision_asJson(request):
 			detalleRemision = DetalleRemision.objects.filter(remision= remision)
 			htmlRemision ='' 
 			htmlRemision +='''
-				<span class="alert alert-warning alert-dismissible ">Atencion: Si existen devoluciones, ingrese la devolucion antes de continuar.</span>
-				<br><br>
-				<div class="row container">
-					<div class="col-6"><p><strong>Numero de remision: </strong> {}</p></div>
-					<div class="col-6"><p><strong>Tipo de remision: </strong> {}</p></div>
-					<div class="col-12"><p><strong>Consignado a: </strong>{}</p></div>
-					<div class="col-12"><p><strong>Retirado en: </strong>Empacadora Litoral</p></div>
-					<div class="col-12"><p><strong>Fecha: </strong>{}</p></div>
+				<div class="row ">
+					<div class="col-md-6"><p><strong>Numero de Remisión: </strong> {}</p></div>
+					<div class="col-md-6"><p><strong>Tipo de Remisión: </strong> {}</p></div>
+					<div class="col-md-6"><p><strong>Consignado a: </strong>{}</p></div>
+					<div class="col-md-6"><p><strong>Retirado en: </strong>Empacadora Litoral</p></div>
+					<div class="col-md-6"><p><strong>Fecha: </strong>{}</p></div>
+					<div class="col-md-6 "><p><strong>Entregó: </strong>{}</p></div>
+					<div class="col-md-6 "><p><strong>Recibió: </strong>{}</p></div>
+					<div class="col-md-6"><p><strong>Placa No </strong>{}</p></div>
+					<div class="col-md-12 alert alert-warning">Atención: Si existen devoluciones, ingrese la devolución antes de continuar.</div>
 				</div>
-			'''.format(remision.numRemision,remision.tipoRemision,remision.compania,remision.fecha)
+				
+			'''.format(remision.numRemision,remision.tipoRemision,remision.compania,remision.fecha,remision.entrego,remision.conductor,remision.placa)
+
+			
 			htmlDetalleRemision = ''
 			htmlDetalleRemision += '''
-				<p>A continuacion detallamos los articulos que enviamos.</p>
-				<div class="table-responsive">
-				<table class="table table-bordered ">
+				
+				<div class="container table-responsive">
+				<p class="mb-1">A continuación detallamos los artículos que enviamos.</p>
+				<table class="table table-bordered table-hover">
 						<thead>
 						<tr>
-							<th scope="col">Cantidad</th>
-							<th scope="col">Unidad</th>
-							<th scope="col">Descripcion</th>
-							<th scope="col">Devolucion</th>
+							<th scope="col">Cantidad(qq)</th>
+							<th scope="col">Descripción</th>
+							<th scope="col">Devolución(qq)</th>
 							<th scope="col">Valor total</th>
 						</tr>
 						</thead>
@@ -647,29 +652,23 @@ def terminarRemision_asJson(request):
 			'''
 			for dR in detalleRemision:
 				xyz = ''
+				color = 'alert-warning'
 				if dR.hielo.pk == 2:
 					xyz = 'readonly="True"'
+					color = ''
 				htmlDetalleRemision +='''
-				<tr>
-					<th scope="row">{}</th>
-					<td>{}</td>
-					<td>{}</td>
-					<td><input type="text" class="devolucion text-success form-control" value="{}"   data-id="{}" {}></td>
-					<td>{}</td>
-				</tr>
-				'''.format(dR.salida,dR.unidad,dR.hielo,dR.devolucion,dR.id,xyz,dR.cantidad)
+							<tr>
+								<th scope="row">{}</th>
+								<td>{}</td>
+								<td class="{}"><input type="text" class="devolucion text-success form-control" value="{}"   data-id="{}" {} data-total='{}'></td>
+								<td>{}</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				'''.format(dR.salida,dR.hielo,color,dR.devolucion,dR.id,xyz,dR.cantidad,dR.cantidad)
 				print(dR.id)
-			htmlDetalleRemision += '''
-					</tbody>
-				</table>
-				</div>
-				<div class="row container">
-					<div class="col-6 border"><p><strong>Entrego: </strong>{}</p></div>
-					<div class="col-6 border"><p><strong>Recibio: </strong>{}</p>
-										<p><strong>Placa No </strong>{}</p>
-					</div>
-				</div>
-			'''.format(remision.entrego,remision.conductor,remision.placa)
+			
 			
 			htmlPrestamo ='' 
 			htmlDetallePrestamo = ''
