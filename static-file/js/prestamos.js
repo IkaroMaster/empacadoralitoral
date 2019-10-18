@@ -141,9 +141,7 @@ $(function () {
             $(".add-row").click();
             return false;
         }
-        $('#pantalla').addClass('pantalla');
-        $('#circulo').addClass('circulo');
-        $('#loader').addClass('loader');
+        loading();
     });
 
     moment.updateLocale(moment.locale(), {

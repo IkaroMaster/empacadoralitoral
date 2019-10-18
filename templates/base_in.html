@@ -26,7 +26,7 @@
         <ul class="navbar-nav animate side-nav">
           <li class="nav-item">
               {% if perms.prestamos.view_prestamoequipo %}
-              <a href="{% url 'prestamos:prestamos-url' %}" class="nav-link  text-light {% block l3 %}{% endblock %}"><img
+              <a href="{% url 'prestamos:prestamos-url' %}" class="nav-link loading text-light {% block l3 %}{% endblock %}"><img
                   src="{% static 'imgs/reserva.png' %}" width="45px" alt=""> <strong>Préstamos</strong><img
                   src="{% static 'imgs/reserva.png' %}" width="45px" alt="" class=" shortmenu animate m-0 p-0"></a> 
                   
@@ -44,21 +44,21 @@
           
           <li class="nav-item">
           {% if perms.remision.view_remision %}
-          <a href="{% url 'remision:remision-url' %}" class="nav-link  text-light {% block l1 %}{% endblock %}"><img
+          <a href="{% url 'remision:remision-url' %}" class="nav-link loading text-light {% block l1 %}{% endblock %}"><img
               src="{% static 'imgs/remision.png' %}" width="45px" alt=""> <strong>Remisiones</strong><img
               src="{% static 'imgs/remision.png' %}" width="45px" alt="" class=" shortmenu animate m-0 p-0"></a>
           {% endif %}
           </li>
           <li class="nav-item">
           {% if perms.camaron.view_cosecha %}
-          <a href="{% url 'camaron:cosechas-url' %}" class="nav-link  text-light {% block l9 %}{% endblock %}"><img
+          <a href="{% url 'camaron:cosechas-url' %}" class="nav-link loading text-light {% block l9 %}{% endblock %}"><img
               src="{% static 'imgs/camaron.png' %}" width="45px" alt=""> <strong>Camarón</strong><img
               src="{% static 'imgs/camaron.png' %}" width="45px" alt="" class=" shortmenu animate m-0 p-0"></a>
           {% endif %}
           </li>
           <li class="nav-item">
           {% if perms.hielo_proceso.view_hieloproceso %}
-          <a href="{% url 'hielo_proceso:dias-url' %}" class="nav-link  text-light {% block l8 %}{% endblock %}"><img
+          <a href="{% url 'hielo_proceso:dias-url' %}" class="nav-link loading text-light {% block l8 %}{% endblock %}"><img
               src="{% static 'imgs/hielo.png' %}" width="45px" alt=""> <strong>Hielo</strong><img
               src="{% static 'imgs/hielo.png' %}" width="45px" alt="" class=" shortmenu animate m-0 p-0"></a>
           {% endif %}

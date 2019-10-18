@@ -31,11 +31,16 @@ $(document).ready(function () {
             $('#id_guia').prop('required', false);
             $('#id_guia').removeClass('border border-warning');
             $('#prestamoEquipo_selected').prop('required', false).selectpicker('setStyle', 'border border-warning', 'remove').selectpicker('refresh');
-
+            
 
         }
     })
-
+    if($('#id_tipoRemision').val() == '1' & $('#crear').val() != 'True'){
+        $('#id_guia').prop('readonly', false);
+        $('#id_guia').prop('required', true);
+        $('#id_guia').addClass('border border-warning');
+        $('#prestamoEquipo_selected').prop('required', true).selectpicker('setStyle', 'border border-warning', 'add').selectpicker('refresh');
+    }
 
     $('.detalle-formset').formset({
         addText: 'Agregar',
@@ -287,17 +292,17 @@ $(document).ready(function () {
                 $('#id_compania').prop('disabled', true);
                 $('#id_compania').selectpicker('refresh');
 
-                if ($('#crear').val() == 'True') {
+                // if ($('#crear').val() == 'True') {
                     $('#id_conductor').prepend(data.htmlC);
-                }
+                // }
                 $('#id_conductor').val(data.conductor);
                 $('#id_conductor').prop('disabled', true);
                 $('#id_conductor').selectpicker('refresh');
 
 
-                if ($('#crear').val() == 'True') {
+                // if ($('#crear').val() == 'True') {
                     $('#id_placa').prepend(data.htmlP);
-                }
+                // }
                 $('#id_placa').val(data.placa);
                 $('#id_placa').prop('disabled', true);
                 $('#id_placa').selectpicker('refresh');

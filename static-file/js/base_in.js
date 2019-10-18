@@ -41,5 +41,17 @@ $(function () {
 
         }
     });
+
+    $('.loading').on('click',function(){
+        $('#pantalla').addClass('pantalla');
+        $('#circulo').addClass('circulo');
+        $('#loader').addClass('loader');
+    })
+
+    function loading() {
+        $('#pantalla').addClass('pantalla');
+        $('#circulo').addClass('circulo');
+        $('#loader').addClass('loader');
+    }
     
 });

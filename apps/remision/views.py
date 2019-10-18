@@ -78,8 +78,8 @@ def CrearRemision(request): #,pk
 			try:
 				with transaction.atomic():
 					remision.save()
-					if request.POST['prestamoEquipo']:		
-						asignarPrestamo = PrestamoEquipo.objects.get(pk= request.POST['prestamoEquipo'])
+					if actualizacion.prestamoEquipo.pk:		
+						asignarPrestamo = PrestamoEquipo.objects.get(pk= actualizacion.prestamoEquipo.pk)
 						asignarPrestamo.estadoPrestamo = EstadoPrestamo.objects.get(pk=3)
 						print(asignarPrestamo)
 						asignarPrestamo.save()
@@ -352,8 +352,109 @@ def ModificarRemision(request,pk):
 		detalleRemision_formset = DetalleRemisionFormSet(request.POST)
 		print(remision.conductor.pk)
 		print('post:',request.POST['conductor'])
-			# except IntegrityError: #If the transaction failed
-			# 	messages.error(request, 'Ha ocurrido un error al intentar guardar la remision.')
+		if remision_form.is_valid() and detalleRemision_formset.is_valid():
+			remision = Remision.objects.get(pk=request.POST['numRemision'])
+			actualizacion = remision_form.save(commit=False)
+			print(remision.conductor)
+			print('post:',actualizacion.conductor)
+			new_detallesRemision = []
+
+			for x in detalleRemision_formset:
+				salida = x.cleaned_data.get('salida')
+				unidad = x.cleaned_data.get('unidad')
+				hielo = x.cleaned_data.get('hielo')
+
+				if salida and hielo :
+					new_detallesRemision.append(DetalleRemision(remision=remision,salida=salida, unidad=unidad, hielo=hielo))
+
+			try:
+				with transaction.atomic():
+					if actualizacion.prestamoEquipo:
+						if actualizacion.prestamoEquipo != remision.prestamoEquipo:
+							if remision.prestamoEquipo:	
+								asignarPrestamo = PrestamoEquipo.objects.get(pk= remision.prestamoEquipo.pk)
+								asignarPrestamo.estadoPrestamo = EstadoPrestamo.objects.get(pk=1)
+								print('Prestamo nuevamente activo: ',asignarPrestamo)
+								asignarPrestamo.save()
+							if not remision.prestamoEquipo:
+								if remision.conductor:
+									print('Conductor desasignado: '+str(remision.conductor.pk))
+									conductor = Conductor.objects.get(pk = remision.conductor.pk)
+									conductor.disponible = True
+									conductor.save()
+								if remision.placa: 
+									print('Vehículo desasignado: '+str(remision.placa.pk))
+									placa = Vehiculo.objects.get(pk = remision.placa.pk)
+									placa.disponible = True
+									placa.save()
+
+							if actualizacion.prestamoEquipo:	
+								reAsignarPrestamo = PrestamoEquipo.objects.get(pk= actualizacion.prestamoEquipo.pk)
+								reAsignarPrestamo.estadoPrestamo = EstadoPrestamo.objects.get(pk=3)
+								print('Nuevo prestamo asignado:',reAsignarPrestamo)
+								reAsignarPrestamo.save()
+
+							
+							
+					else:
+						if remision.prestamoEquipo:	
+							asignarPrestamo = PrestamoEquipo.objects.get(pk= remision.prestamoEquipo.pk)
+							asignarPrestamo.estadoPrestamo = EstadoPrestamo.objects.get(pk=1)
+							print('Prestamo nuevamente activo: ',asignarPrestamo)
+							asignarPrestamo.save()
+							if actualizacion.conductor:
+								print('Conductor asignado: '+str(actualizacion.conductor))
+								conductor = Conductor.objects.get(pk = actualizacion.conductor.pk)
+								conductor.disponible = False
+								conductor.save()
+							if actualizacion.placa: 
+								print('Vehiculo asignado: '+str(actualizacion.placa))
+								placa = Vehiculo.objects.get(pk = actualizacion.placa.pk)
+								placa.disponible = False
+								placa.save()
+								print('------------------ FIN ---------------')
+						else:
+							print("*************************************")
+							print('No tiene prestamo...')
+							print('Nuevo: ',actualizacion.conductor)
+							print('viejo: ',remision.conductor)
+							if remision.conductor != actualizacion.conductor:
+								
+								if remision.conductor:
+									print('Conductor desasignado: '+str(remision.conductor.pk))
+									conductor = Conductor.objects.get(pk = remision.conductor.pk)
+									conductor.disponible = True
+									conductor.save()
+								if actualizacion.conductor:
+									print('Conductor asignado: '+str(actualizacion.conductor))
+									conductor = Conductor.objects.get(pk = actualizacion.conductor.pk)
+									conductor.disponible = False
+									conductor.save()
+
+							print('---------------------------------')
+							print('Vehículo viejo: '+str(remision.placa))
+							print('Vehículo nuevo: '+str(actualizacion.placa))
+
+							if remision.placa != actualizacion.placa:
+								if remision.placa: 
+									print('Vehiculo desasignado: '+str(remision.placa))
+									placa = Vehiculo.objects.get(pk = remision.placa.pk)
+									placa.disponible = True
+									placa.save()
+								if actualizacion.placa: 
+									print('Vehiculo asignado: '+str(actualizacion.placa))
+									placa = Vehiculo.objects.get(pk = actualizacion.placa.pk)
+									placa.disponible = False
+									placa.save()
+							print('------------------ FIN ---------------')
+
+					DetalleRemision.objects.filter(remision=remision).delete()
+					actualizacion.save()
+					DetalleRemision.objects.bulk_create(new_detallesRemision)
+
+					return redirect(reverse('remision:remision-url'))
+			except IntegrityError: #If the transaction failed
+				messages.error(request, 'Ha ocurrido un error al intentar guardar la remision.')
 
 	else:
 		remision_form = RemisionForm(instance=remision)
