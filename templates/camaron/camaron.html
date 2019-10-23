@@ -1,24 +1,13 @@
 {% extends "base_in.html" %}
 {% block titulo %}
-Remisiones
+Cosechas
 {% endblock titulo %}
 {% block l9 %}
 bg-success
 {% endblock l9 %}
 {% block cuerpo %}
 <div class="card text-center">
-    <div class="panel-heading bg-primary">
-        <h4 class="panel-title text-light">
-            {% if listado  %}
-            Notas de Cosecha de Camarón
-            {% elif editar %}
-            Editar Nota de Cosecha Nō {{pk}}
-            {% elif crear %}
-            Crear Nueva Nota de Cosecha
-            {% endif %}
 
-        </h4>
-    </div>
     <div class="card-header">
         <ul class="nav nav-tabs card-header-tabs">
             {% if perms.camaron.add_cosecha %}
@@ -37,91 +26,104 @@ bg-success
         </ul>
     </div>
     <div class="card-body">
+        <h4 class="mb-1"><strong>{% if crear%}Crear Nueva Nota de Cosecha{% elif editar %}Editar Nota de Cosecha Nō
+                {{pk}}{% elif listado %}Notas de Cosecha de Camarón{% endif %}</strong>
+        </h4>
+
+
+        {% if crear or editar %}
+
         <div style="{{estilos.o1}}">
 
             {% if messages %}
             {% for message in messages %}
-            <span class="alert alert-danger alert-dismissible ">Error: {{ message|escape }}</span>
-            <!--data-dismiss="alert"-->
-            <br><br>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Error: </strong>{{ message|escape }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
             {% endfor %}
             {% endif %}
 
+            <p class="small text-left mt-0 mb-0"><i class="fas fa-info"></i> <strong class="text-warning">Campo con borde color amarillo es requerido.</strong></p>
             <form class="row" method="post" id="formCosecha">
                 <input type="hidden" name="crear" id="crear" data-cosecha="{{pk}}" value="{{ crear }}">
                 {% csrf_token %}
-
-                <div class="col-md-2">
-                    <label for="">Codigo:</label>
+                <div class="col-md-3 input-group mb-3 mt-2">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon1">Código</span>
+                    </div>
                     {{cosecha_form.codCosecha}}
-                    <br>
                 </div>
-                <div class="col-md-3">
-                    <label for="">Remisión:</label>
-                    {{cosecha_form.remision}}
-                    <br><br>
-                </div>
-
-                <div class="col-md-3">
-                    <label>Finca:</label>
-                    <div class="input-group">
-                        <select name="" class="form-control selectpicker show-tick" data-live-search="true" id="finca"
-                            required>
-                            {% if htmlFincas %}
-                            {{htmlFincas|safe}}
-                            {% else %}
-                            <option value="">Seleccione... </option>
-                            {% endif %}
-                        </select>
-                        <a hidden id="agregarFinca" data-url="{% url 'compania:agregar-finca-url' %}"
-                            class="btn-lg text-success fas fa-plus ml-1 p-0 pl-1 pt-2"></a>
+                <div class="col-md-3 input-group mb-3 mt-2">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon1">Remisión</span>
                     </div>
-                </div>
-
-
-                <div class="col-md-3">
-                    <label for="">Laguna:</label>
-                    <div class="input-group">
-                        {{cosecha_form.laguna}}
-                        <a hidden id="agregarLaguna" data-url="{% url 'compania:agregar-laguna-url' %}"
-                            class="btn-lg text-success fas fa-plus ml-1 p-0 pl-1 pt-2"></a>
+                    {% if remision %}
+                    <input type="text" readonly class="form-control" value="{{remision}}">
+                    <div hidden>
+                        {{cosecha_form.remision}}
                     </div>
-                    
+                    {% else %}
+                        {{cosecha_form.remision}}
+                    {% endif %}
                     
                 </div>
-
-                <div class="col-md-3">
-                    <label for="">Fecha:</label>
+                <div class="col-md-3 input-group mb-3 mt-2">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon1">Finca</span>
+                    </div>
+                    <select name="" class="form-control selectpicker show-tick" data-live-search="true" data-size="5" id="finca"
+                        required>
+                        {% if htmlFincas %}
+                        {{htmlFincas|safe}}
+                        {% else %}
+                        <option value="">Seleccione... </option>
+                        {% endif %}
+                    </select>
+                    <a hidden id="agregarFinca" data-url="{% url 'compania:agregar-finca-url' %}"
+                        class="btn-lg text-success fas fa-plus ml-1 p-0 pl-1 pt-2"></a>
+                </div>
+                <div class="col-md-3 input-group mb-3 mt-2">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon1">Laguna</span>
+                    </div>
+                    {{cosecha_form.laguna}}
+                    <a hidden id="agregarLaguna" data-url="{% url 'compania:agregar-laguna-url' %}"
+                        class="btn-lg text-success fas fa-plus ml-1 p-0 pl-1 pt-2"></a>
+                </div>
+                <div class="col-md-3 input-group mb-3 mt-2">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon1">Fecha</span>
+                    </div>
                     {{cosecha_form.fecha}}
-                    <br>
                 </div>
-
-                <div class="col-md-2">
-                    <label for="">Hora Inicio:</label>
-                    {{cosecha_form.horaInicio}}
-                    <br>
-                </div>
-                <div class="col-md-2">
-                    <label for="">Hora Final:</label>
-                    {{cosecha_form.horaFinal}}
-                    <br>
-                </div>
-                <div class="col-md-4">
-                    <label for="">Nombre:</label>
-                    <div class="input-group">
-                        {{cosecha_form.entrego}}
-                        <a id="agregarEmpleado" data-url="{% url 'empleado:agregar-empleado-url' %}" class="btn-lg text-success fas fa-plus ml-1 p-0 pl-1 pt-2"></a>
+                <div class="col-md-3 input-group mb-3 mt-2">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon1">Hora de Inicio</span>
+                        </div>
+                        {{cosecha_form.horaInicio}}
                     </div>
-                </div>
+                <div class="col-md-3 input-group mb-3 mt-2">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon1">Hora Final</span>
+                        </div>
+                        {{cosecha_form.horaFinal}}
+                    </div>
+                <div class="col-md-3 input-group mb-3 mt-2">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon1">Entrego</span>
+                        </div>
+                        <input type="text" value="{%if entrego%}{{entrego}}{%else%}{{user.get_full_name}}{%endif%}"class="form-control" readonly>
+                        <div hidden>
+                        {{cosecha_form.entrego}}
+                        <a id="agregarEmpleado" data-url="{% url 'empleado:agregar-empleado-url' %}"
+                            class="btn-lg text-success fas fa-plus ml-1 p-0 pl-1 pt-2"></a>
+                        </div>
+                    </div>
+
                 <div style="display: none">{{cosecha_form.registro}}</div>
-
-
-                
-
-
-
-
-
 
                 <!-- {% for rf in remision_form %}
                         <div class="link-formset">
@@ -140,13 +142,13 @@ bg-success
                             {% endif %}
                         </div>
                     {% endfor %} -->
-
-                <div id="detalleCosecha">
-
+               
+                <div id="detalleCosecha" class="col-md-12 row">
                     {% if not crear %}
+                    <div class="col-md-6 table-responsive">
+                    <div class="alert alert-info alert-dismissible mb-0"><strong> Ingrese el detalle de la recepción de cosecha</strong></div>
                     {{ detalleCosecha_formset.management_form }}
-                    <hr>
-                    <table class="table table-striped table-inverse table-responsive">
+                    <table class="table table-striped table-inverse ">
                         <thead class="thead-inverse">
                             <tr>
                                 <th>No. Bin</th>
@@ -188,8 +190,11 @@ bg-success
                             </tr>
 
                             {% endfor %}
+                            
                         </tbody>
                     </table>
+                    </div>
+                    {{html|safe}}
                     {% endif %}
                 </div>
 
@@ -207,64 +212,46 @@ bg-success
 
             <center>
                 <br>
-                <button id="guardarCosecha" class="btn btn-success">
-                    {% if crear %}
-                    Guardar Cosecha
-                    {% elif editar%}
-                    Modificar
-                    {% endif %}
-                </button>
-                <a href="{% url 'camaron:cosechas-url'%} " class="btn btn-secondary">Cancelar</a>
+                <button id="guardarCosecha" class="btn btn-success">{% if crear%}<i class="fas fa-save"></i> Guardar{% elif editar %}<i class="fas fa-edit"></i> Modificar{% endif %}</button>
+                <a href="{% url 'camaron:cosechas-url'%} " class="btn btn-secondary"><i class="fas fa-window-close"></i> Cancelar</a>
 
             </center>
 
         </div>
+
+        {% endif %}
+
+        {% if listado %}
+
+
         <div style="{{estilos.o2}}">
-            <div class="row ">
-                {% if perms.camaron.add_cosecha %}
-                <div class="col-md-3 btn-group">
-                    <a class=" btn btn-success {{ clases.o1 }}" href="{% url 'camaron:crear-url' %}">Nueva
-                        Cosecha</a>
-                </div>
-                {% endif %}
+            {% if perms.camaron.add_cosecha %}
+            <i id="add_cosecha"></i>
+            {% endif %}
+            {% if perms.camaron.imprimir_cosecha %}
+            <i id="imprimir_cosecha"></i>
+            {% endif %}
 
-                {% if perms.camaron.imprimir_cosecha %}
-                <div class="col-md-2 btn-group" role="group">
-                    <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Reportes
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                        <button id="reporteMensual" data-toggle="modal" data-target="#modalReporte"
-                            class=" dropdown-item ">Reporte Mensual</button>
-                        <div class="dropdown-divider"></div>
-                        <button id="reporteIntervalo" data-toggle="modal" data-target="#modalReporte"
-                            class=" dropdown-item ">Reporte Con Intervalo De Fechas</button>
-                    </div>
-                </div>
-                {% endif %}
-
-                <div class="col-md-2 btn-group" role="group">
-                    <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Gráficos
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                        <button id="graficoMensual" class="dropdown-item" data-toggle="modal"
-                            data-target="#modalGrafico">Consumo de Hielo Mensual</button>
-                    </div>
-                </div>
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>Confirmación: </strong>{{ message|escape }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-            <br>
+            {% endfor %}
+            {% endif %}
+
 
             <div class="table-responsive">
                 <table id="tablajs" class="table table-striped table-hover table-bordered" style="width:100%"
                     class="display">
                     <thead class="thead-inverse">
                         <tr>
-                            <th data-priority="1">Cod.</th>
-                            <th>Remision</th>
-                            <th>Guia</th>
+                            <th data-priority="1">Cód.</th>
+                            <th>Remisión</th>
+                            <th>Guía</th>
                             <th>Fecha</th>
                             <th>Hora</th>
                             <th>Laguna</th>
@@ -280,8 +267,8 @@ bg-success
                         <tr id="fila-{{c.codCosecha}}">
                             <td>{{ c.codCosecha }}</td>
                             <td>{{ c.remision }}</td>
-                            <td>{{ c.remision.guia }}</td>
-                            <td>{{c.fecha}} </td>
+                            <td>{% if c.remision.guia %}{{ c.remision.guia }}{% endif %}</td>
+                            <td>{{c.fecha|date:'Y/m/d'}} </td>
                             <td>{{c.horaInicio}} - {{c.horaFinal}} </td>
                             <td>{{c.laguna}} </td>
                             <td>{{c.remision.conductor}} </td>
@@ -292,16 +279,17 @@ bg-success
 
                                 {% if perms.camaron.imprimir_cosecha %}
                                 <button type="submit" class="imprimir btn btn-success fas fa-print"
-                                    form="formReporteCosecha-{{c.pk}}"></button>
+                                    uk-tooltip="Imprimir cosecha" form="formReporteCosecha-{{c.pk}}"></button>
                                 {% endif %}
 
                                 {% if perms.camaron.change_cosecha %}
-                                <a id="editar-{{c.pk}}" data-editar='{{c.pk}}'
+                                <a id="editar-{{c.pk}}" data-editar='{{c.pk}}' 
                                     href="{% url 'camaron:modificar-url' c.pk%}" class="editar "></a>
-                                <button data-id="{{c.pk}}" class="editarCosecha btn btn-info fas fa-pen"></button>
+                                <button data-id="{{c.pk}}" uk-tooltip="Editar cosecha" class="editarCosecha btn btn-info fas fa-pen"></button>
                                 {% endif %}
                                 {% if perms.camaron.view_cosecha %}
-                                <button class="ver btn btn-warning fas fa-eye " data-ver='{{c.pk}}'></button>
+                                <button class="ver btn btn-warning fas fa-eye " uk-tooltip="Visualizar cosecha"
+                                    data-ver='{{c.pk}}'></button>
                                 {% endif %}
 
 
@@ -326,6 +314,8 @@ bg-success
             </div>
 
         </div>
+
+        {% endif %}
     </div>
 
 </div>
@@ -414,7 +404,7 @@ bg-success
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                <button id="guardarNuevo" type="submit" form="formNuevo"  class="btn btn-primary">Guardar</button>
+                <button id="guardarNuevo" type="submit" form="formNuevo" class="btn btn-primary">Guardar</button>
             </div>
         </div>
     </div>

@@ -35,9 +35,12 @@ bg-success
 
             {% if messages %}
             {% for message in messages %}
-            <span class="alert alert-danger alert-dismissible ">Error: {{ message|escape }}</span>
-            <!--data-dismiss="alert"-->
-            <br><br>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Error: </strong>{{ message|escape }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
             {% endfor %}
             {% endif %}
 
@@ -210,10 +213,8 @@ bg-success
 
                 {% if detalleRemision_formset.non_form_errors %}
                 {% for error in detalleRemision_formset.non_form_errors %}
-                <span class="alert alert-warning alert-dismissible">Alerta: {{ error|escape }}</span>
+                <div class="alert alert-warning alert-dismissible">Alerta: {{ error|escape }}</div>
                 <!--data-dismiss="alert"-->
-                <br>
-                <br>
                 {% endfor %}
                 {% endif %}
                 <input type="submit" id="enviarFormularioRemision" hidden>
@@ -246,7 +247,7 @@ bg-success
                     class="display">
                     <thead class="thead-inverse">
                         <tr>
-                            <th data-priority="1">Cod.</th>
+                            <th data-priority="1">Cód.</th>
                             <th>Tipo</th>
                             <th>Compañía</th>
                             <th>Fecha</th>
@@ -303,28 +304,27 @@ bg-success
                                 {% if perms.remision.terminar_remision %}
                                 
                                 {% if r.tipoRemision.pk != 1 %}
-                                     <button uk-tooltip="Terminar remisión"
+                                     <button id="terminar-{{r.numRemision}}" uk-tooltip="Terminar remisión"
                                     class="btn btn-success fas fa-check terminarRemision" data-id="{{ r.numRemision }}"
                                     data-terminar="{{ r.numRemision }}"></button>
                                 {% endif %}
                                     
                                 {% endif %}
                                 {% if perms.remision.change_remision %}
-                                <a id="editar-{{ r.numRemision }}"
-                                    href="{% url 'remision:modificar_remision-url' r.numRemision %}"
+                                <a id="editar-{{r.numRemision}}" href="{% url 'remision:modificar_remision-url' r.numRemision %}"
                                     data-id="{{ r.numRemision }}" data-editar="{{ r.numRemision }}"></a>
-                                <button uk-tooltip="Editar remisión" class="btn btn-info fas fa-pen editarRemision "
+                                <button id="editar1-{{r.numRemision}}" uk-tooltip="Editar remisión" class="btn btn-info fas fa-pen editarRemision "
                                     data-id="{{ r.numRemision }}"></button>
                                 {% endif %}
                                 {% if perms.remision.delete_remision %}
-                                <button uk-tooltip="Anular remisión" class="btn btn-danger anularRemision fas fa-times"
+                                <button id="anular-{{r.numRemision}}" uk-tooltip="Anular remisión" class="btn btn-danger anularRemision fas fa-times"
                                     data-id="{{ r.numRemision }}" data-anular="{{ r.numRemision }}"></button>
                                 {% endif %}
-                                <button uk-tooltip="Visualizar remisión" class="btn btn-warning verRemision fas fa-eye "
+                                <button id="ver-{{r.numRemision}}"  uk-tooltip="Visualizar remisión" class="btn btn-warning verRemision fas fa-eye "
                                     data-id="{{ r.numRemision }}"></button>
                                 {% else %}
 
-                                <button uk-tooltip="Visualizar remisión" class="btn btn-warning verRemision fas fa-eye "
+                                <button id="ver-{{r.numRemision}}" uk-tooltip="Visualizar remisión" class="btn btn-warning verRemision fas fa-eye "
                                     data-id="{{ r.numRemision }}"></button>
                                 {% endif %}
 

@@ -43,7 +43,7 @@ class EstadoRemision(models.Model):
 class Remision(models.Model):
 	numRemision 	= models.CharField(primary_key=True,max_length=6)
 	tipoRemision	= models.ForeignKey(TipoRemision ,on_delete=models.PROTECT)
-	guia			= models.IntegerField(blank=True, null=True)
+	guia			= models.CharField(max_length=6,blank=True, null=True)
 	compania		= models.ForeignKey(Compania,on_delete=models.PROTECT)
 	fecha			= models.DateField(auto_now_add=False,auto_now=False)
 	# estado			= models.BooleanField(default=False)

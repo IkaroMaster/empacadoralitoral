@@ -133,38 +133,60 @@ $(function () {
 
     });
 
-    var tablex = $('#tablajs').DataTable({
-        "scrollY": '40vh',
+    var tabla = $('#tablajs').DataTable({
+        // "dom": "<'row'  <'col-md-6'f> >",
+        dom: "<'row'<'#contenedorArriba.col-md-3'><'col-md-9'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-4'i><'col-sm-8'<'#colvis'>p>>",
+        "scrollY": '46vh',
         "scrollCollapse": true,
         "scrollX": true,
         "deferRender": true,
         // responsive: true,
-        "scroller": true,
+        "scroller": false,
         "language": {
-            "zeroRecords": "No se ha encontrado nada, lo siento.",
+            "zeroRecords": "No se ha encontrado nada.",
             "infoEmpty": "No hay registros disponibles",
-            "infoFiltered": "(filtrado de _MAX_ registros totales)",
+            "infoFiltered": "(Filtrado de _MAX_ registros totales)",
             "info": "Mostrando _START_ a _END_ de _TOTAL_ registros.",
-            "search": "Buscar:"
-        }
-        // "scrollCollapse": true
-    });
-
-    $('#tablajs2').DataTable({
-        "language": {
-            "lengthMenu": "Mostrar _MENU_ por páginas",
-            "zeroRecords": "No se encontró ningún registro",
-            "info": "Mostrando página _PAGE_ de _PAGES_",
-            "infoEmpty": "Sin coincidencias",
-            "infoFiltered": "( _MAX_ registros totales )",
-            'search': 'Buscar:'
-                /*'search': 'Buscar: _INPUT_ aqui'*/
-                ,
+            "search": "Buscar:",
             "paginate": {
                 "next": "Siguiente",
                 'previous': 'Anterior'
             }
         }
+
+        // "scrollCollapse": true
+    });
+
+    equipo = ''
+    if ($('#add_equipo').length) {
+        equipo = '<a class="btn btn-primary text-left" href="/equipo/opcion/1/"><i class="fas fa-plus"></i> Nuevo Equipo</a>';
+
+    }
+    $('#contenedorArriba').html('<div class="btn-group row">' + equipo +'</div>');
+    $('.dataTables_info').addClass(['p-0', 'text-left']);
+
+    var tabla2 = $('#tablajs2').DataTable({
+        // "dom": "<'row'  <'col-md-6'f> >",
+        dom: "<'row'<'#contenedorArriba.col-md-3'><'col-md-9'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-4'i><'col-sm-8'<'#colvis'>p>>",
+        "scrollY": '48vh',
+        "scrollCollapse": true,
+        "scrollX": true,
+        "deferRender": true,
+        // responsive: true,
+        "scroller": false,
+        "language": {
+            "zeroRecords": "No se ha encontrado nada.",
+            "infoEmpty": "No hay registros disponibles",
+            "infoFiltered": "(Filtrado de _MAX_ registros totales)",
+            "info": "Mostrando _START_ a _END_ de _TOTAL_ registros.",
+            "search": "Buscar:",
+            "paginate": {
+                "next": "Siguiente",
+                'previous': 'Anterior'
+            }
+        }
+
+        // "scrollCollapse": true
     });
 
     $('.editarEquipo').click(function (e) {

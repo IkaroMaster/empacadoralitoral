@@ -6,23 +6,7 @@ Empleados
 active
 {% endblock l7 %}
 {% block cuerpo %}
-<div class="card text-center">
-    <div class="panel-heading bg-primary">
-        <h4 class="panel-title text-light">{% if crearEmpleado %}
-            Crear Empleado
-            {% elif editarEmpleado %}
-            Modificar {{empleado}}
-            {% elif listadoEmpleados %}
-            Empleados
-            {% elif crearGrupo %}
-            Crear Cargo
-            {% elif editarGrupo %}
-            Modificar cargo de {{grupo}}
-            {% elif listadoGrupos %}
-            Cargos
-            {% endif  %}</h4>
-
-    </div>
+<div class="card text-center mb-1">
     <div class="card-header">
         <ul class="nav nav-tabs card-header-tabs">
 
@@ -42,6 +26,20 @@ active
         </ul>
     </div>
     <div class="card-body">
+        <h4 class="mb-1"> <strong>{% if crearEmpleado %}
+            Crear Empleado
+            {% elif editarEmpleado %}
+            Modificar {{empleado}}
+            {% elif listadoEmpleados %}
+            Empleados
+            {% elif crearGrupo %}
+            Crear Cargo
+            {% elif editarGrupo %}
+            Modificar cargo de {{grupo}}
+            {% elif listadoGrupos %}
+            Cargos
+            {% endif  %}</strong></h4>
+
         <div style="{{estilos.o1}}">
 
             {% if messages %}
@@ -54,34 +52,6 @@ active
 
             <form id="formEmpleado" method="POST">
                 {% csrf_token %}
-                <div class=" panel-heading alert-info">
-                    <h3 class="panel-title ">Información de acceso</h3>
-                </div>
-                <div class="row">
-                    <div class="col-md-4">
-                        <label for="" class="mb-3">Codigo del Empleado:<a href="#" role="button"
-                                class="fas fa-question-circle" data-toggle="popover" title="Código del empleado"
-                                data-content="Código de identificación único del empleado asignado por BIT."></a></label>
-                        <br>
-                        {{form_empleado.codEmpleado}}
-                    </div>
-                    <div class="col-md-4">
-                        <label for="">{{form_usuario.username.label_tag}} <a href="#" role="button"
-                                class="fas fa-question-circle" data-toggle="popover" title="Nombre de usuario"
-                                data-content="{{form_usuario.username.help_text}}"></a></label>
-                        {{form_usuario.username}}
-                    </div>
-                    <div class="col-md-4">
-                        <label for="">{{form_usuario.password1.label_tag}} <a href="#" role="button"
-                                class="fas fa-question-circle" data-toggle="popover" title="Contraseña"
-                                data-content="{{form_usuario.password1.help_text}}" data-html="true"></a></label>
-                        {{form_usuario.password1}}
-                        <div style="display: none;">{{form_usuario.password2}}{{form_empleado.actualizoContrasena}}
-                        </div>
-
-                    </div>
-                </div>
-                <br>
                 <div class=" panel-heading alert-info">
                     <h3 class="panel-title ">Información del empleado</h3>
                 </div>
@@ -122,6 +92,34 @@ active
                     </div>
                 </div>
                 <br>
+                <div class=" panel-heading alert-info">
+                    <h3 class="panel-title ">Información de acceso</h3>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label for="" class="mb-3">Codigo del Empleado:<a href="#" role="button"
+                                class="fas fa-question-circle" data-toggle="popover" title="Código del empleado"
+                                data-content="Código de identificación único del empleado asignado por BIT."></a></label>
+                        <br>
+                        {{form_empleado.codEmpleado}}
+                    </div>
+                    <div class="col-md-4">
+                        <label for="">{{form_usuario.username.label_tag}} <a href="#" role="button"
+                                class="fas fa-question-circle" data-toggle="popover" title="Nombre de usuario"
+                                data-content="{{form_usuario.username.help_text}}"></a></label>
+                        {{form_usuario.username}}
+                    </div>
+                    <div class="col-md-4">
+                        <label for="">{{form_usuario.password1.label_tag}} <a href="#" role="button"
+                                class="fas fa-question-circle" data-toggle="popover" title="Contraseña"
+                                data-content="{{form_usuario.password1.help_text}}" data-html="true"></a></label>
+                        {{form_usuario.password1}}
+                        <div style="display: none;">{{form_usuario.password2}}{{form_empleado.actualizoContrasena}}
+                        </div>
+
+                    </div>
+                </div>
+                <br>
                 <a href="{% url 'empleado:empleados-url'%} " class="btn btn-secondary">Cancelar</a>
 
                 {% if crearEmpleado %}
@@ -138,22 +136,20 @@ active
             <div class="row">
                 <div class="col-md-3 mb-1">
                     {% if perms.empleado.add_empleado %}
-                    <a class="btn btn-success " href="{% url 'empleado:crear-url'  %}">Nuevo
-                        Empleado</a>
+                    <i id="add_empleado"></i>
                     {% endif %}
                 </div>
             </div>
             <div class="table-responsive">
-                <table id="tablajs" class="table table-striped table-hover table-bordered" style="width:100%"
-                    class="display">
+                <table id="tablajs" class="table table-striped table-hover table-bordered" style="width:100%">
                     <thead class="thead-inverse">
                         <tr>
 
-                            <th data-priority="1">Codigo</th>
+                            <th data-priority="1">Código</th>
                             <th>Usuario</th>
                             <th>Identidad</th>
                             <th>Nombre Completo</th>
-                            <th>Telefono</th>
+                            <th>Teléfono</th>
                             <th>Correo</th>
                             <th>Estado</th>
                             <th>Cargo</th>
@@ -243,7 +239,8 @@ active
                     </tbody>
                 </table>
             </div>
-        </div>
+            <p class="text-left mt-2 mb-1"><strong><i class="fas fa-info"></i></strong>    <i class="alert-light">Activo</i>  <i class="alert-danger">Inactivo</i></p>
+        </div> 
         <div style="{{estilos.o3}}">
 
             <form method="post">

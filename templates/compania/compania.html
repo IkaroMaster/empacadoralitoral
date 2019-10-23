@@ -8,37 +8,13 @@ Empresas
 bg-success
 {% endblock l4 %}
 
-{% block estilos %}
+{% block css %}
 <link rel="stylesheet" href="//cdn.materialdesignicons.com/4.4.95/css/materialdesignicons.min.css">
-{% endblock estilos %}
+{% endblock css %}
 
 {% block cuerpo %}
 <div class="card text-center">
-    <div class="panel-heading bg-primary">
-        <h4 class="panel-title text-light">
-            {% if crearCompania %}
-            Crear Nueva Empresa
-            {% elif editarCompania %}
-            Modificar {{nombre}}
-            {% elif listadoCompanias %}
-            Empresas
-            {% elif crearFinca %}
-            Crear Nueva Finca
-            {% elif editarFinca %}
-            Modificar Finca {{finca}}
-            {% elif listadoFincas %}
-            Fincas
-            {% elif crearLaguna %}
-            Crear Nueva Laguna
-            {% elif editarLaguna %}
-            Modificar Laguna {{laguna}}
-            {% elif listadoLagunas %}
-            Lagunas
-            {% endif %}</h4>
-
-
-
-    </div>
+    
     <div class="card-header">
         <ul class="nav nav-tabs card-header-tabs">
 
@@ -46,7 +22,7 @@ bg-success
             {% if crearCompania or editarCompania %}
             <li class="nav-item">
                 <a class="nav-link {{ clases.o1 }}"
-                    href="{% if crearCompania %} {% url 'compania:compania-url' 1 %}{% endif %}">Gestion de Empresa</a>
+                    href="{% if crearCompania %} {% url 'compania:compania-url' 1 %}{% endif %}">Gestión de Empresa</a>
             </li>
             {% endif %}
             {% endif %}
@@ -63,7 +39,7 @@ bg-success
             {% if crearFinca or editarFinca %}
             <li class="nav-item">
                 <a class="nav-link {{ clases.o3 }} "
-                    href="{%if crearFinca%}{% url 'compania:compania-url' 3 %}{%endif%}">Gestion de Finca</a>
+                    href="{%if crearFinca%}{% url 'compania:compania-url' 3 %}{%endif%}">Gestión de Finca</a>
             </li>
 
             {% endif %}
@@ -100,12 +76,34 @@ bg-success
         </ul>
     </div>
     <div class="card-body">
+         <h4 class="mb-1">
+            {% if crearCompania %}
+            Crear Nueva Empresa
+            {% elif editarCompania %}
+            Modificar {{nombre}}
+            {% elif listadoCompanias %}
+            Empresas
+            {% elif crearFinca %}
+            Crear Nueva Finca
+            {% elif editarFinca %}Modificar Finca {{finca}}
+            {% elif listadoFincas %}
+            Fincas
+            {% elif crearLaguna %}
+            Crear Nueva Laguna
+            {% elif editarLaguna %}
+            Modificar Laguna {{laguna}}
+            {% elif listadoLagunas %}
+            Lagunas
+            {% endif %}</h4>
+
 
         {% if crearCompania or editarCompania %}
 
 
 
         <div style="{{estilos.o1}}">
+
+            <p class="small text-left mt-0 mb-0"><i class="fas fa-info"></i> <strong class="text-warning">Campo con borde color amarillo es requerido.</strong></p>
 
             <form action=" {% url 'compania:guardar_compania-url' %}" class="row" method="POST">
                 {% csrf_token %}
@@ -157,9 +155,10 @@ bg-success
 
                 <div class="col-md-6">
                     <br>
-                    <a href="{% url 'compania:compania-url' 2 %}" class="btn btn-secondary">Cancelar</a>
-                    <input class="btn btn-success" type="submit"
-                        value="{% if crearCompania %}Guardar{% else  %}Modificar{% endif %}"><br>
+                    
+                    <button type="submit"  class="btn btn-success">{% if crearCompania%}<i class="fas fa-save"></i> Guardar{% else %}<i class="fas fa-edit"></i> Modificar{% endif %}</button>
+                <a href="{% url 'compania:compania-url' 2 %}"class="btn btn-secondary"><i class="fas fa-window-close"></i> Cancelar</a>
+
                 </div>
 
 
@@ -172,20 +171,16 @@ bg-success
         {% if listadoCompanias %}
 
         <div style="{{estilos.o2}}">
-            <div class="row">
-                <div class="col-md-3 mb-1">
+           
                     {% if perms.compania.add_compania %}
-                    <a class="btn btn-success {{ clases.o1 }}" href="{% url 'compania:compania-url' 1 %}">Nueva
-                        Empresa</a>
+                    <i id="add_compania"></i>
                     {% endif %}
-                </div>
-            </div>
-
+               
             <div class="table-responsive">
-                <table id="tablajs" class="table table-striped table-hover table-bordered">
+                <table id="tablajs" class="table table-striped table-hover table-bordered" width="100%">
                     <thead class="thead-inverse">
                         <tr>
-                            <th>Cod.</th>
+                            <th>Cód.</th>
                             <th>Nombre</th>
                             <th>Estado</th>
                             <th>Abreviatura</th>
@@ -220,12 +215,12 @@ bg-success
                                 {% if perms.compania.change_compania %}
                                 <a id="editarCompania-{{c.pk}}"
                                     href="{% url 'compania:editar_compania-url' c.id %}"></a>
-                                <button class="editarCompania btn btn-info fas fa-pen" data-id="{{c.pk}}"></button>
+                                <button class="editarCompania btn btn-info fas fa-pen" uk-tooltip="Editar empresa" data-id="{{c.pk}}"></button>
                                 {% endif %}
 
                                 {% if perms.compania.estado_compania %}
                                 <button data-id="{{c.pk}}" data-estado='{{c.estado}}' data-nombre="{{c.nombre}}"
-                                    class="estadoCompania btn btn-danger fas fa-times"></button>
+                                    class="estadoCompania btn btn-danger fas fa-times" uk-tooltip="Cambiar estado"></button>
                                 {% endif %}
 
 
@@ -245,6 +240,8 @@ bg-success
         {% endif %}
         {% if crearFinca or editarFinca %}
         <div style="{{estilos.o3}}">
+                        <p class="small text-left mt-0 mb-0"><i class="fas fa-info"></i> <strong class="text-warning">Campo con borde color amarillo es requerido.</strong></p>
+
             <form action=" {% url 'compania:guardar_finca-url' %}" class="row" method="POST">
                 {% csrf_token %}
                 <input type="hidden" name="id_o" value="{{ id_o }}">
@@ -286,10 +283,9 @@ bg-success
 
 
 
-
-
-                    <a href="{% url 'compania:compania-url' 4 %}" class="btn btn-secondary">Cancelar</a>
-                    <input class="btn btn-success" type="submit" value="Guardar"><br>
+                    <button type="submit"  class="btn btn-success">{% if crearFinca%}<i class="fas fa-save"></i> Guardar{% else %}<i class="fas fa-edit"></i> Modificar{% endif %}</button>
+                <a href="{% url 'compania:compania-url' 4 %}"class="btn btn-secondary"><i class="fas fa-window-close"></i> Cancelar</a>
+<br>
 
                 </div>
 
@@ -302,10 +298,7 @@ bg-success
             <div class="row">
 
                 {% if perms.compania.add_finca %}
-                <div class="col-md-3 mb-1">
-                    <a class="btn btn-success {{ clases.o1 }}" href="{% url 'compania:compania-url' 3 %}">Nueva
-                        Finca</a>
-                </div>
+                <i id="add_finca"></i>
                 {% endif %}
 
 
@@ -315,7 +308,7 @@ bg-success
                 <table id="tablajs2" class="table table-striped  table-hover table-bordered ">
                     <thead class="thead-inverse">
                         <tr>
-                            <th>Código de Finca</th>
+                            <th>Código</th>
                             <th>Nombre</th>
                             <th>Abreviatura</th>
                             <th>Empresa</th>
@@ -343,7 +336,7 @@ bg-success
                                 {% if perms.compania.change_finca %}
                                 <a id="editarFinca-{{f.pk}}" href="{% url 'compania:editar_finca-url' f.codFinca %}">
                                 </a>
-                                <button data-id="{{f.pk}}" class="editarFinca btn btn-info fas fa-pen"></button>
+                                <button data-id="{{f.pk}}" class="editarFinca btn btn-info fas fa-pen" uk-tooltip="Editar Finca"></button>
 
                                 {% endif %}
 
@@ -363,6 +356,7 @@ bg-success
 
         <div style="{{estilos.o5}}">
 
+            <p class="small text-left mt-0 mb-0"><i class="fas fa-info"></i> <strong class="text-warning">Campo con borde color amarillo es requerido.</strong></p>
 
             <form class="row" method="POST">
                 {% csrf_token %}
@@ -430,20 +424,16 @@ bg-success
             <div class="row">
 
                 {% if perms.compania.add_laguna %}
-                <div class="col-md-3 mb-1">
-                    <a class="btn btn-success {{ clases.o1 }}" href="{% url 'compania:crear_laguna-url'  %}">Nueva
-                        Laguna</a>
-                </div>
+                <i id="add_laguna"></i>
                 {% endif %}
-
 
 
             </div>
             <div class="table-responsive">
-                <table id="tablajs3" class="table table-striped table-hover table-bordered">
+                <table id="tablajs3" class="table table-striped table-hover table-bordered" width="100%">
                     <thead class="thead-inverse">
                         <tr>
-                            <th>Cod. Laguna</th>
+                            <th>Código</th>
                             <th>Tamaño</th>
                             <th>Ubicación</th>
                             <th>Descripción</th>
@@ -459,15 +449,15 @@ bg-success
 
 
                             <td>{{ l.pk }}</td>
-                            <td>{{ l.tamano }}</td>
+                            <td>{% if l.tamano %}{{ l.tamano }}{% endif %}</td>
                             <!-- <td>{{ c.direccion }}</td> -->
-                            <td>{{ l.ubicacion }}</td>
-                            <td>{{ l.descripcion }}</td>
+                            <td>{% if l.ubicacion %}{{ l.ubicacion }}{% endif %}</td>
+                            <td>{% if l.descripcion %}{{ l.descripcion }}{% endif %}</td>
                             <td>{{l.finca}} </td>
                             <td>
                                 {% if perms.compania.change_laguna %}
                                 <a id="editarLaguna-{{l.pk}}" href="{% url 'compania:editar_laguna-url' l.pk %}"></a>
-                                <button class="editarLaguna btn btn-info fas fa-pen" data-id="{{l.pk}}"></button>
+                                <button class="editarLaguna btn btn-info fas fa-pen" data-id="{{l.pk}}" uk-tooltip="Editar laguna"></button>
                                 {% endif %}
 
                             </td>

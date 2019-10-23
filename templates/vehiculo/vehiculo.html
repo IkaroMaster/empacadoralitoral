@@ -3,23 +3,11 @@
 Vehiculos
 {% endblock titulo %}
 {% block l5 %}
-active
+bg-success
 {% endblock l5 %}
 {% block cuerpo %}
 <div class="card text-center">
-    <div class="panel-heading bg-primary">
-        <h4 class="panel-title text-light">
-
-            {% if crear %}
-            Nuevo Vehículo
-            {% elif editar%}
-            Editar Vehiculo {{vehiculo}}
-            {% elif listado%}
-            Vehiculos
-            {% endif %}
-
-        </h4>
-    </div>
+    
     <div class="card-header">
         <ul class="nav nav-tabs card-header-tabs">
 
@@ -27,27 +15,38 @@ active
             <li class="nav-item">
                 <a class="nav-link {{ clases.o1 }}"
                     href="{%if perms.vehiculo.add_vehiculo and not editar%}{% url 'vehiculo:crear-url' %}{%endif%}">Gestión
-                    de Vehiculo</a>
+                    de Vehículo</a>
             </li>
             {% endif %}
 
 
             <li class="nav-item">
-                <a class="nav-link {{ clases.o2 }}" href="{% url 'vehiculo:vehiculos-url' %} ">Vehiculos</a>
+                <a class="nav-link {{ clases.o2 }}" href="{% url 'vehiculo:vehiculos-url' %} ">Vehículos</a>
             </li>
 
         </ul>
     </div>
     <div class="card-body">
+        <h4 class="mb-1">
+
+            {% if crear %}
+            Nuevo Vehículo
+            {% elif editar%}
+            Editar Vehículo {{vehiculo}}
+            {% elif listado%}
+            Vehículos
+            {% endif %}
+
+        </h4>
         <div style="{{estilos.o1}}">
 
             {% if messages %}
             {% for message in messages %}
-            <span class="alert alert-danger alert-dismissible ">Error: {{ message|escape }}</span>
+            <div class="alert alert-danger alert-dismissible ">Error: {{ message|escape }}</div>
             <!--data-dismiss="alert"-->
-            <br><br>
             {% endfor %}
             {% endif %}
+            <p class="small text-left mt-0 mb-0"><i class="fas fa-info"></i> <strong class="text-warning">Campo con borde color amarillo es requerido.</strong></p>
             <form method="post" id="formRemision">
                 <input type="hidden" name="crear" id="crear" value="{{ crear }}">
                 {% csrf_token %}
@@ -89,9 +88,8 @@ active
                     </div>
                 </div>
                 <br>
-                <a href="{% url 'vehiculo:vehiculos-url'%} " class="btn btn-secondary">Cancelar</a>
-                <input type="submit" class="btn btn-success"
-                    value="{% if crear %}Guardar{% elif editar%}Modificar{% endif %}" class="button" />
+                 <button type="submit"  class="btn btn-success">{% if crearCompania%}<i class="fas fa-save"></i> Guardar{% else %}<i class="fas fa-edit"></i> Modificar{% endif %}</button>
+                <a href="{% url 'vehiculo:vehiculos-url'%} "class="btn btn-secondary"><i class="fas fa-window-close"></i> Cancelar</a>               
             </form>
 
 
@@ -104,8 +102,7 @@ active
                 <div class="col-md-3 mb-1">
 
                     {% if perms.vehiculo.add_vehiculo %}
-                    <a class="btn btn-success {{ clases.o1 }}" href="{% url 'vehiculo:crear-url'  %}">Nuevo
-                        Vehículo</a>
+                    <i id="add_vehiculo"></i>
                     {% endif %}
 
 
@@ -122,6 +119,7 @@ active
                             <th>Año</th>
                             <th>Color</th>
                             <th>Empresa</th>
+                            <th>Estado</th>
                             <th data-priority="2">Acciones</th>
                             <!-- <th>Añadir</th> -->
                         </tr>
@@ -135,14 +133,19 @@ active
                             <td>{{ v.anio }}</td>
                             <td>{{ v.color }}</td>
                             <td>{{ v.empresaFlete }} </td>
+                            <td>{% if v.disponible %}
+                                Disponible
+                            {%else%}
+                            Asignado
+                            {% endif %}</td>
                             <td>
                                 {% if perms.vehiculo.change_vehiculo %}
                                 <a id="editar-{{v.pk}}" href="{% url 'vehiculo:modificar-url' v.pk %}"></a>
-                                <button class="editarVehiculo btn btn-info fas fa-pen " data-id="{{ v.pk }}"></button>
+                                <button class="editarVehiculo btn btn-info fas fa-pen " uk-tooltip="Editar vehículo" data-id="{{ v.pk }}"></button>
                                 {% endif %}
                                 {% if perms.vehiculo.delete_vehiculo %}
                                 <button class="eliminar btn btn-danger fas fa-trash-alt "
-                                    data-eliminar="{{v.pk}}"></button>
+                                    data-eliminar="{{v.pk}}" uk-tooltip="Eliminar vehículo"></button>
                                 {% endif %}
                             </td>
 

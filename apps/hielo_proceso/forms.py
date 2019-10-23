@@ -22,7 +22,8 @@ class DetalleHieloForm(forms.ModelForm):
 		super(DetalleHieloForm, self).__init__(*args, **kwargs)
 		for field in iter(self.fields):
 			self.fields[field].widget.attrs.update({
-				'class': 'form-control'
+				'class': 'form-control',
+				'value':'0'
 			})
 			if field == 'departamento':
 				departamento = DepartamentoProceso.objects.all()#filter(estado=Estado.objects.get(pk=2))
@@ -32,6 +33,7 @@ class DetalleHieloForm(forms.ModelForm):
 				self.fields[field].choices = [('',"Seleccione...")] + cl
 				self.fields[field].widget.attrs['class'] = 'selectpicker form-control dx'
 				self.fields[field].widget.attrs['data-live-search'] = 'true'
+
 
 class BaseDetalleHieloFormSet(BaseFormSet):
 	def clean(self):

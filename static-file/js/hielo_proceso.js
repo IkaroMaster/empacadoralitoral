@@ -16,29 +16,80 @@ $(function () {
         }
     });
 
-    $('#tablajs').DataTable({
-        "order":[[ 0, 'desc' ]],
-        "scrollY":      '35vh',
+    moment.updateLocale(moment.locale(), {
+        invalidDate: ""
+    });
+    var tablex = $('#tablajs').DataTable({
+        // "dom": "<'row'  <'col-md-6'f> >",
+        dom: "<'row'<'#contenedorArriba.col-md-9'><'col-md-3'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-4'i><'col-sm-8'<'#colvis'>p>>",
+        "scrollY": '47vh',
         "scrollCollapse": true,
-        "scrollX":      true,
-        "deferRender":  true,
+        "scrollX": true,
+        "deferRender": true,
         // responsive: true,
-        "scroller":     true,
-        "language":     {
-                            "zeroRecords": "No se ha encontrado nada, lo siento.",
-                            "infoEmpty": "No hay registros disponibles",
-                            "infoFiltered": "(filtrado de _MAX_ registros totales)",
-                            "info":      "Mostrando _START_ a _END_ de _TOTAL_ registros.",
-                            "search":         "Buscar:"
-        }
+        "scroller": true,
+        "language": {
+            "zeroRecords": "No se ha encontrado nada.",
+            "infoEmpty": "No hay registros disponibles",
+            "infoFiltered": "(Filtrado de _MAX_ registros totales)",
+            "info": "Mostrando _START_ a _END_ de _TOTAL_ registros.",
+            "search": "Buscar:"
+        },
+        "columnDefs": [{
+                targets: 0,
+                render: $.fn.dataTable.render.moment('YYYY/MM/DD', 'DD-MM-YYYY')
+            },
+
+        ],
+        "order": [
+            [0, "desc"]
+        ],
+
         // "scrollCollapse": true
     });
+    hielo = '';
+    imprimir = '';
+    grafico = '';
+    if ($('#add_hieloproceso').length) {
+        hielo = '<a class="btn btn-primary text-left" href="/hielo_proceso/crear/"><i class="fas fa-plus"></i> Nuevo consumo diario</a>';
+
+    } 
+
+    if ($('#imprimir_hieloproceso').length) {
+        imprimir = '<div class="btn-group" role="group">'+
+                        '<button id="btnR" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-file-alt"></i> Reportes</button>' +
+                        '<div class="dropdown-menu" aria-labelledby="btnR">' +
+                        '   <button id="reporteMensual" data-toggle="modal" data-target="#modalReporte" class=" dropdown-item "><i class="far fa-file-alt"></i> Reporte Mensual</button>'+
+                        '</div>'+
+                '</div>';
+    }
+
+    if ($('#grafico_hieloproceso').length) {
+        grafico = '<div class="btn-group" role="group">'+
+                    '<button id="btnG" type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-chart-line"></i> Gráficos</button>' +
+                    '<div class="dropdown-menu" aria-labelledby="btnG">' +
+                        '<button id="graficoMensual" class="dropdown-item" data-toggle="modal" data-target="#modalGrafico"><i class="fas fa-chart-line"></i> Consumo de Hielo Mensual</button>' +
+                         '<div class="dropdown-divider"></div>' +
+                        '<a id="graficoMensual" class="dropdown-item"  href="/hielo_proceso/grafico/"><i class="fas fa-chart-line"></i> Consumo de Hielo General</a>' +
+                    '</div>'+
+                '</div>';
+
+    }
+     $('#contenedorArriba').html('<div class="btn-group row">' + hielo + imprimir + grafico +'</div>');
+
+    $('.dataTables_info').addClass(['p-0', 'text-left']);
+
+
+
+
+
+
 
     $('.detalle-formset').formset({
         addText: 'Agregar Departamento',
         deleteText: '',
         deleteCssClass: 'delete-row',
-        addCssClass: 'add-row btn btn-outline-primary',
+        addCssClass: 'add-row btn btn-primary mt-2',
         animateForms: true, 
         added: function () {
             $( ".delete-row" ).addClass( "btn btn-danger fas fa-times" );
@@ -50,11 +101,19 @@ $(function () {
             if ($('#id_form-TOTAL_FORMS').val() >= 2) {
                 $(".delete-row").show();
             }
+            if($('#id_form-TOTAL_FORMS').val() >= 12){
+                $(".add-row").hide();
+
+            }
         }, 
         removed: function () {
             
             if ($('#id_form-TOTAL_FORMS').val() < 2) {
                 $(".delete-row").hide();
+            }
+            if($('#id_form-TOTAL_FORMS').val() <= 12){
+                $(".add-row").show();
+
             }
         },
     });

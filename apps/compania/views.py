@@ -359,27 +359,39 @@ def agregarFinca_asJson(request):
 		html = ''
 		html += '''
 		<h1>Registrar Finca</h1>
-		<form id='formNuevo' action="/compania/agregarFinca/" class="row" method="POST">
+		<form id='formNuevo' action="/compania/agregarFinca/" class=" form-row" method="POST">
 				<input type="hidden" name="csrfmiddlewaretoken" value="{}">
-				<div class="col-md-6">
-					 <label class="text-center">Código de Finca:</label>
+				<div class="col-md-12 input-group mb-3 mt-2">
+					<div class="input-group-prepend">
+						<span class="input-group-text" id="basic-addon1">Código de Finca</span>
+					</div>
 					<input type="text" name="codFinca" maxlength="10" class="form-control" required="" id="id_codFinca">
 				</div>
-				<div class="col-md-6">
-					 <label class="text-center">Nombre:</label>
+				<div class="col-md-12 input-group mb-3 mt-2">
+					<div class="input-group-prepend">
+						<span class="input-group-text" id="basic-addon1">Nombre</span>
+					</div>
 					<input type="text" name="nombre" maxlength="50" class="form-control" required="" id="id_nombre">
 				</div>
-				<div class="col-md-6">
-					<label class="text-center">Abreviatura:</label>
+				<div class="col-md-12 input-group mb-3 mt-2">
+					<div class="input-group-prepend">
+						<span class="input-group-text" id="basic-addon1">Abreviatura</span>
+					</div>
 					<input type="text" name="abreviatura" maxlength="10" class="form-control" id="id_abreviatura">
 				</div>
-				<div class="col-md-6">
-					<label class="text-center">Dirección:</label>
+				<div class="col-md-12 input-group mb-3 mt-2">
+					<div class="input-group-prepend">
+						<span class="input-group-text" id="basic-addon1">Dirección</span>
+					</div>
 					<input type="text" name="direccion" maxlength="200" class="form-control" required="" id="id_direccion">
 				</div>
-				<div class="col-md-6">
-					<label class="text-center">Empresa:</label>
+				<div class="col-md-12 input-group mb-3 mt-2">
+					<div class="input-group-prepend">
+						<span class="input-group-text" id="basic-addon1">Empresa</span>
+					</div>
 					<select name="compania" class="selectpicker form-control" data-live-search="true" required="" id="id_compania" >
+				
+
 					'''.format(csrf.get_token(request))
 		companias = Compania.objects.filter(estado = True,tipoCompania = 1)
 		
@@ -402,6 +414,7 @@ def agregarFinca_asJson(request):
 			else:
 				fincas = Finca.objects.filter(compania=finca.compania)
 			html = ''
+			print("finca num: ",finca.pk)
 			for c in fincas:
 				activo = ''
 				if c.pk == finca.pk:
@@ -478,3 +491,22 @@ def agregarLaguna_asJson(request):
 			return response
 	else:
 		return render(request, '404.html')
+
+
+@login_required
+def validarCodFinca_asJson(request):
+	if request.is_ajax and request.method == 'GET':
+		cod = request.GET['cod']
+		print('Validando codigo de finca nuevo:',cod)
+		existe = Finca.objects.filter(pk = cod).exists()
+		data = {}
+		if existe:
+			data = {
+				'existe':1,
+			}
+			
+		else:
+			data = {
+				'existe':0,
+			}
+		return JsonResponse(data)

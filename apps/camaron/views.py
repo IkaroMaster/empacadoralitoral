@@ -73,9 +73,8 @@ def CrearCosecha(request):
 		print('detalleCosecha: ',detalleCosecha_formset.is_valid())
 		
 		if cosecha_form.is_valid() and detalleCosecha_formset.is_valid():
-			cosecha_form.save()
-			cosecha = Cosecha.objects.get(pk=cosecha_form.cleaned_data.get('codCosecha'))
-			
+			cosecha = cosecha_form.save(commit=False)
+
 			new_detallesCosecha = []
 			for x in detalleCosecha_formset:
 				totalCanasta = x.cleaned_data.get('totalCanasta')
@@ -89,21 +88,38 @@ def CrearCosecha(request):
 
 			try:
 				with transaction.atomic():
-					DetalleCosecha.objects.bulk_create(new_detallesCosecha)
-
 					remision = Remision.objects.get(pk= cosecha.remision.pk)
-					remision.estado = EstadoRemision.objects.get(pk = 2)
-					remision.save()
 					if remision.prestamoEquipo:
+						cosecha.save()
+						print('cosecha creada: ',cosecha)
+						DetalleCosecha.objects.bulk_create(new_detallesCosecha)
+						remision.estado = EstadoRemision.objects.get(pk = 2)
 						prestamo = PrestamoEquipo.objects.get(pk = remision.prestamoEquipo.pk)
 						prestamo.estadoPrestamo = EstadoPrestamo.objects.get(pk = 4)
+						prestamo.fechaEntrada = cosecha.fecha
+						print('Fecha de entrada prestamo: ',cosecha.fecha)
 						detallePrestamo = DetallePrestamoEquipo.objects.filter(prestamoEquipo= prestamo)
 						for r in detallePrestamo:
-							e = Equipo.objects.get(pk=r.equipo.pk)
-							e.estado = Estado.objects.get(pk=2)
-							e.save()
+							dpe = DetallePrestamoEquipo.objects.get(pk = r.pk)
+							if 'equipo-'+str(r.equipo.pk) in request.POST:
+								e = Equipo.objects.get(pk=r.equipo.pk)
+								e.estado = Estado.objects.get(pk=2)
+								e.save()
+								dpe.devuelto = True
+								print('Bin devuelto: ',e)
+							
+							if 'tapadera-'+str(r.tapadera.pk) in request.POST:
+								t = Equipo.objects.get(pk=r.tapadera.pk)
+								t.estado = Estado.objects.get(pk=2)
+								t.save()
+								dpe.devueltoT = True
+								print('Tapadera devuelta: ',t)
+							dpe.save()
 						prestamo.save()
-						messages.success(request, 'Usted ha creado la nueva nota de cosecha.')
+						print('Prestamo finalizado: ',prestamo)
+						remision.save()
+						print('Remision finalizada: ',remision)
+						messages.success(request, 'Ha creado exitosamente la nota de cosecha #'+str(cosecha)+', finalizo la remisión #'+str(remision)+' y el préstamo de equipo #'+str(prestamo)+'.')
 						return redirect(reverse('camaron:cosechas-url'))
 
 
@@ -124,12 +140,14 @@ def CrearCosecha(request):
 		<input type="hidden" name="form-MIN_NUM_FORMS" value="0" id="id_form-MIN_NUM_FORMS">
 		<input type="hidden" name="form-MAX_NUM_FORMS" value="1000" id="id_form-MAX_NUM_FORMS">
 		<hr>
-		<table class="table table-striped table-inverse table-responsive">
+		<div class="col-md-6 table responsive">
+		<div class="alert alert-info alert-dismissible mb-0"><strong> Ingrese el detalle de la recepción de cosecha</strong></div>
+		<table class="table table-striped table-inverse">
 			<thead class="thead-inverse">
 				<tr>
 					<th>No. Bin</th>
-					<th>Total Canasta</th>
-					<th>Total Libras</th>
+					<th>Total de Canastas</th>
+					<th>Total de Libras</th>
 					<th>Observaciones</th>
 				</tr>
 			</thead>
@@ -147,10 +165,10 @@ def CrearCosecha(request):
 							</select>		
 						</td>
 						</td>
-							<td><input type="number" name="form-{}-totalCanasta" value="0" min="0" required class="form-control" id="id_form-{}-totalCanasta">		
+							<td><input type="number" name="form-{}-totalCanasta" value="0" min="0" required class="form-control border border-warning" id="id_form-{}-totalCanasta">		
 						</td>
 						<td>
-							<input type="number" name="form-{}-libras" value="0" step="0.01" min="0" required class="form-control" id="id_form-{}-libras">		
+							<input type="number" name="form-{}-libras" value="0" step="0.01" min="0" required class="form-control border border-warning" id="id_form-{}-libras">		
 						</td>
 						<td>
 							<textarea name="form-{}-observaciones" cols="40" rows="1" class="form-control" placeholder="Aa" id="id_form-{}-observaciones"></textarea>
@@ -162,7 +180,91 @@ def CrearCosecha(request):
 		html +='''
 			</tbody>
 		</table>
+		</div>
+		<div class="col-md-6">
+		<div class="alert alert-warning alert-dismissible mb-0"><strong>Alerta: </strong>Marque la casilla de verificación del equipo recibido.</div>
+					<div class="table-responsive">
+					<table class="table table-bordered">
+							<thead>
+							<tr>
+								<th scope="col">#</th>
+								<th scope="col">Bin</th>
+								<th>Estado</th>
+								<th scope="col">Tapadera</th>
+								<th>Estado</th>
+								<th scope="col">Descripción</th>
+							</tr>
+							</thead>
+							<tbody>
 		'''
+		numero = 0
+		for dP in detallePrestamoEquipo:	
+			numero += 1
+			descripcion = ''
+			if dP.descripcion:
+				descripcion = dP.descripcion
+			html +='''
+			<tr>
+				<td>{}</td>
+				<td>{}</td>
+				<td class=" alert-warning">
+					<div class="pretty p-svg p-round p-plain p-jelly">
+						<input  class="devueltos chkBines" name="equipo-{}" type="checkbox" />
+						<div class="state p-success">
+							<span class="svg" uk-icon="icon: check"></span>
+							<label> Recibido</label>
+						</div>
+					</div>
+					
+				</td>
+				<td>{}</td>
+				<td class="alert-warning">
+					
+					<div class="pretty p-svg p-round p-plain p-jelly">
+						<input  class="devueltos chkTapaderas" name="tapadera-{}" type="checkbox"  />
+						<div class="state p-success">
+							<span class="svg" uk-icon="icon: check"></span>
+							<label>Recibido</label>
+						</div>
+					</div>	
+				</td>
+				<td>{}</td>
+			</tr>
+			 '''.format(numero,dP.equipo,dP.equipo.pk,dP.tapadera,dP.tapadera.pk,descripcion)
+
+		html += '''
+						
+							
+						<tr class="alert-secondary">
+							<td></td>
+							<td></td>
+							<td class="m-0 p-0 ">
+									<div class=" uk-button-group">					
+											<button type="button" id="selBin" class="uk-button uk-button-primary "><i class="far fa-check-circle "></i></button>
+											<button type="button" id="desBin" class="uk-button uk-button-danger  "><i class="far fa-times-circle"></i></button>
+				
+										</div>
+							</td>
+							<td></td>
+							<td class="m-0 p-0 ">
+									<div class=" uk-button-group">					
+										<button type="button" id="selTap" class="uk-button uk-button-primary "><i class="far fa-check-circle "></i></button>
+										<button type="button" id="desTap" class="uk-button uk-button-danger  "><i class="far fa-times-circle"></i></button>
+									</div>
+							</td>
+							<td></td>
+
+						</tr>
+						
+
+						</tbody>
+						
+					</table>
+				</div>
+				</div>
+				
+				'''
+
 		
 		html2 = '<option value="">Seleccione...</option>'
 		for f in finca:	
@@ -175,7 +277,7 @@ def CrearCosecha(request):
 		cosecha_form = CosechaForm(initial = {'entrego':empleado,'registro':request.user})
 		detalleCosecha_formset = DetalleCosechaFormSet() #initial=remisionDetalles_data
 
-	r = Remision.objects.filter(prestamoEquipo__isnull=False,estado = EstadoRemision.objects.get(pk = 1))		
+	r = Remision.objects.filter(prestamoEquipo__isnull=False,estado = EstadoRemision.objects.get(pk = 1),tipoRemision__pk=1)		
 	FormControl(cosecha_form)
 	fechaBasico(cosecha_form,'fecha','Seleccione...')
 	comboboxBasico(cosecha_form,'laguna','Seleccione...','true',[])
@@ -247,10 +349,10 @@ def ModificarCosecha(request,pk):
 		
 		if cosecha_form.is_valid() and detalleCosecha_formset.is_valid():
 			
-			print(remisionActual)
-			cosecha_form.save()
+			print('Remision actual: ',remisionActual)
+			cosecha = cosecha_form.save(commit=False)
 			print('data.post ',cosecha_form.cleaned_data.get('remision'))
-			cosecha = Cosecha.objects.get(pk=cosecha_form.cleaned_data.get('codCosecha'))
+			# cosecha = Cosecha.objects.get(pk=cosecha_form.cleaned_data.get('codCosecha'))
 			
 			new_detallesCosecha = []
 			for x in detalleCosecha_formset:
@@ -258,46 +360,95 @@ def ModificarCosecha(request,pk):
 				numeroBin = x.cleaned_data.get('numeroBin')
 				libras = x.cleaned_data.get('libras')
 				observaciones = x.cleaned_data.get('observaciones')
+				if totalCanasta and libras: 
+					new_detallesCosecha.append(DetalleCosecha(cosecha=cosecha,totalCanasta=totalCanasta, numeroBin=numeroBin, libras=libras,observaciones=observaciones))
+				else:
 
-				new_detallesCosecha.append(DetalleCosecha(cosecha=cosecha,totalCanasta=totalCanasta, numeroBin=numeroBin, libras=libras,observaciones=observaciones))
+					print('BUG: datos incompletos sobre la cosecha detectados')
 
 			try:
 				with transaction.atomic():
+					cosecha.save()
+					print('Cosecha actualizada: ',cosecha)
 					DetalleCosecha.objects.filter(cosecha=cosecha).delete()
 					DetalleCosecha.objects.bulk_create(new_detallesCosecha)
-					
-					print(cosecha.remision.pk)
-					if cosecha.remision.pk != remisionActual:
-						if remisionActual:
-							remision = Remision.objects.get(pk= remisionActual)
-							remision.estado = EstadoRemision.objects.get(pk = 1)
-							remision.save()
-							if remision.prestamoEquipo:
-								prestamo = PrestamoEquipo.objects.get(pk = remision.prestamoEquipo.pk)
-								prestamo.estadoPrestamo = EstadoPrestamo.objects.get(pk = 3 )
-								detallePrestamo = DetallePrestamoEquipo.objects.filter(prestamoEquipo= prestamo)
-								for r in detallePrestamo:
-									e = Equipo.objects.get(pk=r.equipo.pk)
-									e.estado = Estado.objects.get(pk=1)
-									e.save()
-								prestamo.save()
-						
-						if request.POST['remision']:
-							remision = Remision.objects.get(pk= cosecha.remision.pk)
-							remision.estado = EstadoRemision.objects.get(pk = 2)
-							remision.save()
-							if remision.prestamoEquipo:
-								prestamo = PrestamoEquipo.objects.get(pk = remision.prestamoEquipo.pk)
-								prestamo.estadoPrestamo = EstadoPrestamo.objects.get(pk = 4)
-								detallePrestamo = DetallePrestamoEquipo.objects.filter(prestamoEquipo= prestamo)
-								for r in detallePrestamo:
+
+					remision = Remision.objects.get(pk= cosecha.remision.pk)
+					if remision.prestamoEquipo:
+						detallePrestamo = DetallePrestamoEquipo.objects.filter(prestamoEquipo= remision.prestamoEquipo)
+						for r in detallePrestamo:
+							dpe = DetallePrestamoEquipo.objects.get(pk = r.pk)
+							if not dpe.devuelto:
+								if 'equipo-'+str(r.equipo.pk) in request.POST:
 									e = Equipo.objects.get(pk=r.equipo.pk)
 									e.estado = Estado.objects.get(pk=2)
 									e.save()
-								prestamo.save()
-								print('Registro afectados:Cambio de remision, se ha devuelto la remision a remisión anterior a estado activo.')
-					else:
-						print('no entro al if')
+									dpe.devuelto = True
+									print('Bin devuelto: ',e)
+							else:
+								if not 'equipo-'+str(r.equipo.pk) in request.POST:
+									e = Equipo.objects.get(pk=r.equipo.pk)
+									e.estado = Estado.objects.get(pk=1)
+									e.save()
+									dpe.devuelto = False
+									print('Bin asignado: ',e)
+							
+							if not dpe.devueltoT:
+								if 'tapadera-'+str(r.tapadera.pk) in request.POST:
+									t = Equipo.objects.get(pk=r.tapadera.pk)
+									t.estado = Estado.objects.get(pk=2)
+									t.save()
+									dpe.devueltoT = True
+									print('Tapadera devuelta: ',t)
+							else:
+								if not 'tapadera-'+str(r.tapadera.pk) in request.POST:
+									t = Equipo.objects.get(pk=r.tapadera.pk)
+									t.estado = Estado.objects.get(pk=1)
+									t.save()
+									dpe.devueltoT = False
+									print('Tapadera asignada: ',t)
+							
+					
+							dpe.save()
+						prestamo = PrestamoEquipo.objects.get(pk = remision.prestamoEquipo.pk)
+						prestamo.fechaEntrada = cosecha.fecha
+						prestamo.save()
+						print('Prestamo actualizado: ',prestamo)
+						messages.success(request, 'Ha actualizado exitosamente la nota de cosecha #'+str(cosecha)+'.')
+						return redirect(reverse('camaron:cosechas-url'))
+					
+					# print(cosecha.remision.pk)
+					# if cosecha.remision.pk != remisionActual:
+					# 	if remisionActual:
+					# 		remision = Remision.objects.get(pk= remisionActual)
+					# 		remision.estado = EstadoRemision.objects.get(pk = 1)
+					# 		remision.save()
+					# 		if remision.prestamoEquipo:
+					# 			prestamo = PrestamoEquipo.objects.get(pk = remision.prestamoEquipo.pk)
+					# 			prestamo.estadoPrestamo = EstadoPrestamo.objects.get(pk = 3 )
+					# 			detallePrestamo = DetallePrestamoEquipo.objects.filter(prestamoEquipo= prestamo)
+					# 			for r in detallePrestamo:
+					# 				e = Equipo.objects.get(pk=r.equipo.pk)
+					# 				e.estado = Estado.objects.get(pk=1)
+					# 				e.save()
+					# 			prestamo.save()
+						
+					# 	if request.POST['remision']:
+					# 		remision = Remision.objects.get(pk= cosecha.remision.pk)
+					# 		remision.estado = EstadoRemision.objects.get(pk = 2)
+					# 		remision.save()
+					# 		if remision.prestamoEquipo:
+					# 			prestamo = PrestamoEquipo.objects.get(pk = remision.prestamoEquipo.pk)
+					# 			prestamo.estadoPrestamo = EstadoPrestamo.objects.get(pk = 4)
+					# 			detallePrestamo = DetallePrestamoEquipo.objects.filter(prestamoEquipo= prestamo)
+					# 			for r in detallePrestamo:
+					# 				e = Equipo.objects.get(pk=r.equipo.pk)
+					# 				e.estado = Estado.objects.get(pk=2)
+					# 				e.save()
+					# 			prestamo.save()
+					# 			print('Registro afectados:Cambio de remision, se ha devuelto la remision a remisión anterior a estado activo.')
+					# else:
+					# 	print('no entro al if')
 					messages.success(request, 'Usted ha actualizado la nota de cosecha.')
 					return redirect(reverse('camaron:cosechas-url'))
 
@@ -318,65 +469,192 @@ def ModificarCosecha(request,pk):
 				messages.error(request, 'Ha ocurrido un error al intentar guardar la la nota de cosecha.')
 		else:
 			messages.error(request, 'Informacion requerida incompleta para crear la remision.')	
-	elif request.method == 'POST' and request.is_ajax():
-		remision = Remision.objects.get(pk= request.POST['num'])
-		prestamo = remision.prestamoEquipo
-		detallePrestamoEquipo = DetallePrestamoEquipo.objects.filter(prestamoEquipo=prestamo)
-		finca = Finca.objects.filter(compania=remision.compania)
-		
-		html = ''
-		html +='''
-		<input type="hidden" name="form-TOTAL_FORMS" value="{}" id="id_form-TOTAL_FORMS">
-		<input type="hidden" name="form-INITIAL_FORMS" value="{}" id="id_form-INITIAL_FORMS">
-		<input type="hidden" name="form-MIN_NUM_FORMS" value="0" id="id_form-MIN_NUM_FORMS">
-		<input type="hidden" name="form-MAX_NUM_FORMS" value="1000" id="id_form-MAX_NUM_FORMS">
-		<hr>
-		<table class="table table-striped table-inverse table-responsive">
-			<thead class="thead-inverse">
-				<tr>
-					<th>No. Bin</th>
-					<th>Total Canasta</th>
-					<th>Total Libras</th>
-					<th>Observaciones</th>
-				</tr>
-			</thead>
-			<tbody>
-		'''.format(detallePrestamoEquipo.count(), detallePrestamoEquipo.count())
+	# elif request.method == 'POST' and request.is_ajax():
+	# 	remision = Remision.objects.get(pk= request.POST['num'])
+	# 	prestamo = remision.prestamoEquipo
+	# 	detallePrestamoEquipo = DetallePrestamoEquipo.objects.filter(prestamoEquipo=prestamo)
+	# 	finca = Finca.objects.filter(compania=remision.compania)
 
-		contador = 0
-		for dpe in detallePrestamoEquipo:			
-			html += '''
+
+				
+
+
+		
+	# 	html = ''
+	# 	html +='''
+	# 	<input type="hidden" name="form-TOTAL_FORMS" value="{}" id="id_form-TOTAL_FORMS">
+	# 	<input type="hidden" name="form-INITIAL_FORMS" value="{}" id="id_form-INITIAL_FORMS">
+	# 	<input type="hidden" name="form-MIN_NUM_FORMS" value="0" id="id_form-MIN_NUM_FORMS">
+	# 	<input type="hidden" name="form-MAX_NUM_FORMS" value="1000" id="id_form-MAX_NUM_FORMS">
+	# 	<hr>
+	# 	<div class="col-md-6 table responsive">
+	# 	<div class="alert alert-info alert-dismissible mb-0"><strong> Ingrese el detalle de la recepción de cosecha</strong></div>
+	# 	<table class="table table-striped table-inverse table-responsive">
+	# 		<thead class="thead-inverse">
+	# 			<tr>
+	# 				<th>No. Bin</th>
+	# 				<th>Total Canasta</th>
+	# 				<th>Total Libras</th>
+	# 				<th>Observaciones</th>
+	# 			</tr>
+	# 		</thead>
+	# 		<tbody>
+	# 	'''.format(detallePrestamoEquipo.count(), detallePrestamoEquipo.count())
+
+	# 	cosecha = Cosecha.objects.get(remision=remision)
+	# 	finca = ''
+	# 	laguna = ''
+	# 	if cosecha:
+	# 		detalleCosecha = DetalleCosecha.objects.filter(cosecha=cosecha)
+	# 		for dpe in detalleCosecha:
+	# 			contador = 0
+	# 			html += '''
+	# 					<tr class="detalle-formset">
+	# 						<td width="100px">
+	# 							<select name="form-{}-numeroBin" class="selectpicker form-control show-tick dx " data-style="btn-success" id="id_form-{}-numeroBin">
+	# 								<option value="{}">{}</option>
+	# 							</select>		
+	# 						</td>
+	# 						</td>
+	# 							<td><input type="number" name="form-{}-totalCanasta" value="{}" min="0" required class="form-control" id="id_form-{}-totalCanasta">		
+	# 						</td>
+	# 						<td>
+	# 							<input type="number" name="form-{}-libras" value="{}" step="0.01" min="0" required class="form-control" id="id_form-{}-libras">		
+	# 						</td>
+	# 						<td>
+	# 							<textarea name="form-{}-observaciones" cols="40" rows="1" class="form-control" placeholder="Aa" id="id_form-{}-observaciones"></textarea>
+	# 						</td>
+	# 					</tr>
+	# 			'''.format(contador,contador,dpe.numeroBin.pk,dpe.numeroBin,contador,dpe.totalCanasta,contador,contador,dpe.libras,contador,contador,contador)
+	# 			contador+=1
+	# 	else:
+
+	# 		contador = 0
+	# 		for dpe in detallePrestamoEquipo:			
+	# 			html += '''
+						
+	# 					<tr class="detalle-formset">
+	# 						<td width="100px">
+	# 							<select name="form-{}-numeroBin" class="selectpicker form-control show-tick dx " data-style="btn-success" id="id_form-{}-numeroBin">
+	# 								<option value="{}">{}</option>
+	# 							</select>		
+	# 						</td>
+	# 						</td>
+	# 							<td><input type="number" name="form-{}-totalCanasta" value="0" min="0" required class="form-control" id="id_form-{}-totalCanasta">		
+	# 						</td>
+	# 						<td>
+	# 							<input type="number" name="form-{}-libras" value="0" step="0.01" min="0" required class="form-control" id="id_form-{}-libras">		
+	# 						</td>
+	# 						<td>
+	# 							<textarea name="form-{}-observaciones" cols="40" rows="1" class="form-control" placeholder="Aa" id="id_form-{}-observaciones"></textarea>
+	# 						</td>
+	# 					</tr>
+	# 			'''.format(contador,contador,dpe.equipo.pk,dpe.equipo,contador,contador,contador,contador,contador,contador)
+	# 			contador+=1
+
+	# 	html +='''
+	# 		</tbody>
+	# 	</table>
+	# 	</div>
+	# 	<div class="col-md-6">
+	# 	<div class="alert alert-warning alert-dismissible mb-0"><strong>Alerta: </strong>Marque la casilla de verificación del equipo recibido.</div>
+	# 				<div class="table-responsive">
+	# 				<table class="table table-bordered">
+	# 						<thead>
+	# 						<tr>
+	# 							<th scope="col">#</th>
+	# 							<th scope="col">Bin</th>
+	# 							<th>Estado</th>
+	# 							<th scope="col">Tapadera</th>
+	# 							<th>Estado</th>
+	# 							<th scope="col">Descripción</th>
+	# 						</tr>
+	# 						</thead>
+	# 						<tbody>
+	# 	'''
+	# 	numero = 0
+	# 	for dP in detallePrestamoEquipo:
+	# 		devueltoB = ''
+	# 		devueltoT = ''
+
+	# 		if dP.devuelto:
+	# 			devueltoB = 'checked'
+	# 		if dP.devueltoT:
+	# 			devueltoT= 'checked'
+
+	# 		numero += 1
+	# 		descripcion = ''
+	# 		if dP.descripcion:
+	# 			descripcion = dP.descripcion
+	# 		html +='''
+	# 		<tr>
+	# 			<td>{}</td>
+	# 			<td>{}</td>
+	# 			<td class=" alert-warning">
+	# 				<div class="pretty p-svg p-round p-plain p-jelly">
+	# 					<input  class="devueltos chkBines" name="equipo-{}" type="checkbox" {}/>
+	# 					<div class="state p-success">
+	# 						<span class="svg" uk-icon="icon: check"></span>
+	# 						<label> Recibido</label>
+	# 					</div>
+	# 				</div>
 					
-					<tr class="detalle-formset">
-						<td width="100px">
-							<select name="form-{}-numeroBin" class="selectpicker form-control show-tick dx " data-style="btn-success" id="id_form-{}-numeroBin">
-								<option value="{}">{}</option>
-							</select>		
-						</td>
-						</td>
-							<td><input type="number" name="form-{}-totalCanasta" value="0" min="0" required class="form-control" id="id_form-{}-totalCanasta">		
-						</td>
-						<td>
-							<input type="number" name="form-{}-libras" value="0" step="0.01" min="0" required class="form-control" id="id_form-{}-libras">		
-						</td>
-						<td>
-							<textarea name="form-{}-observaciones" cols="40" rows="1" class="form-control" placeholder="Aa" id="id_form-{}-observaciones"></textarea>
-						</td>
-					</tr>
-			'''.format(contador,contador,dpe.equipo.pk,dpe.equipo,contador,contador,contador,contador,contador,contador)
-			contador+=1
+	# 			</td>
+	# 			<td>{}</td>
+	# 			<td class="alert-warning">
+					
+	# 				<div class="pretty p-svg p-round p-plain p-jelly">
+	# 					<input  class="devueltos chkTapaderas" name="tapadera-{}" type="checkbox" {}/>
+	# 					<div class="state p-success">
+	# 						<span class="svg" uk-icon="icon: check"></span>
+	# 						<label>Recibido</label>
+	# 					</div>
+	# 				</div>	
+	# 			</td>
+	# 			<td>{}</td>
+	# 		</tr>
+	# 		 '''.format(numero,dP.equipo,dP.equipo.pk,devueltoB,dP.tapadera,dP.tapadera.pk,devueltoT,descripcion)
 
-		html +='''
-			</tbody>
-		</table>
-		'''
+	# 	html += '''
+						
+							
+	# 					<tr class="alert-secondary">
+	# 						<td></td>
+	# 						<td></td>
+	# 						<td class="m-0 p-0 ">
+	# 								<div class=" uk-button-group">					
+	# 										<button type="button" id="selBin" class="uk-button uk-button-primary "><i class="far fa-check-circle "></i></button>
+	# 										<button type="button" id="desBin" class="uk-button uk-button-danger  "><i class="far fa-times-circle"></i></button>
+				
+	# 									</div>
+	# 						</td>
+	# 						<td></td>
+	# 						<td class="m-0 p-0 ">
+	# 								<div class=" uk-button-group">					
+	# 									<button type="button" id="selTap" class="uk-button uk-button-primary "><i class="far fa-check-circle "></i></button>
+	# 									<button type="button" id="desTap" class="uk-button uk-button-danger  "><i class="far fa-times-circle"></i></button>
+	# 								</div>
+	# 						</td>
+	# 						<td></td>
+
+	# 					</tr>
+						
+
+	# 					</tbody>
+						
+	# 				</table>
+	# 			</div>
+	# 			</div>
+				
+	# 			'''
 		
-		html2 = '<option value="">Seleccione...</option>'
-		for f in finca:	
-			html2 +='''
-			<option value="{}">{}</option>
-			'''.format(f.pk,f)
-		return JsonResponse({'html':html,'html2':html2})
+	# 	html2 = '<option value="">Seleccione...</option>'
+	# 	for f in finca:	
+	# 		html2 +='''
+	# 		<option value="{}">{}</option>
+	# 		'''.format(f.pk,f)
+	# 	return JsonResponse({'html':html,'html2':html2})
+
 	else:
 		empleado = Empleado.objects.get(usuario = request.user)
 		cosecha_form = CosechaForm(instance= cosecha)
@@ -408,6 +686,104 @@ def ModificarCosecha(request,pk):
 		cosecha_form.fields['remision'].widget.attrs['data-live-search'] = False
 
 	cosecha_form.fields['codCosecha'].widget.attrs['readonly']='True'
+
+
+
+
+	detallePrestamoEquipo = DetallePrestamoEquipo.objects.filter(prestamoEquipo=cosecha.remision.prestamoEquipo.pk)
+	html ='''
+			
+		<div class="col-md-6">
+		<div class="alert alert-warning alert-dismissible mb-0"><strong>Alerta: </strong>Marque la casilla de verificación del equipo recibido.</div>
+					<div class="table-responsive">
+					<table class="table table-bordered">
+							<thead>
+							<tr>
+								<th scope="col">#</th>
+								<th scope="col">Bin</th>
+								<th>Estado</th>
+								<th scope="col">Tapadera</th>
+								<th>Estado</th>
+								<th scope="col">Descripción</th>
+							</tr>
+							</thead>
+							<tbody>
+		'''
+	numero = 0
+	for dP in detallePrestamoEquipo:
+		devueltoB = ''
+		devueltoT = ''
+
+		if dP.devuelto:
+			devueltoB = 'checked'
+		if dP.devueltoT:
+			devueltoT= 'checked'
+
+		numero += 1
+		descripcion = ''
+		if dP.descripcion:
+			descripcion = dP.descripcion
+		html +='''
+		<tr>
+			<td>{}</td>
+			<td>{}</td>
+			<td class=" alert-warning">
+				<div class="pretty p-svg p-round p-plain p-jelly">
+					<input  class="devueltos chkBines" name="equipo-{}" type="checkbox" {}/>
+					<div class="state p-success">
+						<span class="svg" uk-icon="icon: check"></span>
+						<label> Recibido</label>
+					</div>
+				</div>
+				
+			</td>
+			<td>{}</td>
+			<td class="alert-warning">
+				
+				<div class="pretty p-svg p-round p-plain p-jelly">
+					<input  class="devueltos chkTapaderas" name="tapadera-{}" type="checkbox" {}/>
+					<div class="state p-success">
+						<span class="svg" uk-icon="icon: check"></span>
+						<label>Recibido</label>
+					</div>
+				</div>	
+			</td>
+			<td>{}</td>
+		</tr>
+		 '''.format(numero,dP.equipo,dP.equipo.pk,devueltoB,dP.tapadera,dP.tapadera.pk,devueltoT,descripcion)
+
+	html += '''
+					
+						
+					<tr class="alert-secondary">
+						<td></td>
+						<td></td>
+						<td class="m-0 p-0 ">
+								<div class=" uk-button-group">					
+										<button type="button" id="selBin" class="uk-button uk-button-primary "><i class="far fa-check-circle "></i></button>
+										<button type="button" id="desBin" class="uk-button uk-button-danger  "><i class="far fa-times-circle"></i></button>
+			
+									</div>
+						</td>
+						<td></td>
+						<td class="m-0 p-0 ">
+								<div class=" uk-button-group">					
+									<button type="button" id="selTap" class="uk-button uk-button-primary "><i class="far fa-check-circle "></i></button>
+									<button type="button" id="desTap" class="uk-button uk-button-danger  "><i class="far fa-times-circle"></i></button>
+								</div>
+						</td>
+						<td></td>
+
+					</tr>
+					
+
+					</tbody>
+					
+				</table>
+			</div>
+			</div>
+			
+			'''
 	
 	context = {
 		'cosecha_form': cosecha_form,
@@ -417,7 +793,9 @@ def ModificarCosecha(request,pk):
 		'htmlFincas' : htmlFincas,
 		'editar':True,
 		'pk':cosecha.pk,
-		'empresa':cosecha.remision.compania.pk
+		'empresa':cosecha.remision.compania.pk,
+		'html':html,
+		'remision':cosecha.remision
 	}
 
 	return render(request, 'camaron/camaron.html', context)

@@ -13,7 +13,7 @@ class Cosecha(models.Model):
 	fecha 		= models.DateField(auto_now_add=False,auto_now=False)
 	horaInicio	= models.TimeField(auto_now=False, auto_now_add=False)
 	horaFinal	= models.TimeField(auto_now=False, auto_now_add=False)
-	remision	= models.ForeignKey(Remision, on_delete=models.PROTECT)
+	remision	= models.ForeignKey(Remision, on_delete=models.PROTECT,related_name='cosechas')
 	entrego		= models.ForeignKey(Empleado,on_delete=models.PROTECT)
 	registro	= models.ForeignKey(User,on_delete=models.PROTECT)
 	

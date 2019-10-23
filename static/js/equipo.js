@@ -116,22 +116,34 @@ $(function () {
 
     });
 
-    var tablex = $('#tablajs').DataTable({
-        "scrollY": '40vh',
+    var tabla = $('#tablajs').DataTable({
+        // "dom": "<'row'  <'col-md-6'f> >",
+        dom: "<'row'<'#contenedorArriba.col-md-9'><'col-md-3'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-4'i><'col-sm-8'<'#colvis'>p>>",
+        "scrollY": '52vh',
         "scrollCollapse": true,
         "scrollX": true,
         "deferRender": true,
         // responsive: true,
         "scroller": true,
         "language": {
-            "zeroRecords": "No se ha encontrado nada, lo siento.",
+            "zeroRecords": "No se ha encontrado nada.",
             "infoEmpty": "No hay registros disponibles",
-            "infoFiltered": "(filtrado de _MAX_ registros totales)",
+            "infoFiltered": "(Filtrado de _MAX_ registros totales)",
             "info": "Mostrando _START_ a _END_ de _TOTAL_ registros.",
             "search": "Buscar:"
         }
+
         // "scrollCollapse": true
     });
+
+    equipo = ''
+    if ($('#add_equipo').length) {
+        equipo = '<a class="btn btn-primary text-left" href="/equipo/opcion/1/"><i class="fas fa-plus"></i> Nuevo Equipo</a>';
+
+    }
+    $('#contenedorArriba').html('<div class="btn-group row">' + equipo +'</div>');
+    $('.dataTables_info').addClass(['p-0', 'text-left']);
+
 
     $('#tablajs2').DataTable({
         "language": {

@@ -588,7 +588,7 @@ def detallePrestamo_asJson(request):
 				if dP.devuelto:
 					devuelto = 'Si'
 				devueltoT = 'No'
-				if dP.devuelto:
+				if dP.devueltoT:
 					devueltoT = 'Si'
 				if dP.descripcion: 
 					descripcion = dP.descripcion

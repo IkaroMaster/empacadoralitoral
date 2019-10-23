@@ -78,8 +78,8 @@ def CrearRemision(request): #,pk
 			try:
 				with transaction.atomic():
 					remision.save()
-					if actualizacion.prestamoEquipo.pk:		
-						asignarPrestamo = PrestamoEquipo.objects.get(pk= actualizacion.prestamoEquipo.pk)
+					if remision.prestamoEquipo:		
+						asignarPrestamo = PrestamoEquipo.objects.get(pk= remision.prestamoEquipo.pk)
 						asignarPrestamo.estadoPrestamo = EstadoPrestamo.objects.get(pk=3)
 						print(asignarPrestamo)
 						asignarPrestamo.save()
@@ -197,54 +197,72 @@ def detalleRemision_asJson(request):
 		codRemision = request.GET['id']
 		remision = Remision.objects.get(pk=codRemision)
 		detalleRemision = DetalleRemision.objects.filter(remision= remision)
+		guia = ''
+		if remision.guia:
+			guia = '<div class="col-md-6"><p><strong>Guía: </strong>'+str(remision.guia)+'</p></div>'
 		htmlRemision ='' 
 		htmlRemision +='''
 			<div class="container row">
-				<div class="col-6"><p><strong>Numero de remision: </strong> {}</p></div>
-				<div class="col-6"><p><strong>Tipo de remision: </strong> {}</p></div>
-				<div class="col-12"><p><strong>Consignado a: </strong>{}</p></div>
-				<div class="col-12"><p><strong>Retirado en: </strong>Empacadora Litoral</p></div>
-				<div class="col-12"><p><strong>Fecha: </strong>{}</p></div>
+				<div class="col-md-6"><p><strong>Numero de remisión: </strong> {}</p></div>
+				<div class="col-md-6"><p><strong>Tipo de remisión: </strong> {}</p></div>
+				{}
+				<div class="col-md-6"><p><strong>Consignado a: </strong>{}</p></div>
+				<div class="col-md-6"><p><strong>Retirado en: </strong>Empacadora Litoral</p></div>
+				<div class="col-md-6"><p><strong>Fecha: </strong>{}</p></div>
+				<div class="col-md-6"><p><strong>Entrego: </strong>{}</p></div>
+				<div class="col-md-6"><p><strong>Recibió: </strong>{}</p></div>
+				<div class="col-md-6"><p><strong>Placa No </strong>{}</p></div>
 			</div>
-		'''.format(remision.numRemision,remision.tipoRemision,remision.compania,remision.fecha) 
+		'''.format(remision.numRemision,remision.tipoRemision,guia,remision.compania,remision.fecha,remision.entrego,remision.conductor,remision.placa) 
+
+		
 		htmlDetalleRemision = ''
 		htmlDetalleRemision += '''
-			<p>A continuacion detallamos los articulos que enviamos.</p>
+			<p class="mb-1" >A continuación detallamos los artículos que enviamos.</p>
 			<div class="table-responsive">
 			<table class="table table-bordered ">
 					<thead>
 					  <tr>
-						<th scope="col">Cantidad</th>
-						<th scope="col">Unidad</th>
-						<th scope="col">Descripcion</th>
-						<th scope="col">Devolucion</th>
-						<th scope="col">Valor total</th>
+						<th scope="col">#</th>
+						<th scope="col">Cantidad(qq)</th>
+						<th scope="col">Descripción</th>
+						<th scope="col">Devolución(qq)</th>
+						<th scope="col">Valor total(qq)</th>
 					  </tr>
 					</thead>
 					<tbody>						
 		'''
+		totalSal = 0
+		totalDev = 0
+		totalCan = 0
+		cantidad = 0
 		for dR in detalleRemision:
+			totalSal += dR.salida
+			totalDev += dR.devolucion
+			totalCan += dR.cantidad
+			cantidad += 1
 			htmlDetalleRemision +='''
 			<tr>
-				<th scope="row">{}</th>
+				<td><strong>{}</strong></td>
 				<td>{}</td>
 				<td>{}</td>
 				<td>{}</td>
 				<td>{}</td>
 			</tr>
-			'''.format(dR.salida,dR.unidad,dR.hielo,dR.devolucion,dR.cantidad)
+			'''.format(cantidad,dR.salida,dR.hielo,dR.devolucion,dR.cantidad)
 		
-		htmlDetalleRemision += '''
-				</tbody>
+		htmlDetalleRemision +='''
+			<tr class='alert-secondary'>
+				<td scope="row"></td>
+				<td ><strong>{}</strong></td>
+				<td></td>
+				<td ><strong>{}</strong></td>
+				<td ><strong>{}</strong></td>
+			</tr>
+			</tbody>
 			</table>
 			</div>
-			<div class="row">
-				<div class="col-6 border"><p><strong>Entrego: </strong>{}</p></div>
-				<div class="col-6 border"><p><strong>Recibio: </strong>{}</p>
-									<p><strong>Placa No </strong>{}</p>
-				</div>
-			</div>
-		'''.format(remision.entrego,remision.conductor,remision.placa)
+		'''.format(totalSal,totalDev,totalCan)
 
 
 		
@@ -253,60 +271,121 @@ def detalleRemision_asJson(request):
 		if remision.prestamoEquipo:
 			prestamo = PrestamoEquipo.objects.get(pk=remision.prestamoEquipo.pk)
 			detallePrestamo = DetallePrestamoEquipo.objects.filter(prestamoEquipo= prestamo)
-		
-			htmlPrestamo +='''
-				<div class="p-3 mb-2 bg-primary text-white text-center">Esta remision esta ligada al prestamo de equipo numero <strong>{}</strong>.</div>
-				<br>
-				<div class="row container">
-					<div class="col-6"><p><strong>Numero de prestamo: </strong> {}</p></div>
-					<div class="col-6"><p><strong>Empresa: </strong> {}</p></div>
-				</div>
-			'''.format(prestamo.numPrestamo,prestamo.numPrestamo,prestamo.compania)
-			
-			
-			htmlDetallePrestamo += '''
-				<p>A continuacion detallamos los articulos que enviamos.</p>
-				<div class="table-responsive">
-				<table class="table table-bordered ">
-						<thead>
-						<tr>
-							<th scope="col">Equipo</th>
-							<th scope="col">Tapadera</th>
-							<th scope="col">Descripcion</th>
-						</tr>
-						</thead>
-						<tbody>	
-											
-			'''
-			for dP in detallePrestamo:
-				htmlDetallePrestamo +='''
-				<tr>
-					<td scope="row">{}</td>
-					<td>{}</td>
-					<td>{}</td>
-				</tr>
-				'''.format(dP.equipo,dP.tapadera,dP.descripcion)
 
 			fecha = ''
 			if prestamo.fechaEntrada:
 				fecha = prestamo.fechaEntrada
 			
+
+			htmlPrestamo +='''
+				<div class="p-3 mb-2 bg-primary text-white text-center">Esta remisión esta ligada al préstamo de equipo numero <strong>{}</strong>.</div>
+				<br>
+				<div class="row container">
+				<div class="col-6"><p><strong>Numero de préstamo: </strong> {}</p></div>
+				<div class="col-6"><p><strong>Empresa: </strong> {}</p></div>
+				<div class="col-6"><p><strong>Numero de placa: </strong> {}</p></div>
+				<div class="col-6"><p><strong>Hora de salida: </strong> {}</p></div>
+				<div class="col-6"><p><strong>Fecha de salida: </strong> {}</p></div>
+				<div class="col-6"><p><strong>Fecha de Entrada: </strong> {}</p></div>
+				<div class="col-12"><p><strong>Observaciones: </strong> {}</p></div>
+				</div>
+			'''.format(prestamo.numPrestamo,prestamo.numPrestamo,prestamo.compania,prestamo.placa,prestamo.horaSalida,prestamo.fechaSalida,fecha,prestamo.observaciones)
+
+			htmlDetallePrestamo = ''
+			if prestamo.estadoPrestamo.pk != 4: 
+				htmlDetallePrestamo += '''
+				<div class="table-responsive">
+					<p class="mb-1" >A continuación detallamos los artículos que enviamos.</p>
+					<table class="table table-bordered">
+							<thead>
+							<tr>
+								<th>#</th>
+								<th scope="col">Equipo</th>
+								<th scope="col">Tapadera</th>
+								<th scope="col">Descripción</th>
+							</tr>
+							</thead>
+							<tbody>	
+												
+				'''
+				numero = 0
+				for dP in detallePrestamo:
+					numero += 1
+					descripcion = ''
+					if dP.descripcion:
+						descripcion = dP.descripcion
+					htmlDetallePrestamo +='''
+					<tr><td><strong>{}</strong></td>
+						<td>{}</td>
+						<td>{}</td>
+						<td>{}</td>
+					</tr>
+					'''.format(numero,dP.equipo,dP.tapadera,descripcion)
+				
+				
+			else:
+				htmlDetallePrestamo += '''
+					<div class="table-responsive">
+					<p class="mb-1" >A continuación detallamos los artículos que enviamos.</p>
+					<table class="table table-bordered">
+							<thead>
+							<tr>
+								<th>#</th>
+								<th scope="col">Equipo</th>
+								<th scope="col">Recibido</th>
+								<th scope="col">Tapadera</th>
+								<th>Recibido</th>
+								<th scope="col">Descripción</th>
+							</tr>
+							</thead>
+							<tbody>	
+												
+				'''
+				numero = 0
+				totalD = 0
+				totalDT = 0
+				for dP in detallePrestamo:
+					numero += 1 
+					devuelto = 'No'
+					descripcion = ''
+					if dP.devuelto:
+						devuelto = 'Si'
+						totalD += 1
+					devueltoT = 'No'
+					if dP.devueltoT:
+						devueltoT = 'Si'
+						totalDT += 1
+					if dP.descripcion: 
+						descripcion = dP.descripcion
+
+					htmlDetallePrestamo +='''
+					<tr>
+						<td><strong>{}</strong></td>
+						<td>{}</td>
+						<td>{}</td>
+						<td>{}</td>
+						<td>{}</td>
+						<td>{}</td>
+					</tr>
+					'''.format(numero,dP.equipo,devuelto,dP.tapadera,devueltoT,descripcion)
+
+				htmlDetallePrestamo += '''
+						<tr class='alert-secondary'>
+							<td><strong></strong></td>
+							<td><strong></strong></td>
+							<td><strong>{}</strong></td>
+							<td><strong></strong></td>
+							<td><strong>{}</strong></td>
+							<td><strong></strong></td>
+							
+						</tr>
+				'''.format(totalD,totalDT)
 			htmlDetallePrestamo += '''
-					</tbody>
+					
+			</tbody>
 				</table>
 				</div>
-				<div class="row container">
-					<div class="col-6"><p><strong>Numero de placa: </strong> {}</p></div>
-					<div class="col-6"><p><strong>Hora de salida: </strong> {}</p></div>
-					<div class="col-6"><p><strong>Fecha de salida: </strong> {}</p></div>
-					<div class="col-6"><p><strong>Fecha de Entrada: </strong> {}</p></div>
-					<div class="col-12"><p><strong>Observaciones: </strong> {}</p></div>
-					
-					
-				</div>
-				
-			'''.format(prestamo.placa,prestamo.horaSalida,prestamo.fechaSalida,fecha,prestamo.observaciones)
-			
+			'''
 		
 
 		data = {
@@ -537,10 +616,11 @@ def anularRemision_asJson(request):
 		id = request.GET['id']
 		remision = Remision.objects.get(pk = id)
 		remision.estado = EstadoRemision.objects.get(pk=3)
+		if remision.guia:
+			remision.guia = ''
 		if remision.prestamoEquipo:
-			print('prestamo de equipo a anular',remision.prestamoEquipo)
+			print('prestamo de equipo anulado: ',remision.prestamoEquipo)
 			prestamoEquipo = PrestamoEquipo.objects.get(pk = remision.prestamoEquipo.pk)
-			print(EstadoPrestamo.objects.get(pk=1))
 			prestamoEquipo.estadoPrestamo = EstadoPrestamo.objects.get(pk=1)
 			prestamoEquipo.save()
 			
@@ -549,8 +629,17 @@ def anularRemision_asJson(request):
 			remision.save()
 			print('prestamo y remision anulada')
 			return JsonResponse({'anulado':True})
-			
 		else:
+			if remision.conductor:
+				print('Conductor desasignado: '+str(remision.conductor.pk))
+				conductor = Conductor.objects.get(pk = remision.conductor.pk)
+				conductor.disponible = True
+				conductor.save()
+			if remision.placa: 
+				print('Vehículo desasignado: '+str(remision.placa.pk))
+				placa = Vehiculo.objects.get(pk = remision.placa.pk)
+				placa.disponible = True
+				placa.save()
 			print('remision anulada')
 			remision.save()
 			return JsonResponse({'anulado':True})
@@ -602,25 +691,89 @@ def terminarRemision_asJson(request):
 			remision = Remision.objects.get(pk= pk)
 			remision.estado = EstadoRemision.objects.get(pk = 2)
 			remision.save()
+			print('Remision finalizada: ',remision)
 			if remision.prestamoEquipo:
+				print('Tiene prestamo de equipo.')
 				prestamo = PrestamoEquipo.objects.get(pk = remision.prestamoEquipo.pk)
 				prestamo.estadoPrestamo = EstadoPrestamo.objects.get(pk = 4)
+				prestamo.fechaEntrada = request.POST['fecha']
+
 				detallePrestamo = DetallePrestamoEquipo.objects.filter(prestamoEquipo= prestamo)
-				for r in detallePrestamo:
-					e = Equipo.objects.get(pk=r.equipo.pk)
-					e.estado = Estado.objects.get(pk=2)
-					e.save()
+				print('----------')
+				dpx = Equipo.objects.filter(Q(equipos__prestamoEquipo=prestamo)| Q(tapaderas__prestamoEquipo=prestamo)).count()
+
+				array_datos = request.POST['datos']
+				datos = json.loads(array_datos)
+				print(datos)
+				if dpx == len(datos):
+					for d in datos:
+						if d['devuelto']:
+							e = Equipo.objects.get(pk=d['id'])
+							e.estado = Estado.objects.get(pk=2)
+							e.save()
+							
+							dp = ''
+							if e.nombre == BaseEquipo.objects.get(pk=1):
+								dp = DetallePrestamoEquipo.objects.get(prestamoEquipo= prestamo,equipo=e)
+								print('Bin Devuelto:'+str(e.pk))
+								dp.devuelto = True
+
+							elif e.nombre == BaseEquipo.objects.get(pk=4):
+								dp = DetallePrestamoEquipo.objects.get(prestamoEquipo= prestamo,tapadera=e)
+								print('Tapadera Devuelta:'+str(e.pk))
+								dp.devueltoT = True
+							dp.save()
+
+
+
+				# for r in detallePrestamo:
+				# 	e = Equipo.objects.get(pk=r.equipo.pk)
+				# 	e.estado = Estado.objects.get(pk=2)
+				# 	e.save()
+				# 	print('equipo disponible: ',e)
+				# 	t = Equipo.objects.get(pk=r.tapadera.pk)
+				# 	t.estado = Estado.objects.get(pk=2)
+				# 	t.save()
+				# 	print('tapadera disponible: ',t)
+				print('----------')
+				c = Conductor.objects.get(pk=prestamo.conductor.pk)
+				c.disponible = True
+				c.save();
+				print('Conductor disponible: ',c)
+				v = Vehiculo.objects.get(pk=prestamo.placa.pk)
+				v.disponible = True
+				v.save();
+				print('Vehiculo disponible: ',v)
 				prestamo.save()
+				print('prestamo finalizado: ',prestamo)
+			else:
+				if remision.conductor:
+					print('Conductor desasignado: '+str(remision.conductor.pk))
+					conductor = Conductor.objects.get(pk = remision.conductor.pk)
+					conductor.disponible = True
+					conductor.save()
+				if remision.placa: 
+					print('Vehículo desasignado: '+str(remision.placa.pk))
+					placa = Vehiculo.objects.get(pk = remision.placa.pk)
+					placa.disponible = True
+					placa.save()
+						
+
+			
 			return JsonResponse({'id':pk})
 		else:
 			codRemision = request.GET['id']
 			remision = Remision.objects.get(pk=codRemision)
 			detalleRemision = DetalleRemision.objects.filter(remision= remision)
+			guia = ''
+			if remision.guia:
+				guia = '<div class="col-md-6"><p><strong>Guía: </strong>'+str(remision.guia)+'</p></div>'
 			htmlRemision ='' 
 			htmlRemision +='''
 				<div class="row ">
 					<div class="col-md-6"><p><strong>Numero de Remisión: </strong> {}</p></div>
 					<div class="col-md-6"><p><strong>Tipo de Remisión: </strong> {}</p></div>
+					{}
 					<div class="col-md-6"><p><strong>Consignado a: </strong>{}</p></div>
 					<div class="col-md-6"><p><strong>Retirado en: </strong>Empacadora Litoral</p></div>
 					<div class="col-md-6"><p><strong>Fecha: </strong>{}</p></div>
@@ -628,10 +781,10 @@ def terminarRemision_asJson(request):
 					<div class="col-md-6 "><p><strong>Recibió: </strong>{}</p></div>
 					<div class="col-md-6"><p><strong>Placa No </strong>{}</p></div>
 				</div>
-				<div class="alert alert-warning"><strong>Alerta: </strong>Si existen devoluciones, ingrese la devolución antes de continuar.</div>
+				<div class="alert alert-warning"><strong>Alerta: </strong>Si existen devoluciones de hielo, ingrese la devolución antes de continuar.</div>
 
 				
-			'''.format(remision.numRemision,remision.tipoRemision,remision.compania,remision.fecha,remision.entrego,remision.conductor,remision.placa)
+			'''.format(remision.numRemision,remision.tipoRemision,guia,remision.compania,remision.fecha,remision.entrego,remision.conductor,remision.placa)
 
 			
 			htmlDetalleRemision = ''
@@ -677,9 +830,9 @@ def terminarRemision_asJson(request):
 				prestamo = PrestamoEquipo.objects.get(pk=remision.prestamoEquipo.pk)
 				detallePrestamo = DetallePrestamoEquipo.objects.filter(prestamoEquipo= prestamo)
 				htmlPrestamo +='''
-				<div class="container-fluid p-3 mb-2 bg-primary text-white text-center">Esta remision esta ligada al prestamo de equipo numero <strong>{}</strong>.</div>
+				<div class="container-fluid p-3 mb-2 bg-primary text-white text-center">Esta remisión esta ligada al préstamo de equipo numero <strong>{}</strong>.</div>
 				<div class="row container ">
-					<div class="col-6"><p><strong>Numero de prestamo: </strong> {}</p></div>
+					<div class="col-6"><p><strong>Numero de préstamo: </strong> {}</p></div>
 					<div class="col-6"><p><strong>Empresa: </strong> {}</p></div>
 					<div class="col-6"><p><strong>Conductor: </strong> {}</p></div>
 					<div class="col-6"><p><strong>Numero de placa: </strong> {}</p></div>

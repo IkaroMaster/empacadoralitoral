@@ -206,21 +206,39 @@ $(function () {
 
 
     var tablex = $('#tablajs').DataTable({
-        "scrollY": '40vh',
+        // "dom": "<'row'  <'col-md-6'f> >",
+        dom: "<'row'<'#contenedorArriba1.col-md-3'><'col-md-9'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-4'i><'col-sm-8'<'#colvis'>p>>",
+        "scrollY": '42vh',
         "scrollCollapse": true,
         "scrollX": true,
         "deferRender": true,
         // responsive: true,
         "scroller": true,
         "language": {
-            "zeroRecords": "No se ha encontrado nada, lo siento.",
+            "zeroRecords": "No se ha encontrado nada.",
             "infoEmpty": "No hay registros disponibles",
-            "infoFiltered": "(filtrado de _MAX_ registros totales)",
+            "infoFiltered": "(Filtrado de _MAX_ registros totales)",
             "info": "Mostrando _START_ a _END_ de _TOTAL_ registros.",
-            "search": "Buscar:"
+            "search": "Buscar:",
+            "paginate": {
+                "next": "Siguiente",
+                'previous': 'Anterior'
+            }
         }
+
         // "scrollCollapse": true
     });
+
+    var empleado = '';
+    if ($('#add_empleado').length) {
+        empleado = '<a class="btn btn-primary text-left" href="/empleado/crear/"><i class="fas fa-plus"></i> Nuevo Empleado</a>';
+
+    }
+
+    $('#contenedorArriba1').html('<div class="btn-group row">'+empleado+'</div>');
+
+    $('.dataTables_info').addClass(['p-0', 'text-left']);
+
     var tablex2 = $('#tablaCargo').DataTable({
         "scrollY": '40vh',
         "scrollCollapse": true,

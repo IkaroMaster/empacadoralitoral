@@ -7,6 +7,71 @@ $(function () {
         timer: 5000
     });
 
+    $('#id_horaFinal').blur(function(){
+        final = $(this).val();
+        inicio = $('#id_horaInicio').val();
+        if (inicio >= final) {
+            notificacion.fire({
+                title: 'La hora final de recepción debe ser mayor que la hora de inicio.',
+                type:'error'
+            });
+            $(this).removeClass('boder-warning');
+            $(this).addClass(['alert-danger', 'border-danger']);
+            $(this).val('').focus();
+
+        }else {
+            $(this).removeClass('alert-danger');
+            $(this).removeClass('border-danger');
+            $(this).addClass('boder-warning');
+
+        }
+    });
+
+    $('#id_horaInicio').blur(function(){
+        inicio = $(this).val();
+        final = $('#id_horaFinal').val();
+        if (inicio >= final & final !='') {
+            notificacion.fire({
+                title: 'La hora de inicio de recepción debe ser menor que la hora final.',
+                type:'error'
+            });
+            $(this).removeClass('boder-warning');
+            $(this).addClass(['alert-danger', 'border-danger']);
+            $(this).val('').focus();
+
+        }else {
+            $(this).removeClass('alert-danger');
+            $(this).removeClass('border-danger');
+            $(this).addClass('boder-warning');
+
+        }
+    });
+
+    $(document).on('click', '#selBin', function () {
+        var bines = $(document).find('.chkBines');
+        bines.each(function (indexInArray, bin) {
+            $(bin).prop('checked', true);
+        });
+    });
+    $(document).on('click', '#desBin', function () {
+        var bines = $(document).find('.chkBines');
+        bines.each(function (indexInArray, bin) {
+            $(bin).prop('checked', false);
+        });
+    });
+    $(document).on('click', '#selTap', function () {
+        var taps = $(document).find('.chkTapaderas');
+        taps.each(function (indexInArray, tap) {
+            $(tap).prop('checked', true);
+        });
+    });
+    $(document).on('click', '#desTap', function () {
+        var taps = $(document).find('.chkTapaderas');
+        taps.each(function (indexInArray, tap) {
+            $(tap).prop('checked', false);
+        });
+    });
+
     var requeridos = $(document).find(':required');
     requeridos.each(function (r, requerido) {
         if ($(requerido).prop('tagName') == 'SELECT') {
@@ -38,6 +103,11 @@ $(function () {
             $('.dx').prop('disabled', false);
         }
 
+        $('#pantalla').addClass('pantalla');
+        $('#circulo').addClass('circulo');
+        $('#loader').addClass('loader');
+
+
         return true;
 
     });
@@ -67,7 +137,7 @@ $(function () {
                     $('#detalleCosecha').html(data.html).hide().show(1000);
                     $('#finca').prop('disabled', false);
                     $('#finca').html(data.html2).selectpicker('refresh');
-                    $('#finca').attr('data-compania',data.empresa);
+                    $('#finca').attr('data-compania', data.empresa);
 
                     if ($('#crear').val() != 'True') {
                         $('#id_laguna').html('<option value="">Seleccione la finca</option>').selectpicker('refresh');
@@ -91,9 +161,9 @@ $(function () {
                 }
 
             });
-        }else{
-            $('#agregarFinca').attr('hidden','true');
-            
+        } else {
+            $('#agregarFinca').attr('hidden', 'true');
+
         }
 
     });
@@ -126,8 +196,8 @@ $(function () {
                 }
 
             });
-        }else{
-            $('#agregarLaguna').attr('hidden',true);
+        } else {
+            $('#agregarLaguna').attr('hidden', true);
 
         }
 
@@ -147,7 +217,7 @@ $(function () {
         $('#modalDetalleCosecha').modal('hide');
     });
 
-    $('#reporteMensual').on('click', function () {
+    $(document).on('click','#reporteMensual', function () {
         $.get('/camaron/ajax_fecha/', function (data) {
             $('.modalCuerpoReporte').empty().html(data.html);
             $('.modalCuerpoReporte').find('#selectMes').selectpicker({
@@ -163,7 +233,7 @@ $(function () {
 
         });
     });
-    $('#reporteIntervalo').on('click', function () {
+    $(document).on('click','#reporteIntervalo', function () {
         $.get('/camaron/ajax_fecha_intervalo/', function (data) {
             $('.modalCuerpoReporte').empty().html(data.html);
             $('.modalCuerpoReporte').find('#selectMes').selectpicker({
@@ -179,7 +249,7 @@ $(function () {
 
         });
     });
-    $('#imprimirReporte').on('click', function () {
+    $(document).on('click','#imprimirReporte', function () {
         // var anio = $('.modalCuerpoReporte').find('#selectAnio').val();
         $('.modalCuerpoReporte').find('#formReporteMensual').submit();
         $('#modalReporte').modal('hide');
@@ -199,6 +269,7 @@ $(function () {
             // showLoaderOnConfirm: true,
         }).then((result) => {
             if (result.value) {
+
                 $('#editar-' + id).get(0).click();
                 // con jquery $("#home-link").get(0).click();
             } else {
@@ -226,7 +297,10 @@ $(function () {
             }).then((result) => {
                 if (result.value) {
                     // $("#formCosecha").submit();
-                    $('#enviarFormularioCosecha').click();
+                    setTimeout(function(){
+                        $('#enviarFormularioCosecha').click();
+                    },500)
+                    
                 }
             })
         } else {
@@ -243,7 +317,9 @@ $(function () {
             }).then((result) => {
                 if (result.value) {
                     // $("#formCosecha").submit();
-                    $('#enviarFormularioCosecha').click();
+                    setTimeout(function(){
+                        $('#enviarFormularioCosecha').click();
+                    },500)
                 }
             });
         }
@@ -268,22 +344,71 @@ $(function () {
     // });
 
 
+    moment.updateLocale(moment.locale(), {
+        invalidDate: ""
+    });
     var tablex = $('#tablajs').DataTable({
-        "scrollY": '40vh',
+        // "dom": "<'row'  <'col-md-6'f> >",
+        dom: "<'row'<'#contenedorArriba.col-md-9'><'col-md-3'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-4'i><'col-sm-8'<'#colvis'>p>>",
+        "scrollY": '52vh',
         "scrollCollapse": true,
         "scrollX": true,
         "deferRender": true,
         // responsive: true,
         "scroller": true,
         "language": {
-            "zeroRecords": "No se ha encontrado nada, lo siento.",
+            "zeroRecords": "No se ha encontrado nada.",
             "infoEmpty": "No hay registros disponibles",
-            "infoFiltered": "(filtrado de _MAX_ registros totales)",
+            "infoFiltered": "(Filtrado de _MAX_ registros totales)",
             "info": "Mostrando _START_ a _END_ de _TOTAL_ registros.",
             "search": "Buscar:"
-        }
+        },
+        "columnDefs": [{
+                targets: 3,
+                render: $.fn.dataTable.render.moment('YYYY/MM/DD', 'DD-MM-YYYY')
+            },
+
+        ],
+        "order": [
+            [3, "desc"],
+            [4, 'asc']
+        ],
+
         // "scrollCollapse": true
     });
+
+    var cosecha = '';
+    var imprimir = '';
+    if ($('#add_cosecha').length) {
+        cosecha = '<a class="btn btn-primary text-left" href="/camaron/crear/"><i class="fas fa-plus"></i> Nueva Cosecha</a>';
+
+    }
+    if ($('#imprimir_cosecha').length) {
+        imprimir = '<div class="btn-group" role="group">'+
+                        '<button id="btnR" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-file-alt"></i> Reportes</button>' +
+                        '<div class="dropdown-menu" aria-labelledby="btnR">' +
+                        '   <button id="reporteMensual" data-toggle="modal" data-target="#modalReporte" class=" dropdown-item "><i class="far fa-file-alt"></i> Reporte Mensual</button>'+
+                            '<div class="dropdown-divider"></div>' +
+                        '   <button id="reporteIntervalo" data-toggle="modal" data-target="#modalReporte" class=" dropdown-item "><i class="far fa-file-alt"></i> Reporte Con Intervalo</button>'+
+                        '</div>'+
+                '</div>';
+    }
+
+    graficos = '<div class="btn-group" role="group">'+
+                    '<button id="btnG" type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-chart-line"></i> Gráficos</button>' +
+                    '<div class="dropdown-menu" aria-labelledby="btnG">' +
+                        '<button id="graficoMensual" class="dropdown-item" data-toggle="modal" data-target="#modalGrafico"><i class="fas fa-chart-line"></i> Consumo de Hielo Mensual</button>' +
+                    '</div>'+
+                '</div>';
+
+
+        
+    $('#contenedorArriba').html('<div class="btn-group row">' + cosecha + imprimir + graficos +'</div>');
+
+    $('.dataTables_info').addClass(['p-0', 'text-left']);
+
+
+
 
     function getCookie(name) {
         var cookieValue = null;
@@ -302,7 +427,7 @@ $(function () {
     }
 
 
-    $('#graficoMensual').on('click', function () {
+    $(document).on('click','#graficoMensual', function () {
         $.get('/camaron/ajax_fecha_grafico_mensual/', function (data) {
             $('.modalCuerpoGrafico').empty().html(data.html);
             $('.modalCuerpoGrafico').find('#selectMes').selectpicker({
@@ -318,7 +443,7 @@ $(function () {
 
         });
     });
-    $('#imprimirGrafico').on('click', function () {
+    $(document).on('click','#imprimirGrafico', function () {
         // var anio = $('.modalCuerpoReporte').find('#selectAnio').val();
         $('.modalCuerpoGrafico').find('#formGraficoMensual').submit();
         $('#modalGrafico').modal('hide');
@@ -344,13 +469,13 @@ $(function () {
 
     $('#agregarFinca').click(function (e) {
         e.preventDefault();
-        $.get($(this).attr('data-url'),function (data) {
+        $.get($(this).attr('data-url'), function (data) {
 
             $('#modalNuevoContenedor').empty().html(data.html);
             $('#guardarNuevo').attr('class', 'btn btn-primary nuevaFinca');
 
             var empresas = $('#modalNuevoContenedor').find('#id_compania option');
-            empresas.each(function(e,empresa){
+            empresas.each(function (e, empresa) {
                 // alert($(empresa).val());
                 // alert($('#finca').prop('data-compania'));
                 console.log(empresa);
@@ -375,7 +500,7 @@ $(function () {
                 });
             }
 
-            
+
             var requeridos = $('#modalNuevoContenedor').find(':required');
             requeridos.each(function (r, requerido) {
                 if ($(requerido).prop('tagName') == 'SELECT') {
@@ -399,7 +524,7 @@ $(function () {
             $.ajax({
                 type: $(this).attr('method'),
                 url: $(this).attr('action'),
-                data: $(this).serialize(),
+                data: $(this).serialize()+"&todo=no",
                 success: function (response) {
                     $('#finca').empty().html(response.html);
                     $('#finca').selectpicker('refresh');
@@ -424,14 +549,16 @@ $(function () {
     $('#agregarLaguna').click(function (e) {
         e.preventDefault();
         finca = $('#finca').find(':selected').val();
-        $.get($(this).attr('data-url'),{finca:finca},function (data) {
+        $.get($(this).attr('data-url'), {
+            finca: finca
+        }, function (data) {
 
             $('#modalNuevoContenedor').empty().html(data.html);
             $('#guardarNuevo').attr('class', 'btn btn-primary nuevaLaguna');
-            
+
             //######## FORMATEO DE CAMPOS
             if ($('#modalNuevoContenedor').find('#id_codLaguna').length) {
-        
+
                 new Cleave('#id_codLaguna', {
                     blocks: [5],
                     uppercase: true
@@ -440,14 +567,14 @@ $(function () {
                     blocks: [6],
                     numericOnly: true
                 });
-        
+
                 $('#modalNuevoContenedor').find('#id_ubicacion').upperFirstAll();
-                
+
             }
             //--------------------------
-            
-           
-            
+
+
+
             var requeridos = $('#modalNuevoContenedor').find(':required');
             requeridos.each(function (r, requerido) {
                 if ($(requerido).prop('tagName') == 'SELECT') {
@@ -495,7 +622,7 @@ $(function () {
     $('#agregarEmpleado').click(function (e) {
         e.preventDefault();
         $.get($(this).attr('data-url'), function (data) {
-            
+
             $('#modalNuevoContenedor').empty().html(data.html);
 
             var requeridos = $('#modalNuevoContenedor').find(':required');
@@ -512,13 +639,13 @@ $(function () {
                 numericOnly: true
             });
             new Cleave('#id_identidad', {
-                blocks: [4,4,5],
-                delimiter:'-',
+                blocks: [4, 4, 5],
+                delimiter: '-',
                 numericOnly: true
             });
             new Cleave('#id_telefono', {
-                blocks: [4,4],
-                delimiter:'-',
+                blocks: [4, 4],
+                delimiter: '-',
                 numericOnly: true
             });
             $('#id_nombre').upperFirst();
@@ -526,14 +653,14 @@ $(function () {
             $('#id_apellido').upperFirst();
             $('#id_segundoApellido').upperFirst();
 
-            $('#guardarNuevo').attr('class','btn btn-primary nuevoEmpleado');
+            $('#guardarNuevo').attr('class', 'btn btn-primary nuevoEmpleado');
             $('#modalNuevo').modal('show');
         });
 
 
     });
 
-    $('#modalNuevo').on('click','.nuevoEmpleado',function () {
+    $('#modalNuevo').on('click', '.nuevoEmpleado', function () {
 
         $(document).find('#formNuevo').submit(function (e) {
             e.preventDefault();
@@ -559,5 +686,38 @@ $(function () {
                 }
             });
         });
+    });
+
+
+    $(document).on('blur', '#id_codFinca', function () {
+        var cod = $(this).val();
+        if (cod != '') {
+            $.ajax({
+                type: "get",
+                url: "/compania/ajax_validar_codfinca/",
+                data: {
+                    cod: cod
+                },
+                success: function (response) {
+                    if (response.existe == 1) {
+                        notificacion.fire({
+                            type: 'error',
+                            title: 'Ya existe una finca con el codigo ' + cod + '.'
+                        });
+                        $('#id_codFinca').removeClass('boder-warning');
+                        $('#id_codFinca').addClass(['alert-danger', 'border-danger']);
+                        $('#id_codFinca').val('').prop('placeholder', cod);
+
+
+                    } else {
+                        $('#id_codFinca').removeClass('alert-danger');
+                        $('#id_codFinca').removeClass('border-danger');
+                        $('#id_codFinca').addClass('boder-warning');
+
+                    }
+                }
+            });
+        }
+
     });
 });

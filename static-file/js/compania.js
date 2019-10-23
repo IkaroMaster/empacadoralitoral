@@ -15,81 +15,104 @@ $(function () {
         }
     });
 
+    var tabla = $('#tablajs').DataTable({
+        // "dom": "<'row'  <'col-md-6'f> >",
+        dom: "<'row'<'#contenedorArriba1.col-md-3'><'col-md-9'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-4'i><'col-sm-8'<'#colvis'>p>>",
+        "scrollY": '48vh',
+        "scrollCollapse": true,
+        "scrollX": true,
+        "deferRender": true,
+        // responsive: true,
+        "scroller": false,
+        "language": {
+            "zeroRecords": "No se ha encontrado nada.",
+            "infoEmpty": "No hay registros disponibles",
+            "infoFiltered": "(Filtrado de _MAX_ registros totales)",
+            "info": "Mostrando _START_ a _END_ de _TOTAL_ registros.",
+            "search": "Buscar:",
+            "paginate": {
+                "next": "Siguiente",
+                'previous': 'Anterior'
+            }
+        }
 
-    var tablex = $('#tablajs').DataTable({
-        "scrollY": '35vh',
+        // "scrollCollapse": true
+    });
+
+    var compania = '';
+    if ($('#add_compania').length) {
+        compania = '<a class="btn btn-primary text-left" href="/compania/opcion/1/"><i class="fas fa-plus"></i> Nueva Empresa</a>';
+
+    }
+
+    $('#contenedorArriba1').html('<div class="btn-group row">'+compania+'</div>');
+
+    $('.dataTables_info').addClass(['p-0', 'text-left']);
+    
+
+    var tabla2 = $('#tablajs2').DataTable({
+        // "dom": "<'row'  <'col-md-6'f> >",
+        dom: "<'row'<'#contenedorArriba.col-md-3'><'col-md-9'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-4'i><'col-sm-8'<'#colvis'>p>>",
+        "scrollY": '48vh',
         "scrollCollapse": true,
-        // "scrollX": true,
+        "scrollX": true,
         "deferRender": true,
         // responsive: true,
-        "scroller": true,
+        "scroller": false,
         "language": {
-            "zeroRecords": "No se ha encontrado nada, lo siento.",
+            "zeroRecords": "No se ha encontrado nada.",
             "infoEmpty": "No hay registros disponibles",
-            "infoFiltered": "(filtrado de _MAX_ registros totales)",
+            "infoFiltered": "(Filtrado de _MAX_ registros totales)",
             "info": "Mostrando _START_ a _END_ de _TOTAL_ registros.",
-            "search": "Buscar:"
+            "search": "Buscar:",
+            "paginate": {
+                "next": "Siguiente",
+                'previous': 'Anterior'
+            }
         }
-        // dom: 'Bfrtip',
-        // // lengthChange: false,
-        // buttons: ['copy', 'excel', 'pdf', 'colvis', {
-        //     extend: 'pdfHtml5',
-        //     download: 'open',
-        //     orientation: 'landscape',
-        //     pageSize: 'LEGAL',
-        //     text: 'Ver',
-        //     title: 'Reporte de Compañias'
-        // }],
-        // "scrollX": true,
-        // "language": {
-        //     "lengthMenu": "Mostrar _MENU_ por páginas",
-        //     "zeroRecords": "No se encontró ningún registro",
-        //     "info": "Mostrando página _PAGE_ de _PAGES_",
-        //     "infoEmpty": "Registro no valido",
-        //     "infoFiltered": "(filtrado de _MAX_ registros totales)",
-        //     'search': 'Buscar:'
-        //         /*'search': 'Buscar: _INPUT_ aqui'*/
-        //         ,
-        //     "paginate": {
-        //         "next": "Siguiente",
-        //         'previous': 'Anterior'
-        //     },
-        //     buttons: {
-        //         colvis: 'Columnas visibles',
-        //         copy: 'Copiar'
-        //     }
-        // }
+
+        // "scrollCollapse": true
     });
-    var tablex = $('#tablajs2').DataTable({
-        "scrollY": '40vh',
+
+    var finca = '';
+    if ($('#add_finca').length) {
+        finca = '<a class="btn btn-primary text-left" href="/compania/opcion/3/"><i class="fas fa-plus"></i> Nueva Finca</a>';
+
+    }
+    $('#contenedorArriba').html('<div class="btn-group row">'+finca+'</div>');
+    $('.dataTables_info').addClass(['p-0', 'text-left']);
+
+    var tabla3 = $('#tablajs3').DataTable({
+        // "dom": "<'row'  <'col-md-6'f> >",
+        dom: "<'row'<'#contenedorArriba3.col-md-3'><'col-md-9'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-4'i><'col-sm-8'<'#colvis'>p>>",
+        "scrollY": '48vh',
         "scrollCollapse": true,
-        // "scrollX": true,
+        "scrollX": true,
         "deferRender": true,
         // responsive: true,
-        "scroller": true,
+        "scroller": false,
         "language": {
-            "zeroRecords": "No se ha encontrado nada, lo siento.",
+            "zeroRecords": "No se ha encontrado nada.",
             "infoEmpty": "No hay registros disponibles",
-            "infoFiltered": "(filtrado de _MAX_ registros totales)",
+            "infoFiltered": "(Filtrado de _MAX_ registros totales)",
             "info": "Mostrando _START_ a _END_ de _TOTAL_ registros.",
-            "search": "Buscar:"
+            "search": "Buscar:",
+            "paginate": {
+                "next": "Siguiente",
+                'previous': 'Anterior'
+            }
         }
+
+        // "scrollCollapse": true
     });
-    var tablex = $('#tablajs3').DataTable({
-        "scrollY": '40vh',
-        "scrollCollapse": true,
-        // "scrollX": true,
-        "deferRender": true,
-        // responsive: true,
-        "scroller": true,
-        "language": {
-            "zeroRecords": "No se ha encontrado nada, lo siento.",
-            "infoEmpty": "No hay registros disponibles",
-            "infoFiltered": "(filtrado de _MAX_ registros totales)",
-            "info": "Mostrando _START_ a _END_ de _TOTAL_ registros.",
-            "search": "Buscar:"
-        }
-    });
+
+    var laguna = '';
+    if ($('#add_laguna').length) {
+        laguna = '<a class="btn btn-primary text-left" href="/compania/lagunas/crear/"><i class="fas fa-plus"></i> Nueva Laguna</a>';
+
+    }
+    $('#contenedorArriba3').html('<div class="btn-group row">'+laguna+'</div>');
+    $('.dataTables_info').addClass(['p-0', 'text-left']);
 
     const Notificacion = Swal.mixin({
         toast: true,

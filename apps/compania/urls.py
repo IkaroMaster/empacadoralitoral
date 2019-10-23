@@ -19,6 +19,7 @@ urlpatterns = [
     path('lagunas/modificar/<slug:pk>/',views.ModificarLaguna,name='editar_laguna-url'),
 
     #AJAX
+    path("ajax_validar_codfinca/", views.validarCodFinca_asJson, name ="validarCodFinca_asJson-url"),
     path('estado/',views.EstadoCompania_asJson,name='estado_compania-url'),
 
     #AGREGAR REGISTROS

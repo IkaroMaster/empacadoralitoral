@@ -5,33 +5,19 @@ Equipo
 {% endblock titulo %}
 
 {% block l2 %}
-active
+bg-success
 {% endblock l2 %}
 
 {% block cuerpo %}
 <div class="card text-center">
-    <div class="panel-heading bg-primary">
-        <h4 class="panel-title text-light">
-            {% if listado %}
-            Inventario de Equipo
-            {% elif crear%}
-            Registrar Nuevo Equipo
-            {% elif crearEquipoBase%}
-            Registrar Nuevo Equipo Para Base
-            {% elif editar%}
-            Editar {{informacion}}
-            {% elif crearCodigoQR%}
-            Generador de codigo QR para inventario de equipo
-            {% endif %}
-        </h4>
-    </div>
+    
     <div class="card-header">
         <ul class="nav nav-tabs card-header-tabs">
 
 
             {% if perms.equipo.add_equipo %}
             <li class="nav-item">
-                <a class="nav-link {{ clases.o1 }}" href="{% url 'equipo:equipo-url' 1 %}">Gestion de Equipo</a>
+                <a class="nav-link {{ clases.o1 }}" href="{% url 'equipo:equipo-url' 1 %}">Gestión de Equipo</a>
             </li>
             {% endif %}
 
@@ -55,7 +41,21 @@ active
         </ul>
     </div>
     <div class="card-body">
+        <h4 class="mb-1">
+            {% if listado %}
+            Inventario de Equipo
+            {% elif crear%}
+            Registrar Nuevo Equipo
+            {% elif crearEquipoBase%}
+            Registrar Nueva Base de Equipo
+            {% elif editar%}
+            Editar {{informacion}}
+            {% elif crearCodigoQR%}
+            Generador de Código QR de Equipo
+            {% endif %}
+        </h4>
         <div style="{{estilos.o1}}">
+             <p class="small text-left mt-0 mb-0"><i class="fas fa-info"></i> <strong class="text-warning">Campo con borde color amarillo es requerido.</strong></p>
 
             <form action=" {% url 'equipo:guardar_equipo-url' %}" class="row" method="POST">
                 {% csrf_token %}
@@ -107,10 +107,12 @@ active
                 </div>
                 <div class=" col-md-3">
                     <br>
-                    <a href="{% url 'equipo:equipo-url' 2 %}" class="btn btn-secondary ">Cancelar</a>
-                    <input class="btn btn-success" type="submit"
-                        value="{% if crear%}Guardar{%elif editar%}Modificar{%endif%}">
-                </div>
+                    
+                     
+                    <button class="btn btn-success" type="submit">{% if crear%}<i class="fas fa-save"></i>
+                    Guardar{% elif editar %}<i class="fas fa-edit"></i> Modificar{% endif %} </button>
+                    <a href="{% url 'equipo:equipo-url' 2 %}" class="btn btn-secondary "><i
+                        class="fas fa-window-close"></i>  Cancelar</a></div>
 
 
 
@@ -119,28 +121,23 @@ active
             </form>
         </div>
         <div style="{{estilos.o2}}">
-            <div class="row col-md-3 mb-1">
                 {% if perms.equipo.add_equipo %}
-                <div class="col">
-                    <a class=" btn btn-success {{ clases.o1 }}" href="{% url 'equipo:equipo-url' 1 %}">Nuevo
-                        Equipo</a>
-                </div>
+                <i hidden id="add_equipo"></i>
                 {% endif %}
-            </div>
 
             <div class="table-responsive">
-                <table id="tablajs" class="table table-striped table-hover table-bordered">
+                <table id="tablajs" class="table table-striped table-hover table-bordered" style="width:100%">
                     <thead class="thead-inverse">
                         <tr>
-                            <th>Cod.</th>
-                            <th>Codigo QR</th>
+                            <th>Cód.</th>
+                            <th>Código QR</th>
                             <th>Nombre</th>
                             <th>Numero</th>
                             <th>Tamaño</th>
                             <th>Color</th>
                             <th>Estado</th>
-                            <th>Descripcion</th>
-                            <th>Edicion</th>
+                            <th>Descripción</th>
+                            <th>Acciones</th>
                             <!-- <th>Añadir</th> -->
                         </tr>
                     </thead>
@@ -178,6 +175,7 @@ active
                     </tbody>
                 </table>
             </div>
+            <p class="text-left mt-0 mb-0"><strong><i class="fas fa-info"></i></strong>   <i class="alert-success">Disponible</i>  <i class="alert-info">Asignado</i>  <i class="alert-danger">Fuera de servicio</i></p>
 
         </div>
 
@@ -189,31 +187,35 @@ active
 
 
 
-                <h3 class="panel-title" style="color:gray">{% if crearEquipoBase %}
-                    Nuevo
+                <h3 class="panel-title" >{% if crearEquipoBase %}
+                    Nueva Base
                     {% else %}
-                    Modificar
+                    Modificar Base
                     {% endif %}</h3>
-                <hr>
+                            <p class="small text-left mt-0 mb-0"><i class="fas fa-info"></i> <strong class="text-warning">Campo con borde color amarillo es requerido.</strong></p>
+
 
                 <form action="{% url 'equipo:guardar_equipo_base-url' %}" method="post" id="formEquipoBase">
                     {% csrf_token %}
                     <input type="hidden" name="id_o" value="{{ id_o }}">
                     {{ form.as_p }}
-                    <button class="btn btn-secondary" id="limpiarFormEquipoBase">Cancelar</button>
-                    <a href=""></a>
-                    <input class="btn btn-success" type="submit" value="Guardar">
-                    <br>
+
+                    <button class="btn btn-success" type="submit">{% if crearEquipoBase%}<i class="fas fa-save"></i>
+                    Guardar{% else %}<i class="fas fa-edit"></i> Modificar{% endif %} </button>
+                    
+                    <button type="button" class="btn btn-secondary" id="limpiarFormEquipoBase"><i
+                        class="fas fa-window-close"></i>  Cancelar</button>
+                    
                 </form>
 
             </div>
             {% endif %}
 
             <div class="col-8 table-responsive ">
-                <table id="tablajs2" class="table table-striped table-hover table-bordered">
+                <table id="tablajs2" class="table table-striped table-hover table-bordered" width="100%">
                     <thead class="thead-inverse">
                         <tr>
-                            <th>Cod.</th>
+                            <th>Cód.</th>
                             <th>Base</th>
                             {% if perms.equipo.change_baseequipo %}
                             <th>Acción</th>
@@ -244,8 +246,9 @@ active
             </div>
         </div>
         <div style="{{estilos.o4}}">
-
+                        
             <form action=" {% url 'equipo:reporte_codigoQR-url' %}" method="POST" target="_blank">
+                <p class="small text-left mt-0 mb-0"><i class="fas fa-info"></i> <strong class="text-warning">Campo con borde color amarillo es requerido.</strong></p>
                 {% csrf_token %}
                 <div class="row">
                     <div class="col-md-6">
@@ -269,7 +272,7 @@ active
                         </div>                        
 
                     </div>
-                    <div class="col-md-5">
+                    <div class="col-md-4">
                         <div class="panel-heading bg-primary">
                             <h4 class="panel-title text-light">Vista Previa</h4>
                         </div>
@@ -294,7 +297,7 @@ active
     <div class="modal-dialog modal-md modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Escanear Codigo</h5>
+                <h5 class="modal-title" id="exampleModalLongTitle">Escanear Código</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>

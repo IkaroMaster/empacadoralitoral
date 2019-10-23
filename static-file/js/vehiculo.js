@@ -97,22 +97,38 @@ $(function () {
 
 
 
-    var tablex = $('#tablajs').DataTable({
-        "scrollY":      '40vh',
+    var tabla = $('#tablajs').DataTable({
+        // "dom": "<'row'  <'col-md-6'f> >",
+        dom: "<'row'<'#contenedorArriba1.col-md-3'><'col-md-9'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-4'i><'col-sm-8'<'#colvis'>p>>",
+        "scrollY": '48vh',
         "scrollCollapse": true,
-        "scrollX":      true,
-        "deferRender":  true,
+        "scrollX": true,
+        "deferRender": true,
         // responsive: true,
-        "scroller":     true,
-        "language":     {
-                            "zeroRecords": "No se ha encontrado nada, lo siento.",
-                            "infoEmpty": "No hay registros disponibles",
-                            "infoFiltered": "(filtrado de _MAX_ registros totales)",
-                            "info":      "Mostrando _START_ a _END_ de _TOTAL_ registros.",
-                            "search":         "Buscar:"
+        "scroller": false,
+        "language": {
+            "zeroRecords": "No se ha encontrado nada.",
+            "infoEmpty": "No hay registros disponibles",
+            "infoFiltered": "(Filtrado de _MAX_ registros totales)",
+            "info": "Mostrando _START_ a _END_ de _TOTAL_ registros.",
+            "search": "Buscar:",
+            "paginate": {
+                "next": "Siguiente",
+                'previous': 'Anterior'
+            }
         }
+
         // "scrollCollapse": true
     });
+
+    var vehiculo = '';
+    if ($('#add_vehiculo').length) {
+        vehiculo = '<a class="btn btn-primary text-left" href="/vehiculo/crear/"><i class="fas fa-plus"></i> Nuevo Vehículo</a>';
+    }
+    $('#contenedorArriba1').html('<div class="btn-group row">'+vehiculo+'</div>');
+    $('.dataTables_info').addClass(['p-0', 'text-left']);
+
+
 
     if ($('#id_placa').length) {
         new Cleave('#id_placa', {

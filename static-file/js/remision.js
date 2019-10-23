@@ -355,36 +355,7 @@ $(document).ready(function () {
 
     $('.anularRemision').on('click', function () {
 
-        // alert($(this).attr('data-id'));
-
-        // swal({
-        //     title: 'Are you sure?',
-        //     text: "You won't be able to revert this!",
-        //     type: 'warning',
-        //     showCancelButton: true,
-        //     confirmButtonColor: '#3085d6',
-        //     cancelButtonColor: '#d33',
-        //     confirmButtonText: 'Yes, delete it!',
-        //     showLoaderOnConfirm: true,
-        //     preConfirm: function() {
-        //        return new Promise(function(resolve) {
-        //             $.ajax({
-        //                 url: '/remision/ajax_anular_remision/',
-        //                 type: 'POST',
-        //                 data: {id: id},
-        //                 dataType: 'json'
-        //             })
-        //             .done(function(response){
-        //                 swal('Deleted!', response.message, response.status);
-        //                 readProducts();
-        //                     })
-        //             .fail(function(){
-        //                 swal('Oops...', 'Something went wrong with ajax !', 'error');
-        //             });
-        //         });
-        //     },
-        //     allowOutsideClick: false     
-        //     });
+        
 
         var id = $(this).attr('data-id');
         Swal.fire({
@@ -407,25 +378,21 @@ $(document).ready(function () {
                         // $('#col_estado-' + id).html('<p style="display: none">3</p>' +
                         //     '<i class="fas fa-times"></i>');
                         $('#col_estado-' + id).html('Anulado');
-                        $('#col_prestamo-' + id).html('-');
-                        $('button[data-terminar = ' + id + ']').css('display', 'none');
-                        $('a[data-editar = ' + id + ']').css('display', 'none');
-                        $('button[data-anular = ' + id + ']').css('display', 'none');
+                        $('#col_prestamo-' + id).html('');
+                        $('#terminar-' + id).hide();
+                        $('#editar1-' + id).hide();
+                        $('#anular-' +id).hide();
                         // $('a[data-id = '+id+']').css('display', 'none');
-                        Swal.fire({
+                        notificacion.fire({
                             // 'Anulado!',
-                            title: 'La remision ' + id + ' ha sido anulada exitosamente.',
-                            type: 'success',
-                            showConfirmButton: false,
-                            timer: 2000
+                            type:'success',
+                            title: 'La remisión ' + id + ' ha sido anulada exitosamente.',                            type: 'success'
                         });
                     } else {
-                        Swal.fire({
+                        notificacion.fire({
                             type: 'error',
-                            title: 'Oops...',
-                            text: '¡Algo salió mal!',
-                            showConfirmButton: false,
-                            timer: 3000
+                            title: 'Oops...¡Algo salió mal!',
+                            
                             // footer: '<a href>Why do I have this issue?</a>'
                         })
                     }
@@ -513,49 +480,67 @@ $(document).ready(function () {
             devolucionRemisiones.push(obj);
         });
         console.log(devolucionRemisiones);
-        $.ajax({
-            type: "POST",
-            url: "/remision/ajax_terminar_remision/",
-            // headers: {
-            //     'Authorization': "Token " + localStorage.access_token
-            // },
-            data: {
-                devolucionRemisiones: JSON.stringify(devolucionRemisiones),
-                csrfmiddlewaretoken: getCookie('csrftoken')
-            },
-            success: function (data) {
-                alert(data.id)
-                $('#modalDetalleRemision').modal('hide');
-                $('#fila-' + data.id).prop('class', 'table-success');
-                $('#col_estado-' + data.id).html('Terminado');
-                // $('#col_estado-' + data.id).html('<p style="display: none">2</p>' +
-                //     '<i class="fas fa-check"></i>');
-                $('button[data-terminar=' + data.id + ']').hide();
-                // $('button[data-editar = '+id+']').css('display', 'none');
-                $('a[data-anular=' + data.id + ']').css('display', 'none');
-                // $('#col_prestamo-'+data.id).html('None');
-                // $('button[data-id = '+data.id+']').css('display', 'none');                        $('a[data-id = '+id+']').css('display', 'none');
-                Swal.fire({
-                    // 'Anulado!',
-                    title: 'La remision ha sido terminada exitosamente.',
-                    type: 'success',
-                    showConfirmButton: false,
-                    timer: 2000
-                });
 
-            },
-            error: function (data) {
-                Swal.fire({
-                    type: 'error',
-                    title: 'Oops...',
-                    text: '¡Algo salió mal!',
-                    showConfirmButton: false,
-                    timer: 3000
-                    // footer: '<a href>Why do I have this issue?</a>'
-                })
+        var fecha = $(document).find('.fechaEntrada').val();
+
+        // Devolucion equipo
+        var devueltos = $('.modalCuerpoRemision').find('.devueltos').filter(':visible');
+        var datos = [];
+        devueltos.each(function (d, devuelto) {
+            var obj = {
+                'id': $(devuelto).attr('data-id'),
+                'devuelto': $(devuelto).is(':checked')
             }
-
+            datos.push(obj);
         });
+
+        console.log(datos);
+        if (fecha != '') {
+            $.ajax({
+                type: "POST",
+                url: "/remision/ajax_terminar_remision/",
+                // headers: {
+                //     'Authorization': "Token " + localStorage.access_token
+                // },
+                data: {
+                    devolucionRemisiones: JSON.stringify(devolucionRemisiones),
+                    csrfmiddlewaretoken: getCookie('csrftoken'),
+                    datos: JSON.stringify(datos),
+                    fecha: fecha,
+                },
+                success: function (data) {
+                    $('#modalDetalleRemision').modal('hide');
+                    $('#fila-' + data.id).prop('class', 'table-success');
+                    $('#col_estado-' + data.id).html('Terminado');
+                    // $('#col_estado-' + data.id).html('<p style="display: none">2</p>' +
+                    //     '<i class="fas fa-check"></i>');
+                    $('#terminar-' + data.id).hide();
+                    $('#editar1-' + data.id).hide();
+                    $('#anular-' + data.id).hide();
+                    // $('#col_prestamo-'+data.id).html('None');
+                    // $('button[data-id = '+data.id+']').css('display', 'none');                        $('a[data-id = '+id+']').css('display', 'none');
+                    notificacion.fire({
+                        // 'Anulado!',
+                        title: 'La remision ha sido terminada exitosamente.',
+                        type: 'success',
+                    });
+
+                },
+                error: function (data) {
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: '¡Algo salió mal!',
+                        showConfirmButton: false,
+                        timer: 3000
+                        // footer: '<a href>Why do I have this issue?</a>'
+                    })
+                }
+
+            });
+
+        }
+
     });
 
     function getCookie(name) {
@@ -669,33 +654,33 @@ $(document).ready(function () {
             }
         }
 
-        if($(this).val() == ''){
-            $(this).val('0').focus();
-;        }
+        if ($(this).val() == '') {
+            $(this).val('0').focus();;
+        }
 
     });
-    $('.modalCuerpoRemision').on('click','#selBin',function(){
+    $('.modalCuerpoRemision').on('click', '#selBin', function () {
         var bines = $('.modalCuerpoRemision').find('.chkBines');
-        bines.each(function (indexInArray, bin) { 
-             $(bin).prop('checked',true);
+        bines.each(function (indexInArray, bin) {
+            $(bin).prop('checked', true);
         });
     });
-    $('.modalCuerpoRemision').on('click','#desBin',function(){
+    $('.modalCuerpoRemision').on('click', '#desBin', function () {
         var bines = $('.modalCuerpoRemision').find('.chkBines');
-        bines.each(function (indexInArray, bin) { 
-             $(bin).prop('checked',false);
+        bines.each(function (indexInArray, bin) {
+            $(bin).prop('checked', false);
         });
     });
-    $('.modalCuerpoRemision').on('click','#selTap',function(){
+    $('.modalCuerpoRemision').on('click', '#selTap', function () {
         var taps = $('.modalCuerpoRemision').find('.chkTapaderas');
-        taps.each(function (indexInArray, tap) { 
-             $(tap).prop('checked',true);
+        taps.each(function (indexInArray, tap) {
+            $(tap).prop('checked', true);
         });
     });
-    $('.modalCuerpoRemision').on('click','#desTap',function(){
+    $('.modalCuerpoRemision').on('click', '#desTap', function () {
         var taps = $('.modalCuerpoRemision').find('.chkTapaderas');
-        taps.each(function (indexInArray, tap) { 
-             $(tap).prop('checked',false);
+        taps.each(function (indexInArray, tap) {
+            $(tap).prop('checked', false);
         });
     });
 
