@@ -1,0 +1,44 @@
+{% if e.usuario.is_active %}
+
+                                    {% if perms.empleado.estado_empleado %}
+                                    <button class="desactivar btn btn-danger fas fa-user-minus" data-desactivar="{{ e.pk }}"
+                                        data-nombre="{{e.nombre}} {{e.apellido}}"></button>
+                                    {% endif %}
+
+                                    {% if not e.actualizoContrasena %}
+                                        {% if perms.empleado.obtener_contrasena %}
+                                        <button type="submit" class="imprimir btn btn-warning fas fa-key"
+                                            form="formObtenerContrasena-{{e.pk}}"></button>
+                                        {% endif %}
+                                    {% endif %}
+
+                                    {% if e.actualizoContrasena %}
+                                        {% if perms.empleado.restablecer_contrasena %}
+                                        <button type="button" class="validarEmpleado btn btn-primary fas fa-user-lock"
+                                            data-empleado="{{e.pk}}" data-toggle="modal" data-target="#modalReporte"></button>
+                                        {% endif %}
+                                    {% endif %}
+                                    
+                                {% else %}
+                                    {% if perms.empleado.estado_empleado %}
+                                        
+                                        {% if  e.usuario%}
+                                            <button class="activar btn btn-success fas fa-user-check " data-activar="{{ e.pk }}"
+                                         data-nombre="{{e.nombre}} {{e.apellido}}"></button>
+                                         {% else %}
+                                         <button class="crearUsuario btn btn-success fas fa-user-plus " data-activar="{{ e.pk }}"
+                                         data-empleado="{{e.pk}}" data-url="{% url 'empleado:agregar-usuario-url' %}"></button>
+                                        {% endif %}
+                                            
+                                    
+                                    {% endif %}
+                                {% endif %}
+                                {% if perms.empleado.change_empleado %}
+                                    {% if e.usuario %}
+                                    <a href="{% url 'empleado:modificar-url' e.pk %}" class="btn btn-info fas fa-user-edit "
+                                    data-editar="{{ e.pk }}"></a>
+                                    {% else %}
+                                    <a href="{% url 'empleado:editar-empleado-url' %}" class="editarEmpleado btn btn-info fas fa-user-edit "
+                                    data-editar="{{ e.pk }}"></a>
+                                    {% endif %} 
+                                {% endif %}

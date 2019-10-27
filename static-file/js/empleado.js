@@ -16,31 +16,70 @@ $(function () {
         }
     });
 
-    $('[data-toggle="popover"]').popover();
-    $('#enviarEmpleado').on('click', function () {
-        if ($('#correo').val() != '') {
-            $('#formEmpleado').submit();
-            Swal.fire({
-                // 'Anulado!',
-                title: 'Nuevo Registro de Empleado',
-                text: "Se ha enviado los datos de acceso al correo que se proporciono del empleado.",
-                type: 'success',
-                showConfirmButton: false,
-                // timer: 3000
-            });
-        } else {
-            Swal.fire({
-                // 'Anulado!',
-                title: 'Nuevo Registro de Empleado',
-                type: 'success',
-                showConfirmButton: false,
-            });
-            $('#formEmpleado').submit();
+    $('#id_username').prop('required',false);
+
+    $('#siUsuario').change(function(){
+        if ($('#siUsuario').is(':checked')) {
+
+            $('#id_username').prop('required',true);
+        }else{
+            $('#id_username').prop('required',false);
         }
-
-
-
     });
+
+    if ($('#id_username').val() !='') {
+        // $('#siUsuario').prop('checked',true);
+        $('#acceso').prop('hidden',false);
+        $('#textoPregunta').prop('hidden',true);
+    }
+
+    
+
+
+    $('#id_username').removeAttr('required');
+    $('#siUsuario').change(function(){
+        if ($(this).is(':checked')) {
+            $('#acceso').prop('hidden',false);
+            $('#id_username').prop('required',true);
+
+        }else{
+            $('#acceso').prop('hidden',true);
+            $('#id_username').removeAttr('required');
+        }
+    });
+
+    $('[data-toggle="popover"]').popover();
+
+    $('#formEmpleado').submit(function(e){
+        $('#pantalla').addClass('pantalla');
+        $('#circulo').addClass('circulo');
+        $('#loader').addClass('loader');
+        return true;
+    });
+    // $('#enviarEmpleado').on('click', function () {
+    //     if ($('#correo').val() != '') {
+    //         $('#formEmpleado').submit();
+    //         Swal.fire({
+    //             // 'Anulado!',
+    //             title: 'Nuevo Registro de Empleado',
+    //             text: "Se ha enviado los datos de acceso al correo que se proporciono del empleado.",
+    //             type: 'success',
+    //             showConfirmButton: false,
+    //             // timer: 3000
+    //         });
+    //     } else {
+    //         Swal.fire({
+    //             // 'Anulado!',
+    //             title: 'Nuevo Registro de Empleado',
+    //             type: 'success',
+    //             showConfirmButton: false,
+    //         });
+    //         $('#formEmpleado').submit();
+    //     }
+
+
+
+    // });
     $('tr').on('click', '.desactivar', function () {
 
         var id = $(this).attr('data-desactivar');
@@ -88,6 +127,7 @@ $(function () {
             }
         })
     });
+
 
     $('tr').on('click', '.activar', function () {
 
@@ -208,7 +248,7 @@ $(function () {
     var tablex = $('#tablajs').DataTable({
         // "dom": "<'row'  <'col-md-6'f> >",
         dom: "<'row'<'#contenedorArriba1.col-md-3'><'col-md-9'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-4'i><'col-sm-8'<'#colvis'>p>>",
-        "scrollY": '42vh',
+        "scrollY": '46vh',
         "scrollCollapse": true,
         "scrollX": true,
         "deferRender": true,
@@ -239,22 +279,40 @@ $(function () {
 
     $('.dataTables_info').addClass(['p-0', 'text-left']);
 
-    var tablex2 = $('#tablaCargo').DataTable({
-        "scrollY": '40vh',
+    
+
+
+    var tabla2 = $('#tablaCargo').DataTable({
+        // "dom": "<'row'  <'col-md-6'f> >",
+        dom: "<'row'<'#contenedorArriba2.col-md-3'><'col-md-9'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-4'i><'col-sm-8'<'#colvis'>p>>",
+        "scrollY": '46vh',
         "scrollCollapse": true,
-        // "scrollX": true,
+        "scrollX": true,
         "deferRender": true,
         // responsive: true,
-        "scroller": true,
+        "scroller": false,
         "language": {
-            "zeroRecords": "No se ha encontrado nada, lo siento.",
+            "zeroRecords": "No se ha encontrado nada.",
             "infoEmpty": "No hay registros disponibles",
-            "infoFiltered": "(filtrado de _MAX_ registros totales)",
+            "infoFiltered": "(Filtrado de _MAX_ registros totales)",
             "info": "Mostrando _START_ a _END_ de _TOTAL_ registros.",
-            "search": "Buscar:"
+            "search": "Buscar:",
+            "paginate": {
+                "next": "Siguiente",
+                'previous': 'Anterior'
+            }
         }
+
         // "scrollCollapse": true
     });
+
+    var cargo = '';
+    if ($('#add_cargo').length) {
+        cargo = '<a class="btn btn-primary text-left" href="/empleado/crear-cargo/"><i class="fas fa-plus"></i> Nuevo Cargo</a>';
+
+    }
+    $('#contenedorArriba2').html('<div class="btn-group row">'+cargo+'</div>');
+    $('.dataTables_info').addClass(['p-0', 'text-left']);
 
 
 
@@ -322,6 +380,13 @@ $(function () {
                 }
             });
         }
+    });
+
+    $('#formGrupo').submit(function(){
+        $('#pantalla').addClass('pantalla');
+        $('#circulo').addClass('circulo');
+        $('#loader').addClass('loader');
+        return true;
     });
 
     function getCookie(name) {

@@ -74,40 +74,63 @@ def CrearEmpleado(request):
 	if request.method == 'POST':
 		form_usuario = UserCreationForm(request.POST)
 		form_empleado = EmpleadoForm(request.POST)
-		print('valido usuario: ',form_usuario.is_valid())
-		print('valido empleado: ',form_empleado.is_valid())
-		if form_usuario.is_valid() and form_empleado.is_valid():
-			usuario = form_usuario.save()
-			empleado = form_empleado.save()
-			empleado.usuario = usuario
-			empleado.save()
-			usuario.first_name = empleado.nombre
-			usuario.last_name = empleado.apellido
-			if empleado.cargo.grupo:
-				grupo = Group.objects.get(pk=empleado.cargo.grupo.pk)
-				# grupo.user_set.add(empleado.usuario)
-				usuario.groups.add(grupo)	
-			
-			if request.POST['correo']:
-				usuario.email = request.POST['correo']
-				htmlMensaje = ''
-				htmlMensaje +='''
-	 				<hr><h2>Sistema Control de Hielo de Empacadora Litoral,S.A</h2><hr>
-					<p>{} {} ingrese los siguiente datos de acceso para ingresar al sistema.</p>
-					<h3><strong>Usuario:</strong> {}</h3>
-					<h3><strong>Contraseña:</strong> {}</h3>
-					<p><strong>Nota:</strong> Se le solicitara cambio de contraseña la primera vez que inicie sesión.</p>
-				'''.format(empleado.nombre,empleado.apellido,request.POST['username'],request.POST['password1'])
-				email = EmailMultiAlternatives(subject="Datos de acceso al Sistema Control de Hielo de Empacadora Litoral,S.A",body='',to=[request.POST['correo']])
-				email.attach_alternative(htmlMensaje,"text/html")
-				email.send()
 
-			usuario.save()
-			print(usuario.first_name)
-			print('si se we :V')
+		if form_empleado.is_valid():
+			print('valido empleado')
+			empleado = form_empleado.save()
+
+			mensajeEmail = ''
+			mensajeUsuario = ''
+			if 'siUsuario' in request.POST and form_usuario.is_valid():
+				print('valido usuario')
+				usuario = form_usuario.save()
+				usuario.first_name = empleado.nombre
+				usuario.last_name = empleado.apellido
+				empleado.usuario = usuario
+				empleado.save()
+				if empleado.cargo.grupo:
+					grupo = Group.objects.get(pk=empleado.cargo.grupo.pk)
+					# grupo.user_set.add(empleado.usuario)
+					usuario.groups.add(grupo) 
+					print('Usuario: ',usuario.username)
+					print('Cargo: ',empleado.cargo)
+					mensajeUsuario = ' con el usuario <strong>'+str(usuario.username)+'</strong> en el cargo '+str(empleado.cargo)	
+
+				
+				if request.POST['correo']:
+					usuario.email = request.POST['correo']
+					htmlMensaje = ''
+					htmlMensaje +='''
+		 				<h2 style="background-color:#26A3FB;padding: 10px;text-align: center;color: white;
+						">Sistema Control de Hielo de Empacadora Litoral, S.A</h2>
+						<p>Hola {} {}, a continuación se brindan las credenciales de acceso al sistema:</p>
+						<h3><strong>Usuario:</strong> {}</h3>
+						<h3><strong>Contraseña:</strong> {}</h3>
+						<p>Ingrese en el navegador web la URL <a href="https://10.19.20.21">https://10.19.20.21/</a> e ingrese los datos de acceso.</p>
+						<p style="background-color:#26A3FB;padding: 10px;text-align: center;color: white;
+						"><strong>Nota:</strong> Se le solicitara cambio de contraseña la primera vez que inicie sesión.</p>
+					'''.format(empleado.nombre,empleado.apellido,request.POST['username'],request.POST['password1'])
+					email = EmailMultiAlternatives(subject="Datos de acceso al Sistema Control de Hielo de Empacadora Litoral,S.A",body='',to=[request.POST['correo']])
+					email.attach_alternative(htmlMensaje,"text/html")
+
+					import os
+					host = 'google.com'
+					respuestaHost = os.system("ping -c 1 " + host + " > /dev/null 2>&1")
+
+					if respuestaHost == 0:
+						print('Exito al salir a internet')
+						email.send()
+						print('Correo enviado al email: ',usuario.email)
+						mensajeEmail = ' y se envió los datos de acceso al correo electrónico <strong>"'+str(request.POST['correo'])+'"</strong>'
+					else:
+						mensajeEmail = ', pero, <i class="text-danger"> no se enviaron las credenciales de acceso al correo electrónico <strong>(ERROR DE CONEXION)</strong></i>'
+
+
+				usuario.save()
+			messages.success(request, 'El empleado '+str(empleado.nombre)+' '+str(empleado.apellido)+' a sido registrado exitosamente'+mensajeUsuario+mensajeEmail+'.')
 			return HttpResponseRedirect(reverse('empleado:empleados-url'))
 		else:
-			print('no se pudo we :(')
+			print('Datos del empleado invalidos')
 	else:
 		form_usuario = UserCreationForm()
 		form_empleado = EmpleadoForm()
@@ -136,68 +159,279 @@ def CrearEmpleado(request):
 @permission_required('empleado.change_empleado',raise_exception=True)
 def ModificarEmpleado(request,pk):
 	empleado = Empleado.objects.get(pk=pk)
-	usuario = User.objects.get(pk= empleado.usuario.pk)
 	estilos, clases = renderizado(1, 4)
-	cargoActual = empleado.cargo.pk
-	correoActual = empleado.usuario.email
+	cargoActual = Cargo.objects.get(pk=empleado.cargo.pk)
+	if empleado.usuario:
+		correoActual = empleado.usuario.email
+		usuarioActual = User.objects.get(pk = empleado.usuario.pk)
+	else:
+		correoActual = ''
+		usuarioActual = ''
+	# correoActual = empleado.usuario.email
 	print('cargo :',cargoActual)
 	print('correo :',correoActual)
 	if request.method == 'POST':
-		# form_usuario = UserCreationForm(request.POST)
+		
 		form_empleado = EmpleadoForm(request.POST,instance=empleado)
 		# print('valido usuario: ',form_usuario.is_valid())
 		print('valido empleado: ',form_empleado.is_valid())
 		if form_empleado.is_valid():
 			empleado = form_empleado.save()
-			empleado.usuario = usuario
-			empleado.save()
-			usuario.first_name = empleado.nombre
-			usuario.last_name = empleado.apellido
-			if empleado.cargo:
-				if empleado.cargo.pk != cargoActual:
-					cargo = Cargo.objects.get(pk = cargoActual)
-					grupo = Group.objects.get(pk = cargo.grupo.pk)
+			mensajeUsuario = ''
+			mensajeEmail = ''
+
+			form_usuario = UserCreationForm(request.POST)
+			if not usuarioActual and form_usuario.is_valid():
+				print('No existe usuario y se recibio uno...')
+				usuario = form_usuario.save(commit=False)
+				usuario.first_name = empleado.nombre
+				usuario.last_name = empleado.apellido
+				usuario.save()
+				print('se guardo el usuario recibido');
+				empleado.usuario = usuario
+				empleado.save()
+				
+				grupo = Group.objects.get(pk=empleado.cargo.grupo.pk)
+				usuario.groups.add(grupo) 
+				print('Cargo: ',empleado.cargo)
+				usuario.save()
+				print('se asigno el usuario al empleado');
+				mensajeUsuario = ' con el usuario <strong>'+str(usuario.username)+'</strong> en el cargo '+str(empleado.cargo)	
+
+					
+				if request.POST['correo']:
+					usuario.email = request.POST['correo']
+					
+					usuario.save()
+					
+					htmlMensaje = ''
+					htmlMensaje +='''
+		 				<h2 style="background-color:#26A3FB;padding: 10px;text-align: center;color: white;
+						">Sistema Control de Hielo de Empacadora Litoral, S.A</h2>
+						<p>Hola {} {}, a continuación se brindan las credenciales de acceso al sistema:</p>
+						<h3><strong>Usuario:</strong> {}</h3>
+						<h3><strong>Contraseña:</strong> {}</h3>
+						<p>Ingrese en el navegador web la URL <a href="https://10.19.20.21">https://10.19.20.21/</a> e ingrese los datos de acceso.</p>
+						<p style="background-color:#26A3FB;padding: 10px;text-align: center;color: white;
+						"><strong>Nota:</strong> Se le solicitara cambio de contraseña la primera vez que inicie sesión.</p>
+					'''.format(empleado.nombre,empleado.apellido,request.POST['username'],request.POST['password1'])
+					email = EmailMultiAlternatives(subject="Datos de acceso al Sistema Control de Hielo de Empacadora Litoral,S.A",body='',to=[request.POST['correo']])
+					email.attach_alternative(htmlMensaje,"text/html")
+
+					import os
+					host = 'google.com'
+					respuestaHost = os.system("ping -c 1 " + host + " > /dev/null 2>&1")
+
+					if respuestaHost == 0:
+						print('Exito al salir a internet')
+						email.send()
+						print('Correo enviado al email: ',usuario.email)
+						mensajeEmail = ' y se envió los datos de acceso al correo electrónico <strong>"'+str(request.POST['correo'])+'"</strong>'
+					else:
+						mensajeEmail = ', pero, <i class="text-danger"> no se enviaron las credenciales de acceso al correo electrónico <strong>(ERROR DE CONEXION)</strong></i>'
+			elif usuarioActual == empleado.usuario:
+				usuario = User.objects.get(pk=empleado.usuario.pk)
+				if cargoActual != empleado.cargo:
+					grupo = Group.objects.get(pk=cargoActual.grupo.pk)
 					grupo.user_set.remove(usuario)
-					print('cambioo de cargo')
-					if empleado.cargo.grupo:
-						grupo = Group.objects.get(pk=empleado.cargo.grupo.pk)
-						# grupo.user_set.add(empleado.usuario)
-						usuario.groups.add(grupo)	
+					grupo.save()
+
+					# grupo.user_set.add(empleado.usuario)
+					grupo1 = Group.objects.get(pk=empleado.cargo.grupo.pk)
+					usuario.groups.add(grupo1) 
+					usuario.save()
+
+					print('Usuario: ',usuario.username)
+					print('Cargo: ',empleado.cargo)
+					mensajeUsuario = ' con el usuario <strong>'+str(usuario.username)+'</strong> en el cargo '+str(empleado.cargo)	
+
+				if correoActual != request.POST['correo']:
+					usuario.email = request.POST['correo']
+					
+					usuario.save()
+					
+					htmlMensaje = ''
+					htmlMensaje +='''
+		 				<h2 style="background-color:#26A3FB;padding: 10px;text-align: center;color: white;
+						">Sistema Control de Hielo de Empacadora Litoral, S.A</h2>
+						<p>Hola {} {}, a continuación se brindan las credenciales de acceso al sistema:</p>
+						<h3><strong>Usuario:</strong> {}</h3>
+						<h3><strong>Contraseña:</strong> {}</h3>
+						<p>Ingrese en el navegador web la URL <a href="https://10.19.20.21">https://10.19.20.21/</a> e ingrese los datos de acceso.</p>
+						<p style="background-color:#26A3FB;padding: 10px;text-align: center;color: white;
+						"><strong>Nota:</strong> Se le solicitara cambio de contraseña la primera vez que inicie sesión.</p>
+					'''.format(empleado.nombre,empleado.apellido,request.POST['username'],request.POST['password1'])
+					email = EmailMultiAlternatives(subject="Restablecimiento de datos de acceso al Sistema Control de Hielo de Empacadora Litoral,S.A",body='',to=[request.POST['correo']])
+					email.attach_alternative(htmlMensaje,"text/html")
+
+					import os
+					host = 'google.com'
+					respuestaHost = os.system("ping -c 1 " + host + " > /dev/null 2>&1")
+
+					if respuestaHost == 0:
+						print('Exito al salir a internet')
+						email.send()
+						print('Correo enviado al email: ',usuario.email)
+						mensajeEmail = ' y se envió los datos de acceso al correo electrónico <strong>"'+str(request.POST['correo'])+'"</strong>'
+					else:
+						mensajeEmail = 'y <i class="text-danger"> no se enviaron las credenciales de acceso al correo electrónico <strong>(ERROR DE CONEXION)</strong></i>'
 			
-			if request.POST['correo'] != correoActual:
-				usuario.email = request.POST['correo']
-			usuario.save()
-			print(usuario.first_name)
+
+					
+
+
+				
+				
+
+			
+			# empleadoActual = Empleado.objects.get(pk=pk)
+			# if 'siUsuario' in request.POST:
+			# 	form_usuario = UserCreationForm(request.POST)
+			# else:
+			# 	usuarioI = User.objects.get(pk=empleadoActual.usuario.pk)
+			# 	form_usuario = UserCreationForm(request.POST,instance=usuarioI)
+
+			# print('valido usuario: ',form_usuario.is_valid())
+			# if 'siUsuario' in request.POST and form_usuario.is_valid():
+			# 	print('valido usuario')
+			# 	usuario = form_usuario.save()
+			# 	empleado.save()
+			# 	usuario.first_name = empleado.nombre
+			# 	usuario.last_name = empleado.apellido
+			# 	empleado.usuario = usuario
+
+			# 	if empleado.cargo.grupo:
+			# 		grupo = Group.objects.get(pk=empleado.cargo.grupo.pk)
+			# 		# grupo.user_set.add(empleado.usuario)
+			# 		usuario.groups.add(grupo) 
+			# 		print('Usuario: ',usuario.username)
+			# 		print('Cargo: ',empleado.cargo)
+			# 		mensajeUsuario = ' con el usuario <strong>'+str(usuario.username)+'</strong> en el cargo '+str(empleado.cargo)	
+
+				
+			# 	if request.POST['correo']:
+			# 		usuario.email = request.POST['correo']
+			# 		htmlMensaje = ''
+			# 		htmlMensaje +='''
+		 # 				<h2 style="background-color:#26A3FB;padding: 10px;text-align: center;color: white;
+			# 			">Sistema Control de Hielo de Empacadora Litoral, S.A</h2>
+			# 			<p>Hola {} {}, a continuación se brindan las credenciales de acceso al sistema:</p>
+			# 			<h3><strong>Usuario:</strong> {}</h3>
+			# 			<h3><strong>Contraseña:</strong> {}</h3>
+			# 			<p>Ingrese en el navegador web la URL <a href="https://10.19.20.21">https://10.19.20.21/</a> e ingrese los datos de acceso.</p>
+			# 			<p style="background-color:#26A3FB;padding: 10px;text-align: center;color: white;
+			# 			"><strong>Nota:</strong> Se le solicitara cambio de contraseña la primera vez que inicie sesión.</p>
+			# 		'''.format(empleado.nombre,empleado.apellido,request.POST['username'],request.POST['password1'])
+			# 		email = EmailMultiAlternatives(subject="Datos de acceso al Sistema Control de Hielo de Empacadora Litoral,S.A",body='',to=[request.POST['correo']])
+			# 		email.attach_alternative(htmlMensaje,"text/html")
+
+			# 		import os
+			# 		host = 'google.com'
+			# 		respuestaHost = os.system("ping -c 1 " + host + " > /dev/null 2>&1")
+
+			# 		if respuestaHost == 0:
+			# 			print('Exito al salir a internet')
+			# 			email.send()
+			# 			print('Correo enviado al email: ',usuario.email)
+			# 			mensajeEmail = ' y se envió los datos de acceso al correo electrónico <strong>"'+str(request.POST['correo'])+'"</strong>'
+			# 		else:
+			# 			mensajeEmail = ', pero, <i class="text-danger"> no se enviaron las credenciales de acceso al correo electrónico <strong>(ERROR DE CONEXION)</strong></i>'
+
+
+			# 	usuario.save()
+			# else:
+
+			# 	if empleado.usuario:
+			# 		usuario = User.objects.get(pk=empleado.usuario.pk)
+			# 		if empleado.cargo != empleadoActual.cargo:
+						
+			# 			grupo = Group.objects.get(pk=empleadoActual.cargo.grupo.pk)
+			# 			grupo.user_set.remove(usuario)
+
+			# 			grupo = Group.objects.get(pk=empleado.cargo.grupo.pk)
+			# 			usuario.groups.add(grupo) 
+			# 		if request.POST['correo']:
+			# 			if usuario.email != request.POST['correo']:
+			# 				usuario.email = request.POST['correo']
+			# 				htmlMensaje = ''
+			# 				htmlMensaje +='''
+			# 	 				<h2 style="background-color:#26A3FB;padding: 10px;text-align: center;color: white;
+			# 					">Sistema Control de Hielo de Empacadora Litoral, S.A</h2>
+			# 					<p>Hola {} {}, a continuación se brindan las credenciales de acceso al sistema:</p>
+			# 					<h3><strong>Usuario:</strong> {}</h3>
+			# 					<h3><strong>Contraseña:</strong> {}</h3>
+			# 					<p>Ingrese en el navegador web la URL <a href="https://10.19.20.21">https://10.19.20.21/</a> e ingrese los datos de acceso.</p>
+			# 					<p style="background-color:#26A3FB;padding: 10px;text-align: center;color: white;
+			# 					"><strong>Nota:</strong> Se le solicitara cambio de contraseña la primera vez que inicie sesión.</p>
+			# 				'''.format(empleado.nombre,empleado.apellido,request.POST['username'],request.POST['password1'])
+			# 				email = EmailMultiAlternatives(subject="Restablecimiento de los datos de acceso al Sistema Control de Hielo de Empacadora Litoral S.A",body='',to=[request.POST['correo']])
+			# 				email.attach_alternative(htmlMensaje,"text/html")
+
+			# 				import os
+			# 				host = 'google.com'
+			# 				respuestaHost = os.system("ping -c 1 " + host + " > /dev/null 2>&1")
+
+			# 				if respuestaHost == 0:
+			# 					print('Exito al salir a internet')
+			# 					email.send()
+			# 					print('Correo enviado al email: ',usuario.email)
+			# 					mensajeEmail = ' y se envió los datos de acceso al correo electrónico <strong>"'+str(request.POST['correo'])+'"</strong>'
+			# 				else:
+			# 					mensajeEmail = ', pero, <i class="text-danger"> no se enviaron las credenciales de acceso al correo electrónico <strong>(ERROR DE CONEXION)</strong></i>'
+			# 		usuario.save()
+
+			
 			print('si se pudo actualizar we :V')
+			messages.success(request, 'El empleado '+str(empleado.nombre)+' '+str(empleado.apellido)+' a sido modificado exitosamente'+mensajeUsuario+mensajeEmail+'.')
 			return HttpResponseRedirect(reverse('empleado:empleados-url'))
 		else:
 			print('no se pudo actualizar we :(')
 	else:
-		form_usuario = UserCreationForm(instance=usuario)
+		email = '' 
 		form_empleado = EmpleadoForm(instance=empleado)
-	form_usuario.fields['password1'].widget = forms.TextInput()
-	form_usuario.fields['password2'].widget = forms.TextInput()
-	FormControl(form_usuario)
-	FormControl(form_empleado)
+		if empleado.usuario:
+			usuario = User.objects.get(pk= empleado.usuario.pk)
+			form_usuario = UserCreationForm()
+			FormControl(form_usuario)
+			FormControl(form_empleado)
+			form_usuario.fields['username'].widget.attrs['readonly']='True'
+			form_usuario.fields['username'].widget.attrs['value'] = usuario.username
+			
+			if usuario.email:
+				email = usuario.email
+			
+		else:
+			form_usuario = UserCreationForm()
+			contra = generate_key(8).lower()
+			FormControl(form_usuario)
+			FormControl(form_empleado)
+			form_usuario.fields['password1'].widget = forms.TextInput()
+			form_usuario.fields['password2'].widget = forms.TextInput()
+			form_usuario.fields['password1'].widget.attrs['value']=contra
+			form_usuario.fields['password2'].widget.attrs['value']=contra
+
+	
+	
 	form_empleado.fields['codEmpleado'].widget.attrs['readonly'] = 'True' #no funciona
-	contra = generate_key(8).lower()
 	# form_usuario.fields['password1'].widget.attrs['value']=contra
 	form_usuario.fields['password1'].widget.attrs['readonly']='True'
 	form_usuario.fields['password2'].widget.attrs['readonly']='True'
-	form_usuario.fields['username'].widget.attrs['readonly']='True'
+	
 	# form_usuario.fields['password2'].widget.attrs['value']=contra
 	# form_usuario.fields['password2'].widget = forms.HiddenInput()
 	comboboxBasico(form_empleado,'cargo','Seleccione...','True',[])
+	
 	context = {
 		'estilos': estilos,
 		'clases': clases,
 		'form_usuario': form_usuario,
 		'form_empleado': form_empleado,
 		'editarEmpleado':True,
-		'correo':usuario.email,
+		'correo':email,
 		'empleado':empleado.nombre+' '+empleado.apellido,
 	 }
 	return render(request,'empleado/empleado.html',context)
+
 
 @login_required()
 @permission_required('empleado.estado_empleado',raise_exception=True)
@@ -283,16 +517,28 @@ def ReporteContrasena(request):
 		if usuario.email:
 			htmlMensaje = ''
 			htmlMensaje +='''
-				<hr><h2>Sistema Control de Hielo de Empacadora Litoral,S.A</h2><hr>
-				<center><h2>Restablecimiento de contraseña</h2></center>
-				<p>{} {} ingrese los siguiente datos de acceso para ingresar al sistema.</p>
-				<h3><strong>Usuario:</strong> {}</h3>
-				<h3><strong>Contraseña:</strong> {}</h3>
-				<p><strong>Nota:</strong> Se le solicitara cambio de contraseña la primera vez que inicie sesión.</p>
+		 				<h2 style="background-color:#26A3FB;padding: 10px;text-align: center;color: white;
+						">Sistema Control de Hielo de Empacadora Litoral, S.A</h2>
+						<p>Hola {} {}, a continuación se brindan las credenciales de acceso al sistema:</p>
+						<h3><strong>Usuario:</strong> {}</h3>
+						<h3><strong>Contraseña:</strong> {}</h3>
+						<p>Ingrese en el navegador web la URL <a href="https://10.19.20.21">https://10.19.20.21/</a> e ingrese los datos de acceso.</p>
+						<p style="background-color:#26A3FB;padding: 10px;text-align: center;color: white;
+						"><strong>Nota:</strong> Se le solicitara cambio de contraseña la primera vez que inicie sesión.</p>
 			'''.format(usuario.first_name,usuario.last_name,usuario,contra)
 			email = EmailMultiAlternatives(subject="Restablecimiento de Contraseña Para el Sistema Control de Hielo de Empacadora Litoral,S.A",body='',to=[usuario.email])
 			email.attach_alternative(htmlMensaje,"text/html")
-			email.send()
+
+			import os
+			host = 'google.com'
+			respuestaHost = os.system("ping -c 1 " + host + " > /dev/null 2>&1")
+
+			if respuestaHost == 0:
+				print('Exito al salir a internet')
+				email.send()
+			else:
+				print('ERROR DE CONEXION: no se pudo enviar al correo electronico')
+			# email.send()
 
 		html_string = render_to_string('empleado/reportes/reporteContrasena.html',data)
 		html = HTML(string=html_string,base_url=request.build_absolute_uri(),encoding="UTF-8")
@@ -360,6 +606,7 @@ def CrearGrupo(request):
 			cargo = Cargo(cargo=grupo.name,grupo = grupo)
 			cargo.save()
 			print(cargo.cargo+' ha sido creado con exito');
+			messages.success(request, 'El cargo '+str(cargo.cargo)+' a sido registrado exitosamente.')
 			return redirect(reverse('empleado:grupos-url'))
 
 

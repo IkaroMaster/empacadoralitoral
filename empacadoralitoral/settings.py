@@ -223,7 +223,7 @@ EMAIL_HOST_PASSWORD = 'Litoral100'
 
 # DEBUG TOOLBAR
 def show_toolbar(request):
-    if not request.is_ajax() and request.user and request.user.username == 'admin':
+    if not request.is_ajax() and request.user and request.user.username == 'admin1':
         return True
     return False
 
