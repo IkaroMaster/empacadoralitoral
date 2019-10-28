@@ -162,7 +162,13 @@ $(function () {
         equipo = '<a class="btn btn-primary text-left" href="/equipo/opcion/1/"><i class="fas fa-plus"></i> Nuevo Equipo</a>';
 
     }
-    $('#contenedorArriba').html('<div class="btn-group row">' + equipo +'</div>');
+
+    graficos = '<button id="btnGroupDrop1" type="button" class="btn btn-success dropdown-toggle"' +
+            'data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas  fa-chart-line"></i> Graficos</button>' +
+            '<div class="dropdown-menu" aria-labelledby="btnGroupDrop1">' +
+            '<a class="btn btn-primary text-left dropdown-item" href="/equipo/grafico_estado_inventario/"><i class="fas  fa-chart-pie"></i> Estado del Inventario</a>'+
+            '</div>';
+    $('#contenedorArriba').html('<div class="btn-group row">' + equipo +graficos+'</div>');
     $('.dataTables_info').addClass(['p-0', 'text-left']);
 
     var tabla2 = $('#tablajs2').DataTable({

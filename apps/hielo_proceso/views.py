@@ -100,11 +100,10 @@ def CrearProcesoHielo(request):
 			try:
 				with transaction.atomic():
 					DetalleHieloProceso.objects.bulk_create(new_detallesHielo)
-					messages.success(request, 'Usted ha creado el nuevo registro de consumo de hielo en la planta.')
+					messages.success(request, 'Se registró el  consumó de hielo en planta de la fecha '+str(hielo.fecha)+' exitosamente.')
+					return redirect(reverse('hielo_proceso:dias-url'))
 			except IntegrityError: #If the transaction failed
-				messages.error(request, 'Ha ocurrido un error al intentar guardar el cosumo de hielo del dia.')
-				return redirect(reverse('hielo_proceso:dias-url'))
-			
+				messages.error(request, 'Ha ocurrido un error al intentar guardar el consumó de hielo del dia.')			
 		else:
 			if HieloProceso.objects.filter(fecha = request.POST['fecha']).exists():
 				messages.error(request, 'Ya existe un registro de hielo de proceso con la fecha '+request.POST['fecha'])

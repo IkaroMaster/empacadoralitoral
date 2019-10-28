@@ -13,4 +13,10 @@ urlpatterns = [
     path("reporte_codigoQR/", views.ReporteCodigoQR, name ="reporte_codigoQR-url"),
     path("reporte_obtenerQR/<int:pk>", views.ReporteObtenerQR, name ="obtener_qr-url"),
 
+
+    #GRAFICOS Y REPORTERIA
+    path("grafico_estado_inventario/",views.grafico_estado_inventario, name ="grafico_estado_inventario-url"),
+
+
+
 ]

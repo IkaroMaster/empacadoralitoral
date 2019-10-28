@@ -266,3 +266,42 @@ def ReporteObtenerQR(request,pk):
 		
 	else:
 		pass
+
+
+@login_required
+def grafico_estado_inventario(request):
+	if not request.user.empleado.actualizoContrasena:
+		return HttpResponseRedirect(reverse('seguridad:log_out-url'))	
+
+	equipos = Equipo.objects.values('estado').order_by('estado').annotate(cantidad=Count('estado'))
+	print('equipos:',equipos)
+
+	# chart = {
+	# 	'chart': {'type': 'spline'},
+	# 	'title': {'text': 'Consumo diario de hielo en proceso'},
+	# 	'xAxis': {
+	# 		'categories': list(map(lambda row: row['fecha'],dataset))
+	# 	},
+	# 	'yAxis': {'title': {'text': 'Quintal (Q)'}},
+	# 	'plotOptions': {
+	# 		'line': {
+	# 			'dataLabels': {
+	# 				'enabled': 'true'
+	# 			},
+	# 			'enableMouseTracking': 'false'
+	# 		}
+	# 	},
+	# 	'series': [{
+	# 		'name':'Fecha',
+	# 		'data':list(map(lambda row: row['quintales'],dataset))
+	# 	}],
+	# 		# 'data': list(map(lambda row: {'name': port_display_name[row['embarked']], 'y': row['total']}, dataset))
+		
+	# }
+
+	return render(request,'equipo/graficos/estadoInventario.html')
+
+
+
+
+

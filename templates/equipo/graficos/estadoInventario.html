@@ -1,0 +1,23 @@
+{% extends "base_in.html" %}
+{% block titulo %}
+Estado Inventario
+{% endblock titulo %}
+{% block l2 %}
+bg-success
+{% endblock l2 %}
+{% block cuerpo %}
+	<div class=" card container">
+		<div class="card-body">
+			<h4 class="text-center"><strong>Grafico general del estado del equipo </strong></h4>
+			<div id="grafico"></div>
+		</div>
+	</div>
+	
+{% endblock cuerpo %}
+{% load static %}
+{% block script %}
+<script src="{% static 'js/highcharts/highcharts.js'%}"></script>
+<script src="{% static 'js/highcharts/exporting.js'%}"></script>
+<script src="{% static 'js/highcharts/highcharts-more.js'%}"></script>
+<script src="{% static 'js/graficosCamaron.js'%}"></script>
+{% endblock script %}
