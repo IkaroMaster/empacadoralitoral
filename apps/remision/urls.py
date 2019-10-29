@@ -25,5 +25,8 @@ urlpatterns = [
 	path("ajax_fecha/", views.Fecha1_asJson, name ="fecha-url"),
 	path("reporte_mensual/", views.ReporteMensual, name ="reporte_mensual-url"),
 
+	#GRAFICOS
+	path("grafico/venta_mensual/", views.GraficoVentaMensual, name ="grafico_venta_mensual-url"),
+
 
 ]

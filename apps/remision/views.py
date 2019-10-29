@@ -1148,3 +1148,27 @@ def validarNumeroRemision_asJson(request):
 				'existe':0,
 			}
 		return JsonResponse(data)
+
+
+@login_required
+def GraficoVentaMensual(request):
+	totalMensual = DetalleRemision.objects.filter(remision__estado__pk=2,hielo__pk=1).values('remision__fecha__month').annotate(total=Sum(F('salida')-F('devolucion'))).order_by('remision__fecha__month')
+	categories  = list(map(lambda row: mesNombre(row['remision__fecha__month']),totalMensual))
+	data = list(map(lambda row: row['total'],totalMensual))
+
+	print('categories: ',categories)
+	print('data: ',data)
+
+	ctx = {
+		'categories' :categories,
+		'data': data,
+	}
+	return render(request,'remision/graficos/ventaMensual.html',ctx)
+
+
+
+
+
+
+
+

@@ -2,8 +2,8 @@ from django import forms
 # from django.contrib.admin import widgets    
 
 def FormControl(form):
-    for x in form.fields:
-    	form.fields[x].widget.attrs['class'] = 'form-control'
+	for x in form.fields:
+		form.fields[x].widget.attrs['class'] = 'form-control'
 
 def renderizado(posicion, tamano):
 	estilos = {}
@@ -38,7 +38,7 @@ def inputReadonly(objeto,campo):
 	objeto.fields[campo].widget.attrs['Readonly'] = True
 	
 def capitalize(objeto,campo):
-    objeto.fields[campo].widget.attrs['style'] = 'text-transform:capitalize;'
+	objeto.fields[campo].widget.attrs['style'] = 'text-transform:capitalize;'
 
 def fechaBasico(objeto,campo,mensaje):
 	objeto.fields[campo].label = mensaje
@@ -73,6 +73,34 @@ def meses(var):
 	var.append([(str('12')), str('Diciembre')])
 	return var
 
+def mesNombre(id):
+	if id == 1:
+		return str('Enero')
+	elif id == 2:
+		return str('Febrero')
+	elif id == 3:
+		return str('Marzo')
+	elif id == 4:
+		return str('Abril')
+	elif id == 5:
+		return str('Mayo')
+	elif id == 6:
+		return str('Junio')
+	elif id == 7:
+		return str('Julio')
+	elif id == 8:
+		return str('Agosto')
+	elif id == 9:
+		return str('Septiembre')
+	elif id == 10:
+		return str('Octubre')
+	elif id == 11:
+		return str('Noviembre')
+	elif id == 12:
+		return str('Diciembre')
+	
+		
+
 def anios(var):
 	var.append([2015])
 	var.append([2016])
@@ -88,16 +116,16 @@ def anios(var):
 	var.append([2025])
 
 def binGrande():
-    return 15.00
+	return 15.00
 def binPequeno():
-    return 10.00
+	return 10.00
 def carretonBlanco():
-    return 7.26
+	return 7.26
 def glaseo():
-    return 1.93
+	return 1.93
 def canastaA():
-    return 1.4597
+	return 1.4597
 def canastapRoja():
-    return 1.45
+	return 1.45
 def canastapAzul():
-    return 1.45
+	return 1.45

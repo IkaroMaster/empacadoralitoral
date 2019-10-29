@@ -1,16 +1,20 @@
 {% extends "base_in.html" %}
 {% block titulo %}
-Grafico
+Consumo por mes
 {% endblock titulo %}
-
 {% block l8 %}
-active
+bg-success
 {% endblock l8 %}
 {% block cuerpo %}
-<div class="container panel-heading bg-primary">
-    <h3 class="panel-title text-light">Gráfico sobre el consumó de hielo</h3>
-</div>
-<div id="container" data-url="{% url 'hielo_proceso:data-url' %}"></div>
+	<div class=" card container">
+		<div class="card-body">
+			
+			<div id="container" data-url="{% url 'hielo_proceso:data-url' %}"></div>
+			</div>
+		</div>
+	
+
+	
 {% endblock cuerpo %}
 {% load static %}
 {% block script %}
@@ -19,3 +23,6 @@ active
 <script src="{% static 'js/highcharts/highcharts-more.js'%}"></script>
 <script src="{% static 'js/graficosHieloProceso.js'%}"></script>
 {% endblock script %}
+
+
+

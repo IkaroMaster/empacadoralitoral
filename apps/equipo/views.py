@@ -19,10 +19,11 @@ from datetime import datetime, date, time, timedelta
 from django.conf import settings
 from django.middleware import csrf
 from qr_code.qrcode.utils import QRCodeOptions
-
+import json
 #PERMISOS
 from django.contrib.auth.decorators import login_required,permission_required
 from django.utils.decorators import method_decorator
+
 
 @login_required
 @permission_required('equipo.view_equipo',raise_exception=True)
@@ -273,7 +274,7 @@ def grafico_estado_inventario(request):
 	if not request.user.empleado.actualizoContrasena:
 		return HttpResponseRedirect(reverse('seguridad:log_out-url'))	
 
-	equipos = Equipo.objects.values('estado').order_by('estado').annotate(cantidad=Count('estado'))
+	equipos = Equipo.objects.all().values('estado','estado__estado').order_by('estado').annotate(cantidad=Count('estado'))
 	print('equipos:',equipos)
 
 	# chart = {
@@ -299,7 +300,53 @@ def grafico_estado_inventario(request):
 		
 	# }
 
-	return render(request,'equipo/graficos/estadoInventario.html')
+
+
+
+
+	grafico = {
+	    'chart': {
+	        'plotBackgroundColor': 'null',
+	        'plotBorderWidth': 'null',
+	        'plotShadow': 'false',
+	        'type': 'pie'
+	    },
+	    'title': {
+	        'text': 'Browser market shares in January, 2018'
+	    },
+	    'tooltip': {
+	        'pointFormat': '{series.name}: <b>{point.percentage:.1f}%</b>'
+	    },
+	    'plotOptions': {
+	        'pie': {
+	            'allowPointSelect': 'true',
+	            'cursor': 'pointer',
+	            'dataLabels': {
+	                'enabled': 'true',
+	                'format': '<b>{point.name}</b>: {point.percentage:.1f} %'
+	            }
+	        }
+	    },
+	    'series': [{
+	        'name': 'Brands',
+	        'colorByPoint': 'true',
+	        'data':list(map(lambda equipo:{'name':equipo['estado__estado'],'y':equipo['cantidad']},equipos))
+	    }]
+	}
+
+	data = list(map(lambda equipo:{'name':equipo['estado__estado'],'y':equipo['cantidad']},equipos))
+
+	print(grafico)
+
+	# graficoDumps = json.dumps(grafico)
+
+	ctx = {
+		'grafico':json.dumps(grafico), 
+		'data': data,
+		'equipos': equipos,
+	}
+
+	return render(request,'equipo/graficos/estadoInventario.html',ctx)
 
 
 

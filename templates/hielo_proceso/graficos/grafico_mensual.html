@@ -1,16 +1,19 @@
 {% extends "base_in.html" %}
 {% block titulo %}
-Grafico
+Consumo diario
 {% endblock titulo %}
-
 {% block l8 %}
-active
+bg-success
 {% endblock l8 %}
 {% block cuerpo %}
-<div class="container panel-heading bg-primary">
-    <h3 class="panel-title text-light">Gráfico de Consumo de Hielo del Mes de {{nombreMes}} </h3>
-</div>
-<div id="container2" data-mes="{{mes}}" data-anio="{{anio}}" data-url="{% url 'hielo_proceso:grafico_mensual-url' %}"></div>
+	<div class=" card container">
+		<div class="card-body">
+			<div id="container2" data-mes="{{mes}}" data-anio="{{anio}}" data-url="{% url 'hielo_proceso:grafico_mensual-url' %}"></div>
+			</div>
+		</div>
+	</div>
+
+	
 {% endblock cuerpo %}
 {% load static %}
 {% block script %}
@@ -19,3 +22,4 @@ active
 <script src="{% static 'js/highcharts/highcharts-more.js'%}"></script>
 <script src="{% static 'js/graficosHieloProceso.js'%}"></script>
 {% endblock script %}
+

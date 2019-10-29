@@ -1,16 +1,19 @@
 {% extends "base_in.html" %}
 {% block titulo %}
-Grafico
+Cosecha mensual
 {% endblock titulo %}
-
 {% block l9 %}
-active
+bg-success
 {% endblock l9 %}
 {% block cuerpo %}
-<div class="container panel-heading bg-primary">
-    <h3 class="panel-title text-light">Gráfico de Cosecha Recibida del Mes de {{nombreMes}} </h3>
-</div>
-<div id="container" data-mes="{{mes}}" data-anio="{{anio}}" data-url="{% url 'camaron:grafico_mensual-url' %}"></div>
+	<div class=" card container">
+		<div class="card-body">
+			<h3 class="panel-title "><strong>Gráfico de Cosecha Recibida del Mes de {{nombreMes}} </strong></h3>
+			
+			<div id="container" data-mes="{{mes}}" data-anio="{{anio}}" data-url="{% url 'camaron:grafico_mensual-url' %}"></div>
+		</div>
+	</div>
+	
 {% endblock cuerpo %}
 {% load static %}
 {% block script %}
@@ -19,3 +22,6 @@ active
 <script src="{% static 'js/highcharts/highcharts-more.js'%}"></script>
 <script src="{% static 'js/graficosCamaron.js'%}"></script>
 {% endblock script %}
+
+
+

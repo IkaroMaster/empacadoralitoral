@@ -397,7 +397,8 @@ $(function () {
     graficos = '<div class="btn-group" role="group">'+
                     '<button id="btnG" type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-chart-line"></i> Gráficos</button>' +
                     '<div class="dropdown-menu" aria-labelledby="btnG">' +
-                        '<button id="graficoMensual" class="dropdown-item" data-toggle="modal" data-target="#modalGrafico"><i class="fas fa-chart-line"></i> Consumo de Hielo Mensual</button>' +
+                        '<button id="graficoMensual" class="dropdown-item" data-toggle="modal" data-target="#modalGrafico"><i class="fas fa-chart-line"></i> Cosecha Mensual</button>' +
+                        '<a class="dropdown-item" href="/camaron/graficos/mensual_fincas/"><i class="fas fa-chart-bar"></i> Cosecha Mensual en Fincas</a>'+
                     '</div>'+
                 '</div>';
 

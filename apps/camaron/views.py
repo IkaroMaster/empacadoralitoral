@@ -1209,11 +1209,37 @@ def GraficoMensual(request):
 				}
 			},
 			'series': [{
-				'name':'Fecha',
+				'name':'Total diario',
 				'data':list(map(lambda row: row['libras'],dataset))
 			}],			
 		}
 		
 		print(chart)
 		return JsonResponse(chart)
+
+
+
+
+def GraficoMensualFincas(request):
+	if request.method == 'GET' and not request.is_ajax():
+		fechaActual = datetime.now().date()
+
+		mesualFincas = DetalleCosecha.objects.filter(cosecha__fecha__month= fechaActual.month,cosecha__fecha__year=fechaActual.year).values('cosecha__fecha__month','cosecha__laguna__finca__nombre').annotate(totalMensual=Cast(Sum(F('libras')),FloatField())).order_by('-totalMensual')
+		data = list(map(lambda mensual:{'name':mensual['cosecha__laguna__finca__nombre'],'data':[mensual['totalMensual']]},mesualFincas))
+
+		ctx = {
+			'fechaActual' : fechaActual,
+			'mesNombre': mesNombre(fechaActual.month),
+			'data': data
+
+		}
+		return render(request,'camaron/graficos/mensualFincas.html',ctx)
+	if request.method == 'GET' and request.is_ajax():
+		ctx = {
+			# 'fechaActual' : fechaActual,
+			# 'mesNombre': mesNombre(fechaActual.month),
+			# 'data': data
+
+		}
+		return render(request,'camaron/graficos/mensualFincas.html',ctx)
 

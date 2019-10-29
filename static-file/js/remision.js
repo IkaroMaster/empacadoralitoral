@@ -232,7 +232,7 @@ $(document).ready(function () {
     });
     var tablex = $('#tablajs').DataTable({
         // "dom": "<'row'  <'col-md-6'f> >",
-        dom: "<'row'<'#contenedorArriba.col-md-4'><'col-md-8'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-4'i><'col-sm-8'<'#colvis'>p>>",
+        dom: "<'row'<'#contenedorArriba.col-md-6'><'col-md-6'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-4'i><'col-sm-8'<'#colvis'>p>>",
         "scrollY": '47vh',
         "scrollCollapse": true,
         "scrollX": true,
@@ -266,15 +266,20 @@ $(document).ready(function () {
         remision = '<a class="btn btn-primary text-left" href="/remision/crear/"><i class="fas fa-plus"></i> Nueva Remisión</a>';
 
     }
-    if ($('#add_remision').length) {
-        reportes = '<button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle"' +
+    if ($('#generar_reportes').length) {
+        reportes = '<div class="btn-group" role="group"><button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle"' +
             'data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-file-alt"></i> Reportes</button>' +
             '<div class="dropdown-menu" aria-labelledby="btnGroupDrop1">' +
             '<button id="reporteMensual" data-toggle="modal" data-target="#modalReporte" class="dropdown-item"><i class="far fa-file-alt"></i> Reporte Mensual</button>' +
-            '</div>';
+            '</div></div>';
 
     }
-    $('#contenedorArriba').html('<div class="btn-group" role="toolbar">' + remision + reportes + '</div>');
+    graficos = '<div class="btn-group" role="group"><button id="btnGroupDrop2" type="button" class="btn btn-success dropdown-toggle"' +
+            'data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas  fa-chart-line"></i> Graficos</button>' +
+            '<div class="dropdown-menu" aria-labelledby="btnGroupDrop2">' +
+                '<a class="btn btn-primary text-left dropdown-item" href="/remision/grafico/venta_mensual/"><i class="fas  fa-chart-pie"></i> Ventas mesuales</a>'+
+            '</div></div>';
+    $('#contenedorArriba').html('<div class="btn-group" role="toolbar">' + remision + reportes +graficos+ '</div>');
 
     $('.dataTables_info').addClass(['p-0', 'text-left']);
 

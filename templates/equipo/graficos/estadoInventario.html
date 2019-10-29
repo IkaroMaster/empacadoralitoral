@@ -8,10 +8,32 @@ bg-success
 {% block cuerpo %}
 	<div class=" card container">
 		<div class="card-body">
-			<h4 class="text-center"><strong>Grafico general del estado del equipo </strong></h4>
+			<h3><strong>Grafico general del estado del inventario de equipo</strong></h3>
 			<div id="grafico"></div>
+			<div class="table-responsive">
+				<table class="table table-bordered">
+					<thead>
+						<tr>
+							<th><strong>#</strong></th>
+							<th>ESTADO</th>
+							<th>CANTIDAD</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for e in equipos  %}
+							<tr>
+								<td>{{forloop.counter}}</td>
+								<td>{{e.estado__estado}}</td>
+								<td>{{e.cantidad}} Unidades</td>
+							</tr>
+						{% endfor %}
+						
+					</tbody>
+				</table>
+			</div>
 		</div>
 	</div>
+
 	
 {% endblock cuerpo %}
 {% load static %}
@@ -19,5 +41,41 @@ bg-success
 <script src="{% static 'js/highcharts/highcharts.js'%}"></script>
 <script src="{% static 'js/highcharts/exporting.js'%}"></script>
 <script src="{% static 'js/highcharts/highcharts-more.js'%}"></script>
-<script src="{% static 'js/graficosCamaron.js'%}"></script>
+<script>
+$(function(){
+
+	Highcharts.chart("grafico", {
+  chart: {
+    plotBackgroundColor: null,
+    plotBorderWidth: null,
+    plotShadow: false,
+    type: 'pie'
+  },
+  title: {
+    text: 'Inventario de equipo'
+  },
+  tooltip: {
+    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+  },
+  plotOptions: {
+    pie: {
+      allowPointSelect: true,
+      cursor: 'pointer',
+      dataLabels: {
+        enabled: true,
+        format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+      },
+      showInLegend:true
+    }
+  },
+  series: [{
+    name: 'Brands',
+    colorByPoint: true,
+    data: {{data|safe}}
+	}]
+});
+	
+
+});
+</script>
 {% endblock script %}
