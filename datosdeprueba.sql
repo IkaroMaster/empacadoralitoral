@@ -1,3 +1,5 @@
+CREATE DATABASE  IF NOT EXISTS `empacadoralitoral` /*!40100 DEFAULT CHARACTER SET utf8 COLLATE utf8_spanish_ci */;
+USE `empacadoralitoral`;
 -- MySQL dump 10.13  Distrib 8.0.15, for macos10.14 (x86_64)
 --
 -- Host: 127.0.0.1    Database: empacadoralitoral
@@ -758,7 +760,7 @@ CREATE TABLE `hielo_proceso_detallehieloproceso` (
   KEY `hielo_proceso_detall_departamento_id_7ec3a715_fk_hielo_pro` (`departamento_id`),
   CONSTRAINT `hielo_proceso_detall_departamento_id_7ec3a715_fk_hielo_pro` FOREIGN KEY (`departamento_id`) REFERENCES `hielo_proceso_departamentoproceso` (`id`),
   CONSTRAINT `hielo_proceso_detall_hieloProceso_id_225a9404_fk_hielo_pro` FOREIGN KEY (`hieloProceso_id`) REFERENCES `hielo_proceso_hieloproceso` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=117 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=127 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -767,7 +769,7 @@ CREATE TABLE `hielo_proceso_detallehieloproceso` (
 
 LOCK TABLES `hielo_proceso_detallehieloproceso` WRITE;
 /*!40000 ALTER TABLE `hielo_proceso_detallehieloproceso` DISABLE KEYS */;
-INSERT INTO `hielo_proceso_detallehieloproceso` VALUES (74,40,2,4,7,2,6,5,2,1),(75,40,3,5,6,2,4,4,3,2),(76,41,2,5,7,6,6,7,5,4),(77,41,3,4,6,5,5,6,6,4),(78,42,2,5,8,2,7,6,4,4),(79,42,3,5,7,2,5,6,5,5),(80,42,4,4,9,2,5,5,4,4),(81,43,2,4,6,5,5,6,5,4),(82,43,3,4,7,5,6,6,5,4),(83,44,2,6,8,7,8,6,6,5),(84,44,3,5,8,6,8,6,5,4),(85,45,2,5,7,6,7,8,8,4),(86,45,3,5,8,6,5,6,5,4),(87,46,2,4,9,7,6,9,7,4),(88,46,3,4,7,6,5,5,7,4),(89,47,2,4,9,6,8,5,7,4),(90,47,3,5,6,7,6,5,8,3),(91,48,2,4,8,6,6,6,8,5),(92,48,3,5,6,7,9,5,9,4),(93,49,2,5,8,9,7,10,7,4),(94,49,3,5,9,8,6,7,9,5),(95,50,2,4,8,7,6,8,6,4),(96,50,3,5,9,6,5,8,6,4),(105,51,2,4,8,7,6,9,6,4),(106,51,3,5,9,6,5,7,6,4),(107,52,2,5,6,6,5,7,5,4),(108,52,3,4,7,5,5,8,6,4),(109,53,2,5,7,8,7,6,6,4),(110,53,3,4,8,9,6,6,5,4),(111,54,2,6,8,6,5,7,7,5),(112,54,3,5,8,5,4,6,6,5),(113,55,2,5,8,5,4,8,7,4),(114,55,3,5,6,6,5,6,6,4),(115,56,2,5,7,6,4,7,8,4),(116,56,3,4,6,5,4,6,9,4);
+INSERT INTO `hielo_proceso_detallehieloproceso` VALUES (74,40,2,4,7,2,6,5,2,1),(75,40,3,5,6,2,4,4,3,2),(76,41,2,5,7,6,6,7,5,4),(77,41,3,4,6,5,5,6,6,4),(78,42,2,5,8,2,7,6,4,4),(79,42,3,5,7,2,5,6,5,5),(80,42,4,4,9,2,5,5,4,4),(81,43,2,4,6,5,5,6,5,4),(82,43,3,4,7,5,6,6,5,4),(83,44,2,6,8,7,8,6,6,5),(84,44,3,5,8,6,8,6,5,4),(85,45,2,5,7,6,7,8,8,4),(86,45,3,5,8,6,5,6,5,4),(87,46,2,4,9,7,6,9,7,4),(88,46,3,4,7,6,5,5,7,4),(89,47,2,4,9,6,8,5,7,4),(90,47,3,5,6,7,6,5,8,3),(91,48,2,4,8,6,6,6,8,5),(92,48,3,5,6,7,9,5,9,4),(93,49,2,5,8,9,7,10,7,4),(94,49,3,5,9,8,6,7,9,5),(95,50,2,4,8,7,6,8,6,4),(96,50,3,5,9,6,5,8,6,4),(105,51,2,4,8,7,6,9,6,4),(106,51,3,5,9,6,5,7,6,4),(107,52,2,5,6,6,5,7,5,4),(108,52,3,4,7,5,5,8,6,4),(109,53,2,5,7,8,7,6,6,4),(110,53,3,4,8,9,6,6,5,4),(111,54,2,6,8,6,5,7,7,5),(112,54,3,5,8,5,4,6,6,5),(113,55,2,5,8,5,4,8,7,4),(114,55,3,5,6,6,5,6,6,4),(115,56,2,5,7,6,4,7,8,4),(116,56,3,4,6,5,4,6,9,4),(117,57,2,5,9,7,5,8,8,6),(118,57,3,6,9,6,4,9,7,5),(119,58,2,5,6,6,4,7,7,4),(120,58,3,4,6,5,4,6,6,4),(121,59,2,5,9,5,5,9,6,3),(122,59,3,6,5,6,5,7,4,4),(123,60,2,5,5,6,5,8,8,5),(124,60,3,5,6,4,4,9,8,5),(125,61,2,4,6,6,6,6,6,5),(126,61,3,5,9,7,5,8,7,4);
 /*!40000 ALTER TABLE `hielo_proceso_detallehieloproceso` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -786,7 +788,7 @@ CREATE TABLE `hielo_proceso_hieloproceso` (
   UNIQUE KEY `hielo_proceso_hieloproceso_fecha_98b5df34_uniq` (`fecha`),
   KEY `hielo_proceso_hielop_registrado_id_4af33447_fk_empleado_` (`registrado_id`),
   CONSTRAINT `hielo_proceso_hielop_registrado_id_4af33447_fk_empleado_` FOREIGN KEY (`registrado_id`) REFERENCES `empleado_empleado` (`codEmpleado`)
-) ENGINE=InnoDB AUTO_INCREMENT=57 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=62 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -795,7 +797,7 @@ CREATE TABLE `hielo_proceso_hieloproceso` (
 
 LOCK TABLES `hielo_proceso_hieloproceso` WRITE;
 /*!40000 ALTER TABLE `hielo_proceso_hieloproceso` DISABLE KEYS */;
-INSERT INTO `hielo_proceso_hieloproceso` VALUES (40,'2019-08-01',801),(41,'2019-08-02',801),(42,'2019-08-03',801),(43,'2019-08-04',801),(44,'2019-08-05',801),(45,'2019-08-06',801),(46,'2019-08-07',801),(47,'2019-08-08',801),(48,'2019-08-09',801),(49,'2019-08-10',801),(50,'2019-09-01',801),(51,'2019-03-09',801),(52,'2019-09-02',801),(53,'2019-09-03',801),(54,'2019-09-04',801),(55,'2019-09-05',801),(56,'2019-09-06',801);
+INSERT INTO `hielo_proceso_hieloproceso` VALUES (40,'2019-08-01',801),(41,'2019-08-02',801),(42,'2019-08-03',801),(43,'2019-08-04',801),(44,'2019-08-05',801),(45,'2019-08-06',801),(46,'2019-08-07',801),(47,'2019-08-08',801),(48,'2019-08-09',801),(49,'2019-08-10',801),(50,'2019-09-01',801),(51,'2019-03-09',801),(52,'2019-09-02',801),(53,'2019-09-03',801),(54,'2019-09-04',801),(55,'2019-09-05',801),(56,'2019-09-06',801),(57,'2019-09-07',801),(58,'2019-09-08',801),(59,'2019-09-09',801),(60,'2019-09-10',801),(61,'2019-10-01',801);
 /*!40000 ALTER TABLE `hielo_proceso_hieloproceso` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1123,4 +1125,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-10-31 17:00:20
+-- Dump completed on 2019-10-31 17:10:26
