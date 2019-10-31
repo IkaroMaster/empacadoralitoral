@@ -270,8 +270,11 @@ $(document).ready(function () {
         reportes = '<div class="btn-group" role="group"><button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle"' +
             'data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-file-alt"></i> Reportes</button>' +
             '<div class="dropdown-menu" aria-labelledby="btnGroupDrop1">' +
-            '<button id="reporteMensual" data-toggle="modal" data-target="#modalReporte" class="dropdown-item"><i class="far fa-file-alt"></i> Reporte Mensual</button>' +
+                '<button id="reporteMensual" data-toggle="modal" data-target="#modalReporte" class="dropdown-item"><i class="far fa-file-alt"></i> Reporte Mensual de Notas de Remisión</button>' +
+                '<div class="dropdown-divider"></div>' +
+                '<button id="reporteIntervalo" class="dropdown-item"><i class="far fa-file-alt"></i> Reporte Notas de Remisión con Intervalo de Fechas</button>' +
             '</div></div>';
+
 
     }
     graficos = '<div class="btn-group" role="group"><button id="btnGroupDrop2" type="button" class="btn btn-success dropdown-toggle"' +
@@ -970,6 +973,52 @@ $(document).ready(function () {
             });
         });
     });
+
+    //------- --------- ---------- -----------------
+
+    $('#reporteIntervalo').click(function () {
+        $.get('/remision/reportes/intervalo/', function (data) {
+            $('#modalNuevoContenedor').empty().html(data.html);
+            $('#guardarNuevo').prop('class', 'btn btn-warning reporteIntervalo').html('Imprimir');
+            $('#modalNuevo').modal('show');
+        });
+    });
+
+    $('#modalNuevoContenedor').on('blur','#fecha1',function(){
+        var fecha1,fecha2;
+        fecha1 = $(this).val();
+        fecha2 = $(document).find('#fecha2').val();
+
+        if (fecha1 > fecha2) {
+            notificacion.fire({
+                'title':'La Fecha de inicio no puede ser mayor.',
+                type: 'error'
+            });
+            $('#fecha1').focus();
+        }
+        
+    });
+
+    $('#modalNuevoContenedor').on('blur','#fecha2',function(){
+        var fecha1,fecha2;
+        fecha2 = $(this).val();
+        fecha1 = $(document).find('#fecha1').val();
+
+        if (fecha2 < fecha1) {
+            notificacion.fire({
+                'title':'La Fecha final no puede ser menor.',
+                type: 'error'
+            });
+            $('#fecha2').focus();
+        }
+        
+    });
+
+    $('#modalNuevo').on('click', '.reporteIntervalo', function () {
+        // $('#guardarNuevo').prop('class', 'btn btn-primary reporteMensualFincas').html('Guardar');
+        $(document).find('#formNuevo').submit();
+    });
+    //------- --------- ---------- -----------------
 
 
 

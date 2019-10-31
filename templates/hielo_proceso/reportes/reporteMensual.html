@@ -191,19 +191,19 @@ td {
                 <td>{{h.canastaA}}</td>
                 <td>{{h.canastapRoja}}</td>
                 <td>{{h.canastapAzul}}</td>
-                <td>{{h.quintales}}</td>
+                <td>{{h.quintales|floatformat:2}}</td>
             </tr>
             {% endfor %}
             <tr class="total">
                 <td><strong>Total</strong></td>
-                <td>{{totales.binGrande}}</td>  
-                <td>{{totales.binPequeno}}</td>
-                <td>{{totales.carretonBlanco}}</td>
-                <td>{{totales.glaseo}}</td>
-                <td>{{totales.canastaA}}</td>
-                <td>{{totales.canastapRoja}}</td>
-                <td>{{totales.canastapAzul}}</td>
-                <td><u>{{totales.quintales}}</u></td>
+                <td><strong>{{totales.binGrande}}</strong></td>  
+                <td><strong>{{totales.binPequeno}}</strong></td>
+                <td><strong>{{totales.carretonBlanco}}</strong></td>
+                <td><strong>{{totales.glaseo}}</strong></td>
+                <td><strong>{{totales.canastaA}}</strong></td>
+                <td><strong>{{totales.canastapRoja}}</strong></td>
+                <td><strong>{{totales.canastapAzul}}</strong></td>
+                <td><strong>{{totales.quintales|floatformat:2}}</strong></td>
             </tr>
         </tbody>
     </table>

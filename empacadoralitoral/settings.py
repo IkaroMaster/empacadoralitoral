@@ -155,16 +155,17 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 # AUTH_USER_MODEL = 'users.User'
 
-# LANGUAGE_CODE = 'es-HN'
+# LANGUAGE_CODE = 'es-ES'
 LANGUAGE_CODE = 'es-EN'
 
 TIME_ZONE = 'America/Tegucigalpa'
 
-USE_I18N = True
+USE_I18N = False
+USE_THOUSAND_SEPARATOR = True
 
-USE_L10N = True
+USE_L10N = False
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)

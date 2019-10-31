@@ -1070,11 +1070,11 @@ def ReporteMensual(request):
 		anio = request.POST['anio']
 
 		# hielo = HieloProceso.objects.filter(fecha__month=int(mes),fecha__year=int(anio))
-		remisiones = Remision.objects.filter(fecha__month=int(mes),fecha__year=int(anio)).annotate(totalDevolucion=Sum(F('detalleremision__devolucion'))).order_by('fecha') 
-		remisionDevolucion = Remision.objects.filter(fecha__month=int(mes),fecha__year=int(anio),detalleremision__hielo__pk=1).annotate(devolucion=Sum(F('detalleremision__devolucion'))) 
-		totalDevoluciones = Remision.objects.filter(fecha__month=int(mes),fecha__year=int(anio),detalleremision__hielo__pk=1).aggregate(totalDevoluciones=Sum(F('detalleremision__devolucion'))) 
-		totalHieloLimpio = Remision.objects.filter(fecha__month=int(mes),fecha__year=int(anio),detalleremision__hielo__pk=1).aggregate(totalHielo=Sum(F('detalleremision__salida'))) 
-		totalHieloSucio = Remision.objects.filter(fecha__month=int(mes),fecha__year=int(anio),detalleremision__hielo__pk=2).aggregate(totalHielo=Sum(F('detalleremision__salida'))) 
+		remisiones = Remision.objects.filter(fecha__month=int(mes),fecha__year=int(anio),estado__pk=2).annotate(totalDevolucion=Sum(F('detalleremision__devolucion'))).order_by('fecha') 
+		remisionDevolucion = Remision.objects.filter(fecha__month=int(mes),fecha__year=int(anio),detalleremision__hielo__pk=1,estado__pk=2).annotate(devolucion=Sum(F('detalleremision__devolucion'))) 
+		totalDevoluciones = Remision.objects.filter(fecha__month=int(mes),fecha__year=int(anio),detalleremision__hielo__pk=1,estado__pk=2).aggregate(totalDevoluciones=Sum(F('detalleremision__devolucion'))) 
+		totalHieloLimpio = Remision.objects.filter(fecha__month=int(mes),fecha__year=int(anio),detalleremision__hielo__pk=1,estado__pk=2).aggregate(totalHielo=Sum(F('detalleremision__salida'))) 
+		totalHieloSucio = Remision.objects.filter(fecha__month=int(mes),fecha__year=int(anio),detalleremision__hielo__pk=2,estado__pk=2).aggregate(totalHielo=Sum(F('detalleremision__salida'))) 
 		if remisiones:
 			mesNombre = remisiones[0].fecha.strftime('%B')
 			data = {'tamano':'Letter', 
@@ -1107,7 +1107,7 @@ def ReporteMensual(request):
 
 			return response
 		else:
-			return HttpResponse('<h1>No hay cosumo de hielo en el mes seleccionado<h1>')
+			return render(request,'404.html')
 		
 	else:
 		return render(request,'404.html')
@@ -1164,6 +1164,62 @@ def GraficoVentaMensual(request):
 		'data': data,
 	}
 	return render(request,'remision/graficos/ventaMensual.html',ctx)
+
+
+
+@login_required
+def ReporteIntervalo(request):
+	if request.is_ajax() and request.method == 'GET':
+		html = fechaIntervalo('/remision/reportes/intervalo/',csrf.get_token(request))
+		# print(html)
+		return JsonResponse({'html':html})
+	elif request.method == 'POST':
+		ahora = datetime.now()
+		fecha1 = datetime.strptime(request.POST['fecha1'],'%Y-%m-%d')
+		fecha2 = datetime.strptime(request.POST['fecha2'],'%Y-%m-%d')
+
+		# hielo = HieloProceso.objects.filter(fecha__month=int(mes),fecha__year=int(anio))
+		remisiones = Remision.objects.filter(fecha__range=(fecha1,fecha2),estado__pk=2).annotate(totalDevolucion=Sum(F('detalleremision__devolucion'))).order_by('fecha') 
+		remisionDevolucion = Remision.objects.filter(fecha__range=(fecha1,fecha2),detalleremision__hielo__pk=1,estado__pk=2).annotate(devolucion=Sum(F('detalleremision__devolucion'))) 
+		totalDevoluciones = Remision.objects.filter(fecha__range=(fecha1,fecha2),detalleremision__hielo__pk=1,estado__pk=2).aggregate(totalDevoluciones=Sum(F('detalleremision__devolucion'))) 
+		totalHieloLimpio = Remision.objects.filter(fecha__range=(fecha1,fecha2),detalleremision__hielo__pk=1,estado__pk=2).aggregate(totalHielo=Sum(F('detalleremision__salida'))) 
+		totalHieloSucio = Remision.objects.filter(fecha__range=(fecha1,fecha2),detalleremision__hielo__pk=2,estado__pk=2).aggregate(totalHielo=Sum(F('detalleremision__salida'))) 
+		if remisiones:
+			mesNombre = remisiones[0].fecha.strftime('%B')
+			data = {'tamano':'Letter', 
+					'posicion':'portrait', 
+					'remisiones':remisiones,
+					'remisionDevolucion':remisionDevolucion,
+					'totalDevoluciones':totalDevoluciones,
+					'totalHieloLimpio':totalHieloLimpio,
+					'totalHieloSucio':totalHieloSucio,
+					'fecha1':fecha1,
+					'fecha2':fecha2
+					# 'mesNombre':mesNombre,
+					# 'anio': anio, 
+					# 'ahora':ahora,
+			}
+			html_string = render_to_string('remision/reportes/reporteIntervalo.html',data)
+			html = HTML(string=html_string,base_url=request.build_absolute_uri(),encoding="UTF-8")
+			
+			result = html.write_pdf(stylesheets=[
+				# Change this to suit your css path
+				## settings.BASE_DIR + '/static/bootstrap/css/bootstrap.css',
+			],)
+			# Creating http response
+			response = HttpResponse(content_type='application/pdf;')
+			response['Content-Disposition'] = 'inline; filename=remison-'+str(fecha1)+'-'+str(fecha2)+'.pdf'
+			response['Content-Transfer-Encoding'] = 'UTF-8'
+			with tempfile.NamedTemporaryFile(delete=True) as output:
+				output.write(result)
+				output.flush()
+				output = open(output.name, 'rb')
+				response.write(output.read())
+
+			return response
+		else:
+			return render(request,'404.html')
+
 
 
 

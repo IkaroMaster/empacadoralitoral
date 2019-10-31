@@ -390,6 +390,8 @@ $(function () {
                         '   <button id="reporteMensual" data-toggle="modal" data-target="#modalReporte" class=" dropdown-item "><i class="far fa-file-alt"></i> Reporte Mensual</button>'+
                             '<div class="dropdown-divider"></div>' +
                         '   <button id="reporteIntervalo" data-toggle="modal" data-target="#modalReporte" class=" dropdown-item "><i class="far fa-file-alt"></i> Reporte Con Intervalo</button>'+
+                            '<div class="dropdown-divider"></div>' +
+                        '   <button id="reporteMensualFincas" class=" dropdown-item "><i class="far fa-file-alt"></i> Cosecha Mensual en Fincas</button>'+
                         '</div>'+
                 '</div>';
     }
@@ -688,6 +690,27 @@ $(function () {
             });
         });
     });
+
+
+    //------- --------- ---------- -----------------
+
+    $('#reporteMensualFincas').click(function () {
+        $.get('/camaron/reportes/mensual_fincas/', function (data) {
+            $('#modalNuevoContenedor').empty().html(data.html);
+            $('#guardarNuevo').prop('class', 'btn btn-warning reporteMensualFincas').html('Imprimir');
+            $('#modalNuevo').modal('show');
+        });
+
+
+    });
+    $('#modalNuevo').on('click', '.reporteMensualFincas', function () {
+        // $('#guardarNuevo').prop('class', 'btn btn-primary reporteMensualFincas').html('Guardar');
+        $(document).find('#formNuevo').submit();
+    });
+
+
+
+
 
 
     $(document).on('blur', '#id_codFinca', function () {

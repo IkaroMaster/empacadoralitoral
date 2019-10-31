@@ -891,55 +891,44 @@ def Fecha1_asJson(request):
 	if not request.user.empleado.actualizoContrasena:
 		return HttpResponseRedirect(reverse('seguridad:log_out-url'))	
 	if request.is_ajax():
-		mes = []
-		meses(mes)
 		html = ''
-		html +='''
-		<form action="/camaron/reporte_mensual/" method="post" id="formReporteMensual" target="_blank">
-		<input type="hidden" name="csrfmiddlewaretoken" value="{}">
-		<div class="row">
-			<p>Para generar el reporte mensual seleccione la fecha:</p>
-			<div class=" col-6">
-				<label for="selectMes">Mes</label>
-				<select name="mes" class="form-control" id="selectMes" required>
-					
-		'''.format(csrf.get_token(request))
-		for mes in mes:
-			html+='''
-					<option value="{}">{}</option>
-			'''.format(mes[0],mes[1])
-		html+='''
-				</select>
+		html += '''
+		<h1></h1>
+		<form id="formNuevo" action="/compania/agregarLaguna/" class="row" method="POST" >
+				<input type="hidden" name="csrfmiddlewaretoken" value="{}">
+				<div class="col-md-6 input-group mb-3 mt-2">
+					<div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon1">Código de Laguna:</span>
+                        </div>
+					 <label class="text-center"></label>
+					 <input type="text" name="codLaguna" maxlength="10" class="form-control" required="" id="id_codLaguna">
 				</div>
-		'''
-
-		anio = []
-		anios(anio)
-		html +='''
-			<div class=" col-6">
-				<label for="selectMes">Año</label>
-				<select name="anio" class="form-control" id="selectAnio" required>
-					
-		'''
-		for anio in anio:
-			var = ''
-			if int(anio[0]) == 2019:
-				var= 'selected'
-			html+='''
-					<option value="{}" {}>{}</option>
-			'''.format(anio[0],var,anio[0])
-		html+='''
-				</select>
+				<div class="col-md-6">
+					<label class="text-center">Finca:</label>
+					<select name="finca" class="selectpicker form-control show-tick"   required="" id="id_finca" >
+					'''.format(csrf.get_token(request))
+		
+		finca = Finca.objects.get(pk=request.GET['finca'])
+		
+		html += '<option value="{}" selected>{}</option>'.format(finca.pk,finca)
+		html += '''
+					</select>
 				</div>
-		</div>
-		</form>
+				<div class="col-md-8">
+					<label class="text-center">Ubicación:</label>
+					<input type="text" name="ubicacion" maxlength="200" class="form-control" id="id_ubicacion">
+				</div>
+				<div class="col-md-4">
+					<label class="text-center">Tamaño:</label>
+					<input type="number" name="tamano" class="form-control" id="id_tamano">
+				</div>
+				<div class="col-md-12">
+						<label class="text-center">Descripción:</label>
+						<input type="text" name="descripcion" maxlength="100" class="form-control" id="id_descripcion">
+				</div>
+			</form>
 		'''
-		data = {
-				'html':html,
-			}
-		return JsonResponse(data)
-	else:
-		pass
+		return JsonResponse({'html':html})
 
 @login_required()
 def FechaIntervalo_asJson(request):
@@ -1073,7 +1062,7 @@ def ReporteIntervalo(request):
 
 		# hielo = HieloProceso.objects.filter(fecha__month=int(mes),fecha__year=int(anio))
 
-		cosechas = Cosecha.objects.filter(fecha__range=(fechaInicio,fechaFinal))
+		cosechas = Cosecha.objects.filter(fecha__range=(fechaInicio,fechaFinal)).order_by('fecha')
 		
 		if cosechas:
 				
@@ -1226,20 +1215,49 @@ def GraficoMensualFincas(request):
 
 		mesualFincas = DetalleCosecha.objects.filter(cosecha__fecha__month= fechaActual.month,cosecha__fecha__year=fechaActual.year).values('cosecha__fecha__month','cosecha__laguna__finca__nombre').annotate(totalMensual=Cast(Sum(F('libras')),FloatField())).order_by('-totalMensual')
 		data = list(map(lambda mensual:{'name':mensual['cosecha__laguna__finca__nombre'],'data':[mensual['totalMensual']]},mesualFincas))
-
+		print(mesualFincas.count())
 		ctx = {
 			'fechaActual' : fechaActual,
 			'mesNombre': mesNombre(fechaActual.month),
-			'data': data
+			'data': data,
 
 		}
 		return render(request,'camaron/graficos/mensualFincas.html',ctx)
 	if request.method == 'GET' and request.is_ajax():
+		var = request.GET['mes']
+		fecha = datetime.strptime(var,'%Y-%m')
+		mesualFincas = DetalleCosecha.objects.filter(cosecha__fecha__month= fecha.month,cosecha__fecha__year=fecha.year).values('cosecha__fecha__month','cosecha__laguna__finca__nombre').annotate(totalMensual=Cast(Sum(F('libras')),FloatField())).order_by('-totalMensual')
+		data = list(map(lambda mensual:{'name':mensual['cosecha__laguna__finca__nombre'],'data':[mensual['totalMensual']]},mesualFincas))
+		print(mesualFincas.count())
 		ctx = {
 			# 'fechaActual' : fechaActual,
-			# 'mesNombre': mesNombre(fechaActual.month),
-			# 'data': data
+			'mesNombre': mesNombre(fecha.month),
+			'data': data,
+			'total':mesualFincas.count()
 
 		}
-		return render(request,'camaron/graficos/mensualFincas.html',ctx)
+		return JsonResponse(ctx)
 
+
+def ReporteMensualFincas(request):
+	print('llego solicitud')
+	if request.is_ajax() and request.method == 'GET':
+		html = fechaMes('/camaron/reportes/mensual_fincas/',csrf.get_token(request))
+		print(html)
+		return JsonResponse({'html':html})
+	elif request.method == 'POST':
+		var = request.POST['mes']
+		fecha = datetime.strptime(var,'%Y-%m')
+		mesualFincas = DetalleCosecha.objects.filter(cosecha__fecha__month= fecha.month,cosecha__fecha__year=fecha.year).values('cosecha__fecha__month','cosecha','cosecha__laguna__finca__nombre').annotate(totalMensual=Cast(Sum(F('libras')),FloatField())).order_by('-totalMensual')
+		print(mesualFincas)
+		total = DetalleCosecha.objects.filter(cosecha__fecha__month= fecha.month,cosecha__fecha__year=fecha.year).aggregate(totalMensual=Cast(Sum(F('libras')),FloatField()))
+
+		ctx = {
+		'mensualFincas':mesualFincas,
+		'mes':mesNombre(fecha.month),
+		'anio':fecha.year,
+		'total':total
+		}
+		return render(request,'camaron/reportes/rMensualFincas.html',ctx)
+
+		

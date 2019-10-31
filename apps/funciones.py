@@ -1,4 +1,6 @@
 from django import forms
+from datetime import datetime, date, time, timedelta
+
 # from django.contrib.admin import widgets    
 
 def FormControl(form):
@@ -129,3 +131,50 @@ def canastapRoja():
 	return 1.45
 def canastapAzul():
 	return 1.45
+
+
+
+def fechaMes(url,csrfToken):
+	fActual = datetime.now().date()
+	mActual = fActual.strftime('%Y-%m')	
+
+	html = '''
+	<form  id="formNuevo" action="{}" class="row" method="POST" target="_blank" >
+		<input type="hidden" name="csrfmiddlewaretoken" value="{}">
+		<div class="col-md-auto input-group mb-3 mt-2">
+			<div class="input-group-prepend">
+            	<span class="input-group-text" id="basic-addon1">Seleccione el mes:</span>
+            </div>	
+			<input type="month" name="mes" value="{}"class="form-control"/>
+		</div>
+	</form>
+	'''.format(url,csrfToken,mActual)
+	return html
+
+
+
+def fechaIntervalo(url,csrfToken):
+	fActual = datetime.now().date()
+	mActual = fActual.strftime('%Y-%m-%d')	
+
+	html = '''
+	<form  id="formNuevo" action="{}" class="row" method="POST" target="_blank" >
+		<input type="hidden" name="csrfmiddlewaretoken" value="{}">
+		<div class="col-md-auto input-group mb-3 mt-2">
+			<div class="input-group-prepend">
+            	<span class="input-group-text" id="basic-addon1">Fecha de Inicio:</span>
+            </div>	
+			<input id="fecha1" type="date" name="fecha1" value="{}"class="form-control"/>
+		</div>
+		<div class="col-md-auto input-group mb-3 mt-2">
+			<div class="input-group-prepend">
+            	<span class="input-group-text" id="basic-addon1">Fecha Final:</span>
+            </div>	
+			<input id="fecha2" type="date" name="fecha2" value="{}"class="form-control"/>
+		</div>
+	</form>
+	'''.format(url,csrfToken,mActual,mActual)
+
+	return html
+
+

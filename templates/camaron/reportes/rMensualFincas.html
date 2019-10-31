@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block titulo %}REPORTE DE CAMARON MENSUAL POR FINCA | EMPACADORA LITORAL S.A{% endblock titulo %}
+{% block css %}
+<style type="text/css">
+@page {
+  size: Letter portrait;
+  margin: 1.5cm;
+} 
+</style>
+{% endblock css %}
+{% block imprimir %}   
+<div class="container-fluid row">
+  <div class="col-1">
+    {% load static %}
+    <img src="{% static 'imgs/logo_litoral.png'%}" alt="" style="width:100%">    
+  </div>
+  <div class="col-10">
+    <h2 class="text-center"><strong>Informe Mensual del Total de Cosecha por Fincas</strong></h2>
+  </div>
+  <div class="col-1">
+    
+  </div>
+</div>
+<p>A continuación se detalla el total en libras de la cosecha recibida en la Empacadora Litoral S.A de C.V en el mes de {{mes|lower}} del año {{anio}}:</p>
+<div class="table-responsive">
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Finca</th>
+        <th>Total Mensual</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for mf in mensualFincas  %}
+      <tr>
+        <td>{{mf.cosecha__laguna__finca__nombre}}</td>
+        <td>{{mf.totalMensual}} lbs</td>
+      </tr>
+      {% endfor %}
+      <tr class="alert-secondary">
+        <td></td>
+        <td><strong>{{total.totalMensual|floatformat:1}} Libras</strong></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+{% endblock imprimir %}
+{% block script %}
+<script>
+$(function () {
+  // setTimeout(function (){ window.print(); }, 500);
+  //     window.onfocus = function () { setTimeout(function () { window.close(); }, 500); }
+  // window.print();
+});
+</script>
+{% endblock script %}
