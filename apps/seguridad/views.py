@@ -12,6 +12,12 @@ from django.urls import reverse
 # Nesesario para crear vistas
 from apps.empleado.models import Empleado
 
+
+from django.views.defaults import page_not_found
+def mi_error_404(request, exception):
+    nombre_template = '404.html'
+    return page_not_found(request, template_name=nombre_template)
+
 # Create your views here.
 def login_form(request):
 	if not request.user.is_authenticated:

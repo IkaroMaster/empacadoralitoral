@@ -56,7 +56,9 @@ def CrearVehiculo(request):
 	if request.method == 'POST':
 		vehiculo_form = VehiculoForm(request.POST)
 		if vehiculo_form.is_valid():
-			vehiculo_form.save()
+			v = vehiculo_form.save()
+			v.disponible = True
+			v.save()
 			return redirect(reverse('vehiculo:vehiculos-url'))
 		else:
 			messages.error(request,'Informacion del vehiculo ingresada invalida.')

@@ -38,7 +38,27 @@ class DetalleHieloForm(forms.ModelForm):
 class BaseDetalleHieloFormSet(BaseFormSet):
 	def clean(self):
 		if any(self.errors):
-			return 
+			return
+
+		departamentos = []
+		duplicado = False
+		for form in self.forms:
+		 	if form.cleaned_data:
+		 		departamento = form.cleaned_data.get('departamento')
+
+		 		if departamento:
+		 			if departamento in departamentos:
+		 				duplicado = True
+		 			departamentos.append(departamento)
+
+		 		if not departamento:
+		 			raise forms.ValidationError('Todas las filas deben tener asignado un departamento',code='falta_departamento')
+
+		 		if duplicado:
+		 			raise forms.ValidationError('Se encontro el departamento '+str(form.cleaned_data.get('departamento'))+' repetido, no puede ingresar departamentos duplicados.',code='duplicado_departamento')
+
+
+
 		
 # from ..equipo.models import *
 # from ..funciones import *

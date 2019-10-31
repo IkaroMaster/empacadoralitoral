@@ -195,7 +195,7 @@ $(function () {
         // "scrollCollapse": true
     });
 
-    $('.editarEquipo').click(function (e) {
+    $(document).on('click','.editarEquipo',function (e) {
         var id = $(this).attr('data-id');
         Swal.fire({
             title: '¿Desea editar el equipo Nō ' + id + '?',
