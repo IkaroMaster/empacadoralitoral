@@ -76,8 +76,7 @@ bg-success
         </ul>
     </div>
     <div class="card-body">
-         <h4 class="mb-1">
-            {% if crearCompania %}
+         <h4 class="mb-1"><strong>{% if crearCompania %}
             Crear Nueva Empresa
             {% elif editarCompania %}
             Modificar {{nombre}}
@@ -94,7 +93,7 @@ bg-success
             Modificar Laguna {{laguna}}
             {% elif listadoLagunas %}
             Lagunas
-            {% endif %}</h4>
+            {% endif %}</strong></h4>
 
 
         {% if crearCompania or editarCompania %}
@@ -207,7 +206,9 @@ bg-success
                                 Inactiva
                                 {% endif %}
                             </td>
-                            <td>{{ c.abreviatura }}</td>
+                            <td>{% if c.abreviatura %}
+                                {{ c.abreviatura }}
+                            {% endif %}</td>
                             <td>{{ c.tipoCompania.tipo }}</td>
                             <a href=""></a>
                             <td>
@@ -219,8 +220,14 @@ bg-success
                                 {% endif %}
 
                                 {% if perms.compania.estado_compania %}
+                                {% if c.estado %}
+                                    <button data-id="{{c.pk}}" data-estado='{{c.estado}}' data-nombre="{{c.nombre}}"
+                                    class="estadoCompania desactivar btn btn-danger fas fa-times" uk-tooltip="Cambiar estado" id="estadoBoton-{{c.pk}}" ></button>
+                                {% else %}
                                 <button data-id="{{c.pk}}" data-estado='{{c.estado}}' data-nombre="{{c.nombre}}"
-                                    class="estadoCompania btn btn-danger fas fa-times" uk-tooltip="Cambiar estado"></button>
+                                    class="estadoCompania activar btn btn-success fas fa-check" uk-tooltip="Cambiar estado" id="estadoBoton-{{c.pk}}"></button>
+                                {% endif %}
+                                
                                 {% endif %}
 
 
@@ -233,8 +240,10 @@ bg-success
                         {% endfor %}
                     </tbody>
                 </table>
+                
             </div>
-
+        <p class="text-left mt-2"><strong><i class="fas fa-info"></i></strong> <i class="alert-danger">Empresa Inactiva</i>
+                <i class="alert-light">Empresa Activa</i></p>
         </div>
 
         {% endif %}

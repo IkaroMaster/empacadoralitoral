@@ -154,7 +154,7 @@ $(function () {
     var tabla = $('#tablajs').DataTable({
         // "dom": "<'row'  <'col-md-6'f> >",
         dom: "<'row'<'#contenedorArriba1.col-md-3'><'col-md-9'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-4'i><'col-sm-8'<'#colvis'>p>>",
-        "scrollY": '48vh',
+        "scrollY": '44vh',
         "scrollCollapse": true,
         "scrollX": true,
         "deferRender": true,

@@ -41,7 +41,7 @@ bg-success
         </ul>
     </div>
     <div class="card-body">
-        <h4 class="mb-1">
+        <h4 class="mb-1"><strong>            
             {% if listado %}
             Inventario de Equipo
             {% elif crear%}
@@ -52,7 +52,8 @@ bg-success
             Editar {{informacion}}
             {% elif crearCodigoQR%}
             Generador de Código QR de Equipo
-            {% endif %}
+            {% endif %}</strong>
+
         </h4>
         <div style="{{estilos.o1}}">
              <p class="small text-left mt-0 mb-0"><i class="fas fa-info"></i> <strong class="text-warning">Campo con borde color amarillo es requerido.</strong></p>
@@ -148,7 +149,7 @@ bg-success
                             <td>{{ e.pk }}</td>
                             <td>{{ e.codigo_barras }}</td>
                             <td>{{ e.nombre }}</td>
-                            <td><a href="">{{ e.numero }}</a></td>
+                            <td>{{ e.numero }}</td>
                             <td>{{ e.tamano }}</td>
                             <td>{{ e.color }}</td>
                             <td id="estado-{{e.pk}}">{{ e.estado }}</td>
@@ -169,13 +170,13 @@ bg-success
                                 {% if perms.equipo.devolver_equipo %}
                                     {% for prestamo in  e.equipos.all %}
                                         {% if e.estado.pk == 1 and e.nombre.pk == 1 and prestamo.prestamoEquipo.estadoPrestamo.pk == 4 and not prestamo.devuelto  %}
-                                            <button class="devolverEquipo btn btn-success fas fa-" uk-tooltip="Retorno de equipo" data-prestamo="{{prestamo.prestamoEquipo.pk}}" data-detallePrestamo="{{prestamo.pk}}" data-tipo="1" d="devolver-{{e.pk}}" data-id="{{e.pk}}"><i class="fas fa-truck-loading"></i></button>
+                                            <button class="devolverEquipo btn btn-success fas fa-" uk-tooltip="Retorno de equipo" data-prestamo="{{prestamo.prestamoEquipo.pk}}" data-detallePrestamo="{{prestamo.pk}}" data-tipo="1" data-numero="{{e.numero}}"  id="devolver-{{e.pk}}" data-id="{{e.pk}}"><i class="fas fa-truck-loading"></i></button>
                                         {% endif %}
                                        
                                     {% endfor %}
                                     {% for prestamo in  e.tapaderas.all %}
                                         {% if e.estado.pk == 1 and e.nombre.pk == 4 and prestamo.prestamoEquipo.estadoPrestamo.pk == 4 and not prestamo.devueltoT %}
-                                            <button class="devolverEquipo btn btn-success fas fa-" uk-tooltip="Retorno de equipo" data-prestamo="{{prestamo.prestamoEquipo.pk}}" data-detallePrestamo="{{prestamo.pk}}" data-tipo="4" id="devolverEquipo-{{e.pk}}" data-id="{{e.pk}}"><i class="fas fa-truck-loading"></i></button>
+                                            <button class="devolverEquipo btn btn-success fas fa-" uk-tooltip="Retorno de equipo" data-prestamo="{{prestamo.prestamoEquipo.pk}}" data-detallePrestamo="{{prestamo.pk}}" data-tipo="4" data-numero="{{e.numero}}" id="devolver-{{e.pk}}" data-id="{{e.pk}}"><i class="fas fa-truck-loading"></i></button>
                                     
                                         {% endif %}                                 
                                     {% endfor %}

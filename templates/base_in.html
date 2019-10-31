@@ -17,7 +17,7 @@
 <div id="wrapper" class="animate">
     <nav class="navbar header-top fixed-top navbar-expand-lg navbar-dark  bg-primary">
       <a class="navbar-brand" href="{% url 'inicio:inicio-url'%}"><img style="display:inline-block"
-        src="{% static 'imgs/iconito.png' %}" width="25px">Control de Hielo Empacadora Litoral</a>
+        src="{% static 'imgs/iconito-min.png' %}" width="25px">Control de Hielo Empacadora Litoral</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText"
         aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -27,8 +27,8 @@
           <li class="nav-item">
               {% if perms.prestamos.view_prestamoequipo %}
               <a href="{% url 'prestamos:prestamos-url' %}" class="nav-link loading text-light {% block l3 %}{% endblock %}"><img
-                  src="{% static 'imgs/reserva.png' %}" width="45px" alt=""> <strong>Préstamos</strong><img
-                  src="{% static 'imgs/reserva.png' %}" width="45px" alt="" class=" shortmenu animate m-0 p-0"></a> 
+                  src="{% static 'imgs/reserva-min.png' %}" width="45px" alt=""> <strong>Préstamos</strong><img
+                  src="{% static 'imgs/reserva-min.png' %}" width="45px" alt="" class=" shortmenu animate m-0 p-0"></a> 
                   
               {% endif %}
           </li>
@@ -45,57 +45,57 @@
           <li class="nav-item">
           {% if perms.remision.view_remision %}
           <a href="{% url 'remision:remision-url' %}" class="nav-link loading text-light {% block l1 %}{% endblock %}"><img
-              src="{% static 'imgs/remision.png' %}" width="45px" alt=""> <strong>Remisiones</strong><img
-              src="{% static 'imgs/remision.png' %}" width="45px" alt="" class=" shortmenu animate m-0 p-0"></a>
+              src="{% static 'imgs/remision-min.png' %}" width="45px" alt=""> <strong>Remisiones</strong><img
+              src="{% static 'imgs/remision-min.png' %}" width="45px" alt="" class=" shortmenu animate m-0 p-0"></a>
           {% endif %}
           </li>
           <li class="nav-item">
           {% if perms.camaron.view_cosecha %}
           <a href="{% url 'camaron:cosechas-url' %}" class="nav-link loading text-light {% block l9 %}{% endblock %}"><img
-              src="{% static 'imgs/camaron.png' %}" width="45px" alt=""> <strong>Camarón</strong><img
-              src="{% static 'imgs/camaron.png' %}" width="45px" alt="" class=" shortmenu animate m-0 p-0"></a>
+              src="{% static 'imgs/camaron-min.png' %}" width="45px" alt=""> <strong>Camarón</strong><img
+              src="{% static 'imgs/camaron-min.png' %}" width="45px" alt="" class=" shortmenu animate m-0 p-0"></a>
           {% endif %}
           </li>
           <li class="nav-item">
           {% if perms.hielo_proceso.view_hieloproceso %}
           <a href="{% url 'hielo_proceso:dias-url' %}" class="nav-link loading text-light {% block l8 %}{% endblock %}"><img
-              src="{% static 'imgs/hielo.png' %}" width="45px" alt=""> <strong>Hielo</strong><img
-              src="{% static 'imgs/hielo.png' %}" width="45px" alt="" class=" shortmenu animate m-0 p-0"></a>
+              src="{% static 'imgs/hielo-min.png' %}" width="45px" alt=""> <strong>Hielo</strong><img
+              src="{% static 'imgs/hielo-min.png' %}" width="45px" alt="" class=" shortmenu animate m-0 p-0"></a>
           {% endif %}
           </li>
           <li class="nav-item">
           {% if perms.equipo.view_equipo %}
-          <a href="{% url 'equipo:equipo-url' 2 %}" class="nav-link  text-light {% block l2 %}{% endblock %}"><img
-              src="{% static 'imgs/almacen.png' %}" width="45px" alt=""> <strong>Equipo</strong><img
-              src="{% static 'imgs/almacen.png' %}" width="45px" alt="" class=" shortmenu animate m-0 p-0"></a>
+          <a href="{% url 'equipo:equipo-url' 2 %}" class="nav-link loading  text-light {% block l2 %}{% endblock %}"><img
+              src="{% static 'imgs/almacen-min.png' %}" width="45px" alt=""> <strong>Equipo</strong><img
+              src="{% static 'imgs/almacen-min.png' %}" width="45px" alt="" class=" shortmenu animate m-0 p-0"></a>
           {% endif %}
           </li>
           <li class="nav-item">
           {% if perms.compania.view_compania %}
-          <a href="{% url 'compania:compania-url' 2 %}" class="nav-link  text-light {% block l4 %}{% endblock %}"><img
-              src="{% static 'imgs/compania2.png' %}" width="45px" alt=""> <strong>Empresas</strong><img
-              src="{% static 'imgs/compania2.png' %}" width="45px" alt="" class=" shortmenu animate m-0 p-0"></a>
+          <a href="{% url 'compania:compania-url' 2 %}" class="nav-link loading  text-light {% block l4 %}{% endblock %}"><img
+              src="{% static 'imgs/compania2-min.png' %}" width="45px" alt=""> <strong>Empresas</strong><img
+              src="{% static 'imgs/compania2-min.png' %}" width="45px" alt="" class=" shortmenu animate m-0 p-0"></a>
           {% endif %}
           </li>
           <li class="nav-item">
           {% if perms.vehiculo.view_vehiculo %}
-          <a href="{% url 'vehiculo:vehiculos-url' %}" class="nav-link  text-light {% block l5 %}{% endblock %}">
-            <img src="{% static 'imgs/vehiculo.png' %}" width="45px" alt=""> <strong>Vehículos</strong><img
-              src="{% static 'imgs/vehiculo.png' %}" width="45px" alt="" class=" shortmenu animate m-0 p-0"></a>
+          <a href="{% url 'vehiculo:vehiculos-url' %}" class="nav-link loading  text-light {% block l5 %}{% endblock %}">
+            <img src="{% static 'imgs/vehiculo-min.png' %}" width="45px" alt=""> <strong>Vehículos</strong><img
+              src="{% static 'imgs/vehiculo-min.png' %}" width="45px" alt="" class=" shortmenu animate m-0 p-0"></a>
           {% endif %}
           </li>
           <li class="nav-item">
           {% if perms.conductor.view_conductor %}
-          <a href="{% url 'conductor:conductores-url' %}" class="nav-link  text-light {% block l6 %}{% endblock %}"><img
-              src="{% static 'imgs/conductor.png' %}" width="45px" alt=""> <strong>Conductores</strong><img
-              src="{% static 'imgs/conductor.png' %}" width="45px" alt="" class=" shortmenu animate m-0 p-0"></a>
+          <a href="{% url 'conductor:conductores-url' %}" class="nav-link loading  text-light {% block l6 %}{% endblock %}"><img
+              src="{% static 'imgs/conductor-min.png' %}" width="45px" alt=""> <strong>Conductores</strong><img
+              src="{% static 'imgs/conductor-min.png' %}" width="45px" alt="" class=" shortmenu animate m-0 p-0"></a>
           {% endif %}
           </li>
           <li class="nav-item">
           {% if perms.empleado.view_empleado %}
-          <a href="{% url 'empleado:empleados-url'  %}" class="nav-link  text-light {% block l7 %}{% endblock %}"><img
-              src="{% static 'imgs/empleado.png' %}" width="45px" alt=""> <strong>Empleados</strong><img
-              src="{% static 'imgs/empleado.png' %}" width="45px" alt="" class=" shortmenu animate m-0 p-0"></a>
+          <a href="{% url 'empleado:empleados-url'  %}" class="nav-link loading  text-light {% block l7 %}{% endblock %}"><img
+              src="{% static 'imgs/empleado-min.png' %}" width="45px" alt=""> <strong>Empleados</strong><img
+              src="{% static 'imgs/empleado-min.png' %}" width="45px" alt="" class=" shortmenu animate m-0 p-0"></a>
           {% endif %}
           </li>
 
@@ -105,10 +105,10 @@
             <a class="nav-link text-light" href="#"><i class="fas btn-lg p-0 fa-user"></i> {{user.get_full_name}}</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link text-light" href="{% url 'seguridad:log_out-url'%}"><i class="fas btn-lg p-0 fa-key"></i> Cerrar Sesión</a>
+            <a class="nav-link loading text-light" href="{% url 'seguridad:log_out-url'%}"><i class="fas btn-lg p-0 fa-key"></i> Cerrar Sesión</a>
           </li>
           <!-- <li><a href="{% url 'empleado:empleados-url'  %}" class="nav-link  text-light "><img
-            src="{% static 'imgs/profile.png' %}" width="20px" alt="">Empleados
+            src="{% static 'imgs/profile-min.png' %}" width="20px" alt="">Empleados
             </a>
           </li> -->
         </ul>

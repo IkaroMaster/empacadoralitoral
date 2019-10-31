@@ -128,7 +128,7 @@ def CrearPrestamo(request):
 	fechaBasico(prestamo_form,'fechaSalida','...')
 	fechaBasico(prestamo_form,'fechaEntrada','...')
 	horaBasico(prestamo_form,'horaSalida','...')
-	em = Compania.objects.filter(tipoCompania = TipoCompania.objects.get(pk = 1))
+	em = Compania.objects.filter(tipoCompania = TipoCompania.objects.get(pk = 1),estado=True)
 	comboboxBasico(prestamo_form,'compania','Seleccione...','true',em)
 	ve = Vehiculo.objects.filter(disponible=True)
 	comboboxBasico(prestamo_form,'placa','Seleccione...','true',ve)

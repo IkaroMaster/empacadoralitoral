@@ -141,7 +141,7 @@ $(function () {
         "scrollX": true,
         "deferRender": true,
         // responsive: true,
-        "scroller": false,
+        "scroller": true,
         "language": {
             "zeroRecords": "No se ha encontrado nada.",
             "infoEmpty": "No hay registros disponibles",
@@ -179,7 +179,7 @@ $(function () {
         "scrollX": true,
         "deferRender": true,
         // responsive: true,
-        "scroller": false,
+        "scroller": true,
         "language": {
             "zeroRecords": "No se ha encontrado nada.",
             "infoEmpty": "No hay registros disponibles",
@@ -211,11 +211,10 @@ $(function () {
                 $('#editar-' + id).get(0).click();
                 // con jquery $("#home-link").get(0).click();
             } else {
-                Swal.fire({
+                notificacion.fire({
                     title: 'Operacion cancelada por el usuario.',
-                    type: 'error',
-                    timer: '3000'
-                })
+                    type: 'error'
+                });
             }
         });
     });
@@ -362,15 +361,28 @@ $(function () {
 
     }
 
-    $('.devolverEquipo').click(function(){
+    $(document).on('click','.devolverEquipo',function(){
         
         var id, prestamo,detallePrestamo,tipo;
-        id = $(this).prop('data-id');
-        prestamo = $(this).prop('data-prestamo');
-        detallePrestamo = $(this).prop('data-detallePrestamo');
-        tipo = $(this).prop('data-tipo');
-        alert(id+' '+prestamo);
-        $.ajax({
+        id = $(this).attr('data-id');
+        prestamo = $(this).attr('data-prestamo');
+        detallePrestamo = $(this).attr('data-detallePrestamo');
+        tipo = $(this).attr('data-tipo');
+
+
+        Swal.fire({
+            title: '¿Desea devolver el equipo Nō ' + $(this).attr('data-numero') + '?',
+            text:'Fue retirado de bodega en el préstamo de equipo Nō '+prestamo+'.',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si, Devolver!',
+            cancelButtonText: 'Cancelar',
+            // showLoaderOnConfirm: true,
+        }).then((result) => {
+            if (result.value) {
+                $.ajax({
                 type: "get",
                 url: "/equipo/ajax/devolver_equipo/",
                 data: {
@@ -398,7 +410,16 @@ $(function () {
                     }
                 }
             });
+            } else {
+                notificacion.fire({
+                    title: 'Operacion cancelada por el usuario.',
+                    type: 'error'
+                });
+            }
+        });
 
+
+    
 
 
     });

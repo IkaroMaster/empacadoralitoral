@@ -18,12 +18,12 @@ $(function () {
     var tabla = $('#tablajs').DataTable({
         // "dom": "<'row'  <'col-md-6'f> >",
         dom: "<'row'<'#contenedorArriba1.col-md-3'><'col-md-9'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-4'i><'col-sm-8'<'#colvis'>p>>",
-        "scrollY": '48vh',
+        "scrollY": '44vh',
         "scrollCollapse": true,
         "scrollX": true,
         "deferRender": true,
         // responsive: true,
-        "scroller": false,
+        "scroller": true,
         "language": {
             "zeroRecords": "No se ha encontrado nada.",
             "infoEmpty": "No hay registros disponibles",
@@ -260,7 +260,7 @@ $(function () {
                         success: function(data) {
                             $('#estado-' + id).html('Inactiva');
                             $('#filaCompania-' + id).addClass('table-danger');
-                            $(this).attr('data-estado', 'False');
+                            $('#estadoBoton-'+id).attr('data-estado', 'False').removeClass(['btn-danger','fa-times']).addClass(['btn-success','fa-check']);
                             Notificacion.fire({
                                 title: nombre + ' ha sido desactivada.',
                                 type: 'success',
@@ -303,7 +303,7 @@ $(function () {
                         success: function (response) {
                             $('#estado-' + id).html('Activa');
                             $('#filaCompania-' + id).removeClass('table-danger');
-                            $(this).attr('data-estado', 'True');
+                            $('#estadoBoton-'+id).attr('data-estado', 'True').addClass(['btn-danger','fa-times']).removeClass(['btn-success','fa-check']);
                             Notificacion.fire({
                                 title: nombre + ' ha sido activada.',
                                 type: 'success',

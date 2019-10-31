@@ -29,13 +29,13 @@ bg-success
         </ul>
     </div>
     <div class="card-body">
-         <h4 class="mb-1">{% if crear %}
+         <h4 class="mb-1"><strong>{% if crear %}
             Nuevo Conductor
             {% elif editar%}
             Modificar Conductor {{conductor}}
             {% elif listado%}
             Conductores
-            {% endif %}</h4>
+            {% endif %}</strong></h4>
 
         {% if editar or crear %}
         <div style="{{estilos.o1}}">
@@ -147,7 +147,7 @@ bg-success
                         <td>{{ c.nombre1 }} {% if c.nombre2 %}{{ c.nombre2 }} {% endif %}{{ c.apellido1 }}
                             {% if c.apellido2 %}{{ c.apellido2 }}{% endif %}</td>
                         <td>{% if c.fechaNacimiento %}
-                            {{ c.fechaNacimiento }}
+                            {{ c.fechaNacimiento |date:"d-m-Y"}}
                         {% endif %}</td>
                         <td>{% if c.celular %}
                             {{ c.celular }}
@@ -185,6 +185,8 @@ bg-success
                 </tbody>
             </table>
         </div>
+        <p class="text-left mt-2"><strong><i class="fas fa-info"></i></strong> <i class="alert-danger">Conductor Inactivo</i>
+                <i class="alert-light">Conductor Activo</i></p>
 
     </div>
 

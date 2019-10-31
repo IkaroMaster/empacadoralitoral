@@ -6,7 +6,7 @@ from django.urls import reverse
 #RECURSOS
 from .models import *
 from .forms import *
-from ..equipo.models import *
+from ..prestamos.models import *
 #FUNCIONES
 from apps.funciones import renderizado
 
@@ -359,10 +359,25 @@ def DevolverEquipo_asJson(request):
 		tipo = request.GET['tipo']
 
 		equipo = Equipo.objects.get(pk = idEquipo)
-		prestamoE = PrestamoEquipo.objects.get(pk=prestamo)
+		# prestamoE = PrestamoEquipo.objects.get(pk=prestamo)
 		detalleP = DetallePrestamoEquipo.objects.get(pk=detallePrestamo)
 
+		equipo.estado = Estado.objects.get(pk=2)
+		equipo.save()
+		print('Equipo devuelto: ',equipo.pk)
+		
+		if int(tipo) == 1:
+			detalleP.devuelto = True
+			print('bin devuelto')
+		elif int(tipo) == 4:
+			detalleP.devueltoT = True
+			print('Tapadera devuelta')
+		detalleP.save()
+
 		return JsonResponse({'devuelto':1})
+	else:
+		return JsonResponse({'devuelto':0})
+
 
 
 
