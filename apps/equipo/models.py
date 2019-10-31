@@ -60,4 +60,5 @@ class Equipo(models.Model):
 		verbose_name_plural = 'Equipos'
 		permissions = [
             ("crearqr_equipo","Puede crear codigo qr para el inventario de equipo"),
+            ("devolver_equipo","Puede devolver el equipo prestado"),
         ]

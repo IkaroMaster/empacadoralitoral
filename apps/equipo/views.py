@@ -6,6 +6,7 @@ from django.urls import reverse
 #RECURSOS
 from .models import *
 from .forms import *
+from ..equipo.models import *
 #FUNCIONES
 from apps.funciones import renderizado
 
@@ -348,6 +349,20 @@ def grafico_estado_inventario(request):
 
 	return render(request,'equipo/graficos/estadoInventario.html',ctx)
 
+
+
+def DevolverEquipo_asJson(request):
+	if request.method == 'GET' and request.is_ajax():
+		idEquipo = request.GET['id']
+		prestamo = request.GET['prestamo']
+		detallePrestamo = request.GET['detallePrestamo']
+		tipo = request.GET['tipo']
+
+		equipo = Equipo.objects.get(pk = idEquipo)
+		prestamoE = PrestamoEquipo.objects.get(pk=prestamo)
+		detalleP = DetallePrestamoEquipo.objects.get(pk=detallePrestamo)
+
+		return JsonResponse({'devuelto':1})
 
 
 

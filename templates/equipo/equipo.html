@@ -143,7 +143,7 @@ bg-success
                     </thead>
                     <tbody>
                         {% for e in equipos %}
-                        <tr {% if e.estado.id == 1 %} class="table-primary" {% elif e.estado.id == 2 %}
+                        <tr id='fila-{{e.pk}}' {% if e.estado.id == 1 %} class="table-primary" {% elif e.estado.id == 2 %}
                             class="table-success" {% elif e.estado.id == 3 %} class="table-danger" {% endif %}>
                             <td>{{ e.pk }}</td>
                             <td>{{ e.codigo_barras }}</td>
@@ -151,7 +151,7 @@ bg-success
                             <td><a href="">{{ e.numero }}</a></td>
                             <td>{{ e.tamano }}</td>
                             <td>{{ e.color }}</td>
-                            <td>{{ e.estado }}</td>
+                            <td id="estado-{{e.pk}}">{{ e.estado }}</td>
                             <td>
 
                                 {{ e.informacion}}
@@ -166,6 +166,21 @@ bg-success
                                 {% endif %}
                                 <a href="{% url 'equipo:obtener_qr-url' e.pk %}" class="btn btn-primary fas fa-qrcode "
                                     target="_blank"></a>
+                                {% if perms.equipo.devolver_equipo %}
+                                    {% for prestamo in  e.equipos.all %}
+                                        {% if e.estado.pk == 1 and e.nombre.pk == 1 and prestamo.prestamoEquipo.estadoPrestamo.pk == 4 and not prestamo.devuelto  %}
+                                            <button class="devolverEquipo btn btn-success fas fa-" uk-tooltip="Retorno de equipo" data-prestamo="{{prestamo.prestamoEquipo.pk}}" data-detallePrestamo="{{prestamo.pk}}" data-tipo="1" d="devolver-{{e.pk}}" data-id="{{e.pk}}"><i class="fas fa-truck-loading"></i></button>
+                                        {% endif %}
+                                       
+                                    {% endfor %}
+                                    {% for prestamo in  e.tapaderas.all %}
+                                        {% if e.estado.pk == 1 and e.nombre.pk == 4 and prestamo.prestamoEquipo.estadoPrestamo.pk == 4 and not prestamo.devueltoT %}
+                                            <button class="devolverEquipo btn btn-success fas fa-" uk-tooltip="Retorno de equipo" data-prestamo="{{prestamo.prestamoEquipo.pk}}" data-detallePrestamo="{{prestamo.pk}}" data-tipo="4" id="devolverEquipo-{{e.pk}}" data-id="{{e.pk}}"><i class="fas fa-truck-loading"></i></button>
+                                    
+                                        {% endif %}                                 
+                                    {% endfor %}
+                                {% endif %}
+
                             </td>
                             <!-- <td><button class="btn btn-success">Añadir</button></td> -->
 

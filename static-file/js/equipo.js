@@ -361,4 +361,45 @@ $(function () {
         });
 
     }
+
+    $('.devolverEquipo').click(function(){
+        
+        var id, prestamo,detallePrestamo,tipo;
+        id = $(this).prop('data-id');
+        prestamo = $(this).prop('data-prestamo');
+        detallePrestamo = $(this).prop('data-detallePrestamo');
+        tipo = $(this).prop('data-tipo');
+        alert(id+' '+prestamo);
+        $.ajax({
+                type: "get",
+                url: "/equipo/ajax/devolver_equipo/",
+                data: {
+                    id: id,
+                    prestamo:prestamo,
+                    detallePrestamo:detallePrestamo,
+                    tipo:tipo
+                },
+                success: function (response) {
+                    if (response.devuelto == 1) {
+                        notificacion.fire({
+                            type: 'success',
+                            title: 'Equipo devuelto a bodega exitosamente.'
+                        });
+                        $('#fila-'+id).prop('class','table-success');
+                        $('#estado-'+id).html('Disponible');
+                        $('#devolver-'+id).hide();
+
+
+                    } else {
+                        notificacion.fire({
+                            type: 'error',
+                            title: 'Error al realizar la devolución del equipo.'
+                        });
+                    }
+                }
+            });
+
+
+
+    });
 });
