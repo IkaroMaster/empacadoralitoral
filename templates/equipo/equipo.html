@@ -17,24 +17,24 @@ bg-success
 
             {% if perms.equipo.add_equipo %}
             <li class="nav-item">
-                <a class="nav-link {{ clases.o1 }}" href="{% url 'equipo:equipo-url' 1 %}">Gestión de Equipo</a>
+                <a class="loading nav-link {{ clases.o1 }}" href="{% url 'equipo:equipo-url' 1 %}">Gestión de Equipo</a>
             </li>
             {% endif %}
 
             {% if perms.equipo.view_equipo %}
-            <li class="nav-item">
+            <li class="loading nav-item">
                 <a class="nav-link {{ clases.o2 }}" href="{% url 'equipo:equipo-url' 2 %}">Equipos</a>
             </li>
             {% endif %}
             {% if perms.equipo.view_baseequipo %}
-            <li class="nav-item">
+            <li class="loading nav-item">
                 <a class="nav-link {{ clases.o3 }} " href="{% url 'equipo:equipo-url' 3 %}">Equipo base</a>
             </li>
             {% endif %}
 
             {% if perms.equipo.crearqr_equipo %}
             <li class="nav-item">
-                <a class="nav-link {{ clases.o4 }} " href="{% url 'equipo:equipo-url' 4 %}">Generar QR</a>
+                <a class="loading nav-link {{ clases.o4 }} " href="{% url 'equipo:equipo-url' 4 %}">Generar QR</a>
             </li>
             {% endif %}
 
@@ -113,7 +113,7 @@ bg-success
                     <button class="btn btn-success" type="submit">{% if crear%}<i class="fas fa-save"></i>
                     Guardar{% elif editar %}<i class="fas fa-edit"></i> Modificar{% endif %} </button>
                     <a href="{% url 'equipo:equipo-url' 2 %}" class="btn btn-secondary "><i
-                        class="fas fa-window-close"></i>  Cancelar</a></div>
+                        class="loading fas fa-window-close"></i>  Cancelar</a></div>
 
 
 
@@ -216,7 +216,7 @@ bg-success
                     <input type="hidden" name="id_o" value="{{ id_o }}">
                     {{ form.as_p }}
 
-                    <button class="btn btn-success" type="submit">{% if crearEquipoBase%}<i class="fas fa-save"></i>
+                    <button class="loading btn btn-success" type="submit">{% if crearEquipoBase%}<i class="fas fa-save"></i>
                     Guardar{% else %}<i class="fas fa-edit"></i> Modificar{% endif %} </button>
                     
                     <button type="button" class="btn btn-secondary" id="limpiarFormEquipoBase"><i

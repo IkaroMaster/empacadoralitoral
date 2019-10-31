@@ -263,7 +263,7 @@ $(document).ready(function () {
     remision = ''
     reportes = ''
     if ($('#add_remision').length) {
-        remision = '<a class="btn btn-primary text-left" href="/remision/crear/"><i class="fas fa-plus"></i> Nueva Remisión</a>';
+        remision = '<a class="loading btn btn-primary text-left" href="/remision/crear/"><i class="fas fa-plus"></i> Nueva Remisión</a>';
 
     }
     if ($('#generar_reportes').length) {

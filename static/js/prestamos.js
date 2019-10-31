@@ -179,7 +179,7 @@ $(function () {
         // "scrollCollapse": true
     });
     if ($('#add_prestamoequipo').length) {
-        $('#contenedorArriba').html('<a class="btn btn-primary text-left" href="/prestamos/crear/"><i class="fas fa-plus"></i> Nuevo Préstamo</a>');
+        $('#contenedorArriba').html('<a class="loading  btn btn-primary text-left" href="/prestamos/crear/"><i class="fas fa-plus"></i> Nuevo Préstamo</a>');
     }
     $('.dataTables_info').addClass(['p-0','text-left']);
 

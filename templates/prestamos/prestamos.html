@@ -15,14 +15,14 @@ bg-success
 
             {% if perms.prestamos.add_prestamoequipo %}
             <li class="nav-item">
-                <a class="nav-link {{ clases.o1 }}" href="{% url 'prestamos:crear_prestamo-url' %}">Gestión de
+                <a class="loading nav-link {{ clases.o1 }}" href="{% url 'prestamos:crear_prestamo-url' %}">Gestión de
                     prestamos</a>
             </li>
             {% endif %}
 
             {% if perms.prestamos.view_prestamoequipo %}
             <li class="nav-item">
-                <a class="nav-link {{ clases.o2 }}" href="{% url 'prestamos:prestamos-url' %}">Préstamos</a>
+                <a class="loading  nav-link {{ clases.o2 }}" href="{% url 'prestamos:prestamos-url' %}">Préstamos</a>
             </li>
             {% endif %}
 
@@ -98,16 +98,20 @@ bg-success
                             <span class="input-group-text" id="basic-addon1">Empresa</span>
                         </div>
                         {{prestamo_form.compania}}
+                        {% if perms.compania.add_compania %}
                         <a id="agregarEmpresa" data-url="{% url 'compania:agregar-empresa-url' %}"
                             class="btn-lg text-success fas fa-plus ml-1 p-0 pl-1 pt-2 "></a>
+                        {% endif %}
                     </div>
                     <div class="col-md-4 input-group mb-3 mt-2">
                         <div class="input-group-prepend">
                             <span class="input-group-text" id="basic-addon1">Conductor</span>
                         </div>
                         {{prestamo_form.conductor}}
+                        {% if perms.conductor.add_conductor %}
                         <a id="agregarConductor" data-url="{% url 'conductor:agregar-conductor-url' %}"
                             class="btn-lg text-success fas fa-plus ml-1 p-0 pl-1 pt-2"></a>
+                        {% endif %}
 
                     </div>
 
@@ -116,8 +120,10 @@ bg-success
                             <span class="input-group-text" id="basic-addon1">Numero de Placa</span>
                         </div>
                         {{prestamo_form.placa}}
+                        {% if perms.vehiculo.add_vehiculo %}
                         <a id="agregarVehiculo" data-url="{% url 'vehiculo:agregar-vehiculo-url' %}"
                             class="btn-lg text-success fas fa-plus ml-1 p-0 pl-1 pt-2"></a>
+                        {% endif %}
                     </div>
 
                     <div class="col-md-4 input-group mb-3 mt-2">
@@ -218,8 +224,8 @@ bg-success
             <center>
                 <button id="guardarPrestamo" class="btn btn-success"> {% if crear%}<i class="fas fa-save"></i>
                     Guardar{% elif editar %}<i class="fas fa-edit"></i> Modificar{% endif %}</button>
-                <a href="{% url 'prestamos:prestamos-url'%} " class="btn btn-secondary"><i
-                        class="fas fa-window-close"></i> Cancelar</a>
+                <a href="{% url 'prestamos:prestamos-url'%} " class="loading btn btn-secondary"><i
+                        class="loading  fas fa-window-close"></i> Cancelar</a>
 
             </center>
             <a href="#" uk-totop uk-scroll></a>
@@ -236,7 +242,7 @@ bg-success
                 </div>
             </div>
             <div class="table-responsive">
-                <table id="tablajs" class="table table-striped table-hover table-bordered">
+                <table id="tablajs" class="table table-striped table-hover table-bordered" width="100%">
                     <thead class="thead-inverse">
                         <tr>
                             <th>#</th>

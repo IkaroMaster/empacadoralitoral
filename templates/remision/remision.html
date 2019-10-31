@@ -13,13 +13,13 @@ bg-success
 
             {% if perms.remision.add_remision %}
             <li class="nav-item">
-                <a class="nav-link {{ clases.o1 }}" href="{% url 'remision:crear_remision-url' %}">Gestión de
+                <a class="loading nav-link {{ clases.o1 }}" href="{% url 'remision:crear_remision-url' %}">Gestión de
                     Remision</a>
             </li>
             {% endif %}
 
             <li class="nav-item">
-                <a class="nav-link {{ clases.o2 }}" href="{% url 'remision:remision-url'%} ">Remisiones</a>
+                <a class="loading nav-link {{ clases.o2 }}" href="{% url 'remision:remision-url'%} ">Remisiones</a>
             </li>
         </ul>
     </div>
@@ -93,24 +93,30 @@ bg-success
                             <span class="input-group-text" id="basic-addon1">Asignado a </span>
                         </div>
                         {{remision_form.compania}}
+                         {% if perms.compania.add_compania %}
                         <a id="agregarEmpresa" data-url="{% url 'compania:agregar-empresa-url' %}"
                             class="btn-lg text-success fas fa-plus ml-1 p-0 pl-1 pt-2"></a>
+                        {%endif%}
                     </div>
                     <div class="col-md-12 input-group mb-3 mt-2">
                         <div class="input-group-prepend">
                             <span class="input-group-text" id="basic-addon1">Recibió </span>
                         </div>
                         {{remision_form.conductor}}
+                        {% if perms.conductor.add_conductor %}
                         <a id="agregarConductor" data-url="{% url 'conductor:agregar-conductor-url' %}"
                             class="btn-lg text-success fas fa-plus ml-1 p-0 pl-1 pt-2"></a>
+                             {% endif %}
                     </div>
                     <div class="col-md-6 input-group mb-3 mt-2">
                         <div class="input-group-prepend">
                             <span class="input-group-text" id="basic-addon1">Placa </span>
                         </div>
                         {{remision_form.placa}}
+                        {% if perms.vehiculo.add_vehiculo %}
                         <a id="agregarVehiculo" data-url="{% url 'vehiculo:agregar-vehiculo-url' %}"
                             class="btn-lg text-success fas fa-plus ml-1 p-0 pl-1 pt-2"></a>
+                        {% endif %}
                     </div>
                     <div class="col-md-6 input-group mb-3 mt-2">
                         <div class="input-group-prepend">
@@ -222,7 +228,7 @@ bg-success
             </form>
             <center>
                 <button id="guardarRemision" class="btn btn-success">{% if crear%}<i class="fas fa-save"></i> Guardar{% elif editar %}<i class="fas fa-edit"></i> Modificar{% endif %}</button>
-                <a href="{% url 'remision:remision-url'%} " class="btn btn-secondary loading"><i class="fas fa-window-close"></i> Cancelar</a>
+                <a href="{% url 'remision:remision-url'%} " class="btn btn-secondary loading"><i class="loading fas fa-window-close"></i> Cancelar</a>
             </center>
             <p></p>
         </div>

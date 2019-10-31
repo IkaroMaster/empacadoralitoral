@@ -21,7 +21,7 @@ bg-success
             {% if perms.compania.add_compania or perms.compania.change_compania %}
             {% if crearCompania or editarCompania %}
             <li class="nav-item">
-                <a class="nav-link {{ clases.o1 }}"
+                <a class="loading nav-link {{ clases.o1 }}"
                     href="{% if crearCompania %} {% url 'compania:compania-url' 1 %}{% endif %}">Gestión de Empresa</a>
             </li>
             {% endif %}
@@ -29,7 +29,7 @@ bg-success
 
             {% if perms.compania.view_compania %}
             <li class="nav-item">
-                <a class="nav-link {{ clases.o2 }}" href="{% url 'compania:compania-url' 2 %}">Empresas</a>
+                <a class="loading nav-link {{ clases.o2 }}" href="{% url 'compania:compania-url' 2 %}">Empresas</a>
             </li>
             {% endif %}
 
@@ -38,7 +38,7 @@ bg-success
             {% if perms.compania.add_finca or perms.compania.change_finca %}
             {% if crearFinca or editarFinca %}
             <li class="nav-item">
-                <a class="nav-link {{ clases.o3 }} "
+                <a class="loading nav-link {{ clases.o3 }} "
                     href="{%if crearFinca%}{% url 'compania:compania-url' 3 %}{%endif%}">Gestión de Finca</a>
             </li>
 
@@ -48,7 +48,7 @@ bg-success
 
             {% if perms.compania.view_finca %}
             <li class="nav-item">
-                <a class="nav-link {{ clases.o4 }}" href="{% url 'compania:compania-url' 4 %}">Fincas</a>
+                <a class="loading nav-link {{ clases.o4 }}" href="{% url 'compania:compania-url' 4 %}">Fincas</a>
             </li>
             {% endif %}
 
@@ -56,7 +56,7 @@ bg-success
             {% if perms.compania.add_laguna or perms.compania.change_laguna %}
             {% if crearLaguna or editarLaguna %}
             <li class="nav-item">
-                <a class="nav-link {{ clases.o5 }}" href="{% if crearLaguna %}
+                <a class="loading nav-link {{ clases.o5 }}" href="{% if crearLaguna %}
             {% url 'compania:crear_laguna-url' %}
             {% endif %}">Gestión de Laguna</a>
             </li>
@@ -66,7 +66,7 @@ bg-success
 
             {% if perms.compania.view_laguna %}
             <li class="nav-item">
-                <a class="nav-link {{ clases.o6 }}" href="{% url 'compania:lagunas-url' %}">Lagunas</a>
+                <a class="loading nav-link {{ clases.o6 }}" href="{% url 'compania:lagunas-url' %}">Lagunas</a>
             </li>
             {% endif %}
 
@@ -156,7 +156,7 @@ bg-success
                     <br>
                     
                     <button type="submit"  class="btn btn-success">{% if crearCompania%}<i class="fas fa-save"></i> Guardar{% else %}<i class="fas fa-edit"></i> Modificar{% endif %}</button>
-                <a href="{% url 'compania:compania-url' 2 %}"class="btn btn-secondary"><i class="fas fa-window-close"></i> Cancelar</a>
+                <a href="{% url 'compania:compania-url' 2 %}"class="loading btn btn-secondary"><i class="fas fa-window-close"></i> Cancelar</a>
 
                 </div>
 
@@ -280,8 +280,10 @@ bg-success
                             <label class="text-center">Empresa:</label>
                             <div class="input-group">
                                 {{form.compania}}
+                                {% if perms.compania.add_compania %}
                                 <a id="agregarEmpresa" data-url="{% url 'compania:agregar-empresa-url' %}"
                                     class="btn-lg text-success fas fa-plus ml-1 p-0 pl-1 pt-2 "></a>
+                                {%endif%}
                             </div>
 
                         </div>
@@ -293,7 +295,7 @@ bg-success
 
 
                     <button type="submit"  class="btn btn-success">{% if crearFinca%}<i class="fas fa-save"></i> Guardar{% else %}<i class="fas fa-edit"></i> Modificar{% endif %}</button>
-                <a href="{% url 'compania:compania-url' 4 %}"class="btn btn-secondary"><i class="fas fa-window-close"></i> Cancelar</a>
+                <a href="{% url 'compania:compania-url' 4 %}"class="loading btn btn-secondary"><i class="fas fa-window-close"></i> Cancelar</a>
 <br>
 
                 </div>
@@ -314,7 +316,7 @@ bg-success
 
             </div>
             <div class="table-responsive">
-                <table id="tablajs2" class="table table-striped  table-hover table-bordered ">
+                <table id="tablajs2" class="table table-striped  table-hover table-bordered " width="100%">
                     <thead class="thead-inverse">
                         <tr>
                             <th>Código</th>
@@ -402,8 +404,10 @@ bg-success
 
                             <div class="input-group">
                                 {{laguna_form.finca}}
+                                {% if perms.compania.add_finca %}
                                 <a id="agregarFinca" data-url="{% url 'compania:agregar-finca-url' %}"
                                     class="btn-lg text-success fas fa-plus ml-1 p-0 pl-1 pt-2"></a>
+                                {% endif %}
                             </div>
 
                         </div>
@@ -414,7 +418,7 @@ bg-success
 
                     <br>
 
-                    <a href="{% url 'compania:lagunas-url'  %}" class="btn btn-secondary">Cancelar</a>
+                    <a href="{% url 'compania:lagunas-url'  %}" class="loading btn btn-secondary">Cancelar</a>
                     <input type="button" class="btn btn-success" id="guardarLaguna"
                         value="{% if crearLaguna %}Guardar{% elif editarLaguna %}Modificar{% endif %}"><br>
                     <input type="submit" id="enviarFormularioLaguna" hidden>

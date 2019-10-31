@@ -13,12 +13,12 @@ bg-success
 
             {% if perms.empleado.view_empleado %}
             <li class="nav-item">
-                <a class="nav-link {{ clases.o2 }}" href="{% url 'empleado:empleados-url'%} ">Empleados</a>
+                <a class="loading nav-link {{ clases.o2 }}" href="{% url 'empleado:empleados-url'%} ">Empleados</a>
             </li>
             {% endif %}
             {% if perms.empleado.view_cargo %}
             <li class="nav-item">
-                <a class="nav-link {{ clases.o4 }}" href="{% url 'empleado:grupos-url'%} ">Cargos</a>
+                <a class="loading nav-link {{ clases.o4 }}" href="{% url 'empleado:grupos-url'%} ">Cargos</a>
             </li>
             {% endif %}
 
@@ -138,7 +138,7 @@ bg-success
             <center>
                 <br>
                 <button id="guardarEmpleado" class="btn btn-success">{% if crearEmpleado%}<i class="fas fa-save"></i> Guardar{% else%}<i class="fas fa-edit"></i> Modificar{% endif %}</button>
-                <a href="{% url 'empleado:empleados-url'%} " class="btn btn-secondary"><i class="fas fa-window-close"></i> Cancelar</a>
+                <a href="{% url 'empleado:empleados-url'%} " class=" loading btn btn-secondary"><i class="fas fa-window-close"></i> Cancelar</a>
             </center>
 
                 
@@ -261,7 +261,7 @@ bg-success
                                 {% endif %}
                                 {% if perms.empleado.change_empleado %}
                                    
-                                    <a href="{% url 'empleado:modificar-url' e.pk %}" class="btn btn-info fas fa-user-edit "
+                                    <a href="{% url 'empleado:modificar-url' e.pk %}" class="loading btn btn-info fas fa-user-edit "
                                     data-editar="{{ e.pk }}" uk-tooltip="Editar empleado"></a>
                                     
                                 {% endif %}
@@ -297,7 +297,7 @@ bg-success
             <center>
                 <br>
                 <button class="btn btn-success">{% if crearGrupo%}<i class="fas fa-save"></i> Guardar{% else%}<i class="fas fa-edit"></i> Modificar{% endif %}</button data-grupo="{{grupo}}">
-                <a href="{% url 'empleado:grupos-url'%} " class="btn btn-secondary"><i class="fas fa-window-close"></i> Cancelar</a>
+                <a href="{% url 'empleado:grupos-url'%} " class="btn btn-secondary"><i class="loading fas fa-window-close"></i> Cancelar</a>
             </center>
 
                 <!-- <a href="{% url 'empleado:grupos-url'  %}" class="btn btn-secondary">Cancelar</a>

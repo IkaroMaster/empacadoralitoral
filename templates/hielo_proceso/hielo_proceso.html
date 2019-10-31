@@ -26,13 +26,13 @@ bg-success
 
             {% if perms.hielo_proceso.add_hieloproceso %}
             <li class="nav-item">
-                <a class="nav-link {{ clases.o1 }}" href="{% url 'hielo_proceso:crear-url'%}">Gestión de Consumo Diario</a>
+                <a class="loading nav-link {{ clases.o1 }}" href="{% url 'hielo_proceso:crear-url'%}">Gestión de Consumo Diario</a>
             </li>
             {% endif %}
 
             {% if perms.hielo_proceso.view_hieloproceso %}
             <li class="nav-item">
-                <a class="nav-link {{ clases.o2 }}" href="{% url 'hielo_proceso:dias-url'%}">Notas</a>
+                <a class="loading nav-link {{ clases.o2 }}" href="{% url 'hielo_proceso:dias-url'%}">Notas</a>
             </li>
             {% endif %}
 
@@ -118,7 +118,7 @@ bg-success
                 <button class="btn btn-success" id="guardarHielo">{% if crear%}<i class="fas fa-save"></i>
                     Guardar{% elif editar %}<i class="fas fa-edit"></i> Modificar{% endif %} </button>
                 <a href="{% url 'hielo_proceso:dias-url'%} " class="btn btn-secondary"><i
-                        class="fas fa-window-close"></i>  Cancelar</a>
+                        class="loading fas fa-window-close"></i>  Cancelar</a>
 
             </center>
             

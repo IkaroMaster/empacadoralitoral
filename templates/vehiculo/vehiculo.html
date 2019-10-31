@@ -13,7 +13,7 @@ bg-success
 
             {% if perms.vehiculo.add_vehiculo or perms.vehiculo.change_vehiculo%}
             <li class="nav-item">
-                <a class="nav-link {{ clases.o1 }}"
+                <a class="loading nav-link {{ clases.o1 }}"
                     href="{%if perms.vehiculo.add_vehiculo and not editar%}{% url 'vehiculo:crear-url' %}{%endif%}">Gestión
                     de Vehículo</a>
             </li>
@@ -21,7 +21,7 @@ bg-success
 
 
             <li class="nav-item">
-                <a class="nav-link {{ clases.o2 }}" href="{% url 'vehiculo:vehiculos-url' %} ">Vehículos</a>
+                <a class="loading nav-link {{ clases.o2 }}" href="{% url 'vehiculo:vehiculos-url' %} ">Vehículos</a>
             </li>
 
         </ul>
@@ -79,8 +79,10 @@ bg-success
                         <label for="">Empresa:</label>
                         <div class="input-group">
                             {{vehiculo_form.empresaFlete}}
+                            {% if perms.compania.add_compania %}
                             <a id="agregarEmpresa" data-url="{% url 'compania:agregar-empresa-url' %}"
                                 class="btn-lg text-success fas fa-plus ml-1 p-0 pl-1 pt-2 "></a>
+                            {%endif%}
 
                         </div>
                         <br><br>
@@ -89,7 +91,7 @@ bg-success
                 </div>
                 <br>
                  <button type="submit"  class="btn btn-success">{% if crearCompania%}<i class="fas fa-save"></i> Guardar{% else %}<i class="fas fa-edit"></i> Modificar{% endif %}</button>
-                <a href="{% url 'vehiculo:vehiculos-url'%} "class="btn btn-secondary"><i class="fas fa-window-close"></i> Cancelar</a>               
+                <a href="{% url 'vehiculo:vehiculos-url'%} "class="loading btn btn-secondary"><i class="fas fa-window-close"></i> Cancelar</a>               
             </form>
 
 
@@ -97,18 +99,10 @@ bg-success
 
         </div>
         <div style="{{estilos.o2}}" class="table-responsive">
-            <div class="row">
-
-                <div class="col-md-3 mb-1">
-
+        
                     {% if perms.vehiculo.add_vehiculo %}
                     <i id="add_vehiculo"></i>
                     {% endif %}
-
-
-                </div>
-
-            </div>
             <div class="table-responsive">
                 <table id="tablajs" class="table table-striped table-hover table-bordered" width='100%'>
                     <thead class="thead-inverse">

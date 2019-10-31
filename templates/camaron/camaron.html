@@ -12,12 +12,12 @@ bg-success
         <ul class="nav nav-tabs card-header-tabs">
             {% if perms.camaron.add_cosecha %}
             <li class="nav-item">
-                <a class="nav-link {{ clases.o1 }}" href="{% url 'camaron:crear-url' %}">Gestión de Cosecha</a>
+                <a class="loading nav-link {{ clases.o1 }}" href="{% url 'camaron:crear-url' %}">Gestión de Cosecha</a>
             </li>
             {% endif %}
             {% if perms.camaron.view_cosecha %}
             <li class="nav-item">
-                <a class="nav-link {{ clases.o2 }}" href="{% url 'camaron:cosechas-url'%} ">Cosechas</a>
+                <a class="loading nav-link {{ clases.o2 }}" href="{% url 'camaron:cosechas-url'%} ">Cosechas</a>
             </li>
             {% endif %}
 
@@ -213,7 +213,7 @@ bg-success
             <center>
                 <br>
                 <button id="guardarCosecha" class="btn btn-success">{% if crear%}<i class="fas fa-save"></i> Guardar{% elif editar %}<i class="fas fa-edit"></i> Modificar{% endif %}</button>
-                <a href="{% url 'camaron:cosechas-url'%} " class="btn btn-secondary"><i class="fas fa-window-close"></i> Cancelar</a>
+                <a href="{% url 'camaron:cosechas-url'%} " class="loading btn btn-secondary"><i class="fas fa-window-close"></i> Cancelar</a>
 
             </center>
 

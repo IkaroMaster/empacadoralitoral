@@ -12,7 +12,7 @@ bg-success
         <ul class="nav nav-tabs card-header-tabs">
             {% if perms.conductor.add_conductor or perms.conductor.change_conductor %}
             <li class="nav-item">
-                <a class="nav-link {{ clases.o1 }}"
+                <a class="loading nav-link {{ clases.o1 }}"
                     href="{% if perms.conductor.add_conductor and not editar%}{% url 'conductor:crear-url' %}{%endif%}">Gestión
                     de Conductor</a>
             </li>
@@ -20,7 +20,7 @@ bg-success
 
             {% if perms.conductor.view_conductor %}
             <li class="nav-item">
-                <a class="nav-link {{ clases.o2 }}" href="{% url 'conductor:conductores-url' %} ">Conductores</a>
+                <a class="loading nav-link {{ clases.o2 }}" href="{% url 'conductor:conductores-url' %} ">Conductores</a>
             </li>
             {% endif %}
 
@@ -106,7 +106,7 @@ bg-success
                 
 
                 <button type="submit"  class="btn btn-success">{% if crear%}<i class="fas fa-save"></i> Guardar{% elif editar %}<i class="fas fa-edit"></i> Modificar{% endif %}</button>
-                <a href="{% url 'conductor:conductores-url'%}" class="btn btn-secondary"><i class="fas fa-window-close"></i> Cancelar</a>
+                <a href="{% url 'conductor:conductores-url'%}" class="loading btn btn-secondary"><i class="fas fa-window-close"></i> Cancelar</a>
 
 
             </form>
