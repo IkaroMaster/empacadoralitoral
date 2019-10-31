@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+{% block titulo %}
+  Inicio
+{% endblock titulo %}
 
 {% block imagen %}
 <!-- {% load static %}
@@ -44,9 +47,9 @@
   <div class="col-md-3 mb-4">
     <div class="card ">
       <div class="card-body" style="text-align: center;">
-        <a href="{% url 'prestamos:prestamos-url' %}"><strong class="">Préstamo de equipo </strong><span
+        <a href="{% url 'prestamos:prestamos-url' %}" uk-tooltip="{{prestamos}} prestamos de equipo activos"><strong class="loading">Préstamo de equipo </strong><span
             class="badge badge-primary badge-pill">{{prestamos}}</span></a><br>
-        <a href="{% url 'prestamos:prestamos-url' %}" class=" align-items-center"><img
+        <a uk-tooltip="{{prestamos}} prestamos de equipo activos" href="{% url 'prestamos:prestamos-url' %}" class="loading align-items-center"><img
             src="{% static 'imgs/reserva.png' %}" width="40%" alt=""></a>
       </div>
     </div>
@@ -56,9 +59,9 @@
   <div class="col-md-3 mb-4">
     <div class="card">
       <div class="card-body" style="text-align: center;">
-        <a href="{% url 'remision:remision-url' %}"><strong class="">Remisiones </strong><span
+        <a href="{% url 'remision:remision-url' %}" uk-tooltip="{{remisiones}} notas de remisión de hielo activas"><strong class="loading">Remisiones </strong><span
             class="badge badge-primary badge-pill">{{remisiones}}</span></a><br>
-        <a href="{% url 'remision:remision-url' %}" class=" align-items-center"><img
+        <a uk-tooltip="{{remisiones}} notas de remisión de hielo activas" href="{% url 'remision:remision-url' %}" class="loading align-items-center"><img
             src="{% static 'imgs/remision.png' %}" width="38%" alt=""></a>
       </div>
     </div>
@@ -68,8 +71,8 @@
   <div class="col-md-3 mb-4">
     <div class="card">
       <div class="card-body" style="text-align: center;">
-        <a href="{% url 'camaron:cosechas-url' %}"><strong class="">Camarón </strong></a><br>
-        <a href="{% url 'camaron:cosechas-url' %}" class=" align-items-center"><img
+        <a href="{% url 'camaron:cosechas-url' %}"><strong class="loading">Camarón </strong></a><br>
+        <a href="{% url 'camaron:cosechas-url' %}" class="loading align-items-center"><img
             src="{% static 'imgs/camaron.png' %}" width="40%" alt=""></a>
       </div>
     </div>
@@ -80,8 +83,8 @@
   <div class="col-md-3 mb-4">
     <div class="card">
       <div class="card-body" style="text-align: center;">
-        <a href="{% url 'hielo_proceso:dias-url' %}"><strong class="">Hielo </strong></a><br>
-        <a href="{% url 'hielo_proceso:dias-url' %}" class=" align-items-center"><img
+        <a href="{% url 'hielo_proceso:dias-url' %}"><strong class="loading">Hielo </strong></a><br>
+        <a href="{% url 'hielo_proceso:dias-url' %}" class="loading align-items-center"><img
             src="{% static 'imgs/hielo.png' %}" width="40%" alt=""></a>
       </div>
     </div>
@@ -91,8 +94,8 @@
   <div class="col-md-3 mb-4">
     <div class="card">
       <div class="card-body" style="text-align: center;">
-        <a href="{% url 'equipo:equipo-url' 2 %}"><strong class="">Bines y Equipo </strong></a><br>
-        <a href="{% url 'equipo:equipo-url' 2 %}" class=" align-items-center"><img src="{% static 'imgs/almacen.png' %}"
+        <a href="{% url 'equipo:equipo-url' 2 %}"><strong class="loading">Bines y Equipo </strong></a><br>
+        <a href="{% url 'equipo:equipo-url' 2 %}" class="loading align-items-center"><img src="{% static 'imgs/almacen.png' %}"
             width="52%" alt=""></a>
       </div>
     </div>
@@ -102,8 +105,8 @@
   <div class="col-md-3 mb-4">
     <div class="card">
       <div class="card-body" style="text-align: center;">
-        <a href="{% url 'compania:compania-url' 2 %}"><strong class="">Empresas </strong></a><br>
-        <a href="{% url 'compania:compania-url' 2 %}" class=" align-items-center"><img
+        <a href="{% url 'compania:compania-url' 2 %}"><strong class="loading">Empresas </strong></a><br>
+        <a href="{% url 'compania:compania-url' 2 %}" class="loading align-items-center"><img
             src="{% static 'imgs/compania2.png' %}" width="40%" alt=""></a>
       </div>
     </div>
@@ -113,8 +116,8 @@
   <div class="col-md-3 mb-4">
     <div class="card">
       <div class="card-body" style="text-align: center;">
-        <a href="{% url 'vehiculo:vehiculos-url' %}"><strong class="">Vehículos </strong></a><br>
-        <a href="{% url 'vehiculo:vehiculos-url' %}" class=" align-items-center"><img
+        <a href="{% url 'vehiculo:vehiculos-url' %}"><strong class="loading">Vehículos </strong></a><br>
+        <a href="{% url 'vehiculo:vehiculos-url' %}" class="loading align-items-center"><img
             src="{% static 'imgs/vehiculo.png' %}" width="40%" alt=""></a>
       </div>
     </div>
@@ -124,8 +127,8 @@
   <div class="col-md-3 mb-4">
     <div class="card">
       <div class="card-body" style="text-align: center;">
-        <a href="{% url 'conductor:conductores-url' %}"><strong class="">Motoristas </strong></a><br>
-        <a href="{% url 'conductor:conductores-url' %}" class=" align-items-center"><img
+        <a href="{% url 'conductor:conductores-url' %}"><strong class="loading">Motoristas </strong></a><br>
+        <a href="{% url 'conductor:conductores-url' %}" class="loading align-items-center"><img
             src="{% static 'imgs/conductor.png' %}" width="56%" alt=""></a>
       </div>
     </div>
@@ -135,8 +138,8 @@
   <div class="col-md-3 mb-4">
     <div class="card">
       <div class="card-body" style="text-align: center;">
-        <a href="{% url 'empleado:empleados-url'  %}"><strong class="">Empleados </strong></a><br>
-        <a href="{% url 'empleado:empleados-url'  %}" class=" align-items-center"><img
+        <a href="{% url 'empleado:empleados-url'  %}"><strong class="loading">Empleados </strong></a><br>
+        <a href="{% url 'empleado:empleados-url'  %}" class="loading align-items-center"><img
             src="{% static 'imgs/empleado.png' %}" width="40%" alt=""></a>
       </div>
     </div>
@@ -146,7 +149,7 @@
     <div class="card">
       <div class="card-body" style="text-align: center;">
         <a href="{% url 'seguridad:log_out-url'%}"><strong class=" text-black-50">Cerrar Sesión </strong></a><br>
-        <a href="{% url 'seguridad:log_out-url'%}" class=" align-items-center"><img
+        <a href="{% url 'seguridad:log_out-url'%}" class="loading align-items-center"><img
             src="{% static 'imgs/cerrarsesion.png' %}" width="40%" alt=""></a>
       </div>
     </div>
