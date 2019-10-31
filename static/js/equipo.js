@@ -1,5 +1,22 @@
 $(function () {
 
+    const notificacion = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 5000
+    });
+
+    var requeridos = $(document).find(':required');
+    requeridos.each(function (r, requerido) {
+        if ($(requerido).prop('tagName') == 'SELECT') {
+            $(requerido).selectpicker('setStyle', 'border border-warning');
+        } else {
+            $(requerido).addClass('border border-warning');
+        }
+    });
+
+
     $("#limpiarFormEquipoBase").click(function (event) {
         $("#formEquipoBase")[0].reset();
     });
@@ -118,8 +135,8 @@ $(function () {
 
     var tabla = $('#tablajs').DataTable({
         // "dom": "<'row'  <'col-md-6'f> >",
-        dom: "<'row'<'#contenedorArriba.col-md-9'><'col-md-3'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-4'i><'col-sm-8'<'#colvis'>p>>",
-        "scrollY": '52vh',
+        dom: "<'row'<'#contenedorArriba.col-md-3'><'col-md-9'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-4'i><'col-sm-8'<'#colvis'>p>>",
+        "scrollY": '46vh',
         "scrollCollapse": true,
         "scrollX": true,
         "deferRender": true,
@@ -130,7 +147,11 @@ $(function () {
             "infoEmpty": "No hay registros disponibles",
             "infoFiltered": "(Filtrado de _MAX_ registros totales)",
             "info": "Mostrando _START_ a _END_ de _TOTAL_ registros.",
-            "search": "Buscar:"
+            "search": "Buscar:",
+            "paginate": {
+                "next": "Siguiente",
+                'previous': 'Anterior'
+            }
         }
 
         // "scrollCollapse": true
@@ -141,25 +162,37 @@ $(function () {
         equipo = '<a class="btn btn-primary text-left" href="/equipo/opcion/1/"><i class="fas fa-plus"></i> Nuevo Equipo</a>';
 
     }
-    $('#contenedorArriba').html('<div class="btn-group row">' + equipo +'</div>');
+
+    graficos = '<button id="btnGroupDrop1" type="button" class="btn btn-success dropdown-toggle"' +
+            'data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas  fa-chart-line"></i> Graficos</button>' +
+            '<div class="dropdown-menu" aria-labelledby="btnGroupDrop1">' +
+            '<a class="btn btn-primary text-left dropdown-item" href="/equipo/grafico_estado_inventario/"><i class="fas  fa-chart-pie"></i> Estado del Inventario</a>'+
+            '</div>';
+    $('#contenedorArriba').html('<div class="btn-group row">' + equipo +graficos+'</div>');
     $('.dataTables_info').addClass(['p-0', 'text-left']);
 
-
-    $('#tablajs2').DataTable({
+    var tabla2 = $('#tablajs2').DataTable({
+        // "dom": "<'row'  <'col-md-6'f> >",
+        dom: "<'row'<'#contenedorArriba.col-md-3'><'col-md-9'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-4'i><'col-sm-8'<'#colvis'>p>>",
+        "scrollY": '48vh',
+        "scrollCollapse": true,
+        "scrollX": true,
+        "deferRender": true,
+        // responsive: true,
+        "scroller": true,
         "language": {
-            "lengthMenu": "Mostrar _MENU_ por páginas",
-            "zeroRecords": "No se encontró ningún registro",
-            "info": "Mostrando página _PAGE_ de _PAGES_",
-            "infoEmpty": "Sin coincidencias",
-            "infoFiltered": "( _MAX_ registros totales )",
-            'search': 'Buscar:'
-                /*'search': 'Buscar: _INPUT_ aqui'*/
-                ,
+            "zeroRecords": "No se ha encontrado nada.",
+            "infoEmpty": "No hay registros disponibles",
+            "infoFiltered": "(Filtrado de _MAX_ registros totales)",
+            "info": "Mostrando _START_ a _END_ de _TOTAL_ registros.",
+            "search": "Buscar:",
             "paginate": {
                 "next": "Siguiente",
                 'previous': 'Anterior'
             }
         }
+
+        // "scrollCollapse": true
     });
 
     $('.editarEquipo').click(function (e) {
@@ -178,11 +211,10 @@ $(function () {
                 $('#editar-' + id).get(0).click();
                 // con jquery $("#home-link").get(0).click();
             } else {
-                Swal.fire({
+                notificacion.fire({
                     title: 'Operacion cancelada por el usuario.',
-                    type: 'error',
-                    timer: '3000'
-                })
+                    type: 'error'
+                });
             }
         });
     });
@@ -328,4 +360,67 @@ $(function () {
         });
 
     }
+
+    $(document).on('click','.devolverEquipo',function(){
+        
+        var id, prestamo,detallePrestamo,tipo;
+        id = $(this).attr('data-id');
+        prestamo = $(this).attr('data-prestamo');
+        detallePrestamo = $(this).attr('data-detallePrestamo');
+        tipo = $(this).attr('data-tipo');
+
+
+        Swal.fire({
+            title: '¿Desea devolver el equipo Nō ' + $(this).attr('data-numero') + '?',
+            text:'Fue retirado de bodega en el préstamo de equipo Nō '+prestamo+'.',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si, Devolver!',
+            cancelButtonText: 'Cancelar',
+            // showLoaderOnConfirm: true,
+        }).then((result) => {
+            if (result.value) {
+                $.ajax({
+                type: "get",
+                url: "/equipo/ajax/devolver_equipo/",
+                data: {
+                    id: id,
+                    prestamo:prestamo,
+                    detallePrestamo:detallePrestamo,
+                    tipo:tipo
+                },
+                success: function (response) {
+                    if (response.devuelto == 1) {
+                        notificacion.fire({
+                            type: 'success',
+                            title: 'Equipo devuelto a bodega exitosamente.'
+                        });
+                        $('#fila-'+id).prop('class','table-success');
+                        $('#estado-'+id).html('Disponible');
+                        $('#devolver-'+id).hide();
+
+
+                    } else {
+                        notificacion.fire({
+                            type: 'error',
+                            title: 'Error al realizar la devolución del equipo.'
+                        });
+                    }
+                }
+            });
+            } else {
+                notificacion.fire({
+                    title: 'Operacion cancelada por el usuario.',
+                    type: 'error'
+                });
+            }
+        });
+
+
+    
+
+
+    });
 });

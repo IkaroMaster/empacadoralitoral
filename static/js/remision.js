@@ -1,13 +1,56 @@
 $(document).ready(function () {
+
+    const notificacion = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 5000
+    });
+
+    var requeridos = $(document).find(':required');
+    requeridos.each(function (r, requerido) {
+        if ($(requerido).prop('tagName') == 'SELECT') {
+            $(requerido).selectpicker('setStyle', 'border border-warning');
+        } else {
+            $(requerido).addClass('border border-warning');
+        }
+    });
+
+
+    $('#id_guia').prop('readonly', true);
+    $('#id_tipoRemision').change(function () {
+        var seleccionado = $(this).find(':selected');
+        if (seleccionado.val() == '1') {
+            $('#id_guia').prop('readonly', false);
+            $('#id_guia').prop('required', true);
+            $('#id_guia').addClass('border border-warning');
+            $('#prestamoEquipo_selected').prop('required', true).selectpicker('setStyle', 'border border-warning', 'add').selectpicker('refresh');
+
+        } else {
+            $('#id_guia').prop('readonly', true);
+            $('#id_guia').prop('required', false);
+            $('#id_guia').removeClass('border border-warning');
+            $('#prestamoEquipo_selected').prop('required', false).selectpicker('setStyle', 'border border-warning', 'remove').selectpicker('refresh');
+
+
+        }
+    })
+    if ($('#id_tipoRemision').val() == '1' & $('#crear').val() != 'True') {
+        $('#id_guia').prop('readonly', false);
+        $('#id_guia').prop('required', true);
+        $('#id_guia').addClass('border border-warning');
+        $('#prestamoEquipo_selected').prop('required', true).selectpicker('setStyle', 'border border-warning', 'add').selectpicker('refresh');
+    }
+
     $('.detalle-formset').formset({
-        addText: 'Nuevo Detalle',
-        deleteText: 'x',
-        addCssClass: 'add-row btn btn-outline-primary',
+        addText: 'Agregar',
+        deleteText: '',
+        addCssClass: 'add-row btn btn-primary mt-2 mt-2',
         deleteCssClass: 'delete-row',
         animateForms: true,
         formTemplate: null,
         added: function () {
-            $(".delete-row").addClass("btn btn-outline-danger");
+            $(".delete-row").addClass("btn btn-danger fas fa-times ");
             $('.dx').selectpicker({
                 liveSearch: false,
                 selectAll: true
@@ -16,6 +59,9 @@ $(document).ready(function () {
             if (total > 1) {
                 $(".add-row").hide();
             }
+
+            $(document).find('.salida').addClass(['border', 'border-warning']);
+
         },
         removed: function () {
             var total = $('#id_form-TOTAL_FORMS').val();
@@ -24,44 +70,73 @@ $(document).ready(function () {
                 $(".delete-row").hide();
             }
         },
-
-
     });
+    $('.salida').addClass(['border', 'border-warning']);
+    $(".delete-row").addClass("btn btn-danger fas fa-times ");
 
     $('#guardarRemision').click(function () {
-        if ($('#crear').val() != 'True') {
-            Swal.fire({
-                title: '¿Desea modificar la remisión ' + $('#crear').attr('data-remision') + ' ?',
-                text: "¡No podrás revertir esto!",
-                type: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Si, Modificar!',
-                cancelButtonText: 'Volver',
-                // showLoaderOnConfirm: true,
-            }).then((result) => {
-                if (result.value) {
-                    $("#enviarFormularioRemision").click();
-                }
-            })
-        } else {
-            Swal.fire({
-                title: '¿Guardar remisión?',
-                text: "¡Se registrara una nueva remisión con los datos proporcionados!",
-                type: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Si, Guardar!',
-                cancelButtonText: 'Volver',
-                // showLoaderOnConfirm: true,
-            }).then((result) => {
-                if (result.value) {
-                    $("#enviarFormularioRemision").click();
-                }
+        total = $(document).find('.salida');
+        var capacidad = parseFloat($('#capacidad').val());
+        var salida = 0;
+        $.each(total, function (indexInArray, t) {
+            salida += parseFloat($(t).val());
+        });
+        if (capacidad < salida & capacidad > 0) {
+
+            $('#errorDetalle').empty().html('<div class="alert alert-danger alert-dismissible "><strong>Error:</strong> la capacidad total de transporté de hielo del préstamo de equipos <strong>Nō ' + $('#prestamoEquipo_selected').val() + '</strong> es de <strong>' + capacidad + 'qq</strong>.<hr>Imposible realizar la salida de <strong>' + salida + 'qq</strong> de hielo.</div>');
+            notificacion.fire({
+                type: 'error',
+                title: 'Error: Salida de hielo invalida.'
             });
+
+            $(document).find('.salida').removeClass('border-warning').addClass('border-danger');
+        } else {
+            $('#errorDetalle').empty();
+            $(document).find('.salida').removeClass('border-danger').addClass('border-warning');
+
+
+            if ($('#crear').val() != 'True') {
+                Swal.fire({
+                    title: '¿Desea modificar la remisión ' + $('#crear').attr('data-remision') + ' ?',
+                    text: "¡No podrás revertir esto!",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Si, Modificar!',
+                    cancelButtonText: 'Volver',
+                    // showLoaderOnConfirm: true,
+                }).then((result) => {
+                    if (result.value) {
+                        setTimeout(function () {
+                            $("#enviarFormularioRemision").click();
+                        }, 500);
+                    }
+                })
+            } else {
+
+                Swal.fire({
+                    title: '¿Guardar remisión?',
+                    text: "¡Se registrara una nueva remisión con los datos proporcionados!",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Si, Guardar!',
+                    cancelButtonText: 'Volver',
+                    // showLoaderOnConfirm: true,
+                }).then((result) => {
+                    if (result.value) {
+                        setTimeout(function () {
+                            $("#enviarFormularioRemision").click();
+                        }, 500);
+                    }
+                });
+
+            }
+
         }
+
     });
 
     if ($('#crear').val() == 'True') {
@@ -70,9 +145,26 @@ $(document).ready(function () {
         $('#id_form-0-hielo').val('1').selectpicker('refresh');
         $(".delete-row").hide();
     } else {
-        $('#esCrear').hide();
         $('#id_numRemision').prop('readonly', true);
-        $('.delete-row').addClass("btn btn-outline-danger");
+
+        if (parseFloat($('#capacidad').val()) > 0) {
+            $('#id_compania').prop('disabled', true);
+            $('#id_compania').selectpicker('refresh');
+
+            $('#id_conductor').prop('disabled', true);
+            $('#id_conductor').selectpicker('refresh');
+
+            $('#id_prestamoEquipo').prop('disabled', true);
+            $('#id_prestamoEquipo').selectpicker('refresh');
+
+            $('#id_placa').prop('disabled', true);
+            $('#id_placa').selectpicker('refresh');
+
+            $('#agregarEmpresa').hide();
+            $('#agregarConductor').hide();
+            $('#agregarVehiculo').hide();
+        }
+        // $('.delete-row').addClass("btn btn-outline-danger");
 
         var total = $('#id_form-TOTAL_FORMS').val();
         if (total > 1) {
@@ -89,11 +181,19 @@ $(document).ready(function () {
             $(".add-row").click();
             return false;
         }
+
+
+
         // $('#mostrarModal').modal('show');
         // $('#modalGuardar').click(function(){
         $('#id_compania').prop('disabled', false);
         $('#id_conductor').prop('disabled', false);
         $('#id_placa').prop('disabled', false);
+
+
+        $('#pantalla').addClass('pantalla');
+        $('#circulo').addClass('circulo');
+        $('#loader').addClass('loader');
 
         return true;
         // });
@@ -111,58 +211,6 @@ $(document).ready(function () {
     //     }
 
     // });
-    $('#siPrestamo').change(function () {
-        if ($("#siPrestamo").prop('checked')) {
-            $('#prestamo').show(500);
-            $('#prestamoEquipo_selected').prop('disabled', false);
-            $('#prestamoEquipo_selected').val('');
-            $('#prestamoEquipo_selected').selectpicker('refresh');
-            // if ($('#prestamoEquipo_selected').find(":selected").val() == '') {
-            //     readonly('#id_compania',false);
-            //     readonly('#id_conductor',false);
-            //     readonly('#id_placa',false); 
-            // }
-        } else {
-            $('#prestamo').hide(500);
-            $('#prestamoEquipo_selected').prop('disabled', true);
-            if ($('#id_compania').is(':disabled')) {
-                $('#id_compania').prop('disabled', false);
-                $('#id_compania').val('');
-                $('#id_compania').selectpicker('refresh');
-            }
-            if ($('#id_conductor').is(':disabled')) {
-                $('#id_conductor').prop('disabled', false);
-                $('#id_conductor').val('');
-                $('#id_conductor').selectpicker('refresh');
-
-            }
-            if ($('#id_placa').is(':disabled')) {
-                $('#id_placa').prop('disabled', false);
-                $('#id_placa').val('');
-                $('#id_placa').selectpicker('refresh');
-
-            }
-            // readonly('#id_compania',true);
-            // readonly('#id_conductor',true);
-            // readonly('#id_placa',true); 
-        }
-    });
-
-
-
-
-
-
-
-
-    // $("#probando").on("click",".delete-row", function (event) {
-    //     event.preventDefault();
-    //     alert('hola');
-    //     var total = $('#id_form-TOTAL_FORMS').val();
-    //     if (total <= 2) {
-    //         $(".add-row").show();
-    //     }
-    // });
 
 
     /* Setup plugin defaults */
@@ -179,105 +227,124 @@ $(document).ready(function () {
     //     added: null,                     // Function called each time a new form is added
     //     removed: null                    // Function called each time a form is deleted
     // };
-
-
+    moment.updateLocale(moment.locale(), {
+        invalidDate: ""
+    });
     var tablex = $('#tablajs').DataTable({
-        "scrollY": '35vh',
+        // "dom": "<'row'  <'col-md-6'f> >",
+        dom: "<'row'<'#contenedorArriba.col-md-6'><'col-md-6'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-4'i><'col-sm-8'<'#colvis'>p>>",
+        "scrollY": '47vh',
         "scrollCollapse": true,
         "scrollX": true,
         "deferRender": true,
         // responsive: true,
         "scroller": true,
         "language": {
-            "zeroRecords": "No se ha encontrado nada, lo siento.",
+            "zeroRecords": "No se ha encontrado nada.",
             "infoEmpty": "No hay registros disponibles",
-            "infoFiltered": "(filtrado de _MAX_ registros totales)",
+            "infoFiltered": "(Filtrado de _MAX_ registros totales)",
             "info": "Mostrando _START_ a _END_ de _TOTAL_ registros.",
             "search": "Buscar:"
-        }
+        },
+        "columnDefs": [{
+                targets: 3,
+                render: $.fn.dataTable.render.moment('YYYY/MM/DD', 'DD-MM-YYYY')
+            },
+
+        ],
+        "order": [
+            [3, "desc"],
+            [4, 'asc']
+        ],
+
         // "scrollCollapse": true
     });
-    // var tablex = $('#tablajs').DataTable({
-    //     			dom: 'Bfrtip',
-    //                 lengthChange: false,
-    //                 // bAutoWidth: true,
-    //                 // scrollCollapse: true,
-    //                 // scroller:       true,
-    //                 // deferRender:    true,
-    //                 // scroller:       true,
-    //                 scrollY: 300,
-    //                 buttons: [ 'copy', 'excel', 'pdf','colvis',{
-    //                     extend: 'pdfHtml5',
-    //                     download: 'open',
-    //                     orientation: 'landscape',
-    //                     pageSize: 'LEGAL',
-    //                     text: 'Ver',
-    //                     title: 'Reporte de equipos'}],
-    //                     scrollX: true,
-    //                     // scrollY: 400,
-    //                 "language": {
-    //                     "lengthMenu": "Mostrar _MENU_ por páginas",
-    //                     "zeroRecords": "No se encontró ningún registro",
-    //                     "info": "Mostrando página _PAGE_ de _PAGES_",
-    //                     "infoEmpty": "Registro no valido",
-    //                     "infoFiltered": "(filtrado de _MAX_ registros totales)",
-    //                     'search': 'Buscar:'
-    //                     /*'search': 'Buscar: _INPUT_ aqui'*/,
-    //                      "paginate": {
-    //                           "next": "Siguiente",
-    //                           'previous': 'Anterior'
-    //                      },
-    //                      buttons: {
-    //                         colvis: 'Columnas visibles',
-    //                         copy: 'Copiar'
-    //                     }
-    //                 }
-    //              });
+
+    remision = ''
+    reportes = ''
+    if ($('#add_remision').length) {
+        remision = '<a class="btn btn-primary text-left" href="/remision/crear/"><i class="fas fa-plus"></i> Nueva Remisión</a>';
+
+    }
+    if ($('#generar_reportes').length) {
+        reportes = '<div class="btn-group" role="group"><button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle"' +
+            'data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-file-alt"></i> Reportes</button>' +
+            '<div class="dropdown-menu" aria-labelledby="btnGroupDrop1">' +
+                '<button id="reporteMensual" data-toggle="modal" data-target="#modalReporte" class="dropdown-item"><i class="far fa-file-alt"></i> Reporte Mensual de Notas de Remisión</button>' +
+                '<div class="dropdown-divider"></div>' +
+                '<button id="reporteIntervalo" class="dropdown-item"><i class="far fa-file-alt"></i> Reporte Notas de Remisión con Intervalo de Fechas</button>' +
+            '</div></div>';
+
+
+    }
+    graficos = '<div class="btn-group" role="group"><button id="btnGroupDrop2" type="button" class="btn btn-success dropdown-toggle"' +
+            'data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas  fa-chart-line"></i> Graficos</button>' +
+            '<div class="dropdown-menu" aria-labelledby="btnGroupDrop2">' +
+                '<a class="btn btn-primary text-left dropdown-item" href="/remision/grafico/venta_mensual/"><i class="fas  fa-chart-pie"></i> Ventas mesuales</a>'+
+            '</div></div>';
+    $('#contenedorArriba').html('<div class="btn-group" role="toolbar">' + remision + reportes +graficos+ '</div>');
+
+    $('.dataTables_info').addClass(['p-0', 'text-left']);
+
+
+
 
     $("#prestamoEquipo_selected").change(function () {
         var num = $(this).find(":selected").val();
 
         // $.get('{% url "remision:prestamoEquipo_asJson-url" %}', {num:num},function(data) {
-        $.get('/remision/ajax_prestamo_equipo/', {
-            num: num
-        }, function (data) {
+        if (num != '') {
+            $.get('/remision/ajax_prestamo_equipo/', {
+                num: num
+            }, function (data) {
+                $(document).find('.temporal').remove();
 
-            // alert(data.compania);
-            // alert(data.conductor);
-            // alert(data.placa);
+                $('#capacidad').val(data.capacidad);
 
-            // ASIGNADO A (AJAX):
-            $('#id_compania').val(data.compania);
-            $('#id_compania').prop('disabled', true);
+                $('#id_compania').val(data.compania);
+                $('#id_compania').prop('disabled', true);
+                $('#id_compania').selectpicker('refresh');
+
+                // if ($('#crear').val() == 'True') {
+                $('#id_conductor').prepend(data.htmlC);
+                // }
+                $('#id_conductor').val(data.conductor);
+                $('#id_conductor').prop('disabled', true);
+                $('#id_conductor').selectpicker('refresh');
+
+
+                // if ($('#crear').val() == 'True') {
+                $('#id_placa').prepend(data.htmlP);
+                // }
+                $('#id_placa').val(data.placa);
+                $('#id_placa').prop('disabled', true);
+                $('#id_placa').selectpicker('refresh');
+
+                $('#agregarEmpresa').hide();
+                $('#agregarConductor').hide();
+                $('#agregarVehiculo').hide();
+
+            }, 'json');
+        } else {
+            $(document).find('.temporal').remove();
+
+            $('#id_compania').val('');
+            $('#id_compania').prop('disabled', false);
             $('#id_compania').selectpicker('refresh');
-            // $('#id_compania').selectpicker('toggle');
 
-
-            // readonly('#id_compania',false);
-            // readonly('#id_compania',true);
-            // $('#id_compania').readonly(true);
-
-            // $("#compania").prop('disabled',true);
-            // $('#id_compania option:not(:selected)').prop('disabled',true);
-            // $('#id_compania option:(:selected)').prop('disabled',false);
-            // $("#compania").find("select").prop("disabled",true);
-            // $('#id_compania').attr('disabled', 'disabled');
-            // x$('#id_compania').prop('disabled', true);
-
-            // RECIBIO (AJAX):
-            $('#id_conductor').val(data.conductor);
-            $('#id_conductor').prop('disabled', true);
+            $('#id_conductor').val('');
+            $('#id_conductor').prop('disabled', false);
             $('#id_conductor').selectpicker('refresh');
-            // readonly('#id_conductor');
-            // $('#id_conductor').prop('disabled', true);
 
-            // PLACA (AJAX):
-            $('#id_placa').val(data.placa);
-            $('#id_placa').prop('disabled', true);
+            $('#id_placa').val('');
+            $('#id_placa').prop('disabled', false);
             $('#id_placa').selectpicker('refresh');
-            // readonly('#id_placa');
-            // $('#id_placa').prop('disabled', true);
-        }, 'json');
+
+            $('#agregarEmpresa').show();
+            $('#agregarConductor').show();
+            $('#agregarVehiculo').show();
+        }
+
     });
 
 
@@ -296,36 +363,7 @@ $(document).ready(function () {
 
     $('.anularRemision').on('click', function () {
 
-        // alert($(this).attr('data-id'));
-
-        // swal({
-        //     title: 'Are you sure?',
-        //     text: "You won't be able to revert this!",
-        //     type: 'warning',
-        //     showCancelButton: true,
-        //     confirmButtonColor: '#3085d6',
-        //     cancelButtonColor: '#d33',
-        //     confirmButtonText: 'Yes, delete it!',
-        //     showLoaderOnConfirm: true,
-        //     preConfirm: function() {
-        //        return new Promise(function(resolve) {
-        //             $.ajax({
-        //                 url: '/remision/ajax_anular_remision/',
-        //                 type: 'POST',
-        //                 data: {id: id},
-        //                 dataType: 'json'
-        //             })
-        //             .done(function(response){
-        //                 swal('Deleted!', response.message, response.status);
-        //                 readProducts();
-        //                     })
-        //             .fail(function(){
-        //                 swal('Oops...', 'Something went wrong with ajax !', 'error');
-        //             });
-        //         });
-        //     },
-        //     allowOutsideClick: false     
-        //     });
+        
 
         var id = $(this).attr('data-id');
         Swal.fire({
@@ -348,25 +386,21 @@ $(document).ready(function () {
                         // $('#col_estado-' + id).html('<p style="display: none">3</p>' +
                         //     '<i class="fas fa-times"></i>');
                         $('#col_estado-' + id).html('Anulado');
-                        $('#col_prestamo-' + id).html('-');
-                        $('button[data-terminar = ' + id + ']').css('display', 'none');
-                        $('a[data-editar = ' + id + ']').css('display', 'none');
-                        $('button[data-anular = ' + id + ']').css('display', 'none');
+                        $('#col_prestamo-' + id).html('');
+                        $('#terminar-' + id).hide();
+                        $('#editar1-' + id).hide();
+                        $('#anular-' +id).hide();
                         // $('a[data-id = '+id+']').css('display', 'none');
-                        Swal.fire({
+                        notificacion.fire({
                             // 'Anulado!',
-                            title: 'La remision ' + id + ' ha sido anulada exitosamente.',
-                            type: 'success',
-                            showConfirmButton: false,
-                            timer: 2000
+                            type:'success',
+                            title: 'La remisión ' + id + ' ha sido anulada exitosamente.',                            type: 'success'
                         });
                     } else {
-                        Swal.fire({
+                        notificacion.fire({
                             type: 'error',
-                            title: 'Oops...',
-                            text: '¡Algo salió mal!',
-                            showConfirmButton: false,
-                            timer: 3000
+                            title: 'Oops...¡Algo salió mal!',
+                            
                             // footer: '<a href>Why do I have this issue?</a>'
                         })
                     }
@@ -417,8 +451,8 @@ $(document).ready(function () {
             } else {
                 Swal.fire({
                     title: 'Operacion cancelada por el usuario.',
-                    type:'error',
-                    timer:'3000'
+                    type: 'error',
+                    timer: '3000'
                 })
             }
         });
@@ -432,6 +466,10 @@ $(document).ready(function () {
             id: id
         }, function (data) {
             $('.modalCuerpoRemision').empty().html(data.htmlRemision + '' + data.htmlDetalleRemision + '' + data.htmlPrestamo + '' + data.htmlDetallePrestamo);
+            new Cleave('.devolucion', {
+                blocks: [3],
+                numericOnly: true
+            });
         });
 
         $('#modalDetalleRemision').modal('show');
@@ -439,7 +477,7 @@ $(document).ready(function () {
     });
 
     $('#terminarRemision').on('click', function () {
-        
+
         var items = $('.modalCuerpoRemision').find('.devolucion');
         var devolucionRemisiones = [];
         items.each(function (i, item) {
@@ -450,49 +488,67 @@ $(document).ready(function () {
             devolucionRemisiones.push(obj);
         });
         console.log(devolucionRemisiones);
-        $.ajax({
-            type: "POST",
-            url: "/remision/ajax_terminar_remision/",
-            // headers: {
-            //     'Authorization': "Token " + localStorage.access_token
-            // },
-            data: {
-                devolucionRemisiones: JSON.stringify(devolucionRemisiones),
-                csrfmiddlewaretoken: getCookie('csrftoken')
-            },
-            success: function (data) {
-                alert(data.id)
-                $('#modalDetalleRemision').modal('hide');
-                $('#fila-' + data.id).prop('class', 'table-success');
-                $('#col_estado-' + data.id).html('Terminado');
-                // $('#col_estado-' + data.id).html('<p style="display: none">2</p>' +
-                //     '<i class="fas fa-check"></i>');
-                $('button[data-terminar=' + data.id + ']').hide();
-                // $('button[data-editar = '+id+']').css('display', 'none');
-                $('a[data-anular=' + data.id + ']').css('display', 'none');
-                // $('#col_prestamo-'+data.id).html('None');
-                // $('button[data-id = '+data.id+']').css('display', 'none');                        $('a[data-id = '+id+']').css('display', 'none');
-                Swal.fire({
-                    // 'Anulado!',
-                    title: 'La remision ha sido terminada exitosamente.',
-                    type: 'success',
-                    showConfirmButton: false,
-                    timer: 2000
-                });
 
-            },
-            error: function (data) {
-                Swal.fire({
-                    type: 'error',
-                    title: 'Oops...',
-                    text: '¡Algo salió mal!',
-                    showConfirmButton: false,
-                    timer: 3000
-                    // footer: '<a href>Why do I have this issue?</a>'
-                })
+        var fecha = $(document).find('.fechaEntrada').val();
+
+        // Devolucion equipo
+        var devueltos = $('.modalCuerpoRemision').find('.devueltos').filter(':visible');
+        var datos = [];
+        devueltos.each(function (d, devuelto) {
+            var obj = {
+                'id': $(devuelto).attr('data-id'),
+                'devuelto': $(devuelto).is(':checked')
             }
-
+            datos.push(obj);
         });
+
+        console.log(datos);
+        if (fecha != '') {
+            $.ajax({
+                type: "POST",
+                url: "/remision/ajax_terminar_remision/",
+                // headers: {
+                //     'Authorization': "Token " + localStorage.access_token
+                // },
+                data: {
+                    devolucionRemisiones: JSON.stringify(devolucionRemisiones),
+                    csrfmiddlewaretoken: getCookie('csrftoken'),
+                    datos: JSON.stringify(datos),
+                    fecha: fecha,
+                },
+                success: function (data) {
+                    $('#modalDetalleRemision').modal('hide');
+                    $('#fila-' + data.id).prop('class', 'table-success');
+                    $('#col_estado-' + data.id).html('Terminado');
+                    // $('#col_estado-' + data.id).html('<p style="display: none">2</p>' +
+                    //     '<i class="fas fa-check"></i>');
+                    $('#terminar-' + data.id).hide();
+                    $('#editar1-' + data.id).hide();
+                    $('#anular-' + data.id).hide();
+                    // $('#col_prestamo-'+data.id).html('None');
+                    // $('button[data-id = '+data.id+']').css('display', 'none');                        $('a[data-id = '+id+']').css('display', 'none');
+                    notificacion.fire({
+                        // 'Anulado!',
+                        title: 'La remision ha sido terminada exitosamente.',
+                        type: 'success',
+                    });
+
+                },
+                error: function (data) {
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: '¡Algo salió mal!',
+                        showConfirmButton: false,
+                        timer: 3000
+                        // footer: '<a href>Why do I have this issue?</a>'
+                    })
+                }
+
+            });
+
+        }
+
     });
 
     function getCookie(name) {
@@ -536,7 +592,7 @@ $(document).ready(function () {
 
     });
 
-    
+
     // $("#tablajs").on("click","tr",function(){
     //     var c = $(this).attr('id');
     //     Swal.fire('hello '+c,'success');
@@ -548,6 +604,10 @@ $(document).ready(function () {
             blocks: [6],
             numericOnly: true
         });
+        new Cleave('#id_guia', {
+            blocks: [6],
+            numericOnly: true
+        });
 
         if ($('#crear').val() != 'True') {
             new Cleave('#id_fecha', {
@@ -556,5 +616,410 @@ $(document).ready(function () {
             });
         }
     }
+
+    $('#id_guia').blur(function () {
+        var guia = $(this).val();
+        if (guia != '' & guia != $('#guia').val()) {
+            $.ajax({
+                type: "get",
+                url: "/remision/ajax_validar_guia/",
+                data: {
+                    guia: guia
+                },
+                success: function (response) {
+                    if (response.existe == 1) {
+                        notificacion.fire({
+                            type: 'error',
+                            title: 'Ya existe una remisión con el numero de guía ' + guia + '.'
+                        });
+                        $('#id_guia').removeClass('boder-warning');
+                        $('#id_guia').addClass(['alert-danger', 'border-danger']);
+                        $('#id_guia').val('').prop('placeholder', guia);
+
+
+                    } else {
+                        $('#id_guia').removeClass('alert-danger');
+                        $('#id_guia').removeClass('border-danger');
+                        $('#id_guia').addClass('boder-warning');
+
+                    }
+                }
+            });
+        }
+
+    });
+
+    $(document).on('blur', '.devolucion', function () {
+        total = parseFloat($(this).attr('data-total'));
+        devolucion = parseFloat($(this).val());
+        if (devolucion > 0) {
+            if (devolucion > total) {
+                notificacion.fire({
+                    type: 'error',
+                    title: 'Error: La devolución de hielo limpio no puede ser mayor que la salida.'
+                });
+                $(this).val('0').focus();
+            }
+        }
+
+        if ($(this).val() == '') {
+            $(this).val('0').focus();;
+        }
+
+    });
+    $('.modalCuerpoRemision').on('click', '#selBin', function () {
+        var bines = $('.modalCuerpoRemision').find('.chkBines');
+        bines.each(function (indexInArray, bin) {
+            $(bin).prop('checked', true);
+        });
+    });
+    $('.modalCuerpoRemision').on('click', '#desBin', function () {
+        var bines = $('.modalCuerpoRemision').find('.chkBines');
+        bines.each(function (indexInArray, bin) {
+            $(bin).prop('checked', false);
+        });
+    });
+    $('.modalCuerpoRemision').on('click', '#selTap', function () {
+        var taps = $('.modalCuerpoRemision').find('.chkTapaderas');
+        taps.each(function (indexInArray, tap) {
+            $(tap).prop('checked', true);
+        });
+    });
+    $('.modalCuerpoRemision').on('click', '#desTap', function () {
+        var taps = $('.modalCuerpoRemision').find('.chkTapaderas');
+        taps.each(function (indexInArray, tap) {
+            $(tap).prop('checked', false);
+        });
+    });
+
+    $('#id_numRemision').blur(function () {
+        var numero = $(this).val();
+        if (numero != '' & $('#crear').val() == 'True') {
+            $.ajax({
+                type: "get",
+                url: "/remision/ajax_validar_numero_remision/",
+                data: {
+                    numero: numero
+                },
+                success: function (response) {
+                    if (response.existe == 1) {
+                        notificacion.fire({
+                            type: 'error',
+                            title: 'Ya existe una remisión con el número ' + numero + '.'
+                        });
+                        $('#id_numRemision').removeClass('boder-warning');
+                        $('#id_numRemision').addClass(['alert-danger', 'border-danger']);
+                        $('#id_numRemision').val('').prop('placeholder', numero);
+
+
+                    } else {
+                        $('#id_numRemision').removeClass('alert-danger');
+                        $('#id_numRemision').removeClass('border-danger');
+                        $('#id_numRemision').addClass('boder-warning');
+
+                    }
+                }
+            });
+        }
+
+    });
+
+    // Creacion de Nuevos registros mediante ajax
+    $('#agregarEmpresa').click(function (e) {
+        e.preventDefault();
+        $.get($(this).attr('data-url'), {
+            uso: 1
+        }, function (data) {
+            $('#modalNuevoContenedor').empty().html(data.html);
+            $('#modalNuevo').find('#id_tipoCompania option').each(function () {
+                if ($(this).val() != 1) {
+                    $(this).prop('disabled', 'true');
+                } else {
+                    $(this).prop('selected', 'True');
+                }
+            });
+            var d = $(document).find('#id_tipoCompania').selectpicker({
+                size: 3,
+            });
+            d.selectpicker('refresh');
+            $('#guardarNuevo').attr('class', 'btn btn-primary nuevaEmpresa');
+
+            var requeridos = $('#modalNuevoContenedor').find(':required');
+            requeridos.each(function (r, requerido) {
+                if ($(requerido).prop('tagName') == 'SELECT') {
+                    $(requerido).selectpicker('setStyle', 'border border-warning');
+                } else {
+                    $(requerido).addClass('border border-warning');
+                }
+            });
+            $('#modalNuevo').modal('show');
+        });
+    });
+
+    $('#modalNuevo').on('click', '.nuevaEmpresa', function () {
+        var form = $(document).find('#formNuevo');
+        // $(form).submit();
+        console.log(form);
+        $(document).find('#formNuevo').submit(function (e) {
+            e.preventDefault();
+            $.ajax({
+                type: $(this).attr('method'),
+                url: $(this).attr('action'),
+                data: $(this).serialize(),
+                success: function (response) {
+                    $('#id_compania').empty().html(response.html).selectpicker('refresh');
+                    $('#modalNuevo').modal('hide');
+                    notificacion.fire({
+                        type: 'success',
+                        title: 'Empresa Registrada'
+                    })
+                },
+                error: function (response) {
+                    $('#modalNuevo').modal('hide');
+                    notificacion.fire({
+                        type: 'error',
+                        title: 'Error al registrar la empresa'
+                    })
+                }
+            });
+        });
+    });
+
+    //------- --------- ---------- -----------------
+    $('#agregarConductor').click(function (e) {
+        e.preventDefault();
+        $.get($(this).attr('data-url'), function (data) {
+            //######## FORMATEO DE CAMPOS
+            //if ($('#modalNuevoContenedor').find('#id_numIdentidad').length) {
+
+            // }
+            $('#modalNuevoContenedor').empty().html(data.html);
+            new Cleave('#id_numIdentidad', {
+                blocks: [4, 4, 5],
+                delimiter: '-',
+                numericOnly: true
+            });
+
+            $('#modalNuevoContenedor').find('#id_nombre1').upperFirstAll();
+            $('#modalNuevoContenedor').find('#id_nombre2').upperFirstAll();
+            $('#modalNuevoContenedor').find('#id_apellido1').upperFirstAll();
+            $('#modalNuevoContenedor').find('#id_apellido2').upperFirstAll();
+
+
+            $('#guardarNuevo').attr('class', 'btn btn-primary nuevoConductor');
+
+            var requeridos = $('#modalNuevoContenedor').find(':required');
+            requeridos.each(function (r, requerido) {
+                if ($(requerido).prop('tagName') == 'SELECT') {
+                    $(requerido).selectpicker('setStyle', 'border border-warning');
+                } else {
+                    $(requerido).addClass('border border-warning');
+                }
+            });
+            $('#modalNuevo').modal('show');
+        });
+
+
+    });
+
+    $('#modalNuevo').on('click', '.nuevoConductor', function () {
+        var form = $(document).find('#formNuevo');
+        // $(form).submit();
+        // console.log(form);
+        $(document).find('#formNuevo').submit(function (e) {
+            e.preventDefault();
+            $.ajax({
+                type: $(this).attr('method'),
+                url: $(this).attr('action'),
+                data: $(this).serialize(),
+                success: function (response) {
+                    $('#id_conductor').empty().html(response.html);
+                    $('#id_conductor').selectpicker('refresh');
+                    $('#modalNuevo').modal('hide');
+                    notificacion.fire({
+                        type: 'success',
+                        title: 'Conductor Registrado'
+                    });
+                },
+                error: function (response) {
+                    $('#modalNuevo').modal('hide');
+                    notificacion.fire({
+                        type: 'error',
+                        title: 'Error al registrar el conductor'
+                    })
+                }
+            });
+        });
+    });
+
+    //------- --------- ---------- -----------------
+    $('#agregarVehiculo').click(function (e) {
+        e.preventDefault();
+        $.get($(this).attr('data-url'), function (data) {
+
+            $('#modalNuevoContenedor').empty().html(data.html);
+
+            var requeridos = $('#modalNuevoContenedor').find(':required');
+            requeridos.each(function (r, requerido) {
+                if ($(requerido).prop('tagName') == 'SELECT') {
+                    $(requerido).selectpicker('setStyle', 'border border-warning');
+                } else {
+                    $(requerido).addClass('border border-warning');
+                }
+            });
+
+            $('#guardarNuevo').attr('class', 'btn btn-primary nuevoVehiculo');
+            $('#modalNuevo').modal('show');
+        });
+
+
+    });
+
+    $('#modalNuevo').on('click', '.nuevoVehiculo', function () {
+
+        $(document).find('#formNuevo').submit(function (e) {
+            e.preventDefault();
+            $.ajax({
+                type: $(this).attr('method'),
+                url: $(this).attr('action'),
+                data: $(this).serialize(),
+                success: function (response) {
+                    $('#id_placa').empty().html(response.html);
+                    $('#id_placa').selectpicker('refresh');
+                    $('#modalNuevo').modal('hide');
+                    notificacion.fire({
+                        type: 'success',
+                        title: 'Vehiculo Registrado'
+                    });
+                },
+                error: function (response) {
+                    $('#modalNuevo').modal('hide');
+                    notificacion.fire({
+                        type: 'error',
+                        title: 'Error al registrar el vehiculo'
+                    })
+                }
+            });
+        });
+    });
+
+    //------- --------- ---------- -----------------
+    $('#agregarEmpleado').click(function (e) {
+        e.preventDefault();
+        $.get($(this).attr('data-url'), function (data) {
+
+            $('#modalNuevoContenedor').empty().html(data.html);
+
+            var requeridos = $('#modalNuevoContenedor').find(':required');
+            requeridos.each(function (r, requerido) {
+                if ($(requerido).prop('tagName') == 'SELECT') {
+                    $(requerido).selectpicker('setStyle', 'border border-warning');
+                } else {
+                    $(requerido).addClass('border border-warning');
+                }
+            });
+
+            new Cleave('#id_codEmpleado', {
+                blocks: [4],
+                numericOnly: true
+            });
+
+            new Cleave('#id_identidad', {
+                blocks: [4, 4, 5],
+                delimiter: '-',
+                numericOnly: true
+            });
+            new Cleave('#id_telefono', {
+                blocks: [4, 4],
+                delimiter: '-',
+                numericOnly: true
+            });
+            $('#id_nombre').upperFirst();
+            $('#id_segundoNombre').upperFirst();
+            $('#id_apellido').upperFirst();
+            $('#id_segundoApellido').upperFirst();
+
+            $('#guardarNuevo').attr('class', 'btn btn-primary nuevoEmpleado');
+            $('#modalNuevo').modal('show');
+        });
+
+
+    });
+
+    $('#modalNuevo').on('click', '.nuevoEmpleado', function () {
+
+        $(document).find('#formNuevo').submit(function (e) {
+            e.preventDefault();
+            $.ajax({
+                type: $(this).attr('method'),
+                url: $(this).attr('action'),
+                data: $(this).serialize(),
+                success: function (response) {
+                    $('#id_entrego').empty().html(response.html);
+                    $('#id_entrego').selectpicker('refresh');
+                    $('#modalNuevo').modal('hide');
+                    notificacion.fire({
+                        type: 'success',
+                        title: 'Empleado Registrado'
+                    });
+                },
+                error: function (response) {
+                    $('#modalNuevo').modal('hide');
+                    notificacion.fire({
+                        type: 'error',
+                        title: 'Error al registrar el empleado'
+                    })
+                }
+            });
+        });
+    });
+
+    //------- --------- ---------- -----------------
+
+    $('#reporteIntervalo').click(function () {
+        $.get('/remision/reportes/intervalo/', function (data) {
+            $('#modalNuevoContenedor').empty().html(data.html);
+            $('#guardarNuevo').prop('class', 'btn btn-warning reporteIntervalo').html('Imprimir');
+            $('#modalNuevo').modal('show');
+        });
+    });
+
+    $('#modalNuevoContenedor').on('blur','#fecha1',function(){
+        var fecha1,fecha2;
+        fecha1 = $(this).val();
+        fecha2 = $(document).find('#fecha2').val();
+
+        if (fecha1 > fecha2) {
+            notificacion.fire({
+                'title':'La Fecha de inicio no puede ser mayor.',
+                type: 'error'
+            });
+            $('#fecha1').focus();
+        }
+        
+    });
+
+    $('#modalNuevoContenedor').on('blur','#fecha2',function(){
+        var fecha1,fecha2;
+        fecha2 = $(this).val();
+        fecha1 = $(document).find('#fecha1').val();
+
+        if (fecha2 < fecha1) {
+            notificacion.fire({
+                'title':'La Fecha final no puede ser menor.',
+                type: 'error'
+            });
+            $('#fecha2').focus();
+        }
+        
+    });
+
+    $('#modalNuevo').on('click', '.reporteIntervalo', function () {
+        // $('#guardarNuevo').prop('class', 'btn btn-primary reporteMensualFincas').html('Guardar');
+        $(document).find('#formNuevo').submit();
+    });
+    //------- --------- ---------- -----------------
+
+
 
 });
